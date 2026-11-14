@@ -46,8 +46,10 @@ jobs:
         run: |
           pip install -q --upgrade pip
           pip install -q numpy requests edge-tts pillow opencv-python-headless
-          pip install -q playwright
-          python -m playwright install --with-deps chromium
+          # Node wala playwright chahiye (script node se subtitle PNG banata hai)
+          npm install -g playwright
+          npx --yes playwright install --with-deps chromium
+          echo "NODE_PATH=$(npm root -g)" >> "$GITHUB_ENV"
 
       - name: Awaaz + images banao
         run: |
@@ -58,6 +60,8 @@ jobs:
           PYTHONUNBUFFERED: "1"
 
       - name: Video render
+        env:
+          NODE_PATH: ${{ env.NODE_PATH }}
         run: |
           OUTDIR="$(dirname "${{ inputs.episode }}")/ep01_assets"
           python studio/story_video.py "${{ inputs.episode }}" "$OUTDIR" "${{ inputs.outname }}" \
