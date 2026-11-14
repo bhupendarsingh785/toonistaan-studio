@@ -1,0 +1,246 @@
+[
+ {
+  "image": "s01",
+  "verdict": "CHECK",
+  "issues": [],
+  "warnings": [
+   "thodi naram (sharpness 48)"
+  ],
+  "sharpness": 47.6,
+  "brightness": 94,
+  "contrast": 56,
+  "faces": [],
+  "people_tracked": 0,
+  "hands_tracked": 0
+ },
+ {
+  "image": "s02",
+  "verdict": "PASS",
+  "issues": [],
+  "warnings": [],
+  "sharpness": 120.2,
+  "brightness": 74,
+  "contrast": 59,
+  "faces": [
+   {
+    "box": [
+     532,
+     67,
+     37,
+     49
+    ],
+    "conf": 0.91,
+    "sharp": 80.5
+   }
+  ],
+  "people_tracked": 1,
+  "hands_tracked": 0
+ },
+ {
+  "image": "s03",
+  "verdict": "CHECK",
+  "issues": [],
+  "warnings": [
+   "gardan/sir ka anupaat ajeeb (6.30)"
+  ],
+  "sharpness": 372.6,
+  "brightness": 56,
+  "contrast": 56,
+  "faces": [],
+  "people_tracked": 1,
+  "hands_tracked": 0
+ },
+ {
+  "image": "s04",
+  "verdict": "CHECK",
+  "issues": [],
+  "warnings": [
+   "thodi naram (sharpness 44)"
+  ],
+  "sharpness": 43.5,
+  "brightness": 102,
+  "contrast": 70,
+  "faces": [
+   {
+    "box": [
+     298,
+     108,
+     228,
+     289
+    ],
+    "conf": 0.94,
+    "sharp": 20.8
+   }
+  ],
+  "people_tracked": 1,
+  "hands_tracked": 0
+ },
+ {
+  "image": "s05",
+  "verdict": "CHECK",
+  "issues": [],
+  "warnings": [
+   "thodi naram (sharpness 56)",
+   "ye hisse saaf/sahi nahi lag rahe (dhake ya bigde): daaya takhna -> aankh se dekho"
+  ],
+  "sharpness": 55.7,
+  "brightness": 108,
+  "contrast": 64,
+  "faces": [
+   {
+    "box": [
+     345,
+     34,
+     98,
+     120
+    ],
+    "conf": 0.92,
+    "sharp": 85.4
+   }
+  ],
+  "people_tracked": 1,
+  "hands_tracked": 1
+ },
+ {
+  "image": "s06",
+  "verdict": "CHECK",
+  "issues": [],
+  "warnings": [
+   "ye hisse saaf/sahi nahi lag rahe (dhake ya bigde): daayi kohni -> aankh se dekho"
+  ],
+  "sharpness": 116.0,
+  "brightness": 91,
+  "contrast": 50,
+  "faces": [
+   {
+    "box": [
+     341,
+     49,
+     105,
+     120
+    ],
+    "conf": 0.94,
+    "sharp": 34.4
+   },
+   {
+    "box": [
+     526,
+     77,
+     105,
+     118
+    ],
+    "conf": 0.94,
+    "sharp": 47.8
+   }
+  ],
+  "people_tracked": 2,
+  "hands_tracked": 0
+ },
+ {
+  "image": "s07",
+  "verdict": "PASS",
+  "issues": [],
+  "warnings": [],
+  "sharpness": 213.2,
+  "brightness": 65,
+  "contrast": 60,
+  "faces": [
+   {
+    "box": [
+     488,
+     341,
+     25,
+     33
+    ],
+    "conf": 0.88,
+    "sharp": 636.5
+   }
+  ],
+  "people_tracked": 1,
+  "hands_tracked": 0
+ },
+ {
+  "image": "s08",
+  "verdict": "PASS",
+  "issues": [],
+  "warnings": [],
+  "sharpness": 112.9,
+  "brightness": 75,
+  "contrast": 52,
+  "faces": [
+   {
+    "box": [
+     249,
+     268,
+     27,
+     36
+    ],
+    "conf": 0.82,
+    "sharp": 44.2
+   }
+  ],
+  "people_tracked": 0,
+  "hands_tracked": 0
+ },
+ {
+  "image": "s09",
+  "verdict": "PASS",
+  "issues": [],
+  "warnings": [],
+  "sharpness": 261.9,
+  "brightness": 70,
+  "contrast": 49,
+  "faces": [],
+  "people_tracked": 0,
+  "hands_tracked": 0
+ },
+ {
+  "image": "s10",
+  "verdict": "CHECK",
+  "issues": [],
+  "warnings": [
+   "naak beech mein nahi (tircha chehra ya bigda)"
+  ],
+  "sharpness": 166.5,
+  "brightness": 98,
+  "contrast": 58,
+  "faces": [
+   {
+    "box": [
+     607,
+     161,
+     112,
+     177
+    ],
+    "conf": 0.95,
+    "sharp": 90.6
+   },
+   {
+    "box": [
+     329,
+     79,
+     146,
+     198
+    ],
+    "conf": 0.95,
+    "sharp": 32.2
+   }
+  ],
+  "people_tracked": 2,
+  "hands_tracked": 0
+ },
+ {
+  "image": "s11",
+  "verdict": "CHECK",
+  "issues": [],
+  "warnings": [
+   "thodi naram (sharpness 27)"
+  ],
+  "sharpness": 26.9,
+  "brightness": 98,
+  "contrast": 57,
+  "faces": [],
+  "people_tracked": 0,
+  "hands_tracked": 0
+ }
+]
