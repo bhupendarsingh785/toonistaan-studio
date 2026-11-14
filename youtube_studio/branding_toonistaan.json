@@ -1,0 +1,12 @@
+{
+  "description": "Toonistaan mein aapka swagat hai! 🎬\nYahan milengi 3D cartoon wali mazedaar Hindi kahaniyan: dosti, jaadu, rahasya, superhero, comedy aur seekh ki kahaniyan, sab apne desh ke rang mein.\n\n🤖 Chhotu Robot, Munni, Dadaji aur Rampur gaon ke naye-naye karname\n⚡ Desi superheroes ki apni duniya\n📅 Roz naye Shorts aur har hafte ek nayi episode\n🔔 Subscribe karein aur bell dabayein, taaki koi kahani na chhoote!\n\n#HindiCartoon #3DAnimation #HindiKahani #Toonistaan",
+  "keywords": ["toonistaan", "hindi cartoon", "3d animation", "hindi kahani", "cartoon kahani", "chhotu robot", "desi superhero", "hindi story", "moral stories hindi", "animated stories"],
+  "country": "IN",
+  "defaultLanguage": "hi",
+  "banner": "assets/Toonistaan_banner.png",
+  "playlists": [
+    {"title": "Chhotu Robot aur Rampur Gaon | Poori Series", "description": "Chhotu Robot, Munni aur Dadaji ki saari kahaniyan, kram se."},
+    {"title": "Toonistaan Shorts", "description": "Roz ke chhote, mazedaar 3D cartoon pal."},
+    {"title": "Toofan | Desi Superhero", "description": "Gaon ka ladka Toofan aur uski bijli ki shakti ki kahaniyan."}
+  ]
+}
