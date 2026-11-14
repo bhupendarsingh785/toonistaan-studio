@@ -1,0 +1,187 @@
+{
+ "title": "Rampur ka Bandh | राजू की समझदारी | Toonistaan Hindi Kahani",
+ "style": ", original 3D animated movie style, cinematic warm lighting, highly detailed, smooth, beautiful",
+ "cast": {
+  "RAJU": "Raju, a young Indian village man of 25 wearing a LIGHT BLUE kurta and white pajama with a cream gamchha scarf on his shoulder, warm brown skin, short neat black hair",
+  "MUNNI": "a cheerful 10-year-old Indian girl Munni with two black braids and a yellow frock",
+  "DADI": "a kind old Indian grandmother with grey hair bun and white cotton saree"
+ },
+ "scenes": [
+  {
+   "id": "s01",
+   "img": "wide shot of a peaceful Indian village Rampur at sunrise, mud houses, green fields, river, banyan tree, birds flying",
+   "lines": [
+    [
+     "pratham",
+     "रामपुर गाँव में सुबह हो रही थी। नदी किनारे खेत लहलहा रहे थे, और पक्षी गीत गा रहे थे।"
+    ]
+   ],
+   "music": "happy",
+   "cam": "in",
+   "sfx": [
+    "leaves"
+   ]
+  },
+  {
+   "id": "s02",
+   "img": "RAJU walking with his old bicycle on a village dirt path between green fields, morning",
+   "lines": [
+    [
+     "pratham",
+     "गाँव का सबसे मेहनती लड़का राजू, रोज़ की तरह अपनी साइकिल लेकर खेत की ओर निकला।"
+    ]
+   ],
+   "music": "happy",
+   "cam": "left",
+   "sfx": [
+    "footsteps"
+   ]
+  },
+  {
+   "id": "s03",
+   "img": "an old stone river dam with a visible crack and water leaking through it, river behind, dramatic",
+   "lines": [
+    [
+     "pratham",
+     "पर आज बाँध के पास उसने कुछ अजीब देखा। बाँध की दीवार में एक दरार थी, और उसमें से पानी रिस रहा था।"
+    ]
+   ],
+   "music": "mystery",
+   "cam": "in",
+   "sfx": [
+    "wind"
+   ]
+  },
+  {
+   "id": "s04",
+   "img": "close-up of RAJU looking shocked and worried, near a river dam",
+   "lines": [
+    [
+     "pratham",
+     "अरे बाप रे! अगर यह दरार बड़ी हो गई, तो पूरा गाँव डूब जाएगा!"
+    ]
+   ],
+   "music": "mystery",
+   "cam": "fastin",
+   "sfx": [
+    "fear"
+   ]
+  },
+  {
+   "id": "s05",
+   "img": "RAJU riding his bicycle very fast on a village road towards the village, dust flying, motion",
+   "lines": [
+    [
+     "pratham",
+     "राजू तेज़ी से साइकिल चलाता हुआ गाँव की ओर भागा।"
+    ]
+   ],
+   "music": "action",
+   "cam": "right",
+   "sfx": [
+    "whoosh"
+   ]
+  },
+  {
+   "id": "s06",
+   "img": "two characters only: RAJU standing out of breath beside his bicycle, talking to MUNNI, in a village square",
+   "lines": [
+    [
+     "priyamvada",
+     "भैया, क्या हुआ? आप इतने घबराए हुए क्यों हैं?"
+    ],
+    [
+     "pratham",
+     "मुन्नी, जल्दी सबको बुलाओ! बाँध टूटने वाला है!"
+    ]
+   ],
+   "music": "action",
+   "cam": "out",
+   "sfx": [],
+   "variants": 3
+  },
+  {
+   "id": "s07",
+   "img": "MUNNI ringing a big bell at a small village temple while villagers come running",
+   "lines": [
+    [
+     "pratham",
+     "मुन्नी ने मंदिर की घंटी बजाई। देखते ही देखते पूरा गाँव इकट्ठा हो गया।"
+    ]
+   ],
+   "music": "action",
+   "cam": "in",
+   "sfx": [
+    "chime"
+   ]
+  },
+  {
+   "id": "s08",
+   "img": "many Indian villagers men and women carrying sand bags together and stacking them against a cracked river dam, teamwork",
+   "lines": [
+    [
+     "pratham",
+     "सबने मिलकर रेत की बोरियाँ भरीं, और बाँध की दरार के आगे मज़बूत दीवार खड़ी कर दी।"
+    ]
+   ],
+   "music": "action",
+   "cam": "left",
+   "sfx": [
+    "footsteps"
+   ]
+  },
+  {
+   "id": "s09",
+   "img": "stormy night with heavy rain and lightning, swollen river pushing against a river dam reinforced with sand bags, villagers with lanterns watching",
+   "lines": [
+    [
+     "pratham",
+     "उसी रात तेज़ बारिश हुई। नदी उफान पर थी, पर बोरियों की दीवार डटी रही।"
+    ]
+   ],
+   "music": "action",
+   "cam": "shake",
+   "sfx": [
+    "thunder",
+    "wind"
+   ]
+  },
+  {
+   "id": "s10",
+   "img": "RAJU in the center being blessed by DADI who puts her hand on his head, MUNNI smiling next to them, happy villagers in background, bright sunny morning village square",
+   "lines": [
+    [
+     "priyamvada",
+     "शाबाश राजू! आज तुम्हारी समझदारी से पूरा गाँव बच गया।"
+    ],
+    [
+     "pratham",
+     "उस दिन रामपुर ने सीखा, कि मिलकर काम करें, तो कोई मुसीबत बड़ी नहीं होती।"
+    ]
+   ],
+   "music": "happy",
+   "cam": "out",
+   "sfx": [
+    "sparkle"
+   ],
+   "variants": 3
+  },
+  {
+   "id": "s11",
+   "img": "beautiful Indian village at golden sunset with river and fields, peaceful, wide shot",
+   "lines": [
+    [
+     "pratham",
+     "ऐसी ही और मज़ेदार कहानियों के लिए, टूनिस्तान को सब्सक्राइब करें!"
+    ]
+   ],
+   "music": "happy",
+   "cam": "in",
+   "sfx": []
+  }
+ ],
+ "title_card": [
+  "रामपुर का बाँध",
+  "टूनिस्तान की कहानी"
+ ]
+}
