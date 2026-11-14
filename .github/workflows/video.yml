@@ -4,6 +4,10 @@ name: Kahani video banao
 # Actions → "Kahani video banao" → Run workflow
 
 on:
+  # push se bhi chal jaye (dispatch kabhi kabhi register nahi hota)
+  push:
+    paths:
+      - "trigger/**"
   workflow_dispatch:
     inputs:
       episode:
