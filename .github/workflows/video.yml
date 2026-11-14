@@ -1,0 +1,77 @@
+name: Kahani video banao
+
+# Lambi video (10+ min) ke liye — GitHub ka runner 6 ghante tak chalta hai.
+# Actions → "Kahani video banao" → Run workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "Episode JSON ka path"
+        required: true
+        default: "studio/series/rampur/ep01_bandh.json"
+      outname:
+        description: "Output file ka naam"
+        required: true
+        default: "rampur.mp4"
+      width:
+        description: "Width (1920 ya 1280)"
+        required: false
+        default: "1280"
+      height:
+        description: "Height (1080 ya 720)"
+        required: false
+        default: "720"
+
+permissions:
+  contents: read
+
+jobs:
+  video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: System packages
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-core fonts-noto-devanagari
+
+      - name: Python packages
+        run: |
+          pip install -q --upgrade pip
+          pip install -q numpy requests edge-tts pillow opencv-python-headless
+          pip install -q playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Awaaz + images banao
+        run: |
+          OUTDIR="$(dirname "${{ inputs.episode }}")/ep01_assets"
+          mkdir -p "$OUTDIR"
+          python studio/gen_assets.py "${{ inputs.episode }}" "$OUTDIR"
+        env:
+          PYTHONUNBUFFERED: "1"
+
+      - name: Video render
+        run: |
+          OUTDIR="$(dirname "${{ inputs.episode }}")/ep01_assets"
+          python studio/story_video.py "${{ inputs.episode }}" "$OUTDIR" "${{ inputs.outname }}" \
+            --w "${{ inputs.width }}" --h "${{ inputs.height }}"
+        env:
+          PYTHONUNBUFFERED: "1"
+
+      - name: Video upload karo (artifact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: video
+          path: |
+            ${{ inputs.outname }}
+            *.srt
+          if-no-files-found: warn
+          retention-days: 14
