@@ -1,31 +1,10 @@
 name: Kahani video banao
 
-# Lambi video (10+ min) ke liye — GitHub ka runner 6 ghante tak chalta hai.
-# Actions → "Kahani video banao" → Run workflow
-
 on:
-  # push se bhi chal jaye (dispatch kabhi kabhi register nahi hota)
   push:
     paths:
       - "trigger/**"
   workflow_dispatch:
-    inputs:
-      episode:
-        description: "Episode JSON ka path"
-        required: true
-        default: "studio/series/rampur/ep01_bandh.json"
-      outname:
-        description: "Output file ka naam"
-        required: true
-        default: "rampur.mp4"
-      width:
-        description: "Width (1920 ya 1280)"
-        required: false
-        default: "1280"
-      height:
-        description: "Height (1080 ya 720)"
-        required: false
-        default: "720"
 
 permissions:
   contents: read
@@ -44,42 +23,43 @@ jobs:
       - name: System packages
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq ffmpeg fonts-noto-core fonts-noto-mono || sudo apt-get install -y -qq ffmpeg fonts-noto-core
+          sudo apt-get install -y -qq ffmpeg fonts-noto-core
 
       - name: Python packages
         run: |
           pip install -q --upgrade pip
           pip install -q numpy requests edge-tts pillow opencv-python-headless
-          # Node wala playwright chahiye (script node se subtitle PNG banata hai)
+
+      - name: Node playwright
+        run: |
           npm install -g playwright
           npx --yes playwright install --with-deps chromium
-          echo "NODE_PATH=$(npm root -g)" >> "$GITHUB_ENV"
 
-      - name: Awaaz + images banao
-        run: |
-          OUTDIR="$(dirname "${{ inputs.episode }}")/ep01_assets"
-          mkdir -p "$OUTDIR"
-          python studio/gen_assets.py "${{ inputs.episode }}" "$OUTDIR"
+      - name: Awaaz aur images
         env:
           PYTHONUNBUFFERED: "1"
+        run: |
+          EP=studio/series/rampur/ep01_bandh.json
+          OUT=studio/series/rampur/ep01_assets
+          mkdir -p "$OUT"
+          python studio/gen_assets.py "$EP" "$OUT"
 
       - name: Video render
         env:
-          NODE_PATH: ${{ env.NODE_PATH }}
-        run: |
-          OUTDIR="$(dirname "${{ inputs.episode }}")/ep01_assets"
-          python studio/story_video.py "${{ inputs.episode }}" "$OUTDIR" "${{ inputs.outname }}" \
-            --w "${{ inputs.width }}" --h "${{ inputs.height }}"
-        env:
           PYTHONUNBUFFERED: "1"
+        run: |
+          export NODE_PATH="$(npm root -g)"
+          EP=studio/series/rampur/ep01_bandh.json
+          OUT=studio/series/rampur/ep01_assets
+          python studio/story_video.py "$EP" "$OUT" rampur.mp4 --w 1280 --h 720
 
-      - name: Video upload karo (artifact)
+      - name: Video upload
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: video
           path: |
-            ${{ inputs.outname }}
+            rampur.mp4
             *.srt
           if-no-files-found: warn
           retention-days: 14
