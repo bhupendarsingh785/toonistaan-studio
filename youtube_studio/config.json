@@ -1,0 +1,24 @@
+{
+  "channels": {
+    "toonistaan": {
+      "client_secret_file": "secrets/client_secret.json",
+      "slots_ist": [
+        "12:00",
+        "18:00"
+      ],
+      "max_uploads_per_day": 2,
+      "privacy_after_publish": "public",
+      "category_id": "1",
+      "default_language": "hi",
+      "made_for_kids": false,
+      "contains_synthetic_media": true,
+      "default_tags": [
+        "toonistaan",
+        "hindi cartoon",
+        "3d animation",
+        "hindi kahani",
+        "chhotu robot"
+      ]
+    }
+  }
+}
