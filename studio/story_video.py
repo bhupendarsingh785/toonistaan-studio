@@ -102,9 +102,14 @@ for i, s in enumerate(scenes):
     k = int(a * SR); m = m[: N - k]; music[k:k + len(m)] += m
 # ducking: voice envelope
 envv = np.convolve(np.abs(voice), np.ones(int(SR * 0.3)) / int(SR * 0.3), "same")
-duck = np.where(envv > 0.01, 0.07, 0.22)
-duck = np.convolve(duck, np.ones(int(SR * 0.25)) / int(SR * 0.25), "same")
-mix = voice + fx + music * duck
+duck = np.where(envv > 0.008, 0.045, 0.16)   # awaaz ke waqt music bahut dheema
+duck = np.convolve(duck, np.ones(int(SR * 0.20)) / int(SR * 0.20), "same")
+# awaaz ko upar uthao (saaf sunai de)
+_v = voice * 1.35
+_vpk = np.abs(_v).max()
+if _vpk > 0:
+    _v = _v / max(1.0, _vpk / 0.95)
+mix = _v + fx * 0.8 + music * duck
 mix = np.clip(mix / (np.abs(mix).max() + 1e-9) * 0.89, -1, 1)
 apath = f"{tmp}/mix.wav"
 with wave.open(apath, "w") as w:
