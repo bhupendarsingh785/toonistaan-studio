@@ -11,6 +11,38 @@ MODELS = os.path.join(HERE, "models")
 FPS = 30
 _seg = None
 
+# ---------------------------------------------------------------- models
+_MODEL_URLS = {
+    "humanseg.onnx": "https://github.com/opencv/opencv_zoo/raw/main/models/human_segmentation_pphumanseg/human_segmentation_pphumanseg_2023mar.onnx",
+    "yunet.onnx": "https://github.com/opencv/opencv_zoo/raw/main/models/face_detection_yunet/face_detection_yunet_2023mar.onnx",
+}
+
+def ensure_models(verbose=True):
+    """Zaroori model na ho to khud download kar lo (internet ho to). Fail ho to False."""
+    import urllib.request
+    os.makedirs(MODELS, exist_ok=True)
+    ok = True
+    for name, url in _MODEL_URLS.items():
+        path = os.path.join(MODELS, name)
+        if os.path.exists(path) and os.path.getsize(path) > 100_000:
+            continue
+        try:
+            if verbose:
+                print("model download:", name, flush=True)
+            tmp = path + ".part"
+            urllib.request.urlretrieve(url, tmp)
+            if os.path.getsize(tmp) > 100_000:
+                os.replace(tmp, path)
+            else:
+                ok = False
+        except Exception as e:
+            if verbose:
+                print("model fail:", name, str(e)[:80], flush=True)
+            ok = False
+    return ok
+
+
+
 
 # ------------------------------------------------------------------ audio -> munh
 def mouth_curve(audio_path, n_frames, start_s=0.0, fps=FPS):
@@ -358,6 +390,7 @@ def render_scene(img_path, n_frames, W, H, cam="in", mouth=None, vfx=None, crop=
 
 
 if __name__ == "__main__":
+    ensure_models()
     a = sys.argv[1:]
     W, H, dur = 1280, 720, 6.0
     voice = a[2] if len(a) > 2 else None
