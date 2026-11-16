@@ -110,6 +110,12 @@ apath = f"{tmp}/mix.wav"
 with wave.open(apath, "w") as w:
     w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes((mix * 32767).astype(np.int16).tobytes())
 
+# ---------- awaaz mili ya nahi ----------
+_tot_lines = sum(len(s2["lines"]) for s2 in scenes)
+print("VOICE_LINES", _tot_lines, flush=True)
+if _tot_lines == 0:
+    print("WARN: koi awaaz file nahi mili — video me sirf music hoga", flush=True)
+
 # ---------- missing images ka intezaam (video fail na ho) ----------
 for sc in ep["scenes"]:
     src_id = sc.get("use", sc["id"])
