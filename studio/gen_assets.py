@@ -42,7 +42,9 @@ def prompt_for(sc):
     cast_line = ""
     if ep.get("cast"):
         cast_line = " | characters: " + "; ".join(ep["cast"].values())[:400]
-    base = f"{STYLE_LOCK}. {p}{cast_line}{ep.get('style', '')}. negative: {STYLE_AVOID}"
+    # kirdaar ka description SABSE PEHLE (AI usko zyada sunta hai) -> kapde/chehra ek jaisa
+    base = (f"{cast_line.strip(' |')}. Same characters, same faces, exactly the same clothes in every scene. "
+            f"{STYLE_LOCK}. {p}{ep.get('style', '')}. negative: {STYLE_AVOID}")
     try:
         out = ai_enhance(sc, base)
         return out if out else base
