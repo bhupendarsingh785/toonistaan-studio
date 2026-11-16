@@ -4,6 +4,7 @@ Run with Blender's bundled python:  PY gen_assets.py episode.json outdir
 import json, os, sys, time, subprocess, urllib.request, urllib.parse
 
 PIPER = "/opt/tools/piper/piper"
+HAVE_PIPER = os.path.exists(PIPER)   # Cloud Shell / Actions me Piper nahi hota
 VOICES = {"pratham": "/opt/tools/voices/hi_pratham.onnx", "priyamvada": "/opt/tools/voices/hi_priyamvada.onnx"}
 
 ep = json.load(open(sys.argv[1], encoding="utf-8"))
@@ -21,7 +22,8 @@ def prompt_for(sc):
 
 # voices first (fast)
 # Behtar awaaz (Microsoft neural, free, internet chahiye): madhur (aadmi), swara (aurat) -> .mp3
-EDGE = {"madhur": "hi-IN-MadhurNeural", "swara": "hi-IN-SwaraNeural"}
+EDGE = {"madhur": "hi-IN-MadhurNeural", "swara": "hi-IN-SwaraNeural",
+        "pratham": "hi-IN-MadhurNeural", "priyamvada": "hi-IN-SwaraNeural"}
 for sc in ep["scenes"]:
     for i, (voice, text) in enumerate(sc["lines"]):
         wav = f"{out}/{sc['id']}_{i}.wav"
@@ -34,6 +36,15 @@ for sc in ep["scenes"]:
             if r.returncode == 0:
                 continue
             voice = "pratham" if voice == "madhur" else "priyamvada"  # internet na ho to Piper
+        if not HAVE_PIPER:
+            fb = "hi-IN-MadhurNeural" if voice in ("pratham", "madhur") else "hi-IN-SwaraNeural"
+            r2 = subprocess.run([sys.executable, "-m", "edge_tts", "--text", text, "--voice", fb,
+                                 "--rate=" + ep.get("voice_rate", "-6%"), "--write-media", wav[:-4] + ".mp3"],
+                                capture_output=True)
+            if r2.returncode == 0:
+                continue
+            print("VOICE_FAIL", sc["id"], i, r2.stderr.decode()[-160:], flush=True)
+            continue
         subprocess.run([PIPER, "-m", VOICES[voice], "-f", wav, "--length_scale", "1.05",
                         "--sentence_silence", "0.25"], input=text.encode(), check=True,
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
