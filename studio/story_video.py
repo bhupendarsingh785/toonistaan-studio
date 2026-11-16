@@ -9,7 +9,13 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import sfx  # noqa: E402
+try:
+    import motion  # noqa: E402
+    motion.ensure_models(verbose=True)
+except Exception as _e:
+    print("motion models:", str(_e)[:80], flush=True)
 
+HERE = os.path.dirname(os.path.abspath(__file__))
 SR = 44100; FPS = 30; XF = 0.6; LEAD = 0.6; TAIL = 0.9; GAP = 0.35
 args = sys.argv[1:]
 EP, AS, OUT = args[0], args[1], args[2]
