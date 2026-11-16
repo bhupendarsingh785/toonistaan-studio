@@ -46,11 +46,12 @@ for f in files:
     bright, contrast = float(g.mean()), float(g.std())
     night = any(k in (sc.get("img", "") + name).lower() for k in ("night", "storm", "dark"))
     if w0 < 960: issues.append(f"chhoti image {w0}x{h0}")
-    if sharp < 25: issues.append(f"dhundhli (sharpness {sharp:.0f})")
-    elif sharp < 60: warn.append(f"thodi naram (sharpness {sharp:.0f})")
+    sk = 0.45 if night else 1.0  # raat ke scene naram hote (16 Nov calibration: ep03 sab sahi par FIX aa rahe the)
+    if sharp < 25 * sk: issues.append(f"dhundhli (sharpness {sharp:.0f})")
+    elif sharp < 60 * sk: warn.append(f"thodi naram (sharpness {sharp:.0f})")
     if bright < (18 if night else 40): issues.append(f"bahut andhera ({bright:.0f})")
     if bright > 225: issues.append(f"bahut ujli/safed ({bright:.0f})")
-    if contrast < 22: issues.append(f"phiki, contrast kam ({contrast:.0f})")
+    if contrast < (14 if night else 22): issues.append(f"phiki, contrast kam ({contrast:.0f})")
     # saada background: upar ke 40% hisse mein texture
     edges = cv2.Canny(g, 60, 140)
     top = edges[: int(H * .4)].mean() / 255; sat = cv2.cvtColor(im, cv2.COLOR_BGR2HSV)[..., 1].mean()
@@ -71,7 +72,7 @@ for f in files:
         order_ok = (nose[1] > min(reye[1], leye[1])) and ((rm[1] + lmo[1]) / 2 > nose[1])
         rec = {"box": [int(x), int(y), int(fw), int(fh)], "conf": round(conf, 2), "sharp": round(fs, 1)}
         big = fh > H * 0.12
-        if big and fs < 20: issues.append(f"chehra dhundhla (face sharp {fs:.0f})")
+        if big and fs < 20 * sk: issues.append(f"chehra dhundhla (face sharp {fs:.0f})")
         if big and not order_ok: issues.append("chehra bigda: aankh-naak-munh ki jagah galat")
         if big and nose_mid > 0.55 and tilt < 25: warn.append("naak beech mein nahi (tircha chehra ya bigda)")
         if big and tilt > 35: warn.append(f"chehra bahut tircha ({tilt:.0f} deg)")
