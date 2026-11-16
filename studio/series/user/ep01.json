@@ -1,116 +1,130 @@
 {
- "title": "Ek ladka tha ladka gehri Jungle Se Ja Raha",
- "style": ", original 3D animated movie style, cinematic warm lighting, indian village, highly detailed, no text, no watermark",
- "w": 1920,
- "h": 1080,
- "voice_rate": "-6%",
- "seed": 3821,
- "cast": {},
- "scenes": [
-  {
-   "id": "s01",
-   "img": "Ek ladka tha ladka gehri Jungle Se Ja Raha",
-   "lines": [
-    [
-     "pratham",
-     "Ek ladka tha ladka gehri Jungle Se Ja Raha"
-    ]
-   ],
-   "music": "happy",
-   "cam": "in",
-   "sfx": [
-    "chime"
-   ]
+  "title": "दो दीये — छोटू और दादी की दिवाली",
+  "style": ", original 3D animated movie style like Pixar, indian village, expressive cartoon faces, warm cinematic lighting, emotional storytelling, highly detailed, no text, no watermark",
+  "w": 1280,
+  "h": 720,
+  "voice_rate": "-6%",
+  "seed": 2141,
+  "cast": {
+    "CHHOTU": "Chhotu, a cheerful 8-year-old Indian village boy with short black hair, brown skin, wearing a faded yellow kurta and blue shorts, big expressive eyes",
+    "DADI": "Dadi, a kind elderly Indian grandmother with grey hair in a bun, white cotton saree, gentle wrinkled face, loving eyes"
   },
-  {
-   "id": "s02",
-   "img": "tha ek gufa padi gufa dravni Thi daravani gufa",
-   "lines": [
-    [
-     "pratham",
-     "tha ek gufa padi gufa dravni Thi daravani gufa"
-    ]
-   ],
-   "music": "horror",
-   "cam": "in",
-   "sfx": [
-    "wind"
-   ]
-  },
-  {
-   "id": "s03",
-   "img": "Se vah darta hua nikala gufa mein se ek",
-   "lines": [
-    [
-     "pratham",
-     "Se vah darta hua nikala gufa mein se ek"
-    ]
-   ],
-   "music": "horror",
-   "cam": "in",
-   "sfx": [
-    "wind"
-   ]
-  },
-  {
-   "id": "s04",
-   "img": "chik nikali ek ladiss chik rahi thi use Laga",
-   "lines": [
-    [
-     "pratham",
-     "chik nikali ek ladiss chik rahi thi use Laga"
-    ]
-   ],
-   "music": "happy",
-   "cam": "in",
-   "sfx": [
-    "chime"
-   ]
-  },
-  {
-   "id": "s05",
-   "img": "Shayad Ko ladiss Hai vah pass gaya to ek",
-   "lines": [
-    [
-     "pratham",
-     "Shayad Ko ladiss Hai vah pass gaya to ek"
-    ]
-   ],
-   "music": "happy",
-   "cam": "in",
-   "sfx": [
-    "chime"
-   ]
-  },
-  {
-   "id": "s06",
-   "img": "daravani bhoot Thi jise Dekho Bhava aag lagi Thi",
-   "lines": [
-    [
-     "pratham",
-     "daravani bhoot Thi jise Dekho Bhava aag lagi Thi"
-    ]
-   ],
-   "music": "horror",
-   "cam": "in",
-   "sfx": [
-    "wind"
-   ]
-  },
-  {
-   "id": "s07",
-   "img": "Nadi karke Gaya to fir use ek ladki Mili",
-   "lines": [
-    [
-     "pratham",
-     "Nadi karke Gaya to fir use ek ladki Mili"
-    ]
-   ],
-   "music": "happy",
-   "cam": "in",
-   "sfx": [
-    "chime"
-   ]
-  }
- ]
+  "scenes": [
+    {
+      "id": "s01",
+      "img": "CHHOTU and DADI in a small mud house courtyard at sunrise in an Indian village, Dadi lighting a clay stove, warm golden morning light, smoke rising softly, peaceful happy morning, wide shot",
+      "lines": [
+        [
+          "pratham",
+          "सूरज उग रहा था। गाँव के छोटे से आँगन में दादी चूल्हा जला रही थीं।"
+        ]
+      ],
+      "music": "calm",
+      "cam": "in",
+      "sfx": [
+        "leaves"
+      ]
+    },
+    {
+      "id": "s02",
+      "img": "CHHOTU running joyfully into the courtyard waving his arms, big happy smile, dust rising, bright morning light, Dadi smiling in background, energetic joyful mood",
+      "lines": [
+        [
+          "pratham",
+          "छोटू दौड़ता हुआ आया — दादी, आज दिवाली है!"
+        ]
+      ],
+      "music": "happy",
+      "cam": "in",
+      "sfx": [
+        "chime"
+      ]
+    },
+    {
+      "id": "s03",
+      "img": "close-up of DADI smiling gently but her eyes filled with tears, soft sad light, empty poor kitchen behind her, emotional heartbroken mood, muted warm colors",
+      "lines": [
+        [
+          "pratham",
+          "दादी मुस्कुराईं, पर उनकी आँखें भर आईं। घर में दीया जलाने तक के पैसे नहीं थे।"
+        ]
+      ],
+      "music": "sad",
+      "cam": "in",
+      "sfx": []
+    },
+    {
+      "id": "s04",
+      "img": "CHHOTU quietly breaking his small clay piggy bank with a stone, coins falling on the floor, determined sad little face, dim light inside a small room, emotional close shot",
+      "lines": [
+        [
+          "pratham",
+          "छोटू ने चुपचाप अपनी मिट्टी की गुल्लक तोड़ दी।"
+        ]
+      ],
+      "music": "sad",
+      "cam": "in",
+      "sfx": [
+        "boom"
+      ]
+    },
+    {
+      "id": "s05",
+      "img": "CHHOTU at a colourful indian village market buying two small clay diyas and a packet of sweets, holding coins in his small hands, warm evening light, hopeful happy mood",
+      "lines": [
+        [
+          "pratham",
+          "उसने बाज़ार से दो दीये और थोड़ी मिठाई खरीदी।"
+        ]
+      ],
+      "music": "calm",
+      "cam": "out",
+      "sfx": []
+    },
+    {
+      "id": "s06",
+      "img": "DADI hugging CHHOTU tightly in the courtyard at night, two clay diyas glowing warmly on the ground, tears of joy on Dadi's face, soft golden glow, deeply emotional loving moment",
+      "lines": [
+        [
+          "pratham",
+          "शाम को आँगन में दो दीये जले। दादी ने छोटू को गले लगा लिया।"
+        ]
+      ],
+      "music": "romance",
+      "cam": "in",
+      "sfx": [
+        "chime"
+      ]
+    },
+    {
+      "id": "s07",
+      "img": "CHHOTU looking up at DADI with a big warm smile, diya light reflecting in his eyes, night sky with stars behind them, tender emotional happy moment, cinematic close-up",
+      "lines": [
+        [
+          "pratham",
+          "छोटू बोला — दादी, असली दिवाली तो साथ होने में है।"
+        ]
+      ],
+      "music": "emotional",
+      "cam": "in",
+      "sfx": [
+        "sparkle"
+      ]
+    },
+    {
+      "id": "s08",
+      "img": "wide night shot of the tiny village house glowing with two diyas, stars shining in the sky, fireworks far away, warm golden light spreading, joyful peaceful ending",
+      "lines": [
+        [
+          "pratham",
+          "आसमान में तारे चमके, और छोटे से घर में खुशी की रोशनी भर गई।"
+        ]
+      ],
+      "music": "happy",
+      "cam": "out",
+      "sfx": [
+        "sparkle"
+      ]
+    }
+  ]
 }
