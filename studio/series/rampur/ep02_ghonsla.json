@@ -1,0 +1,206 @@
+{
+ "title": "Munni aur Chidiya ka Ghonsla | मुन्नी की दया | Toonistaan Hindi Kahani",
+ "title_card": [
+  "मुन्नी और चिड़िया का घोंसला",
+  "टूनिस्तान की कहानी"
+ ],
+ "seed": 23,
+ "style": ", original 3D animated movie style, cinematic soft warm lighting, highly detailed, smooth, beautiful, vibrant colors",
+ "cast": {
+  "MUNNI": "a cheerful 9-year-old Indian girl Munni with two black braids tied with red ribbons, wearing a YELLOW frock, big expressive eyes",
+  "DADI": "a kind old Indian grandmother, 70 years old, grey hair in a bun, round glasses, white cotton saree"
+ },
+ "scenes": [
+  {
+   "id": "s01",
+   "people": 0,
+   "music": "happy",
+   "cam": "in",
+   "sfx": [
+    "leaves"
+   ],
+   "img": "a peaceful Indian village at sunrise after a stormy night, wet mud houses, puddles, broken twigs on the ground, a big neem tree, golden sunlight, wide shot",
+   "lines": [
+    [
+     "madhur",
+     "रात भर तेज़ आँधी चली थी। सुबह जब सूरज निकला, तो रामपुर गाँव में चारों तरफ़ टूटी टहनियाँ बिखरी पड़ी थीं।"
+    ]
+   ],
+   "vfx": [
+    "dust",
+    "birds"
+   ]
+  },
+  {
+   "id": "s02",
+   "people": 1,
+   "variants": 2,
+   "music": "happy",
+   "cam": "left",
+   "sfx": [
+    "footsteps"
+   ],
+   "img": "on a village dirt path under a big neem tree in the morning, MUNNI walking to school with a small school bag, full body, medium shot",
+   "lines": [
+    [
+     "madhur",
+     "मुन्नी हर रोज़ की तरह स्कूल जा रही थी, कि तभी उसे नीम के पेड़ के नीचे कुछ हिलता हुआ दिखा।"
+    ]
+   ],
+   "vfx": [
+    "leaves",
+    "rays"
+   ]
+  },
+  {
+   "id": "s03",
+   "people": 0,
+   "music": "mystery",
+   "cam": "fastin",
+   "sfx": [
+    "wind"
+   ],
+   "img": "close-up on dry ground under a neem tree, no people: a small round twig bird nest with THREE tiny baby sparrow chicks with open beaks chirping inside, morning light",
+   "lines": [
+    [
+     "madhur",
+     "वह एक छोटा सा घोंसला था। आँधी में वह पेड़ से गिर गया था, और उसमें तीन नन्हे चूज़े चीं चीं कर रहे थे।"
+    ]
+   ],
+   "seed": 101,
+   "vfx": [
+    "dust"
+   ]
+  },
+  {
+   "id": "s04",
+   "people": 1,
+   "variants": 2,
+   "music": "sad",
+   "cam": "in",
+   "sfx": [],
+   "img": "under a neem tree in a village, MUNNI kneeling on the ground looking with worry at a small bird nest with baby birds in front of her, medium close-up",
+   "lines": [
+    [
+     "swara_bachcha",
+     "अरे बाप रे! ये बेचारे तो गिर गए! इनकी माँ इन्हें कैसे ढूँढेगी?"
+    ]
+   ],
+   "vfx": [
+    "leaves"
+   ]
+  },
+  {
+   "id": "s05m",
+   "use": "s04",
+   "crop": [
+    0.12,
+    0.0,
+    0.76,
+    0.85
+   ],
+   "people": 1,
+   "music": "sad",
+   "cam": "static",
+   "sfx": [
+    "footsteps"
+   ],
+   "img": "(s04 ki tasveer, close shot)",
+   "lines": [
+    [
+     "swara_bachcha",
+     "दादी, दादी! देखो, चिड़िया का घोंसला गिर गया है!"
+    ]
+   ],
+   "vfx": [
+    "leaves"
+   ]
+  },
+  {
+   "id": "s05",
+   "people": 1,
+   "music": "sad",
+   "cam": "static",
+   "sfx": [],
+   "img": "in front of a mud house courtyard in a village, DADI alone, smiling kindly and speaking gently, medium close-up portrait, warm morning light",
+   "lines": [
+    [
+     "swara_dadi",
+     "घबराओ मत बिटिया। इसे धीरे से वापस पेड़ पर रख दो। माँ चिड़िया अपने बच्चों को ज़रूर पहचान लेगी।"
+    ]
+   ],
+   "seed": 57,
+   "vfx": [
+    "dust"
+   ]
+  },
+  {
+   "id": "s06",
+   "people": 0,
+   "music": "action",
+   "cam": "right",
+   "sfx": [
+    "whoosh"
+   ],
+   "img": "under a neem tree, a small wooden stool on the ground, close-up of a little girl's hands in yellow sleeves gently placing a twig bird nest with baby birds onto a low tree branch, no face visible",
+   "lines": [
+    [
+     "madhur",
+     "मुन्नी एक छोटा स्टूल लाई, और बड़े प्यार से घोंसले को नीम की सबसे सुरक्षित डाल पर रख दिया।"
+    ]
+   ],
+   "seed": 77,
+   "vfx": [
+    "leaves"
+   ]
+  },
+  {
+   "id": "s07",
+   "people": 0,
+   "music": "happy",
+   "cam": "in",
+   "sfx": [
+    "sparkle"
+   ],
+   "img": "no people, nature close-up: a mother sparrow bird feeding three baby sparrow chicks in a twig nest on a neem tree branch, warm sunlight, joyful",
+   "lines": [
+    [
+     "madhur",
+     "थोड़ी ही देर में माँ चिड़िया लौट आई। अपने बच्चों को सही सलामत देखकर वह ख़ुशी से चहकने लगी।"
+    ]
+   ],
+   "seed": 91,
+   "vfx": [
+    "rays",
+    "dust"
+   ]
+  },
+  {
+   "id": "s08",
+   "people": 1,
+   "music": "happy",
+   "cam": "out",
+   "sfx": [
+    "chime"
+   ],
+   "img": "a beautiful Indian village at golden sunset, MUNNI smiling happily and waving at a neem tree with birds flying around it, wide shot",
+   "lines": [
+    [
+     "swara_bachcha",
+     "अब तुम सब सुरक्षित हो!"
+    ],
+    [
+     "madhur",
+     "छोटी सी दया भी किसी की पूरी दुनिया बचा सकती है। ऐसी ही कहानियों के लिए, टूनिस्तान को सब्सक्राइब करें!"
+    ]
+   ],
+   "vfx": [
+    "birds",
+    "rays"
+   ]
+  }
+ ],
+ "narrators": [
+  "madhur"
+ ]
+}
