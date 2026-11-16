@@ -12,11 +12,32 @@ os.makedirs(out, exist_ok=True)
 seed = ep.get("seed", 11)
 
 
+try:
+    import ai as _ai
+except Exception:
+    _ai = None
+
+def ai_enhance(sc, base_prompt):
+    """Key ho to scene ka image prompt AI se behtar karo. Na ho to wahi wapas."""
+    if _ai is None or not _ai.have_any_key():
+        return base_prompt
+    cast = ", ".join(ep.get("cast", {}).values())[:300]
+    out = _ai.enhance_image_prompt(sc.get("img", ""), ep.get("style", ""), cast)
+    if out:
+        print("IMG_PROMPT_AI", sc.get("id"), flush=True)
+        return out + ep.get("style", "")
+    return base_prompt
+
+
 def prompt_for(sc):
     p = sc["img"]
     for k, v in ep.get("cast", {}).items():
         p = p.replace(k, v)
-    return p + ep.get("style", "")
+    base = p + ep.get("style", "")
+    try:
+        return ai_enhance(sc, base)
+    except Exception:
+        return base
 
 
 # voices first (fast)
