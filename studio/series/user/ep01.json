@@ -1,0 +1,116 @@
+{
+ "title": "Ek ladka tha ladka gehri Jungle Se Ja Raha",
+ "style": ", original 3D animated movie style, cinematic warm lighting, indian village, highly detailed, no text, no watermark",
+ "w": 1920,
+ "h": 1080,
+ "voice_rate": "-6%",
+ "seed": 8887,
+ "cast": {},
+ "scenes": [
+  {
+   "id": "s01",
+   "img": "Ek ladka tha ladka gehri Jungle Se Ja Raha",
+   "lines": [
+    [
+     "pratham",
+     "Ek ladka tha ladka gehri Jungle Se Ja Raha"
+    ]
+   ],
+   "music": "happy",
+   "cam": "in",
+   "sfx": [
+    "chime"
+   ]
+  },
+  {
+   "id": "s02",
+   "img": "tha ek gufa padi gufa dravni Thi daravani gufa",
+   "lines": [
+    [
+     "pratham",
+     "tha ek gufa padi gufa dravni Thi daravani gufa"
+    ]
+   ],
+   "music": "horror",
+   "cam": "in",
+   "sfx": [
+    "wind"
+   ]
+  },
+  {
+   "id": "s03",
+   "img": "Se vah darta hua nikala gufa mein se ek",
+   "lines": [
+    [
+     "pratham",
+     "Se vah darta hua nikala gufa mein se ek"
+    ]
+   ],
+   "music": "horror",
+   "cam": "in",
+   "sfx": [
+    "wind"
+   ]
+  },
+  {
+   "id": "s04",
+   "img": "chik nikali ek ladiss chik rahi thi use Laga",
+   "lines": [
+    [
+     "pratham",
+     "chik nikali ek ladiss chik rahi thi use Laga"
+    ]
+   ],
+   "music": "happy",
+   "cam": "in",
+   "sfx": [
+    "chime"
+   ]
+  },
+  {
+   "id": "s05",
+   "img": "Shayad Ko ladiss Hai vah pass gaya to ek",
+   "lines": [
+    [
+     "pratham",
+     "Shayad Ko ladiss Hai vah pass gaya to ek"
+    ]
+   ],
+   "music": "happy",
+   "cam": "in",
+   "sfx": [
+    "chime"
+   ]
+  },
+  {
+   "id": "s06",
+   "img": "daravani bhoot Thi jise Dekho Bhava aag lagi Thi",
+   "lines": [
+    [
+     "pratham",
+     "daravani bhoot Thi jise Dekho Bhava aag lagi Thi"
+    ]
+   ],
+   "music": "horror",
+   "cam": "in",
+   "sfx": [
+    "wind"
+   ]
+  },
+  {
+   "id": "s07",
+   "img": "Nadi karke Gaya to fir use ek ladki Mili",
+   "lines": [
+    [
+     "pratham",
+     "Nadi karke Gaya to fir use ek ladki Mili"
+    ]
+   ],
+   "music": "happy",
+   "cam": "in",
+   "sfx": [
+    "chime"
+   ]
+  }
+ ]
+}
