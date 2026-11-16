@@ -73,23 +73,67 @@ MOODS = {  # (bpm, chord roots, scale type)
     "action": (140, [50, 50, 53, 48], [0, 3, 7]),
     "mystery": (80, [57, 58, 57, 56], [0, 3, 6]),
     "comedy": (128, [60, 65, 67, 60], [0, 4, 7]),
+    # --- naye mood (video editor / story ke liye) ---
+    "calm": (72, [57, 60, 64, 53], [0, 4, 7]),
+    "romance": (76, [60, 65, 69, 67], [0, 4, 7]),
+    "epic": (92, [50, 57, 62, 46], [0, 7, 12]),
+    "lofi": (78, [62, 67, 72, 57], [0, 4, 7]),
+    "suspense": (60, [45, 48, 52, 41], [0, 3, 7]),
+    "horror": (54, [40, 43, 46, 38], [0, 1, 6]),
+    "emotional": (66, [57, 60, 64, 50], [0, 3, 7]),
+}
+MOOD_ALIAS = {  # galat/alternate naam bhi chalein
+    "darr": "horror", "fear": "horror", "dark": "horror",
+    "pyaar": "romance", "love": "romance", "romantic": "romance",
+    "dukh": "sad", "emotional": "sad", "alone": "sad",
+    "khushi": "happy", "fun": "comedy", "masti": "comedy",
+    "shant": "calm", "soft": "calm", "peace": "calm",
+    "josh": "epic", "hero": "epic", "motivation": "epic",
+    "chill": "lofi", "lo-fi": "lofi",
+    "raaz": "mystery", "secret": "mystery", "detective": "suspense",
 }
 def music(mood="happy", d=20):
-    bpm, roots, tri = MOODS[mood]; beat = 60 / bpm; out = np.zeros(int(SR*d))
+    """Mood ka music. Koi bhi galat mood aaye to 'happy' par gir jata hai (crash nahi)."""
+    if not isinstance(mood, str):
+        mood = "happy"
+    key = mood.strip().lower()
+    key = MOOD_ALIAS.get(key, key)
+    if key not in MOODS:
+        key = "happy"
+    bpm, roots, tri = MOODS[key]; beat = 60 / bpm
+    d = max(0.2, float(d))
+    out = np.zeros(int(SR*d))
+    N = len(out)
     i = 0; pos = 0.0
-    while pos < d:
+    while pos < d - 1e-6:
         root = roots[i % len(roots)]; bar = beat * 4
-        tt = t(min(bar, d - pos)); k = int(SR*pos)
+        seg = min(bar, d - pos)
+        tt = t(seg); k = int(SR*pos)
         pad = sum(np.sin(2*np.pi*NOTE(root+iv-12)*tt) for iv in tri) * 0.15
-        out[k:k+len(tt)] += pad * env(len(tt), .2, .3)
+        seg_len = min(len(tt), N - k)
+        if seg_len > 0:
+            out[k:k+seg_len] += (pad * env(len(tt), .2, .3))[:seg_len]
         for b in range(4):
-            note = root + tri[(b + i) % 3] + 12; nt = t(beat*0.9); kk = k + int(SR*beat*b)
-            if kk + len(nt) < len(out):
-                out[kk:kk+len(nt)] += np.sin(2*np.pi*NOTE(note)*nt) * np.exp(-nt*4) * 0.35
-                if mood in ("action", "happy", "comedy"):
-                    out[kk:kk+int(SR*.1)] += np.sin(2*np.pi*60*t(.1))*np.exp(-t(.1)*30)*0.6
+            note = root + tri[(b + i) % 3] + 12
+            nt = t(beat*0.9); kk = k + int(SR*beat*b)
+            if kk >= N:
+                break
+            add = np.sin(2*np.pi*NOTE(note)*nt) * np.exp(-nt*4) * 0.35
+            n_len = min(len(add), N - kk)
+            if n_len > 0:
+                out[kk:kk+n_len] += add[:n_len]
+            if key in ("action", "happy", "comedy", "epic"):
+                kt = t(.1); kick = np.sin(2*np.pi*60*kt) * np.exp(-kt*30) * 0.6
+                k_len = min(len(kick), N - kk)
+                if k_len > 0:
+                    out[kk:kk+k_len] += kick[:k_len]
         pos += bar; i += 1
-    fade = int(SR*1.5); out[-fade:] *= np.linspace(1, 0, fade)
+    fade = min(int(SR*1.5), N // 3)
+    if fade > 1:
+        out[-fade:] *= np.linspace(1, 0, fade)
+    peak = float(np.max(np.abs(out))) if N else 0.0
+    if peak > 0.98:
+        out *= 0.98 / peak
     return out
 
 ALL = {"whoosh": whoosh, "footsteps": footsteps, "chime": chime, "sparkle": sparkle, "boom": boom,
