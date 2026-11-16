@@ -1,0 +1,76 @@
+name: Kahani video banao
+
+# Story page (story.html) yahan episode JSON likhta hai -> video ban jati hai.
+on:
+  push:
+    paths:
+      - "studio/series/user/**"
+      - "trigger/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: System packages
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-core
+
+      - name: Python packages
+        run: |
+          pip install -q --upgrade pip
+          pip install -q numpy requests edge-tts pillow opencv-python-headless
+
+      - name: Node playwright
+        run: |
+          npm install -g playwright
+          npx --yes playwright install --with-deps chromium
+
+      - name: Episode chuno
+        id: pick
+        run: |
+          if [ -f studio/series/user/ep01.json ]; then
+            echo "ep=studio/series/user/ep01.json" >> "$GITHUB_OUTPUT"
+            echo "out=kahani.mp4" >> "$GITHUB_OUTPUT"
+            echo "assets=studio/series/user/assets" >> "$GITHUB_OUTPUT"
+          else
+            echo "ep=studio/series/rampur/ep01_bandh.json" >> "$GITHUB_OUTPUT"
+            echo "out=rampur.mp4" >> "$GITHUB_OUTPUT"
+            echo "assets=studio/series/rampur/ep01_assets" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Awaaz aur images
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: |
+          mkdir -p "${{ steps.pick.outputs.assets }}"
+          python studio/gen_assets.py "${{ steps.pick.outputs.ep }}" "${{ steps.pick.outputs.assets }}"
+
+      - name: Video render
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: |
+          export NODE_PATH="$(npm root -g)"
+          python studio/story_video.py "${{ steps.pick.outputs.ep }}" "${{ steps.pick.outputs.assets }}" "${{ steps.pick.outputs.out }}" --w 1280 --h 720
+
+      - name: Video upload
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: video
+          path: |
+            *.mp4
+            *.srt
+          if-no-files-found: warn
+          retention-days: 14
