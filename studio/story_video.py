@@ -10,6 +10,7 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import sfx  # noqa: E402
 
+HERE = os.path.dirname(os.path.abspath(__file__))
 SR = 44100; FPS = 30; XF = 0.6; LEAD = 0.6; TAIL = 0.9; GAP = 0.35
 args = sys.argv[1:]
 EP, AS, OUT = args[0], args[1], args[2]
@@ -77,6 +78,65 @@ with wave.open(apath, "w") as w:
     w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes((mix * 32767).astype(np.int16).tobytes())
 
 # ---------- subtitle + title PNGs (Chromium shapes Hindi correctly) ----------
+def pil_png(items):
+    """Backup: Chromium/playwright na ho to PIL se subtitle/title PNG banao (Hindi font ke saath)."""
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+    except Exception:
+        return False
+    import re as _re
+    fp = os.path.join(HERE, "fonts", "Hind-Bold.ttf")
+    if not os.path.exists(fp):
+        cand = [os.path.join(HERE, "fonts", f) for f in os.listdir(os.path.join(HERE, "fonts"))] if os.path.isdir(os.path.join(HERE, "fonts")) else []
+        fp = cand[0] if cand else None
+    ok = True
+    for it in items:
+        try:
+            html = it["html"]
+            txt = _re.sub(r"<[^>]+>", "\n", html)
+            txt = "\n".join([x.strip() for x in txt.splitlines() if x.strip()])
+            size = 44
+            m = _re.search(r"font-size:\s*(\d+)px", html)
+            if m:
+                size = int(m.group(1))
+            color = "#ffffff"
+            mc = _re.search(r"color:\s*#([0-9a-fA-F]{6})", html)
+            if mc:
+                color = "#" + mc.group(1)
+            img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+            d = ImageDraw.Draw(img)
+            f = ImageFont.truetype(fp, size) if fp else ImageFont.load_default()
+            # line wrap
+            lines, cur = [], ""
+            for word in txt.replace("\n", " \n ").split():
+                if word == "\n":
+                    lines.append(cur); cur = ""; continue
+                test = (cur + " " + word).strip()
+                if d.textlength(test, font=f) > W * 0.86:
+                    lines.append(cur); cur = word
+                else:
+                    cur = test
+            if cur:
+                lines.append(cur)
+            lh = int(size * 1.35)
+            total_h = lh * len(lines)
+            bottom = int(H * 0.06)
+            m2 = _re.search(r"bottom:\s*(\d+)px", html)
+            y0 = H - (int(m2.group(1)) if m2 else bottom) - total_h
+            m3 = _re.search(r"top:\s*(\d+)px", html)
+            if m3:
+                y0 = int(m3.group(1))
+            for i, line in enumerate(lines):
+                w = d.textlength(line, font=f)
+                x = (W - w) / 2
+                y = y0 + i * lh
+                d.text((x + 3, y + 3), line, font=f, fill=(0, 0, 0, 170))   # shadow
+                d.text((x, y), line, font=f, fill=color)
+            img.save(it["path"])
+        except Exception:
+            ok = False
+    return ok
+
 def html_png(items):
     js = json.dumps(items, ensure_ascii=False)
     node = f"""
@@ -91,7 +151,12 @@ const {{ chromium }} = require('playwright');
  await b.close();
 }})();"""
     open(f"{tmp}/r.js", "w").write(node)
-    subprocess.run(["node", f"{tmp}/r.js"], check=True)
+    try:
+        subprocess.run(["node", f"{tmp}/r.js"], check=True)
+    except Exception as e:
+        print("PLAYWRIGHT_FAIL -> PIL se subtitle bana rahe hain:", str(e)[:120], flush=True)
+        if not pil_png(items):
+            raise
 
 items = []
 fs = int(H * 0.052)
@@ -108,7 +173,7 @@ if tc:
 html_png(items)
 
 # ---------- video clips ----------
-def cam_filter(cam, frames):
+def cam_filter(cam, frames, crop=None):
     n = max(frames - 1, 1)
     c = "x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
     z = {"in": f"z='1+0.14*on/{n}':{c}", "out": f"z='1.14-0.14*on/{n}':{c}",
@@ -116,19 +181,144 @@ def cam_filter(cam, frames):
          "left": f"z='1.15':x='(iw-iw/zoom)*on/{n}':y='ih/2-(ih/zoom/2)'",
          "right": f"z='1.15':x='(iw-iw/zoom)*(1-on/{n})':y='ih/2-(ih/zoom/2)'",
          "shake": f"z='1.12':{c}"}[cam]
-    f = f"crop=iw*0.92:ih*0.92:iw*0.02:ih*0.02,scale={W*3//2}:{H*3//2},zoompan={z}:d={frames}:s={W}x{H}:fps={FPS}"
+    pre = "crop=iw*0.92:ih*0.92:iw*0.02:ih*0.02,"
+    if crop:  # [x, y, w, h] 0-1: ek wide tasveer se close shot (nayi image banaye bina)
+        x, y, w, h = crop
+        pre += f"crop=iw*{w}:ih*{h}:iw*{x}:ih*{y},"
+    f = f"{pre}scale={W*3//2}:{H*3//2},zoompan={z}:d={frames}:s={W}x{H}:fps={FPS}"
     if cam == "shake":
         f += (f",crop={W-60}:{H-34}:x='30+18*sin(t*23)':y='17+10*sin(t*31)',scale={W}:{H},"
               "eq=eval=frame:brightness='0.45*gt(mod(t\\,2.7)\\,2.55)'")
     return f + ",eq=saturation=1.08:contrast=1.03,vignette=PI/6,format=yuv420p"
 
-clips = []
-for i, s in enumerate(scenes):
+USE_MOTION = ep.get("motion", True) and "--no-motion" not in args
+if USE_MOTION:
+    try:
+        import motion  # kirdaar alag layer, bolna, aankh, VFX
+    except Exception as e:  # models na hon to purana tareeka
+        print("motion band:", e); USE_MOTION = False
+NARRATORS = set(ep.get("narrators", ["madhur", "pratham", "madhur_dada_narrator"]))
+SHEETS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sheets")
+
+
+def _abs_actor(a_):
+    """sheet/prop ke naam ko poora path banao (studio/sheets/)"""
+    a_ = json.loads(json.dumps(a_))
+    if not os.path.isabs(a_["sheet"]):
+        a_["sheet"] = os.path.join(SHEETS, a_["sheet"])
+    if a_.get("prop") and not os.path.isabs(a_["prop"]["sheet"]):
+        a_["prop"]["sheet"] = os.path.join(SHEETS, a_["prop"]["sheet"])
+    return a_
+
+
+def scene_mouth_by_voice(i, s, frames):
+    """har awaaz (voice) ka alag munh-curve: kai kirdaar ek scene mein"""
+    out = {}
+    p = (XF if i else 0) + LEAD
+    hop = SR // FPS
+    for a, (vname, _) in zip(s["lines"], s["sc"]["lines"]):
+        m = out.setdefault(vname, np.zeros(frames, np.float32))
+        k0 = int(p * FPS)
+        for f_ in range(int(len(a) / SR * FPS)):
+            if k0 + f_ < frames:
+                seg = a[f_ * hop:(f_ + 1) * hop]
+                m[k0 + f_] = np.sqrt(np.mean(seg ** 2)) if len(seg) else 0
+        p += len(a) / SR + GAP
+    return {k: motion.normalise_mouth(v) for k, v in out.items()}
+
+
+def scene_mouth(i, s, frames):
+    """kirdaar ki lines (narrator nahi) ki awaaz se har frame ka munh"""
+    m = np.zeros(frames, np.float32)
+    p = (XF if i else 0) + LEAD
+    hop = SR // FPS
+    for a, (vname, _) in zip(s["lines"], s["sc"]["lines"]):
+        if vname not in NARRATORS:
+            k0 = int(p * FPS)
+            for f_ in range(int(len(a) / SR * FPS)):
+                if k0 + f_ < frames:
+                    seg = a[f_ * hop:(f_ + 1) * hop]
+                    m[k0 + f_] = np.sqrt(np.mean(seg ** 2)) if len(seg) else 0
+        p += len(a) / SR + GAP
+    return motion.normalise_mouth(m)
+
+
+import hashlib, shutil as _sh
+from concurrent.futures import ProcessPoolExecutor
+CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache", "clips")
+os.makedirs(CACHE, exist_ok=True)
+
+
+def render_clip(i):
+    """ek scene ka clip (alag process mein chalta: kai scene ek saath banenge)"""
+    if WORKERS > 1:
+        import cv2 as _cv; _cv.setNumThreads(1)  # har worker ek core (aapas mein na takraayein)
+    s = scenes[i]
     frames = int(round(s["dur"] * FPS)); out = f"{tmp}/c{i:03d}.mp4"
-    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-loop", "1", "-i", f"{AS}/{s['sc']['id']}.jpg",
-                    "-vf", cam_filter(s["sc"].get("cam", "in"), frames), "-frames:v", str(frames),
-                    "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", out], check=True)
-    clips.append((out, s["dur"])); print("clip", i, f"{s['dur']:.1f}s", flush=True)
+    img_path = f"{AS}/{s['sc'].get('use', s['sc']['id'])}.jpg"
+    ai_clip = f"{AS}/{s['sc']['id']}.mp4"
+    if os.path.exists(ai_clip):
+        # GPU worker (Kaggle/Colab) ka asli chalta AI clip: scene ki lambai tak dheema/loop (ping-pong), 1080p, rang
+        cdur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", ai_clip],
+                                    capture_output=True, text=True).stdout.strip() or 0)
+        speed = max(0.5, min(1.0, cdur / s["dur"])) if cdur else 1.0  # 2x se zyada dheema nahi
+        vf = (f"crop=iw*0.92:ih*0.92:iw*0.02:ih*0.02,setpts=PTS/{speed:.3f},scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},fps={FPS},"
+              "eq=saturation=1.06:contrast=1.03,vignette=PI/6,format=yuv420p")
+        # chhota clip ho to ulta chala kar jodo (jhatka nahi)
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", ai_clip, "-filter_complex",
+                        f"[0:v]split[a][b];[b]reverse[r];[a][r]concat=n=2:v=1:a=0,loop=-1:size=32767,{vf}[v]",
+                        "-map", "[v]", "-frames:v", str(frames), "-an", "-c:v", "libx264", "-preset", "ultrafast", "-crf", "16", out], check=True)
+        return out, s["dur"], f"AI clip ({cdur:.1f}s)"
+    mouth = scene_mouth(i, s, frames) if USE_MOTION else None
+    # cache: same tasveer + same settings + same awaaz = purana clip turant (sirf badle scene dobara bante)
+    hsh = hashlib.md5()
+    hsh.update(open(img_path, "rb").read())
+    hsh.update(json.dumps({k: s["sc"].get(k) for k in ("cam", "vfx", "crop", "people", "emotion", "actors")}, sort_keys=True).encode())
+    hsh.update(f"{W}x{H}:{frames}:{i}:{USE_MOTION}:v2".encode())
+    if mouth is not None:
+        hsh.update(np.round(mouth, 3).tobytes())
+    cpath = os.path.join(CACHE, hsh.hexdigest()[:20] + ".mp4")
+    if os.path.exists(cpath):
+        _sh.copy(cpath, out); return out, s["dur"], "cache"
+    info = None
+    if USE_MOTION:
+        enc = subprocess.Popen(["ffmpeg", "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", f"{W}x{H}",
+                                "-r", str(FPS), "-i", "-", "-vf", "eq=saturation=1.08:contrast=1.03,vignette=PI/6,format=yuv420p",
+                                "-c:v", "libx264", "-preset", "ultrafast", "-crf", "16", "-threads", "1", out], stdin=subprocess.PIPE)
+        try:
+            info = motion.render_scene(img_path, frames, W, H, cam=s["sc"].get("cam", "in"), mouth=mouth,
+                                       vfx=s["sc"].get("vfx"), crop=s["sc"].get("crop"), seed=i + 1,
+                                       people=s["sc"].get("people"), emotion=s["sc"].get("emotion", "neutral"),
+                                       actors=[_abs_actor(a_) for a_ in s["sc"].get("actors", [])] or None,
+                                       mouths=scene_mouth_by_voice(i, s, frames),
+                                       write=lambda f_: enc.stdin.write(f_.tobytes()))
+        except Exception as e:
+            print("motion fail, zoompan:", i, e, flush=True); info = None
+        finally:
+            enc.stdin.close(); enc.wait()
+        if enc.returncode != 0:
+            info = None
+    if info is None:  # purana zoompan (motion band ya fail)
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-loop", "1", "-i", img_path,
+                        "-vf", cam_filter(s["sc"].get("cam", "in") if s["sc"].get("cam", "in") in
+                                          ("in", "out", "fastin", "left", "right", "shake") else "in", frames, s["sc"].get("crop")),
+                        "-frames:v", str(frames), "-c:v", "libx264", "-preset", "ultrafast", "-crf", "16", out], check=True)
+    _sh.copy(out, cpath)
+    return out, s["dur"], info or "zoompan"
+
+
+WORKERS = int(args[args.index("--jobs") + 1]) if "--jobs" in args else max(1, os.cpu_count() or 1)
+# lambe scene pehle (sab worker barabar busy)
+order = sorted(range(len(scenes)), key=lambda k: -scenes[k]["dur"])
+results = {}
+if WORKERS > 1:
+    with ProcessPoolExecutor(max_workers=WORKERS) as ex:
+        for k, r in zip(order, ex.map(render_clip, order)):
+            results[k] = r; print("clip", k, f"{r[1]:.1f}s", r[2], flush=True)
+else:
+    for k in order:
+        results[k] = render_clip(k); print("clip", k, f"{results[k][1]:.1f}s", results[k][2], flush=True)
+clips = [(results[k][0], results[k][1]) for k in range(len(scenes))]
 
 # xfade chain
 inp = []; [inp.extend(["-i", c]) for c, _ in clips]
