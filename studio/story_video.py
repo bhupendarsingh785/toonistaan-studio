@@ -9,8 +9,12 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import sfx  # noqa: E402
+try:
+    import motion  # noqa: E402
+    motion.ensure_models(verbose=True)
+except Exception as _e:
+    print('motion models:', str(_e)[:80], flush=True)
 
-HERE = os.path.dirname(os.path.abspath(__file__))
 SR = 44100; FPS = 30; XF = 0.6; LEAD = 0.6; TAIL = 0.9; GAP = 0.35
 args = sys.argv[1:]
 EP, AS, OUT = args[0], args[1], args[2]
@@ -78,65 +82,6 @@ with wave.open(apath, "w") as w:
     w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes((mix * 32767).astype(np.int16).tobytes())
 
 # ---------- subtitle + title PNGs (Chromium shapes Hindi correctly) ----------
-def pil_png(items):
-    """Backup: Chromium/playwright na ho to PIL se subtitle/title PNG banao (Hindi font ke saath)."""
-    try:
-        from PIL import Image, ImageDraw, ImageFont
-    except Exception:
-        return False
-    import re as _re
-    fp = os.path.join(HERE, "fonts", "Hind-Bold.ttf")
-    if not os.path.exists(fp):
-        cand = [os.path.join(HERE, "fonts", f) for f in os.listdir(os.path.join(HERE, "fonts"))] if os.path.isdir(os.path.join(HERE, "fonts")) else []
-        fp = cand[0] if cand else None
-    ok = True
-    for it in items:
-        try:
-            html = it["html"]
-            txt = _re.sub(r"<[^>]+>", "\n", html)
-            txt = "\n".join([x.strip() for x in txt.splitlines() if x.strip()])
-            size = 44
-            m = _re.search(r"font-size:\s*(\d+)px", html)
-            if m:
-                size = int(m.group(1))
-            color = "#ffffff"
-            mc = _re.search(r"color:\s*#([0-9a-fA-F]{6})", html)
-            if mc:
-                color = "#" + mc.group(1)
-            img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-            d = ImageDraw.Draw(img)
-            f = ImageFont.truetype(fp, size) if fp else ImageFont.load_default()
-            # line wrap
-            lines, cur = [], ""
-            for word in txt.replace("\n", " \n ").split():
-                if word == "\n":
-                    lines.append(cur); cur = ""; continue
-                test = (cur + " " + word).strip()
-                if d.textlength(test, font=f) > W * 0.86:
-                    lines.append(cur); cur = word
-                else:
-                    cur = test
-            if cur:
-                lines.append(cur)
-            lh = int(size * 1.35)
-            total_h = lh * len(lines)
-            bottom = int(H * 0.06)
-            m2 = _re.search(r"bottom:\s*(\d+)px", html)
-            y0 = H - (int(m2.group(1)) if m2 else bottom) - total_h
-            m3 = _re.search(r"top:\s*(\d+)px", html)
-            if m3:
-                y0 = int(m3.group(1))
-            for i, line in enumerate(lines):
-                w = d.textlength(line, font=f)
-                x = (W - w) / 2
-                y = y0 + i * lh
-                d.text((x + 3, y + 3), line, font=f, fill=(0, 0, 0, 170))   # shadow
-                d.text((x, y), line, font=f, fill=color)
-            img.save(it["path"])
-        except Exception:
-            ok = False
-    return ok
-
 def html_png(items):
     js = json.dumps(items, ensure_ascii=False)
     node = f"""
@@ -151,12 +96,7 @@ const {{ chromium }} = require('playwright');
  await b.close();
 }})();"""
     open(f"{tmp}/r.js", "w").write(node)
-    try:
-        subprocess.run(["node", f"{tmp}/r.js"], check=True)
-    except Exception as e:
-        print("PLAYWRIGHT_FAIL -> PIL se subtitle bana rahe hain:", str(e)[:120], flush=True)
-        if not pil_png(items):
-            raise
+    subprocess.run(["node", f"{tmp}/r.js"], check=True)
 
 items = []
 fs = int(H * 0.052)
