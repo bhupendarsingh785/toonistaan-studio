@@ -106,7 +106,12 @@ _vjobs = [(sc["id"], i, voice_for(sc, voice, text), text) for sc in ep["scenes"]
 if _vjobs:
     with _TPE(max_workers=min(4, len(_vjobs))) as ex:
         list(ex.map(_mkvoice, _vjobs))
-print("VOICES_OK", flush=True)
+_made = 0
+try:
+    _made = len([f for f in os.listdir(out) if f.endswith((".mp3", ".wav"))])
+except Exception:
+    pass
+print("VOICES_OK", _made, "files", flush=True)
 
 # Variants: "variants": N (episode ya scene level) -> <id>_v0.jpg .. v{N-1}; best ko <id>.jpg naam do.
 # Sirf kuch scene dobara: python gen_assets.py ep.json out s04,s06   (purani file hata kar naya seed)
