@@ -2,6 +2,7 @@
 Run with Blender's bundled python:  PY gen_assets.py episode.json outdir
 """
 import json, os, sys, time, subprocess, urllib.request, urllib.parse
+import numpy as np
 
 PIPER = "/opt/tools/piper/piper"
 VOICES = {"pratham": "/opt/tools/voices/hi_pratham.onnx", "priyamvada": "/opt/tools/voices/hi_priyamvada.onnx"}
@@ -41,8 +42,19 @@ def prompt_for(sc):
 
 
 # voices first (fast) — edge-tts (free neural), Piper optional
-EDGE = {"madhur": "hi-IN-MadhurNeural", "swara": "hi-IN-SwaraNeural",
-        "pratham": "hi-IN-MadhurNeural", "priyamvada": "hi-IN-SwaraNeural"}
+# (voice -> (edge voice, pitch factor))  — pitch 1.0 = normal, >1 = patli/bachche jaisi
+EDGE = {
+    "madhur":     ("hi-IN-MadhurNeural", 1.0),    # aadmi
+    "pratham":    ("hi-IN-MadhurNeural", 1.0),    # aadmi (purana naam)
+    "swara":      ("hi-IN-SwaraNeural", 1.0),     # aurat
+    "priyamvada": ("hi-IN-SwaraNeural", 1.0),     # aurat (purana naam)
+    "bachcha":    ("hi-IN-SwaraNeural", 1.22),    # bachcha (patli awaaz)
+    "child":      ("hi-IN-SwaraNeural", 1.22),
+    "budha":      ("hi-IN-MadhurNeural", 0.90),   # budha (bhaari awaaz)
+    "dadi":       ("hi-IN-SwaraNeural", 0.92),    # dadi
+    "aurat":      ("hi-IN-SwaraNeural", 1.0),
+    "aadmi":      ("hi-IN-MadhurNeural", 1.0),
+}
 HAVE_PIPER = os.path.exists(PIPER)
 from concurrent.futures import ThreadPoolExecutor as _TPE
 
@@ -51,12 +63,21 @@ def _mkvoice(job):
     wav = f"{out}/{sid}_{i}.wav"
     if os.path.exists(wav) or os.path.exists(wav[:-4] + ".mp3"):
         return True
-    v = EDGE.get(voice, "hi-IN-MadhurNeural")
+    v, pitch = EDGE.get(voice, ("hi-IN-MadhurNeural", 1.0))
+    mp3 = wav[:-4] + ".mp3"
     for tryv in (v, "hi-IN-SwaraNeural" if v == "hi-IN-MadhurNeural" else "hi-IN-MadhurNeural"):
         r = subprocess.run([sys.executable, "-m", "edge_tts", "--text", text, "--voice", tryv,
-                            "--rate=" + ep.get("voice_rate", "-6%"), "--write-media", wav[:-4] + ".mp3"],
+                            "--rate=" + ep.get("voice_rate", "-6%"), "--write-media", mp3],
                            capture_output=True)
-        if r.returncode == 0 and os.path.exists(wav[:-4] + ".mp3"):
+        if r.returncode == 0 and os.path.exists(mp3):
+            if abs(pitch - 1.0) > 0.01:
+                tmp = mp3.replace(".mp3", "_p.mp3")
+                f = pitch
+                subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", mp3,
+                                "-filter:a", f"asetrate=24000*{f},aresample=24000,atempo={1/f:.4f}",
+                                tmp], capture_output=True)
+                if os.path.exists(tmp) and os.path.getsize(tmp) > 1000:
+                    os.replace(tmp, mp3)
             return True
     if HAVE_PIPER:
         try:
@@ -70,7 +91,18 @@ def _mkvoice(job):
     print("VOICE_FAIL", sid, i, flush=True)
     return False
 
-_vjobs = [(sc["id"], i, voice, text) for sc in ep["scenes"] for i, (voice, text) in enumerate(sc["lines"])]
+VOICE_MAP = ep.get("voices", {})   # jaise {"CHHOTU":"bachcha","DADI":"dadi"}
+
+def voice_for(sc, voice, text):
+    """Episode ke 'voices' map se kirdaar ki awaaz chuno."""
+    if VOICE_MAP:
+        blob = (sc.get("img", "") + " " + text).upper()
+        for name, v in VOICE_MAP.items():
+            if name.upper() in blob:
+                return v
+    return voice
+
+_vjobs = [(sc["id"], i, voice_for(sc, voice, text), text) for sc in ep["scenes"] for i, (voice, text) in enumerate(sc["lines"])]
 if _vjobs:
     with _TPE(max_workers=min(4, len(_vjobs))) as ex:
         list(ex.map(_mkvoice, _vjobs))
@@ -118,12 +150,27 @@ def fetch(job):
         try:
             data = subprocess.run(["curl", "-sL", "-m", "90", url], capture_output=True).stdout
             if len(data) > 5000:
+                # ---- clarity agent: dhundhli tasveer dobara banao ----
+                score = 999.0
+                try:
+                    import cv2 as _cv
+                    _img = _cv.imdecode(np.frombuffer(data, np.uint8), _cv.IMREAD_COLOR)
+                    if _img is not None:
+                        g = _cv.cvtColor(_img, _cv.COLOR_BGR2GRAY)
+                        score = float(_cv.Laplacian(g, _cv.CV_64F).var())
+                except Exception:
+                    pass
+                if score < 25 and attempt < 3:
+                    print("IMG_BLUR", os.path.basename(jpg), round(score, 1), "-> dobara", flush=True)
+                    url = url.split("&seed=")[0] + "&seed=" + str(int(time.time()) % 99999)
+                    time.sleep(2)
+                    continue
                 open(jpg, "wb").write(data)
                 try:
                     open(f"{lib}/{key}.jpg", "wb").write(data)
                 except Exception:
                     pass
-                print("IMG_OK", os.path.basename(jpg), len(data), flush=True)
+                print("IMG_OK", os.path.basename(jpg), len(data), "sharp", round(score, 1), flush=True)
                 return True
         except Exception:
             pass
