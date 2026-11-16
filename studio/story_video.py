@@ -9,11 +9,6 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import sfx  # noqa: E402
-try:
-    import motion  # noqa: E402
-    motion.ensure_models(verbose=True)
-except Exception as _e:
-    print('motion models:', str(_e)[:80], flush=True)
 
 SR = 44100; FPS = 30; XF = 0.6; LEAD = 0.6; TAIL = 0.9; GAP = 0.35
 args = sys.argv[1:]
@@ -36,6 +31,34 @@ def load_wav(p):
 
 
 # ---------- timeline ----------
+
+def _fallback_card(path, title="", mood="calm"):
+    """Tasveer na mile to ek sundar card banao (video kabhi fail na ho)."""
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+    except Exception:
+        return False
+    pal = {"horror": ((8, 8, 14), (44, 12, 20)), "sad": ((12, 18, 32), (52, 62, 84)),
+           "happy": ((10, 26, 46), (0, 170, 150)), "action": ((26, 11, 11), (200, 90, 30)),
+           "romance": ((40, 10, 40), (240, 120, 170)), "calm": ((14, 20, 36), (60, 90, 140))}.get(mood, ((14, 20, 36), (60, 90, 140)))
+    img = Image.new("RGB", (W, H), pal[0])
+    d = ImageDraw.Draw(img)
+    for y in range(H):
+        k = y / max(1, H - 1)
+        d.line([(0, y), (W, y)], fill=(int(pal[0][0]*(1-k)+pal[1][0]*k),
+                                       int(pal[0][1]*(1-k)+pal[1][1]*k),
+                                       int(pal[0][2]*(1-k)+pal[1][2]*k)))
+    fp = os.path.join(HERE, "fonts", "Hind-Bold.ttf")
+    try:
+        f = ImageFont.truetype(fp, int(H * 0.05))
+    except Exception:
+        f = ImageFont.load_default()
+    if title:
+        tw = d.textlength(title, font=f)
+        d.text(((W - tw) / 2, H * 0.45), title, font=f, fill=(255, 255, 255))
+    img.save(path, quality=90)
+    return True
+
 scenes = []; t = 0.0
 for i, sc in enumerate(ep["scenes"]):
     lines = []
@@ -80,6 +103,14 @@ mix = np.clip(mix / (np.abs(mix).max() + 1e-9) * 0.89, -1, 1)
 apath = f"{tmp}/mix.wav"
 with wave.open(apath, "w") as w:
     w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes((mix * 32767).astype(np.int16).tobytes())
+
+# ---------- missing images ka intezaam (video fail na ho) ----------
+for sc in ep["scenes"]:
+    src_id = sc.get("use", sc["id"])
+    p_img = f"{AS}/{src_id}.jpg"
+    if not (os.path.exists(p_img) and os.path.getsize(p_img) > 3000):
+        print("IMG_MISSING", src_id, "-> card bana rahe hain", flush=True)
+        _fallback_card(p_img, title=str(sc.get("img", ""))[:40], mood=str(sc.get("music", "calm")))
 
 # ---------- subtitle + title PNGs (Chromium shapes Hindi correctly) ----------
 def html_png(items):
