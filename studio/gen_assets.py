@@ -42,9 +42,9 @@ def prompt_for(sc):
     cast_line = ""
     if ep.get("cast"):
         cast_line = " | characters: " + "; ".join(ep["cast"].values())[:400]
-    # kirdaar ka description SABSE PEHLE (AI usko zyada sunta hai) -> kapde/chehra ek jaisa
-    base = (f"{cast_line.strip(' |')}. Same characters, same faces, exactly the same clothes in every scene. "
-            f"{STYLE_LOCK}. {p}{ep.get('style', '')}. negative: {STYLE_AVOID}")
+    # scene pehle (warna AI har scene me wahi tasveer bana deta hai), phir style + kirdaar
+    base = (f"{p}. {STYLE_LOCK}. same characters and same clothes as described: {cast_line.strip(' |')}"
+            f"{ep.get('style', '')}. negative: {STYLE_AVOID}")
     try:
         out = ai_enhance(sc, base)
         return out if out else base
@@ -181,7 +181,7 @@ for sc in ep["scenes"]:
             print("IMG_LIB", os.path.basename(jpg), flush=True)
             continue
         url = ("https://image.pollinations.ai/prompt/" + urllib.parse.quote(prompt_for(sc) + "," + NEG) +
-               f"?width={IW}&height={IH}&nologo=true&model=flux&enhance=true&seed={base + v * 101}")
+               f"?width={IW}&height={IH}&nologo=true&model=flux&enhance=true&seed={base + v * 101 + (abs(hash(sc['id'])) % 97) * 7}")
         jobs.append((jpg, url, key))
 
 print("IMG_QUEUE", len(jobs), flush=True)
