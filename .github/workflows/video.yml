@@ -1,8 +1,10 @@
 name: Kahani video banao
 
+# Story page (story.html) yahan episode JSON likhta hai -> video ban jati hai.
 on:
   push:
     paths:
+      - "studio/series/user/**"
       - "trigger/**"
   workflow_dispatch:
 
@@ -35,23 +37,33 @@ jobs:
           npm install -g playwright
           npx --yes playwright install --with-deps chromium
 
+      - name: Episode chuno
+        id: pick
+        run: |
+          if [ -f studio/series/user/ep01.json ]; then
+            echo "ep=studio/series/user/ep01.json" >> "$GITHUB_OUTPUT"
+            echo "out=kahani.mp4" >> "$GITHUB_OUTPUT"
+            echo "assets=studio/series/user/assets" >> "$GITHUB_OUTPUT"
+          else
+            echo "ep=studio/series/rampur/ep01_bandh.json" >> "$GITHUB_OUTPUT"
+            echo "out=rampur.mp4" >> "$GITHUB_OUTPUT"
+            echo "assets=studio/series/rampur/ep01_assets" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Awaaz aur images
         env:
           PYTHONUNBUFFERED: "1"
         run: |
-          EP=studio/series/rampur/ep01_bandh.json
-          OUT=studio/series/rampur/ep01_assets
-          mkdir -p "$OUT"
-          python studio/gen_assets.py "$EP" "$OUT"
+          mkdir -p "${{ steps.pick.outputs.assets }}"
+          python studio/gen_assets.py "${{ steps.pick.outputs.ep }}" "${{ steps.pick.outputs.assets }}"
 
       - name: Video render
         env:
           PYTHONUNBUFFERED: "1"
         run: |
           export NODE_PATH="$(npm root -g)"
-          EP=studio/series/rampur/ep01_bandh.json
-          OUT=studio/series/rampur/ep01_assets
-          python studio/story_video.py "$EP" "$OUT" rampur.mp4 --w 1280 --h 720
+          python studio/story_video.py "${{ steps.pick.outputs.ep }}" "${{ steps.pick.outputs.assets }}" \
+            "${{ steps.pick.outputs.out }}" --w 1280 --h 720
 
       - name: Video upload
         if: always()
@@ -59,7 +71,7 @@ jobs:
         with:
           name: video
           path: |
-            rampur.mp4
+            *.mp4
             *.srt
           if-no-files-found: warn
           retention-days: 14
