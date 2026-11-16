@@ -58,6 +58,30 @@ EDGE = {
 HAVE_PIPER = os.path.exists(PIPER)
 from concurrent.futures import ThreadPoolExecutor as _TPE
 
+AWAZ_TOOL = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools", "awaaz.py")
+
+# hamare naam -> awaaz tool ke kirdaar
+AWAZ_KIRDAAR = {
+    "bachcha": "swara_bachcha", "child": "swara_bachcha",
+    "dadi": "swara_dadi", "budha": "madhur_dada",
+    "madhur": "madhur", "pratham": "madhur",
+    "swara": "swara", "priyamvada": "swara", "aurat": "swara", "aadmi": "madhur",
+}
+
+
+def _voice_by_tool(text, voice, mp3):
+    """tools/awaaz.py se awaaz: kirdaar + bhaav (darr/khushi/dukh) + saaf chain. Fail -> False."""
+    if not os.path.exists(AWAZ_TOOL):
+        return False
+    k = AWAZ_KIRDAAR.get(voice, "madhur")
+    r = subprocess.run([sys.executable, AWAZ_TOOL, "bolo", text, "--kirdaar", k, "-o", mp3],
+                       capture_output=True)
+    ok = r.returncode == 0 and os.path.exists(mp3) and os.path.getsize(mp3) > 1500
+    if ok:
+        print("VOICE_TOOL", os.path.basename(mp3), k, flush=True)
+    return ok
+
+
 def _mkvoice(job):
     sid, i, voice, text = job
     wav = f"{out}/{sid}_{i}.wav"
@@ -65,6 +89,8 @@ def _mkvoice(job):
         return True
     v, pitch = EDGE.get(voice, ("hi-IN-MadhurNeural", 1.0))
     mp3 = wav[:-4] + ".mp3"
+    if _voice_by_tool(text, voice, mp3):
+        return True
     for tryv in (v, "hi-IN-SwaraNeural" if v == "hi-IN-MadhurNeural" else "hi-IN-MadhurNeural"):
         r = subprocess.run([sys.executable, "-m", "edge_tts", "--text", text, "--voice", tryv,
                             "--rate=" + ep.get("voice_rate", "-6%"), "--write-media", mp3],
