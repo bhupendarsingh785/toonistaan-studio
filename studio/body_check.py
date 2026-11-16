@@ -41,7 +41,11 @@ def analyse(img):
     persons = _pd.infer(img)
     persons = [] if persons is None else persons
     for p in persons:
-        r = _pose.infer(img, p)
+        try:
+            r = _pose.infer(img, p)
+        except cv2.error:  # kinare par kata insaan: model ka padding fail (bug fix 16 Nov)
+            out["warnings"].append("ek insaan frame ke kinare par kata: body tracking chhodi, aankh se dekho")
+            continue
         if r is None:
             continue
         lm = r[1][:33]  # x, y, z, visibility, presence
@@ -89,7 +93,10 @@ def analyse(img):
     palms = _palm.infer(img)
     palms = [] if palms is None else palms
     for pm in palms:
-        h = _hand.infer(img, pm)
+        try:
+            h = _hand.infer(img, pm)
+        except cv2.error:
+            h = None
         if h is None:
             out["warnings"].append("haath mila par uske points saaf nahi (haath bigda ho sakta: aankh se dekho)")
             continue
