@@ -30,13 +30,22 @@ def ai_enhance(sc, base_prompt):
     return base_prompt
 
 
+STYLE_LOCK = ("3D animated cartoon movie still, Pixar style stylized character design, "
+               "consistent character face and clothes, bright cinematic lighting, high detail, 8k")
+STYLE_AVOID = ("photorealistic, real photograph, real human photo, blurry, dark, low quality, "
+               "text, watermark, deformed face, extra fingers")
+
 def prompt_for(sc):
     p = sc["img"]
     for k, v in ep.get("cast", {}).items():
         p = p.replace(k, v)
-    base = p + ep.get("style", "")
+    cast_line = ""
+    if ep.get("cast"):
+        cast_line = " | characters: " + "; ".join(ep["cast"].values())[:400]
+    base = f"{STYLE_LOCK}. {p}{cast_line}{ep.get('style', '')}. negative: {STYLE_AVOID}"
     try:
-        return ai_enhance(sc, base)
+        out = ai_enhance(sc, base)
+        return out if out else base
     except Exception:
         return base
 
@@ -170,7 +179,7 @@ for sc in ep["scenes"]:
             print("IMG_LIB", os.path.basename(jpg), flush=True)
             continue
         url = ("https://image.pollinations.ai/prompt/" + urllib.parse.quote(prompt_for(sc) + "," + NEG) +
-               f"?width={IW}&height={IH}&nologo=true&seed={base + v * 101}")
+               f"?width={IW}&height={IH}&nologo=true&model=flux&enhance=true&seed={base + v * 101}")
         jobs.append((jpg, url, key))
 
 print("IMG_QUEUE", len(jobs), flush=True)
@@ -191,7 +200,7 @@ def fetch(job):
                         score = float(_cv.Laplacian(g, _cv.CV_64F).var())
                 except Exception:
                     pass
-                if score < 25 and attempt < 3:
+                if score < 12 and attempt < 3:
                     print("IMG_BLUR", os.path.basename(jpg), round(score, 1), "-> dobara", flush=True)
                     url = url.split("&seed=")[0] + "&seed=" + str(int(time.time()) % 99999)
                     time.sleep(2)
