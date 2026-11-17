@@ -21,34 +21,21 @@ jobs:
           pip install -q --upgrade pip
           pip install -q numpy edge-tts
 
-      - name: Freesound key check
+      - name: Keys check
         env:
           FREESOUND_API_KEY: ${{ secrets.FREESOUND_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
         run: |
-          if [ -z "$FREESOUND_API_KEY" ]; then
-            echo "FREESOUND_KEY: nahi mili (secret set nahi hai) — procedural sound chalega"
-          else
-            echo "FREESOUND_KEY: mil gayi (${#FREESOUND_API_KEY} akshar)"
-          fi
-
-      - name: Awaaz studio (Pocket FM)
-        env:
-          PYTHONUNBUFFERED: "1"
-        run: |
-          python tools/awaaz_studio.py sunao studio/series/user/awaaz_demo.json -o awaaz-demo.mp3 --mahaul village --music calm
+          [ -z "$FREESOUND_API_KEY" ] && echo "FREESOUND_KEY: nahi" || echo "FREESOUND_KEY: mili (${#FREESOUND_API_KEY})"
+          [ -z "$ELEVENLABS_API_KEY" ] && echo "ELEVEN_KEY: nahi (edge-tts chalega)" || echo "ELEVEN_KEY: mili (${#ELEVENLABS_API_KEY})"
 
       - name: Cinema (kahani se audio drama)
         env:
           PYTHONUNBUFFERED: "1"
           FREESOUND_API_KEY: ${{ secrets.FREESOUND_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
         run: |
           python astra/cinema.py banao studio/series/user/story_demo.json -o cinema-demo.mp3
-
-      - name: Sound pack (ASTRA generators)
-        env:
-          PYTHONUNBUFFERED: "1"
-        run: |
-          python astra/astra.py pack -o pack
 
       - name: Upload
         if: always()
@@ -56,9 +43,7 @@ jobs:
         with:
           name: awaaz
           path: |
-            awaaz-demo.mp3
             cinema-demo.mp3
             cinema-demo.cues.json
-            pack/*.wav
           if-no-files-found: warn
           retention-days: 14
