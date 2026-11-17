@@ -23,14 +23,16 @@ import urllib.request
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 # ElevenLabs ke public multilingual voices (stable ids)
+# Sirf PREMADE voices — free plan par yahi chalti hain (library voices 402 deti hain)
 DEFAULT_VOICES = {
-    "male_adult": "pNInz6obpgDQGcFmaJgB",     # Adam - deep male
-    "female_adult": "EXAVITQu4vr4xnSDxMaL",   # Sarah - warm female
-    "male_young": "TX3LPaxmHKxFdv7VOQHJ",     # Liam - young male
-    "female_young": "XB0fDUnXU5powFXDhCwa",   # Charlotte
-    "male_old": "onwK4e9ZLuTAKqWW03F9",       # Daniel - mature
-    "female_old": "pFZP5JQG7iQjIQuC4Bku",     # Lily
+    "male_adult": "pNInz6obpgDQGcFmaJgB",     # Adam
+    "female_adult": "21m00Tcm4TlvDq8ikWAM",   # Rachel
+    "male_young": "TxGEqnHWrfWFTfGW9XjX",     # Josh (jawan aadmi)
+    "female_young": "AZnzlk1XvdvUeBnXmlld",   # Domi (jawan ladki)
+    "male_old": "VR6AewLTigWG4xSOukaG",       # Arnold (bhaari)
+    "female_old": "MF3mGyEYCl7XYWbV9V6O",     # Elli
 }
+SAFE_VOICE = {"male": "pNInz6obpgDQGcFmaJgB", "female": "21m00Tcm4TlvDq8ikWAM"}
 
 # hamare kirdaar -> kaunsi voice + settings
 KIRDAAR_VOICE = {
@@ -87,6 +89,21 @@ def eleven_tts(text, kirdaar="madhur", out="out.mp3"):
         except Exception:
             pass
         print("ELEVEN_FAIL", e.code, body, flush=True)
+        # 402/403/404 = ye voice free plan me nahi -> safe premade voice se dobara
+        if e.code in (401, 402, 403, 404, 422):
+            gender = "female" if voice_name.startswith("female") else "male"
+            safe_id = SAFE_VOICE[gender]
+            if voice_id != safe_id:
+                url2 = f"https://api.elevenlabs.io/v1/text-to-speech/{safe_id}"
+                try:
+                    audio = _post(url2, payload, {"xi-api-key": key, "Content-Type": "application/json",
+                                                  "Accept": "audio/mpeg"})
+                    if len(audio) > 2000:
+                        open(out, "wb").write(audio)
+                        print("ELEVEN_OK_SAFE", kirdaar, gender, len(audio), flush=True)
+                        return True
+                except Exception as e2:
+                    print("ELEVEN_FAIL_SAFE", str(e2)[:60], flush=True)
         return False
     except Exception as e:
         print("ELEVEN_FAIL", str(e)[:80], flush=True)
