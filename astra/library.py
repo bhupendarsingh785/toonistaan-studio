@@ -1640,6 +1640,101 @@ DEFAULT_INDEX = {
    "pour"
   ],
   "license": "Pixabay"
+ },
+ "cooker_1": {
+  "file": "kitchen/cooker_1.mp3",
+  "tags": [
+   "cooker",
+   "कुकर",
+   "pressure",
+   "seeti",
+   "सीटी"
+  ],
+  "license": "Pixabay"
+ },
+ "cooker_2": {
+  "file": "kitchen/cooker_2.mp3",
+  "tags": [
+   "cooker",
+   "कुकर",
+   "pressure"
+  ],
+  "license": "Pixabay"
+ },
+ "cooker_release": {
+  "file": "kitchen/cooker_release.mp3",
+  "tags": [
+   "cooker",
+   "release",
+   "bhaap",
+   "भाप"
+  ],
+  "license": "Pixabay"
+ },
+ "cooker_low": {
+  "file": "kitchen/cooker_low.mp3",
+  "tags": [
+   "cooker",
+   "dheema",
+   "low"
+  ],
+  "license": "Pixabay"
+ },
+ "cooker_whistle": {
+  "file": "kitchen/cooker_whistle.mp3",
+  "tags": [
+   "cooker",
+   "whistle",
+   "सीटी",
+   "seeti"
+  ],
+  "license": "Pixabay"
+ },
+ "bubbling_sauce": {
+  "file": "kitchen/bubbling_sauce.mp3",
+  "tags": [
+   "bubble",
+   "sauce",
+   "tarkari",
+   "सब्जी"
+  ],
+  "license": "Pixabay"
+ },
+ "boil_2": {
+  "file": "kitchen/boil_2.mp3",
+  "tags": [
+   "boil",
+   "ubalna",
+   "उबलना"
+  ],
+  "license": "Pixabay"
+ },
+ "boil_3": {
+  "file": "kitchen/boil_3.mp3",
+  "tags": [
+   "boil",
+   "ubalna",
+   "उबलना"
+  ],
+  "license": "Pixabay"
+ },
+ "heavy_bubbles": {
+  "file": "kitchen/heavy_bubbles.mp3",
+  "tags": [
+   "bubbles",
+   "bulbule",
+   "गाढ़ा"
+  ],
+  "license": "Pixabay"
+ },
+ "boil_long": {
+  "file": "kitchen/boil_long.mp3",
+  "tags": [
+   "boil",
+   "loop",
+   "ubalna"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -1688,6 +1783,8 @@ VARIANTS = {
     "birds": ["birds_in_rain"],
     "water": ["water_relax", "pour_glass", "kettle_pour", "boiling"],
     "chai": ["tea_boil", "kettle_cup", "boiling"],
+    "cooker": ["cooker_whistle", "cooker_1", "cooker_2", "cooker_release", "cooker_low"],
+    "boil": ["boil_2", "boil_3", "boil_long", "boiling"],
     "bubbles": ["bubbles"],
     "underwater": ["underwater"],
     "lava": ["lava_loop"],
