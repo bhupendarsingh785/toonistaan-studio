@@ -3298,6 +3298,61 @@ DEFAULT_INDEX = {
    "meow"
   ],
   "license": "Pixabay"
+ },
+ "cat_meow_6": {
+  "file": "animals/cat_meow_6.mp3",
+  "tags": [
+   "cat",
+   "billi",
+   "बिल्ली",
+   "meow",
+   "myau"
+  ],
+  "license": "Pixabay"
+ },
+ "cat_meow_7": {
+  "file": "animals/cat_meow_7.mp3",
+  "tags": [
+   "cat",
+   "billi",
+   "बिल्ली",
+   "meow",
+   "myau"
+  ],
+  "license": "Pixabay"
+ },
+ "cat_meow_8": {
+  "file": "animals/cat_meow_8.mp3",
+  "tags": [
+   "cat",
+   "billi",
+   "बिल्ली",
+   "meow",
+   "myau"
+  ],
+  "license": "Pixabay"
+ },
+ "cat_meow_9": {
+  "file": "animals/cat_meow_9.mp3",
+  "tags": [
+   "cat",
+   "billi",
+   "बिल्ली",
+   "meow",
+   "myau"
+  ],
+  "license": "Pixabay"
+ },
+ "cat_meow_10": {
+  "file": "animals/cat_meow_10.mp3",
+  "tags": [
+   "cat",
+   "billi",
+   "बिल्ली",
+   "meow",
+   "myau"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -3335,7 +3390,7 @@ VARIANTS = {
     "blender": ["blender_1", "blender_2", "blender_3", "blender_4"],
     "dragon": ["dragon_roar", "dragon_growl", "dinosaur_roar"],
     "tiger": ["tiger_roar_1", "tiger_roar_2", "tiger_roar_3", "tiger_roar_4", "tiger_roar_5", "tiger_roar_6", "tiger_attack", "big_cats_mix"],
-    "cat": ["cat_meow_1", "cat_meow_2", "cat_meow_3", "cat_meow_4", "cat_meow_5"],
+    "cat": ["cat_meow_1", "cat_meow_2", "cat_meow_3", "cat_meow_4", "cat_meow_5", "cat_meow_6", "cat_meow_7", "cat_meow_8", "cat_meow_9", "cat_meow_10"],
     "monster": ["monster_roar_1", "monster_roar_2", "monster_roar_3", "monster_growl_1", "monster_lurk"],
     "wolf": ["wolf_growl"],
     "roar": ["roar_1", "tiger_roar_1", "monster_roar_1"],
