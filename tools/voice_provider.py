@@ -66,6 +66,81 @@ def _post(url, data, headers, timeout=90):
         return r.read()
 
 
+# ---------------------------------------------------------------- Sarvam AI (bulbul)
+SARVAM_URL = "https://api.sarvam.ai/text-to-speech"
+SARVAM_SPEAKER = {
+    # kirdaar -> bulbul:v3 speaker
+    "madhur": "shubh",          # narrator (male, stable)
+    "swara": "ritu",            # aurat
+    "swara_bachcha": "priya",   # bachchi (halki awaaz)
+    "madhur_bachcha": "rahul",  # ladka
+    "swara_dadi": "kavya",      # dadi
+    "madhur_dada": "dev",       # dada (bhaari)
+}
+SARVAM_PACE = {
+    "madhur": 0.95, "swara": 1.0, "swara_bachcha": 1.08, "madhur_bachcha": 1.06,
+    "swara_dadi": 0.88, "madhur_dada": 0.86,
+}
+
+
+def sarvam_key():
+    k = (os.environ.get("SARVAM_API_KEY") or "").strip().strip('"').strip("'")
+    return re.sub(r"[^A-Za-z0-9\-_]", "", k)
+
+
+def have_sarvam():
+    return bool(sarvam_key())
+
+
+def sarvam_tts(text, kirdaar="madhur", out="out.wav"):
+    """Sarvam bulbul se awaaz (Hindi storytelling). Fail -> False."""
+    key = sarvam_key()
+    if not key:
+        return False
+    import base64
+    speaker = os.environ.get(f"SARVAM_SPEAKER_{kirdaar.upper()}") or SARVAM_SPEAKER.get(kirdaar, "shubh")
+    payload = {
+        "text": str(text)[:2400],
+        "language_code": os.environ.get("SARVAM_LANG", "hi-IN"),
+        "speaker": speaker,
+        "model": os.environ.get("SARVAM_MODEL", "bulbul:v3"),
+        "pace": float(os.environ.get("SARVAM_PACE", SARVAM_PACE.get(kirdaar, 1.0))),
+        "temperature": float(os.environ.get("SARVAM_TEMP", "0.7")),
+        "speech_sample_rate": 24000,
+        "output_audio_codec": "wav",
+    }
+    try:
+        raw = _post(SARVAM_URL, payload, {"api-subscription-key": key,
+                                          "Content-Type": "application/json"})
+    except urllib.error.HTTPError as e:
+        body = ""
+        try:
+            body = e.read().decode("utf-8", "ignore")[:200]
+        except Exception:
+            pass
+        print("SARVAM_FAIL", e.code, body, flush=True)
+        return False
+    except Exception as e:
+        print("SARVAM_FAIL", str(e)[:80], flush=True)
+        return False
+    try:
+        data = json.loads(raw.decode("utf-8", "ignore"))
+        audios = data.get("audios") or []
+        if not audios:
+            print("SARVAM_FAIL khaali audios", flush=True)
+            return False
+        audio = base64.b64decode(audios[0])
+    except Exception as e:
+        print("SARVAM_FAIL decode", str(e)[:60], flush=True)
+        return False
+    if len(audio) < 2000:
+        print("SARVAM_FAIL chhota", len(audio), flush=True)
+        return False
+    open(out, "wb").write(audio)
+    print("SARVAM_OK", kirdaar, speaker, payload["pace"], len(audio), flush=True)
+    return True
+
+
 def list_voices():
     """Account par jo voices available hain (free plan par sirf kuch)."""
     key = eleven_key()
