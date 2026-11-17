@@ -4346,6 +4346,109 @@ DEFAULT_INDEX = {
    "toofan"
   ],
   "license": "Pixabay"
+ },
+ "wind_eerie": {
+  "file": "horror/wind_eerie.mp3",
+  "tags": [
+   "wind",
+   "eerie",
+   "horror",
+   "hawa",
+   "dar"
+  ],
+  "license": "Pixabay"
+ },
+ "wind_howl_window": {
+  "file": "ambience/wind_howl_window.mp3",
+  "tags": [
+   "wind",
+   "howl",
+   "window",
+   "khidki",
+   "toofan"
+  ],
+  "license": "Pixabay"
+ },
+ "wind_shaking_windows": {
+  "file": "ambience/wind_shaking_windows.mp3",
+  "tags": [
+   "wind",
+   "windows",
+   "storm",
+   "khidki"
+  ],
+  "license": "Pixabay"
+ },
+ "wind_winter": {
+  "file": "ambience/wind_winter.mp3",
+  "tags": [
+   "winter",
+   "cold",
+   "wind",
+   "sardi"
+  ],
+  "license": "Pixabay"
+ },
+ "wind_cold": {
+  "file": "ambience/wind_cold.mp3",
+  "tags": [
+   "cold",
+   "wind",
+   "bitter",
+   "thand"
+  ],
+  "license": "Pixabay"
+ },
+ "war_horn": {
+  "file": "ambience/war_horn.mp3",
+  "tags": [
+   "war",
+   "horn",
+   "yuddh",
+   "battle",
+   "singing"
+  ],
+  "license": "Pixabay"
+ },
+ "fog_horn_1": {
+  "file": "ambience/fog_horn_1.mp3",
+  "tags": [
+   "fog",
+   "horn",
+   "ship",
+   "samundar"
+  ],
+  "license": "Pixabay"
+ },
+ "fog_horn_2": {
+  "file": "ambience/fog_horn_2.mp3",
+  "tags": [
+   "fog",
+   "horn",
+   "ship",
+   "dhundh"
+  ],
+  "license": "Pixabay"
+ },
+ "ghost_howl_1": {
+  "file": "horror/ghost_howl_1.mp3",
+  "tags": [
+   "ghost",
+   "howl",
+   "bhoot",
+   "chillana"
+  ],
+  "license": "Pixabay"
+ },
+ "ghost_howl_2": {
+  "file": "horror/ghost_howl_2.mp3",
+  "tags": [
+   "ghost",
+   "howl",
+   "bhoot",
+   "dar"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -4385,6 +4488,7 @@ VARIANTS = {
     "magic": ["holy_aura", "christmas_magic", "angel_choir", "light_magic", "incant", "heal_spell", "sound_of_god"],
     "church": ["church_ambience", "cathedral_organ", "psalm23"],
     "choir": ["holy_chorus", "choir_short", "angel_choir"],
+    "howl": ["ghost_howl_1", "ghost_howl_2", "wind_howl_window"],
     "ghost": ["ghost", "ghosts_past", "ghost_past_2"],
     "bell": ["temple_bell", "shofar"],
     "jungle": ["jungle_nature"],
