@@ -106,7 +106,7 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
 
     # pehle poora timeline banao (lambai pata chale)
     plan = []      # (kind, payload, start)
-    t = 0.4
+    t = 0.9
     for si, sc in enumerate(scenes):
         env = sc.get("env", "neutral")
         music = sc.get("music", "calm")
@@ -153,8 +153,8 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
                 if not _sfx:
                     _sfx = sfx_extra.detect_bhav(bhaav, 1)
                 for name in _sfx:
-                    plan.append(("sfx", {"name": name, "start": t - 0.15, "text": text}, t - 0.15))
-                    cues.append({"type": "sfx", "name": name, "start": round(t - 0.15, 2)})
+                    plan.append(("sfx", {"name": name, "start": t + 0.02, "text": text}, t + 0.02))
+                    cues.append({"type": "sfx", "name": name, "start": round(t + 0.02, 2)})
             except Exception:
                 pass
         # scene ka music
@@ -184,7 +184,7 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
                     rw = read_wav(rp)
                     rw = norm(rw, 0.85)
                     rw = A.reverb(rw, 0.10)
-                    place(fx, rw, p["start"], 0.95)
+                    place(fx, rw, p["start"], 0.62)
                     done = True
                     if verbose:
                         print("SFX_REAL", p["name"], flush=True)
@@ -197,7 +197,7 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
                     snd = sfx_extra.ALL[p["name"]]()
                     snd = norm(snd, 0.85)
                     snd = A.reverb(snd, 0.25)
-                    place(fx, snd, p["start"], 0.8)
+                    place(fx, snd, p["start"], 0.55)
                 except Exception:
                     pass
         elif kind == "amb":
@@ -214,7 +214,7 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
                     if len(rw) > SR * 0.5:
                         reps = int(np.ceil((SR * need) / len(rw)))
                         seg = np.tile(rw, max(1, reps))[: int(SR * need)]
-                        seg = norm(seg, 0.30)   # dheema, peeche
+                        seg = norm(seg, 0.16)   # bahut dheema, peeche
                         if verbose:
                             print("AMB_REAL", kind_amb, flush=True)
             except Exception:
@@ -222,6 +222,11 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
             # 2) na mile to synth
             if seg is None:
                 seg = A.ambience(kind_amb, need)
+            # fade in/out (achanak shuru na ho)
+            _f = min(int(SR * 0.8), max(1, len(seg) // 4))
+            seg = seg.astype(np.float32).copy()
+            seg[:_f] *= np.linspace(0, 1, _f)
+            seg[-_f:] *= np.linspace(1, 0, _f)
             seg = np.pad(seg, (0, max(0, n - int(SR * p["start"]) - len(seg))))[: max(0, n - int(SR * p["start"]))]
             amb_bus[int(SR * p["start"]):int(SR * p["start"]) + len(seg)] += seg * 0.9
         elif kind == "music":
