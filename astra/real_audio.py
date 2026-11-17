@@ -307,7 +307,7 @@ def _download(url, path):
     return os.path.getsize(path) > 5000
 
 
-def fetch(name, target_seconds=None, force=False):
+def fetch(name, target_seconds=None, force=False, context=""):
     """
     Naam (jaise 'footsteps') -> asli recording ka wav path (44.1k mono).
     Key na ho, na mile, ya fail ho -> None.
@@ -315,7 +315,7 @@ def fetch(name, target_seconds=None, force=False):
     # 0) apni library (sabse achi quality) — sabse pehle
     try:
         import library as L
-        lp = L.fetch(name)
+        lp = L.fetch(name, context)
         if lp:
             return lp
     except Exception:
