@@ -3016,6 +3016,99 @@ DEFAULT_INDEX = {
    "loha"
   ],
   "license": "Pixabay"
+ },
+ "blender_1": {
+  "file": "machines/blender_1.mp3",
+  "tags": [
+   "blender",
+   "mixer",
+   "juicer",
+   "rasoi"
+  ],
+  "license": "Pixabay"
+ },
+ "blender_2": {
+  "file": "machines/blender_2.mp3",
+  "tags": [
+   "blender",
+   "mixer",
+   "juicer"
+  ],
+  "license": "Pixabay"
+ },
+ "blender_3": {
+  "file": "machines/blender_3.mp3",
+  "tags": [
+   "blender",
+   "mixer"
+  ],
+  "license": "Pixabay"
+ },
+ "blender_4": {
+  "file": "machines/blender_4.mp3",
+  "tags": [
+   "blender",
+   "mixer"
+  ],
+  "license": "Pixabay"
+ },
+ "mixer_inside": {
+  "file": "machines/mixer_inside.mp3",
+  "tags": [
+   "mixer",
+   "inside",
+   "machine"
+  ],
+  "license": "Pixabay"
+ },
+ "coffee_grinder_5": {
+  "file": "machines/coffee_grinder_5.mp3",
+  "tags": [
+   "coffee",
+   "grinder",
+   "electric"
+  ],
+  "license": "Pixabay"
+ },
+ "dragon_roar": {
+  "file": "animals/dragon_roar.mp3",
+  "tags": [
+   "dragon",
+   "roar",
+   "dahad",
+   "ड्रैगन"
+  ],
+  "license": "Pixabay"
+ },
+ "dinosaur_roar": {
+  "file": "animals/dinosaur_roar.mp3",
+  "tags": [
+   "dinosaur",
+   "roar",
+   "dahad"
+  ],
+  "license": "Pixabay"
+ },
+ "alien_roar": {
+  "file": "animals/alien_roar.mp3",
+  "tags": [
+   "alien",
+   "spaceship",
+   "roar",
+   "एलियन"
+  ],
+  "license": "Pixabay"
+ },
+ "dragon_growl": {
+  "file": "animals/dragon_growl.mp3",
+  "tags": [
+   "dragon",
+   "growl",
+   "tiger",
+   "elephant",
+   "गुर्राना"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -3050,6 +3143,9 @@ VARIANTS = {
     "train": ["train_pass_1", "train_pass_2", "train_pass_3", "train_running", "train_approaching", "train_crossing", "train_horn_1", "train_horn_2", "train_horn_3", "train_horn_4", "train_horn_distant", "train_horn_lofi", "train_horn_comical", "train_departure", "train_passing_cars", "train_loud", "train_rural_india", "train_distant_birds", "steam_train", "steam_train_2", "train_horn_5", "train_horn_6", "train_horn_pass_distant", "train_horn_passing", "train_horn_asia", "train_horn_lofi_2", "train_horn_blast", "train_musical", "diesel_horn", "train_horn_7", "train_horn_8", "train_horn_fade", "train_horn_horror", "station_ambience"],
     "machine": ["grinder_axe", "grinder_start", "mixer_beater", "coffee_grinder", "food_mixer", "mixer_2", "coffee_machine", "coffee_grinder_2", "concrete_mixer", "metal_scrape"],
     "vinyl": ["vinyl_scratch", "vinyl_crackle", "vinyl_loop"],
+    "blender": ["blender_1", "blender_2", "blender_3", "blender_4"],
+    "dragon": ["dragon_roar", "dragon_growl", "dinosaur_roar"],
+    "alien": ["alien_roar"],
     "coffee": ["coffee_machine", "coffee_grinder_2", "coffee_grinder_3", "coffee_stir"],
     "horn": ["horn_1"],
     "sehnai": ["drum_sehnai"],
