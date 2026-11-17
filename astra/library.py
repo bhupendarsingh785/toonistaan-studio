@@ -3668,6 +3668,112 @@ DEFAULT_INDEX = {
    "cinematic"
   ],
   "license": "Pixabay"
+ },
+ "mantra_lakshmi": {
+  "file": "mantra/mantra_lakshmi.mp3",
+  "tags": [
+   "mantra",
+   "lakshmi",
+   "लक्ष्मी",
+   "wealth",
+   "paisa"
+  ],
+  "license": "Pixabay"
+ },
+ "mantra_krishna_love": {
+  "file": "mantra/mantra_krishna_love.mp3",
+  "tags": [
+   "mantra",
+   "krishna",
+   "कृष्ण",
+   "love",
+   "pyaar"
+  ],
+  "license": "Pixabay"
+ },
+ "mantra_kali": {
+  "file": "mantra/mantra_kali.mp3",
+  "tags": [
+   "mantra",
+   "kali",
+   "काली",
+   "shakti",
+   "tantra"
+  ],
+  "license": "Pixabay"
+ },
+ "mantra_mrityunjaya": {
+  "file": "mantra/mantra_mrityunjaya.mp3",
+  "tags": [
+   "mantra",
+   "shiva",
+   "मृत्युंजय",
+   "mahamrityunjaya",
+   "deep"
+  ],
+  "license": "Pixabay"
+ },
+ "mantra_shivaya": {
+  "file": "mantra/mantra_shivaya.mp3",
+  "tags": [
+   "mantra",
+   "shiva",
+   "ॐ नमः शिवाय",
+   "om"
+  ],
+  "license": "Pixabay"
+ },
+ "mantra_govinda": {
+  "file": "mantra/mantra_govinda.mp3",
+  "tags": [
+   "mantra",
+   "govinda",
+   "गोविंदा",
+   "vishnu",
+   "bhakti"
+  ],
+  "license": "Pixabay"
+ },
+ "sitar_raaga": {
+  "file": "music/sitar_raaga.mp3",
+  "tags": [
+   "sitar",
+   "raaga",
+   "tabla",
+   "meditation",
+   "spa"
+  ],
+  "license": "Pixabay"
+ },
+ "sacred_whispers_1": {
+  "file": "music/sacred_whispers_1.mp3",
+  "tags": [
+   "sacred",
+   "whispers",
+   "mystic",
+   "temple"
+  ],
+  "license": "Pixabay"
+ },
+ "sacred_whispers_3": {
+  "file": "music/sacred_whispers_3.mp3",
+  "tags": [
+   "sacred",
+   "whispers",
+   "mystic",
+   "temple"
+  ],
+  "license": "Pixabay"
+ },
+ "mandala_groove": {
+  "file": "music/mandala_groove.mp3",
+  "tags": [
+   "mandala",
+   "groove",
+   "hypnotic",
+   "loop"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -3721,6 +3827,8 @@ VARIANTS = {
     "coffee": ["coffee_machine", "coffee_grinder_2", "coffee_grinder_3", "coffee_stir"],
     "horn": ["horn_1"],
     "sehnai": ["drum_sehnai"],
+    "mantra": ["mantra_lakshmi", "mantra_krishna_love", "mantra_kali", "mantra_mrityunjaya", "mantra_shivaya", "mantra_govinda"],
+    "sitar": ["sitar_raaga"],
     "bhajan": ["bhajan_maithili", "bhajan_rajasthani", "bhajan_desert", "bhajan_vishnu"],
     "meditation": ["meditation_indian"],
     "folk": ["folk_song_marathi", "bhajan_desert"],
