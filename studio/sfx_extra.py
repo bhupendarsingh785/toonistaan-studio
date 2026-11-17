@@ -267,6 +267,25 @@ def _door_rule(low):
     return out
 
 
+# Bhaav -> kaunsi awaaz lagti hai (situation ke hisaab se)
+BHAV_SOUNDS = {
+    "scared":    ["heartbeat", "breath"],
+    "surprised": ["scary_sting"],
+    "sad":       ["wind"],
+    "happy":     ["crowd_applause", "birds"],
+    "excited":   ["crowd_applause"],
+    "angry":     ["horror_hit"],
+    "whisper":   ["room"],
+    "calm":      [],
+    "neutral":   [],
+}
+
+
+def detect_bhav(bhaav, limit=1):
+    """Sirf bhaav se sound (jab vaakya me koi cheez na mile)."""
+    return list(BHAV_SOUNDS.get(str(bhaav or "").lower(), []))[:limit]
+
+
 def detect(text):
     """Line ke shabdon se SFX chuno (max 2)."""
     out = []
