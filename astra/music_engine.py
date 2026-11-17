@@ -6,6 +6,7 @@ from __future__ import annotations
 import math, random, wave, struct
 from pathlib import Path
 AUDIO_DIR = Path(__file__).resolve().parent.parent / 'storage' / 'audio'
+AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 
 RATE=24000
 SCALES={
