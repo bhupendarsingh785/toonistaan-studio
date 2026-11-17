@@ -3970,6 +3970,105 @@ DEFAULT_INDEX = {
    "chant"
   ],
   "license": "Pixabay"
+ },
+ "baby_laughs_2": {
+  "file": "voices/baby_laughs_2.mp3",
+  "tags": [
+   "baby",
+   "laugh",
+   "hansi",
+   "bachcha"
+  ],
+  "license": "Pixabay"
+ },
+ "baby_giggle_3": {
+  "file": "voices/baby_giggle_3.mp3",
+  "tags": [
+   "baby",
+   "giggle",
+   "hansi"
+  ],
+  "license": "Pixabay"
+ },
+ "baby_babble_2": {
+  "file": "voices/baby_babble_2.mp3",
+  "tags": [
+   "baby",
+   "babble",
+   "bachcha",
+   "gugu"
+  ],
+  "license": "Pixabay"
+ },
+ "baby_talk": {
+  "file": "voices/baby_talk.mp3",
+  "tags": [
+   "baby",
+   "talk",
+   "bachcha",
+   "bolna"
+  ],
+  "license": "Pixabay"
+ },
+ "girl_cry_1": {
+  "file": "voices/girl_cry_1.mp3",
+  "tags": [
+   "girl",
+   "cry",
+   "ladki",
+   "rona"
+  ],
+  "license": "Pixabay"
+ },
+ "child_cry_2": {
+  "file": "voices/child_cry_2.mp3",
+  "tags": [
+   "child",
+   "cry",
+   "bachcha",
+   "rona"
+  ],
+  "license": "Pixabay"
+ },
+ "man_cry_4": {
+  "file": "voices/man_cry_4.mp3",
+  "tags": [
+   "man",
+   "cry",
+   "aadmi",
+   "rona"
+  ],
+  "license": "Pixabay"
+ },
+ "human_roar": {
+  "file": "voices/human_roar.mp3",
+  "tags": [
+   "roar",
+   "growl",
+   "insaan",
+   "gussa"
+  ],
+  "license": "Pixabay"
+ },
+ "plors_sob": {
+  "file": "voices/plors_sob.mp3",
+  "tags": [
+   "sob",
+   "siskna",
+   "rona",
+   "dukh"
+  ],
+  "license": "Pixabay"
+ },
+ "mantra_ambient": {
+  "file": "mantra/mantra_ambient.mp3",
+  "tags": [
+   "mantra",
+   "ambient",
+   "chant",
+   "spiritual"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -3992,6 +4091,7 @@ VARIANTS = {
     "talk": ["talk_crowd_1", "talk_crowd_2"],
     "scream": ["scream_woman", "man_scream", "man_scream_2", "man_death_scream"],
     "cry": ["man_cry", "man_sniffle", "man_cry_2"],
+    "girl_cry": ["girl_cry_1", "child_cry_2"],
     "baby": ["baby_cry_1", "baby_cry_2", "baby_cry_3", "baby_laugh_1", "baby_laugh_2", "baby_giggle_1", "baby_giggle_2", "baby_babble", "baby_moan", "baby_noises"],
     "woman_cry": ["woman_cry_1", "woman_cry_2", "soft_cry_1"],
     "kitten": ["kitten_1"],
