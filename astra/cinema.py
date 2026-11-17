@@ -82,7 +82,7 @@ def place(canvas, x, at_sec, gain=1.0):
 
 
 def tts(text, kirdaar, bhaav, out_mp3):
-    cmd = [sys.executable, os.path.join(ROOT, "tools", "awaaz.py"), "bolo", text, "--kirdaar", kirdaar, "-o", out_mp3]
+    cmd = [sys.executable, os.path.join(ROOT, "tools", "awaaz.py"), "bolo", text, "--kirdaar", kirdaar, "-o", out_mp3, "--natural"]
     if bhaav:
         cmd += ["--bhaav", bhaav]
     r = sh(cmd)
