@@ -92,7 +92,7 @@ def tts(text, kirdaar, bhaav, out_mp3):
     return r.returncode == 0 and os.path.exists(out_mp3)
 
 
-def build(story_path, out_path, verbose=True):
+def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
     import astra as A  # same folder
     import sfx as S
 
@@ -142,7 +142,7 @@ def build(story_path, out_path, verbose=True):
             else:
                 if verbose:
                     print("TTS_FAIL", si, li, flush=True)
-            t += dur + 0.35
+            t += dur + gap
 
             # line ke shabdon se SFX (max 2), thodi doori/pan ke saath
             for name in A.detect(text) if hasattr(A, "detect") else []:
@@ -158,9 +158,9 @@ def build(story_path, out_path, verbose=True):
         plan.append(("music", {"mood": music, "start": sc_start, "end": t + 0.6}, sc_start))
         cue["scenes"].append({"env": env, "music": music, "start": round(sc_start, 2),
                               "end": round(t + 0.6, 2), "cues": cues})
-        t += 0.6
+        t += scene_gap
 
-    total = t + 0.8
+    total = t + 0.35
     n = int(SR * total)
     voice = np.zeros(n, np.float32)
     fx = np.zeros(n, np.float32)
