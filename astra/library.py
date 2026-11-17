@@ -3353,6 +3353,106 @@ DEFAULT_INDEX = {
    "myau"
   ],
   "license": "Pixabay"
+ },
+ "chick_1": {
+  "file": "voices/chick_1.mp3",
+  "tags": [
+   "chick",
+   "chidiya",
+   "चूजा",
+   "bird"
+  ],
+  "license": "Pixabay"
+ },
+ "baby_moan": {
+  "file": "voices/baby_moan.mp3",
+  "tags": [
+   "baby",
+   "bachcha",
+   "moan",
+   "rona"
+  ],
+  "license": "Pixabay"
+ },
+ "baby_laugh_1": {
+  "file": "voices/baby_laugh_1.mp3",
+  "tags": [
+   "baby",
+   "bachcha",
+   "laugh",
+   "hansi",
+   "khushi"
+  ],
+  "license": "Pixabay"
+ },
+ "baby_babble": {
+  "file": "voices/baby_babble.mp3",
+  "tags": [
+   "baby",
+   "babble",
+   "bachcha",
+   "gugu"
+  ],
+  "license": "Pixabay"
+ },
+ "baby_cry_1": {
+  "file": "voices/baby_cry_1.mp3",
+  "tags": [
+   "baby",
+   "bachcha",
+   "cry",
+   "rona",
+   "रोना"
+  ],
+  "license": "Pixabay"
+ },
+ "baby_cry_2": {
+  "file": "voices/baby_cry_2.mp3",
+  "tags": [
+   "baby",
+   "cry",
+   "rona"
+  ],
+  "license": "Pixabay"
+ },
+ "baby_cry_3": {
+  "file": "voices/baby_cry_3.mp3",
+  "tags": [
+   "baby",
+   "cry",
+   "rona"
+  ],
+  "license": "Pixabay"
+ },
+ "child_cry_1": {
+  "file": "voices/child_cry_1.mp3",
+  "tags": [
+   "child",
+   "bachcha",
+   "cry",
+   "rona"
+  ],
+  "license": "Pixabay"
+ },
+ "man_cry_2": {
+  "file": "voices/man_cry_2.mp3",
+  "tags": [
+   "man",
+   "cry",
+   "rona",
+   "dukh"
+  ],
+  "license": "Pixabay"
+ },
+ "baby_zombie": {
+  "file": "voices/baby_zombie.mp3",
+  "tags": [
+   "zombie",
+   "baby",
+   "horror",
+   "daravana"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -3372,7 +3472,10 @@ VARIANTS = {
     "gate_close": ["door_close_a", "door_close_b", "door_close_c"],
     "talk": ["talk_crowd_1", "talk_crowd_2"],
     "scream": ["scream_woman", "man_scream", "man_scream_2", "man_death_scream"],
-    "cry": ["man_cry", "man_sniffle"],
+    "cry": ["man_cry", "man_sniffle", "man_cry_2"],
+    "baby": ["baby_cry_1", "baby_cry_2", "baby_cry_3", "baby_laugh_1", "baby_babble", "baby_moan"],
+    "child": ["child_cry_1", "baby_cry_1"],
+    "zombie": ["baby_zombie"],
     "vampire": ["vampire_hiss", "vampire_hiss_2", "vampire_growl", "vampire_laugh", "vampire_laugh_2", "vampire_shriek"],
     "vampire_line": ["vampire_line_hunger", "vampire_line_humans", "vampire_line_soul", "vampire_line"],
     "screech": ["screech"],
