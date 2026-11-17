@@ -24,24 +24,29 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 # ElevenLabs ke public multilingual voices (stable ids)
 # Sirf PREMADE voices — free plan par yahi chalti hain (library voices 402 deti hain)
+# Sirf 2 PREMADE voices (free plan par 100% chalti hain): Adam + Rachel.
+# Bachche/dadi ka farak speed + pitch se banate hain.
+ADAM = "pNInz6obpgDQGcFmaJgB"
+RACHEL = "21m00Tcm4TlvDq8ikWAM"
 DEFAULT_VOICES = {
-    "male_adult": "pNInz6obpgDQGcFmaJgB",     # Adam
-    "female_adult": "21m00Tcm4TlvDq8ikWAM",   # Rachel
-    "male_young": "TxGEqnHWrfWFTfGW9XjX",     # Josh (jawan aadmi)
-    "female_young": "AZnzlk1XvdvUeBnXmlld",   # Domi (jawan ladki)
-    "male_old": "VR6AewLTigWG4xSOukaG",       # Arnold (bhaari)
-    "female_old": "MF3mGyEYCl7XYWbV9V6O",     # Elli
+    "male_adult": ADAM,
+    "female_adult": RACHEL,
+    "male_young": ADAM,
+    "female_young": RACHEL,
+    "male_old": ADAM,
+    "female_old": RACHEL,
 }
 SAFE_VOICE = {"male": "pNInz6obpgDQGcFmaJgB", "female": "21m00Tcm4TlvDq8ikWAM"}
 
 # hamare kirdaar -> kaunsi voice + settings
+# (voice, speed, pitch) — pitch 1.0 = normal, 1.2 = bachcha, 0.9 = budha
 KIRDAAR_VOICE = {
-    "madhur": ("male_adult", 0.92, 1.0),        # (voice, speed, style)
-    "swara": ("female_adult", 0.95, 1.0),
-    "swara_bachcha": ("female_young", 1.06, 1.15),
-    "madhur_bachcha": ("male_young", 1.06, 1.15),
-    "swara_dadi": ("female_old", 0.88, 0.9),
-    "madhur_dada": ("male_old", 0.88, 0.9),
+    "madhur": ("male_adult", 0.95, 1.0),
+    "swara": ("female_adult", 0.97, 1.02),
+    "swara_bachcha": ("female_young", 1.05, 1.18),
+    "madhur_bachcha": ("male_young", 1.05, 1.16),
+    "swara_dadi": ("female_old", 0.88, 0.92),
+    "madhur_dada": ("male_old", 0.88, 0.90),
 }
 
 
@@ -65,7 +70,7 @@ def eleven_tts(text, kirdaar="madhur", out="out.mp3"):
     key = eleven_key()
     if not key:
         return False
-    voice_name, speed, style = KIRDAAR_VOICE.get(kirdaar, ("male_adult", 1.0, 1.0))
+    voice_name, speed, pitch = KIRDAAR_VOICE.get(kirdaar, ("male_adult", 1.0, 1.0))
     env_override = os.environ.get(f"ELEVEN_VOICE_{voice_name.split('_')[0].upper()}", "").strip()
     voice_id = env_override or DEFAULT_VOICES.get(voice_name, DEFAULT_VOICES["male_adult"])
     payload = {
@@ -74,7 +79,7 @@ def eleven_tts(text, kirdaar="madhur", out="out.mp3"):
         "voice_settings": {
             "stability": 0.45,
             "similarity_boost": 0.8,
-            "style": min(1.0, max(0.0, (style - 1.0) * 2)),
+            "style": 0.0,
             "use_speaker_boost": True,
         },
     }
@@ -112,10 +117,17 @@ def eleven_tts(text, kirdaar="madhur", out="out.mp3"):
         print("ELEVEN_FAIL chhota audio", len(audio), flush=True)
         return False
     open(out, "wb").write(audio)
-    if abs(speed - 1.0) > 0.02:
+    if abs(speed - 1.0) > 0.02 or abs(pitch - 1.0) > 0.02:
         tmp = out.replace(".mp3", "_s.mp3")
+        chain = []
+        if abs(pitch - 1.0) > 0.02:
+            chain.append(f"asetrate=44100*{pitch:.3f}")
+            chain.append("aresample=44100")
+            chain.append(f"atempo={1/pitch:.4f}")
+        if abs(speed - 1.0) > 0.02:
+            chain.append(f"atempo={speed:.3f}")
         r = subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", out,
-                            "-filter:a", f"atempo={speed:.3f}", tmp], capture_output=True)
+                            "-filter:a", ",".join(chain), tmp], capture_output=True)
         if r.returncode == 0 and os.path.exists(tmp):
             os.replace(tmp, out)
     print("ELEVEN_OK", kirdaar, voice_name, len(audio), flush=True)
