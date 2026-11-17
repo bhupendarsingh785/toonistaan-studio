@@ -35,6 +35,14 @@ DEFAULT_INDEX = {
     "footsteps_parquet": {"file": "footsteps/footsteps_parquet.mp3", "tags": ["footsteps", "kadam", "कदम", "parquet", "boots", "indoor", "ghar", "घर"], "license": "Pixabay"},
     "footsteps_hallway": {"file": "footsteps/footsteps_hallway.mp3", "tags": ["footsteps", "kadam", "कदम", "hallway", "corridor", "हवेली", "indoor"], "license": "Pixabay"},
     "footsteps_concrete": {"file": "footsteps/footsteps_concrete.mp3", "tags": ["footsteps", "kadam", "कदम", "concrete", "road", "सड़क", "bahar", "outdoor"], "license": "Pixabay"},
+    "footsteps_walk":    {"file": "footsteps/footsteps_walk.mp3", "tags": ["footsteps", "walking", "kadam", "कदम", "chalna"], "license": "Pixabay"},
+    "door_open_a":       {"file": "door/door_open_a.mp3", "tags": ["door", "open", "दरवाज़ा", "darwaza", "khulna"], "license": "Pixabay"},
+    "door_open_b":       {"file": "door/door_open_b.mp3", "tags": ["door", "open", "दरवाज़ा", "darwaza", "khulna"], "license": "Pixabay"},
+    "door_open_c":       {"file": "door/door_open_c.mp3", "tags": ["door", "open", "दरवाज़ा", "darwaza", "khulna"], "license": "Pixabay"},
+    "door_close_a":      {"file": "door/door_close_a.mp3", "tags": ["door", "close", "दरवाज़ा", "darwaza", "band"], "license": "Pixabay"},
+    "door_close_b":      {"file": "door/door_close_b.mp3", "tags": ["door", "close", "दरवाज़ा", "darwaza", "band"], "license": "Pixabay"},
+    "door_close_c":      {"file": "door/door_close_c.mp3", "tags": ["door", "close", "दरवाज़ा", "darwaza", "band"], "license": "Pixabay"},
+    "jungle_nature":     {"file": "nature/jungle_nature.mp3", "tags": ["jungle", "forest", "जंगल", "nature", "birds", "ambience"], "license": "Pixabay"},
 }
 
 # hamare SFX naam -> library naam (seedha match)
@@ -96,6 +104,18 @@ def find(name, context=""):
     return None
 
 
+VARIANTS = {
+    "gate_open": ["door_open_a", "door_open_b", "door_open_c"],
+    "door": ["door_open_a", "door_open_b", "door_open_c"],
+    "gate_close": ["door_close_a", "door_close_b", "door_close_c"],
+    "jungle": ["jungle_nature"],
+    "footsteps_walk": ["footsteps_walk", "footsteps_parquet", "footsteps_concrete"],
+}
+
+FAST_WORDS = ["दौड़", "भाग", "तेज़", "तेज", "जल्दी", "fast", "run", "daud"]
+SLOW_WORDS = ["धीरे", "आहिस्ता", "dheere", "slow"]
+SCARY_WORDS = ["डरावन", "डर", "आहट", "scary", "horror", "धीमी"]
+
 INDOOR_WORDS = ["घर", "कमरा", "हवेली", "अंदर", "सीढ़ी", "छत", "room", "indoor", "hall", "floor"]
 OUTDOOR_WORDS = ["सड़क", "बाहर", "मिट्टी", "खेत", "बाज़ार", "गली", "road", "street", "outdoor", "concrete"]
 
@@ -110,22 +130,53 @@ def pick_footsteps(text=""):
     return "footsteps_parquet"
 
 
+def speed_for(name, context=""):
+    """Vaakya se raftaar: tez / dheema / daravana."""
+    t = str(context or "")
+    if any(w in t for w in FAST_WORDS):
+        return 1.25
+    if any(w in t for w in SCARY_WORDS):
+        return 0.82
+    if any(w in t for w in SLOW_WORDS):
+        return 0.88
+    return 1.0
+
+
+_ROT = {}
+
+
+def _variant(name, context=""):
+    """Ek hi tarah ki kai awaazein — baari-baari chuno (har scene alag lage)."""
+    if name in ("footsteps", "kadam", "कदम"):
+        return pick_footsteps(context)
+    if name in VARIANTS:
+        lst = VARIANTS[name]
+        i = _ROT.get(name, 0) % len(lst)
+        _ROT[name] = i + 1
+        return lst[i]
+    return find(name, context)
+
+
 def fetch(name, context=""):
     """Asli library file ka wav (44.1k mono) — na mile to None."""
-    key = find(name, context)
+    key = _variant(name, context)
     if not key:
         return None
     meta = _index()[key]
     src = os.path.join(LIB, meta["file"])
     if not os.path.exists(src):
         return None
-    out = os.path.join(CACHE, f"{key}.wav")
+    sp = speed_for(name, context)
+    out = os.path.join(CACHE, f"{key}_{sp:.2f}.wav")
     if os.path.exists(out) and os.path.getsize(out) > 5000:
         return out
-    r = subprocess.run([_ff(), "-loglevel", "error", "-y", "-i", src, "-ac", "1", "-ar", "44100", out],
-                       capture_output=True)
+    cmd = [_ff(), "-loglevel", "error", "-y", "-i", src, "-ac", "1", "-ar", "44100"]
+    if abs(sp - 1.0) > 0.02:
+        cmd += ["-filter:a", f"atempo={sp:.3f}"]
+    cmd += [out]
+    r = subprocess.run(cmd, capture_output=True)
     if r.returncode == 0 and os.path.exists(out) and os.path.getsize(out) > 5000:
-        print("LIB_OK", key, meta.get("license", ""), flush=True)
+        print("LIB_OK", key, "speed", sp, meta.get("license", ""), flush=True)
         return out
     return None
 
