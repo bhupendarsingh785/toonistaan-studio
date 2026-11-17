@@ -169,14 +169,31 @@ def build(story_path, out_path, verbose=True):
             a = read_wav(p["wav"])
             place(voice, a, p["start"], 1.0)
         elif kind == "sfx":
+            done = False
+            # 1) pehle ASLI recording (Freesound) — key ho to
             try:
-                import sfx_extra
-                s = sfx_extra.ALL[p["name"]]()
-                s = norm(s, 0.85)
-                s = A.reverb(s, 0.25)
-                place(fx, s, p["start"], 0.55)
+                import real_audio
+                rp = real_audio.fetch(p["name"])
+                if rp:
+                    rw = read_wav(rp)
+                    rw = norm(rw, 0.85)
+                    rw = A.reverb(rw, 0.20)
+                    place(fx, rw, p["start"], 0.75)
+                    done = True
+                    if verbose:
+                        print("SFX_REAL", p["name"], flush=True)
             except Exception:
                 pass
+            # 2) na mile to procedural
+            if not done:
+                try:
+                    import sfx_extra
+                    snd = sfx_extra.ALL[p["name"]]()
+                    snd = norm(snd, 0.85)
+                    snd = A.reverb(snd, 0.25)
+                    place(fx, snd, p["start"], 0.55)
+                except Exception:
+                    pass
         elif kind == "amb":
             env = p["env"]
             kind_amb = env if env in ("rain", "wind", "night", "village") else "room"
