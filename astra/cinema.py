@@ -153,7 +153,8 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
                 if not _sfx:
                     _sfx = sfx_extra.detect_bhav(bhaav, 1)
                 for name in _sfx:
-                    plan.append(("sfx", {"name": name, "start": t + 0.02, "text": text}, t + 0.02))
+                    plan.append(("sfx", {"name": name, "start": t + 0.02, "text": text,
+                                       "scene_end": t + 9.0}, t + 0.02))
                     cues.append({"type": "sfx", "name": name, "start": round(t + 0.02, 2)})
             except Exception:
                 pass
