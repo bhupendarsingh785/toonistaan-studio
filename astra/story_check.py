@@ -38,6 +38,7 @@ def main():
         vp = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(vp)
         speakers = vp.SARVAM_SPEAKER
+        pitches = vp.SARVAM_PITCH
         paces = vp.SARVAM_PACE
     except Exception:
         speakers, paces = {}, {}
@@ -58,8 +59,9 @@ def main():
     used = {}
     for c in chars:
         s = speakers.get(c)
+        pch = pitches.get(c, 1.0) if 'pitches' in dir() else 1.0
         if s:
-            used.setdefault(s, []).append(c)
+            used.setdefault((s, round(pch, 2)), []).append(c)
     same = {s: v for s, v in used.items() if len(v) > 1}
     print("\n[1] Awaaz")
     if missing_voice:
