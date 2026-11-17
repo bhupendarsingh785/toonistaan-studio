@@ -75,7 +75,7 @@ def eleven_tts(text, kirdaar="madhur", out="out.mp3"):
     voice_id = env_override or DEFAULT_VOICES.get(voice_name, DEFAULT_VOICES["male_adult"])
     payload = {
         "text": text,
-        "model_id": os.environ.get("ELEVEN_MODEL", "eleven_multilingual_v2"),
+        "model_id": os.environ.get("ELEVEN_MODEL", "eleven_flash_v2_5"),
         "voice_settings": {
             "stability": 0.45,
             "similarity_boost": 0.8,
@@ -90,7 +90,7 @@ def eleven_tts(text, kirdaar="madhur", out="out.mp3"):
     except urllib.error.HTTPError as e:
         body = ""
         try:
-            body = e.read().decode("utf-8", "ignore")[:160]
+            body = e.read().decode("utf-8", "ignore")[:400]
         except Exception:
             pass
         print("ELEVEN_FAIL", e.code, body, flush=True)
@@ -98,6 +98,19 @@ def eleven_tts(text, kirdaar="madhur", out="out.mp3"):
         if e.code in (401, 402, 403, 404, 422):
             gender = "female" if voice_name.startswith("female") else "male"
             safe_id = SAFE_VOICE[gender]
+            # (a) doosra model try karo
+            alt = "eleven_multilingual_v2" if payload["model_id"] != "eleven_multilingual_v2" else "eleven_flash_v2_5"
+            for mid in (alt, "eleven_turbo_v2_5"):
+                try:
+                    pl = dict(payload); pl["model_id"] = mid
+                    au = _post(f"https://api.elevenlabs.io/v1/text-to-speech/{safe_id}", pl,
+                               {"xi-api-key": key, "Content-Type": "application/json", "Accept": "audio/mpeg"})
+                    if len(au) > 2000:
+                        open(out, "wb").write(au)
+                        print("ELEVEN_OK_MODEL", kirdaar, mid, len(au), flush=True)
+                        return True
+                except Exception as e3:
+                    print("ELEVEN_MODEL_FAIL", mid, str(e3)[:50], flush=True)
             if voice_id != safe_id:
                 url2 = f"https://api.elevenlabs.io/v1/text-to-speech/{safe_id}"
                 try:
