@@ -319,11 +319,11 @@ ENV_ALLOW = {
     "night":   {"train", "crickets", "wind", "footsteps", "crowd", "owl", "frog",
                 "train_horn", "station", "heartbeat", "rain"},
     "room":    {"clock", "paper", "water", "footsteps", "door", "knock", "coins",
-                "phone", "kettle", "chai", "cooker", "switch", "fan"},
+                "phone", "kettle", "chai", "cooker", "switch", "fan", "stairs", "chair", "plate", "bed", "run"},
     "village": {"birds", "footsteps", "water", "chai", "cooker", "dog", "cow", "gate",
-                "bell", "temple", "crowd", "cycle_bell", "rain", "wind", "goat", "kids"},
+                "bell", "temple", "crowd", "cycle_bell", "rain", "wind", "goat", "kids", "stairs", "run"},
     "jungle":  {"leaves", "birds", "wind", "footsteps", "frog", "crickets", "water"},
-    "hall":    {"clock", "footsteps", "door", "crowd", "paper", "bell"},
+    "hall":    {"clock", "footsteps", "door", "crowd", "paper", "bell", "stairs", "chair", "run"},
     "cave":    {"water", "wind", "footsteps", "heartbeat"},
     "neutral": set(),
 }
@@ -344,7 +344,11 @@ CONTEXT_WORDS = [
     (["घड़ी", "टिक-टिक"], "clock", {"room", "hall"}),
     (["चूल्हा", "रसोई", "थाली", "खाना"], "cooker", {"village", "room"}),
     (["कागज़", "चिट्ठी", "पत्र", "टिकट"], "paper", {"street", "station", "room", "hall"}),
-    (["पैदल", "चलते", "चलना", "कदम", "आहट", "रास्ता", "भाग", "दौड़"], "footsteps", None),
+    (["पैदल", "चलते", "चलना", "चला", "चली", "चले", "चल रहा", "चल रही",
+      "चल पड़ा", "चल पड़ी", "चलने लगा", "चलने लगी", "कदम", "आहट",
+      "आगे बढ़ा", "आगे बढ़ी", "बढ़ चला", "बढ़ चली", "बढ़ा", "बढ़ी",
+      "दाखिल हुआ", "दाखिल हुई", "प्रवेश किया", "अंदर आया", "अंदर आई",
+      "पैर रखा", "पैरों की", "जूते", "टहल", "भाग", "दौड़"], "footsteps", None),
 ]
 
 
@@ -353,8 +357,15 @@ def detect_smart(text, env="neutral", allow_horror=False):
     low = str(text or "").lower()
     allowed = ENV_ALLOW.get(env, set())
     out = []
+    # Darwaze/gate ke liye khulne-band hone ka action preserve karo.
+    door_sounds = _door_rule(low)
+    for snd in door_sounds:
+        if snd not in out:
+            out.append(snd)
     for words, snd, envs in CONTEXT_WORDS:
         if not any(w in low for w in words):
+            continue
+        if snd == "gate_open" and door_sounds:
             continue
         if envs is not None and env not in envs:
             continue
