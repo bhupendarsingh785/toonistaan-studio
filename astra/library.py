@@ -82,7 +82,7 @@ DEFAULT_INDEX = {
     "vampire_hiss_3": {"file": "voices/vampire_hiss_3.mp3", "tags": ['vampire', 'hiss', 'pyaas', 'प्यास'], "license": "Pixabay"},
     "screech": {"file": "horror/screech.mp3", "tags": ['screech', 'cheekh', 'चीख', 'daravana'], "license": "Pixabay"},
     "transition_swoosh": {"file": "horror/transition_swoosh.mp3", "tags": ['transition', 'swoosh', 'dhadkan', 'badlav'], "license": "Pixabay"},
-    "aarti_ganga": {"file": "ambience/aarti_ganga.mp3", "tags": ['aarti', 'गंगा', 'मंदिर', 'mandir', 'ceremony', 'puja', 'भजन'], "license": "Pixabay"},
+    "aarti_ganga": {"file": "ambience/aarti_ganga_small.mp3", "tags": ['aarti', 'गंगा', 'मंदिर', 'mandir', 'ceremony', 'puja', 'भजन'], "license": "Pixabay"},
     "ambience_general": {"file": "ambience/ambience_general.mp3", "tags": ['ambience', 'mahaul', 'माहौल', 'general'], "license": "Pixabay"},
     "temple_ambient": {"file": "ambience/temple_ambient.mp3", "tags": ['temple', 'मंदिर', 'sacral', 'puja', 'goonj'], "license": "Pixabay"},
     "christmas_magic": {"file": "ambience/christmas_magic.mp3", "tags": ['christmas', 'magic', 'जादू', 'festival'], "license": "Pixabay"},
