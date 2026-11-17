@@ -185,7 +185,26 @@ def build(story_path, out_path, verbose=True):
             amb_bus[int(SR * p["start"]):int(SR * p["start"]) + len(seg)] += seg * 0.9
         elif kind == "music":
             dur = max(2.0, p["end"] - p["start"])
-            m = S.music(p["mood"], dur + 1.0)[: int(SR * dur)]
+            m = None
+            try:
+                import music_engine as ME
+                import wave as _w
+                path, _meta = ME.generate_music(p["mood"], max(8.0, dur + 1.0))
+                with _w.open(str(path)) as wf:
+                    raw = np.frombuffer(wf.readframes(wf.getnframes()), np.int16).astype(np.float32) / 32768
+                    ch = wf.getnchannels(); sr = wf.getframerate()
+                if ch == 2:
+                    raw = raw.reshape(-1, 2).mean(1)
+                if sr != SR:
+                    raw = np.interp(np.linspace(0, len(raw) - 1, int(len(raw) * SR / sr)),
+                                    np.arange(len(raw)), raw).astype(np.float32)
+                m = raw[: int(SR * dur)]
+                if verbose:
+                    print("MUSIC_ENGINE", p["mood"], len(m) / SR, "s", flush=True)
+            except Exception as e:
+                if verbose:
+                    print("MUSIC_FALLBACK", str(e)[:60], flush=True)
+                m = S.music(p["mood"], dur + 1.0)[: int(SR * dur)]
             m = norm(m, 0.9)
             f = min(int(SR * 0.6), len(m) // 3)
             if f > 1:
