@@ -19,13 +19,15 @@ jobs:
           python-version: "3.11"
       - name: ffmpeg
         run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
-      - name: Library saaf karo
+      - name: Library saaf karo (noise hatao)
         run: python astra/clean_library.py
+      - name: Duplicate (do baar bheji) hatao
+        run: python astra/dedupe_library.py --apply
       - name: Commit saaf files
         run: |
           git config user.name "astra-bot"
           git config user.email "astra-bot@users.noreply.github.com"
-          git add -A astra/library
+          git add -A astra/library astra/library.py
           if git diff --cached --quiet; then
             echo "kuch naya nahi — sab saaf hai"
           else
