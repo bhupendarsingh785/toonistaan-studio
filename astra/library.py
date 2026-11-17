@@ -72,6 +72,16 @@ DEFAULT_INDEX = {
     "vampire_hiss": {"file": "voices/vampire_hiss.mp3", "tags": ['vampire', 'hiss', 'chudail', 'डर'], "license": "Pixabay"},
     "vampire_growl": {"file": "voices/vampire_growl.mp3", "tags": ['vampire', 'growl', 'dahad', 'दहाड़'], "license": "Pixabay"},
     "vampire_laugh": {"file": "voices/vampire_laugh.mp3", "tags": ['vampire', 'laugh', 'hansi', 'चुड़ैल', 'evil'], "license": "Pixabay"},
+    "doctor_brain_damage": {"file": "voices/doctor_brain_damage.mp3", "tags": ['doctor', 'report', 'brain', 'dimaag', 'दिमाग', 'hospital'], "license": "Pixabay"},
+    "doctor_no_disease": {"file": "voices/doctor_no_disease.mp3", "tags": ['doctor', 'report', 'bimari', 'बीमारी', 'hospital'], "license": "Pixabay"},
+    "vampire_laugh_2": {"file": "voices/vampire_laugh_2.mp3", "tags": ['vampire', 'laugh', 'hansi', 'चुड़ैल'], "license": "Pixabay"},
+    "vampire_laugh_3": {"file": "voices/vampire_laugh_3.mp3", "tags": ['vampire', 'laugh', 'hansi', 'चुड़ैल'], "license": "Pixabay"},
+    "vampire_hum": {"file": "voices/vampire_hum.mp3", "tags": ['vampire', 'hum', 'goonj', 'डर'], "license": "Pixabay"},
+    "vampire_voice_2": {"file": "voices/vampire_voice_2.mp3", "tags": ['vampire', 'voice', 'chudail', 'चुड़ैल'], "license": "Pixabay"},
+    "vampire_hiss_2": {"file": "voices/vampire_hiss_2.mp3", "tags": ['vampire', 'hiss', 'hamla', 'हमला'], "license": "Pixabay"},
+    "vampire_hiss_3": {"file": "voices/vampire_hiss_3.mp3", "tags": ['vampire', 'hiss', 'pyaas', 'प्यास'], "license": "Pixabay"},
+    "screech": {"file": "horror/screech.mp3", "tags": ['screech', 'cheekh', 'चीख', 'daravana'], "license": "Pixabay"},
+    "transition_swoosh": {"file": "horror/transition_swoosh.mp3", "tags": ['transition', 'swoosh', 'dhadkan', 'badlav'], "license": "Pixabay"},
     "jungle_nature":     {"file": "nature/jungle_nature.mp3", "tags": ["jungle", "forest", "जंगल", "nature", "birds", "ambience"], "license": "Pixabay"},
 }
 
@@ -150,7 +160,9 @@ VARIANTS = {
     "talk": ["talk_crowd_1", "talk_crowd_2"],
     "scream": ["scream_woman", "man_scream", "man_scream_2", "man_death_scream"],
     "cry": ["man_cry", "man_sniffle"],
-    "vampire": ["vampire_hiss", "vampire_growl", "vampire_laugh", "vampire_shriek"],
+    "vampire": ["vampire_hiss", "vampire_hiss_2", "vampire_growl", "vampire_laugh", "vampire_laugh_2", "vampire_shriek"],
+    "screech": ["screech"],
+    "transition": ["transition_swoosh"],
     "vampire_line": ["vampire_line_hunger", "vampire_line_humans", "vampire_line_soul", "vampire_line"],
     "footsteps_walk": ["footsteps_walk", "footsteps_parquet", "footsteps_concrete"],
 }
