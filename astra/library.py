@@ -2468,16 +2468,6 @@ DEFAULT_INDEX = {
   ],
   "license": "Pixabay"
  },
- "spirit_gain_2": {
-  "file": "voices/spirit_gain_2.mp3",
-  "tags": [
-   "spirit",
-   "aatma",
-   "आत्मा",
-   "gain"
-  ],
-  "license": "Pixabay"
- },
  "station_ambience": {
   "file": "vehicles/station_ambience.mp3",
   "tags": [
@@ -3822,16 +3812,6 @@ DEFAULT_INDEX = {
    "shiva",
    "मंत्र",
    "healing"
-  ],
-  "license": "Pixabay"
- },
- "mantra_mrityunjaya_sangat": {
-  "file": "mantra/mantra_mrityunjaya_sangat.mp3",
-  "tags": [
-   "mrityunjaya",
-   "sangat",
-   "group",
-   "mandir"
   ],
   "license": "Pixabay"
  },
