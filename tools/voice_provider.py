@@ -82,7 +82,28 @@ SARVAM_SPEAKER = {
     "swara": "ritu", "swara_bachcha": "priya", "madhur_bachcha": "rahul",
     "swara_dadi": "kavya", "madhur_dada": "dev",
 }
+# umar (age) ke hisaab se awaaz ki unchaai — dadi, ladki, bacchi, jawan, budha sab alag
+SARVAM_PITCH = {
+    # budhe / dadi
+    "dadi": 0.86, "chacha": 0.94, "pandit": 0.92, "mukhiya": 0.90, "kaka": 0.95,
+    "madhur_dada": 0.88, "swara_dadi": 0.87,
+    # jawan mard
+    "madhur": 1.0, "arjun": 1.0, "ramesh": 1.0, "salim": 1.03, "driver": 1.02,
+    "constable": 0.97, "doctor": 1.0, "chaiwala": 1.06, "madhur_bachcha": 1.12,
+    # jawan aurat
+    "meera": 1.04, "sunita": 1.03, "aurat": 1.03, "chachi": 1.02, "bhabhi": 1.05,
+    "swara": 1.02, "behen": 1.16, "maa": 0.94,
+    # bacche / bacchi
+    "bachcha": 1.34, "swara_bachcha": 1.30,
+    # daravani
+    "bhoot": 0.80, "chudail": 0.88,
+    "announce": 1.0,
+}
+
+
 SARVAM_PACE = {
+    "ramesh": 0.98, "salim": 1.02, "chaiwala": 1.06, "announce": 1.0,
+    "aurat": 1.0, "maa": 0.90, "behen": 1.12,
     "madhur": 1.0, "arjun": 1.02, "meera": 1.0, "chacha": 0.92, "chachi": 1.05,
     "dadi": 0.86, "pandit": 0.88, "constable": 0.95, "doctor": 0.98, "bachcha": 1.1,
     "sunita": 1.0, "driver": 1.0, "bhoot": 0.78, "chudail": 0.82, "mukhiya": 0.9,
@@ -156,7 +177,26 @@ def sarvam_tts(text, kirdaar="madhur", out="out.wav"):
         print("SARVAM_FAIL chhota", len(audio), flush=True)
         return False
     open(out, "wb").write(audio)
-    print("SARVAM_OK", kirdaar, speaker, payload["pace"], len(audio), flush=True)
+
+    # pitch (umar ke hisaab se) — dadi bhaari, bacchi patli
+    pitch = SARVAM_PITCH.get(kirdaar, 1.0)
+    if abs(pitch - 1.0) > 0.02:
+        try:
+            import shutil, subprocess, tempfile
+            ff = shutil.which("ffmpeg")
+            if not ff:
+                import imageio_ffmpeg
+                ff = imageio_ffmpeg.get_ffmpeg_exe()
+            tmp = tempfile.mktemp(suffix=".wav")
+            af = f"asetrate=24000*{pitch:.3f},aresample=44100,atempo={1/pitch:.4f}"
+            r = subprocess.run([ff, "-loglevel", "error", "-y", "-i", out, "-filter:a", af,
+                                "-ac", "1", "-ar", "44100", tmp], capture_output=True)
+            if r.returncode == 0 and os.path.exists(tmp) and os.path.getsize(tmp) > 2000:
+                os.replace(tmp, out)
+        except Exception as e:
+            print("SARVAM_PITCH_FAIL", str(e)[:50], flush=True)
+
+    print("SARVAM_OK", kirdaar, speaker, payload["pace"], f"pitch={pitch}", len(audio), flush=True)
     return True
 
 
