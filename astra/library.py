@@ -3553,6 +3553,18 @@ DEFAULT_INDEX = {
    "rona"
   ],
   "license": "Pixabay"
+ },
+ "shankh": {
+  "file": "temple/shankh.mp3",
+  "tags": [
+   "shankh",
+   "शंख",
+   "conch",
+   "puja",
+   "aarti",
+   "mandir"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -3584,6 +3596,7 @@ VARIANTS = {
     "vampire_line": ["vampire_line_hunger", "vampire_line_humans", "vampire_line_soul", "vampire_line"],
     "screech": ["screech"],
     "transition": ["transition_swoosh"],
+    "shankh": ["shankh"],
     "temple": ["temple_ambient", "temple_bell", "aarti_ganga", "monk_om", "sacral_pad", "tanpura", "sacral_chant"],
     "magic": ["holy_aura", "christmas_magic", "angel_choir", "light_magic", "incant", "heal_spell", "sound_of_god"],
     "church": ["church_ambience", "cathedral_organ", "psalm23"],
