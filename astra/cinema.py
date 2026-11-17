@@ -59,10 +59,12 @@ def read_wav(p):
 
 
 def write_wav(p, x):
+    """mono ya stereo (n,2) — dono chalti hain."""
     import wave
-    x = np.clip(x, -1, 1)
+    x = np.clip(np.asarray(x, dtype=np.float32), -1, 1)
+    ch = 2 if (x.ndim == 2 and x.shape[1] == 2) else 1
     with wave.open(p, "w") as w:
-        w.setnchannels(1)
+        w.setnchannels(ch)
         w.setsampwidth(2)
         w.setframerate(SR)
         w.writeframes((x * 32767).astype(np.int16).tobytes())
@@ -79,6 +81,38 @@ def place(canvas, x, at_sec, gain=1.0):
         return
     m = min(len(x), len(canvas) - k)
     canvas[k:k + m] += x[:m] * gain
+
+
+PAN_MAP = {
+    "door": -0.35, "gate": -0.35, "knock": -0.30, "window": -0.45,
+    "train": 0.40, "car": 0.35, "horn": 0.42, "crowd": 0.0,
+    "footsteps": 0.0, "steps": 0.0, "run": 0.0, "heartbeat": 0.0,
+    "rain": 0.0, "wind": 0.25, "leaves": -0.25, "birds": -0.30,
+    "dog": 0.30, "cat": -0.28, "clock": -0.20, "cooker": 0.30,
+    "coins": 0.15, "paper": -0.15, "chai": 0.20,
+}
+
+
+def _pan_for(name):
+    n = str(name or "").lower()
+    for k, v in PAN_MAP.items():
+        if k in n:
+            return v
+    return 0.0
+
+
+def place_pan(left, right, x, at_sec, gain=1.0, pan=0.0):
+    """Awaaz ko baayein/daayein rakho (pan -1..+1) — asli duniya jaisa."""
+    i = int(SR * at_sec)
+    if i < 0 or i >= len(left) or len(x) == 0:
+        return
+    m = min(len(x), len(left) - i)
+    if m <= 0:
+        return
+    gl = gain * (1.0 - max(0.0, pan)) * 0.5 ** 0.5
+    gr = gain * (1.0 - max(0.0, -pan)) * 0.5 ** 0.5
+    left[i:i + m] += x[:m] * gl
+    right[i:i + m] += x[:m] * gr
 
 
 def tts(text, kirdaar, bhaav, out_mp3):
@@ -293,6 +327,8 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
     n = int(SR * total)
     voice = np.zeros(n, np.float32)
     fx = np.zeros(n, np.float32)
+    fxL = np.zeros(n, np.float32)
+    fxR = np.zeros(n, np.float32)
     amb_bus = np.zeros(n, np.float32)
     mus_bus = np.zeros(n, np.float32)
 
@@ -314,7 +350,7 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
                     if fade > 1:
                         snd[:fade] *= np.linspace(0, 1, fade)
                         snd[-fade:] *= np.linspace(1, 0, fade)
-                    place(fx, snd, p["start"], 0.34 if bpm < 140 else 0.40)
+                    place_pan(fxL, fxR, snd, p["start"], 0.34 if bpm < 140 else 0.40, _pan_for(p["name"]))
                     status = "rendered_local_footsteps"
             except Exception as e:
                 status = "failed:" + str(e)[:100]
@@ -355,7 +391,7 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
                         if fade > 1:
                             snd[:fade] *= np.linspace(0, 1, fade)
                             snd[-fade:] *= np.linspace(1, 0, fade)
-                        place(fx, snd, p["start"], 0.48)
+                        place_pan(fxL, fxR, snd, p["start"], 0.48, _pan_for(p["name"]))
                 else:
                     status = "asset_unavailable_no_misleading_substitute"
             except Exception as e:
@@ -380,7 +416,8 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
                         _f = min(int(SR * 0.3), max(1, len(rw) // 4))
                         rw = rw.copy()
                         rw[-_f:] *= np.linspace(1, 0, _f)
-                    place(fx, rw, p["start"], p.get("vol", 0.88 if any(k in str(p["name"]) for k in ("door", "gate", "knock")) else 0.78))
+                    _pn = _pan_for(p["name"])
+                    place_pan(fxL, fxR, rw, p["start"], p.get("vol", 0.88 if any(k in str(p["name"]) for k in ("door", "gate", "knock")) else 0.78), _pn)
                     done = True
                     if verbose:
                         print("SFX_REAL", p["name"], flush=True)
@@ -409,7 +446,7 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
                     cap = max(0.0, float(p.get("scene_end", p["start"])) - p["start"])
                     if cap > 0:
                         snd = snd[:int(SR * cap)]
-                    place(fx, snd, p["start"], 0.55)
+                    place_pan(fxL, fxR, snd, p["start"], 0.55, _pan_for(p["name"]))
                 except Exception:
                     pass
         elif kind == "amb":
@@ -477,8 +514,17 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
     duck = np.where(envl > thr, 0.32, 1.0)
     duck = np.convolve(duck, np.ones(int(SR * 0.30)) / int(SR * 0.30), "same")
 
-    mix = voice + fx + amb_bus * (0.55 + 0.45 * duck) + mus_bus * duck
-    mix = norm(mix, 0.95)
+    # ---- stereo mix (duniya jaisa: awaaz beech me, cheezein aas-paas) ----
+    amb_l = amb_bus * (0.62 + 0.38 * duck)
+    amb_r = np.roll(amb_bus, int(SR * 0.011)) * (0.66 + 0.34 * duck)   # halka delay = chaurai
+    mus_l = mus_bus * duck
+    mus_r = np.roll(mus_bus, int(SR * 0.007)) * duck
+    L = voice * 0.72 + fxL + amb_l * 0.30 + mus_l * 0.55
+    R = voice * 0.72 + fxR + amb_r * 0.30 + mus_r * 0.55
+    peak = max(1e-6, float(max(np.abs(L).max(), np.abs(R).max())))
+    L = L / peak * 0.95
+    R = R / peak * 0.95
+    mix = np.stack([L, R], axis=1)
 
     premix = os.path.join(tmp, "premix.wav")
     write_wav(premix, mix)
@@ -492,7 +538,7 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
           "alimiter=limit=0.95,"
           "loudnorm=I=-16:TP=-1.5:LRA=11")
     codec = ["-c:a", "libmp3lame", "-b:a", "192k"] if out_path.lower().endswith(".mp3") else []
-    r = sh(["ffmpeg", "-loglevel", "error", "-y", "-i", premix, "-af", af, "-ar", "44100", "-ac", "1", *codec, out_path])
+    r = sh(["ffmpeg", "-loglevel", "error", "-y", "-i", premix, "-af", af, "-ar", "44100", "-ac", "2", *codec, out_path])
     if r.returncode != 0:
         sys.exit("master fail: " + r.stderr[-300:])
 
