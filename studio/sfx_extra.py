@@ -142,6 +142,14 @@ ALL = {"coins": coins, "phone": phone_ring, "gate_open": gate_open, "gate_close"
        "bell": bell, "switch": switch, "car": car_pass, "water": water, "whoosh": whoosh}
 
 KEYWORDS = [
+    ("scream_woman", ["चीख", "चिल्ला", "cheekh", "scream", "दहाड़"]),
+    ("monster_lurk", ["राक्षस", "भूत", "दैत्य", "monster", "साया", "आत्मा"]),
+    ("crowd_panic", ["भगदड़", "panic", "भाग-दौड़", "शोर"]),
+    ("crowd_applause", ["ताली", "वाहवाही", "applause", "खुशी की आवाज़"]),
+    ("ghost", ["भूतनी", "आत्मा", "ghost", "परछाई"]),
+    ("horror_hit", ["धमाका", "टकराव", "impact", "धड़ाम"]),
+    ("scary_sting", ["डरावनी आवाज़", "चौंक", "sting", "अचानक"]),
+    ("horror_ambience", ["माहौल", "सन्नाटा", "डरावना", "ambience"]),
     ("coins", ["सिक्के", "पैसे", "गुल्लक", "रुपये", "बैंक", "खाता", "पर्स", "नोट", "कमाई", "बचत", "मुद्रा"]),
     ("phone", ["फोन", "मोबाइल", "घंटी", "कॉल", "बजा", "बजी"]),
     ("gate_open", ["गेट खुला", "दरवाज़ा खुला", "दरवाजा खुला", "खटखट", "चरचरा"]),
