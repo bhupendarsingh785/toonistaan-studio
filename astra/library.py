@@ -3453,6 +3453,106 @@ DEFAULT_INDEX = {
    "daravana"
   ],
   "license": "Pixabay"
+ },
+ "baby_giggle_1": {
+  "file": "voices/baby_giggle_1.mp3",
+  "tags": [
+   "baby",
+   "giggle",
+   "hansi",
+   "bachcha"
+  ],
+  "license": "Pixabay"
+ },
+ "baby_giggle_2": {
+  "file": "voices/baby_giggle_2.mp3",
+  "tags": [
+   "baby",
+   "giggle",
+   "hansi"
+  ],
+  "license": "Pixabay"
+ },
+ "baby_laugh_2": {
+  "file": "voices/baby_laugh_2.mp3",
+  "tags": [
+   "baby",
+   "laugh",
+   "hansi",
+   "khushi"
+  ],
+  "license": "Pixabay"
+ },
+ "baby_noises": {
+  "file": "voices/baby_noises.mp3",
+  "tags": [
+   "baby",
+   "noise",
+   "babble",
+   "bachcha"
+  ],
+  "license": "Pixabay"
+ },
+ "soft_cry_1": {
+  "file": "voices/soft_cry_1.mp3",
+  "tags": [
+   "cry",
+   "soft",
+   "rona",
+   "dukh"
+  ],
+  "license": "Pixabay"
+ },
+ "woman_cry_1": {
+  "file": "voices/woman_cry_1.mp3",
+  "tags": [
+   "woman",
+   "cry",
+   "aurat",
+   "rona"
+  ],
+  "license": "Pixabay"
+ },
+ "woman_cry_2": {
+  "file": "voices/woman_cry_2.mp3",
+  "tags": [
+   "woman",
+   "cry",
+   "aurat",
+   "rona"
+  ],
+  "license": "Pixabay"
+ },
+ "monster_girl_cry": {
+  "file": "voices/monster_girl_cry.mp3",
+  "tags": [
+   "monster",
+   "girl",
+   "cry",
+   "sobbing",
+   "horror"
+  ],
+  "license": "Pixabay"
+ },
+ "kitten_1": {
+  "file": "voices/kitten_1.mp3",
+  "tags": [
+   "kitten",
+   "billi",
+   "बिल्ली",
+   "cat",
+   "meow"
+  ],
+  "license": "Pixabay"
+ },
+ "man_cry_3": {
+  "file": "voices/man_cry_3.mp3",
+  "tags": [
+   "man",
+   "cry",
+   "rona"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -3473,7 +3573,9 @@ VARIANTS = {
     "talk": ["talk_crowd_1", "talk_crowd_2"],
     "scream": ["scream_woman", "man_scream", "man_scream_2", "man_death_scream"],
     "cry": ["man_cry", "man_sniffle", "man_cry_2"],
-    "baby": ["baby_cry_1", "baby_cry_2", "baby_cry_3", "baby_laugh_1", "baby_babble", "baby_moan"],
+    "baby": ["baby_cry_1", "baby_cry_2", "baby_cry_3", "baby_laugh_1", "baby_laugh_2", "baby_giggle_1", "baby_giggle_2", "baby_babble", "baby_moan", "baby_noises"],
+    "woman_cry": ["woman_cry_1", "woman_cry_2", "soft_cry_1"],
+    "kitten": ["kitten_1"],
     "child": ["child_cry_1", "baby_cry_1"],
     "zombie": ["baby_zombie"],
     "vampire": ["vampire_hiss", "vampire_hiss_2", "vampire_growl", "vampire_laugh", "vampire_laugh_2", "vampire_shriek"],
