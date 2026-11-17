@@ -21,25 +21,31 @@ jobs:
           pip install -q --upgrade pip
           pip install -q numpy edge-tts
 
-      - name: Voice probe
+      - name: Keys + voice probe
         env:
+          SARVAM_API_KEY: ${{ secrets.SARVAM_API_KEY }}
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          FREESOUND_API_KEY: ${{ secrets.FREESOUND_API_KEY }}
         run: |
+          [ -z "$SARVAM_API_KEY" ] && echo "SARVAM_KEY: nahi" || echo "SARVAM_KEY: mili (${#SARVAM_API_KEY})"
+          [ -z "$ELEVENLABS_API_KEY" ] && echo "ELEVEN_KEY: nahi" || echo "ELEVEN_KEY: mili (${#ELEVENLABS_API_KEY})"
+          [ -z "$FREESOUND_API_KEY" ] && echo "FREESOUND_KEY: nahi" || echo "FREESOUND_KEY: mili (${#FREESOUND_API_KEY})"
           python - <<'PY'
-          import sys, os
+          import sys
           sys.path.insert(0, "tools")
           import voice_provider as V
-          print("key:", V.have_eleven())
-          for k in ["madhur", "swara", "swara_bachcha", "madhur_bachcha", "swara_dadi", "madhur_dada"]:
-              ok = V.eleven_tts("नमस्ते, यह एक जाँच है।", k, f"/tmp/{k}.mp3")
-              print("PROBE", k, "OK" if ok else "FAIL", flush=True)
+          print("sarvam:", V.have_sarvam(), "| eleven:", V.have_eleven())
+          for k in ["madhur", "swara_bachcha", "swara_dadi"]:
+              ok = V.sarvam_tts("नमस्ते, यह जाँच है।", k, f"/tmp/{k}.wav") if V.have_sarvam() else False
+              print("SARVAM_PROBE", k, "OK" if ok else "skip/fail", flush=True)
           PY
 
       - name: Cinema (kahani se audio drama)
         env:
           PYTHONUNBUFFERED: "1"
-          FREESOUND_API_KEY: ${{ secrets.FREESOUND_API_KEY }}
+          SARVAM_API_KEY: ${{ secrets.SARVAM_API_KEY }}
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          FREESOUND_API_KEY: ${{ secrets.FREESOUND_API_KEY }}
         run: |
           python astra/cinema.py banao studio/series/user/story_demo.json -o cinema-demo.mp3
 
