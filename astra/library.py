@@ -1219,6 +1219,116 @@ DEFAULT_INDEX = {
    "halki"
   ],
   "license": "Pixabay"
+ },
+ "steps_a": {
+  "file": "footsteps/steps_a.mp3",
+  "tags": [
+   "steps",
+   "kadam",
+   "कदम",
+   "walk"
+  ],
+  "license": "Pixabay"
+ },
+ "steps_b": {
+  "file": "footsteps/steps_b.mp3",
+  "tags": [
+   "steps",
+   "kadam",
+   "कदम",
+   "pasos"
+  ],
+  "license": "Pixabay"
+ },
+ "steps_c": {
+  "file": "footsteps/steps_c.mp3",
+  "tags": [
+   "steps",
+   "kadam",
+   "कदम"
+  ],
+  "license": "Pixabay"
+ },
+ "steps_d": {
+  "file": "footsteps/steps_d.mp3",
+  "tags": [
+   "steps",
+   "kadam",
+   "कदम"
+  ],
+  "license": "Pixabay"
+ },
+ "steps_shoe": {
+  "file": "footsteps/steps_shoe.mp3",
+  "tags": [
+   "steps",
+   "kadam",
+   "कदम",
+   "shoe",
+   "joota",
+   "जूता"
+  ],
+  "license": "Pixabay"
+ },
+ "steps_soil": {
+  "file": "footsteps/steps_soil.mp3",
+  "tags": [
+   "steps",
+   "kadam",
+   "कदम",
+   "soil",
+   "mitti",
+   "मिट्टी"
+  ],
+  "license": "Pixabay"
+ },
+ "steps_gravel_2": {
+  "file": "footsteps/steps_gravel_2.mp3",
+  "tags": [
+   "steps",
+   "kadam",
+   "कदम",
+   "gravel",
+   "kankad"
+  ],
+  "license": "Pixabay"
+ },
+ "steps_forest_road": {
+  "file": "footsteps/steps_forest_road.mp3",
+  "tags": [
+   "steps",
+   "kadam",
+   "कदम",
+   "forest",
+   "jangal",
+   "जंगल"
+  ],
+  "license": "Pixabay"
+ },
+ "steps_puddle": {
+  "file": "footsteps/steps_puddle.mp3",
+  "tags": [
+   "steps",
+   "kadam",
+   "कदम",
+   "puddle",
+   "paani",
+   "पानी",
+   "keechad"
+  ],
+  "license": "Pixabay"
+ },
+ "steps_muddy_road": {
+  "file": "footsteps/steps_muddy_road.mp3",
+  "tags": [
+   "steps",
+   "kadam",
+   "कदम",
+   "muddy",
+   "keechad",
+   "कीचड़"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -1253,7 +1363,10 @@ VARIANTS = {
     "rain": ["rain_gentle_1", "rain_gentle_7", "rain_midday", "rain_window", "rain_on_glass", "thunderstorm"],
     "rain_tin": ["rain_tin_roof", "rain_tin_metal", "rain_tent"],
     "stairs": ["steps_stairs_up", "steps_stairs_down", "steps_grass_to_stairs"],
-    "gravel": ["steps_gravel"],
+    "gravel": ["steps_gravel", "steps_gravel_2", "steps_forest_road"],
+    "soil": ["steps_soil"],
+    "mud": ["steps_muddy_road", "steps_puddle"],
+    "shoe": ["steps_shoe"],
     "grass": ["steps_frozen_grass", "steps_grass_to_stairs"],
     "village": ["village_ambience"],
     "thunder": ["thunderstorm"],
