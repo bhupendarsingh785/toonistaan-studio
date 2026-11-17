@@ -50,6 +50,23 @@ KIRDAAR = {
     "madhur_bachcha": ("hi-IN-MadhurNeural", 30, 2, "Ladka (patli awaaz)"),
     "swara_dadi": ("hi-IN-SwaraNeural", -22, -20, "Dadi / Nani"),
     "madhur_dada": ("hi-IN-MadhurNeural", -15, -18, "Dada / Nana"),
+    # naye kirdaar (kahani ke liye)
+    "arjun": ("hi-IN-MadhurNeural", 6, 0, "Jawan ladka (hero)"),
+    "meera": ("hi-IN-SwaraNeural", 4, 0, "Jawan ladki (heroine)"),
+    "chacha": ("hi-IN-MadhurNeural", -8, -10, "Chacha (bhaari)"),
+    "chachi": ("hi-IN-SwaraNeural", -4, -4, "Chachi"),
+    "dadi": ("hi-IN-SwaraNeural", -20, -18, "Dadi"),
+    "pandit": ("hi-IN-MadhurNeural", -6, -12, "Pandit ji"),
+    "constable": ("hi-IN-MadhurNeural", 2, -4, "Constable"),
+    "doctor": ("hi-IN-MadhurNeural", 4, -2, "Doctor"),
+    "bachcha": ("hi-IN-SwaraNeural", 32, 6, "Chhota bachcha"),
+    "sunita": ("hi-IN-SwaraNeural", 2, 0, "Gaon ki aurat"),
+    "driver": ("hi-IN-MadhurNeural", 8, 4, "Driver"),
+    "bhoot": ("hi-IN-MadhurNeural", -26, -22, "Bhoot (daravani)"),
+    "chudail": ("hi-IN-SwaraNeural", -12, -16, "Chudail"),
+    "mukhiya": ("hi-IN-MadhurNeural", -10, -14, "Gaon ka mukhiya"),
+    "kaka": ("hi-IN-MadhurNeural", -2, -6, "Dukan wala kaka"),
+    "bhabhi": ("hi-IN-SwaraNeural", 6, 2, "Bhabhi"),
 }
 
 BODY = ("equalizer=f=220:t=q:w=1.0:g=-2,equalizer=f=3200:t=q:w=1.2:g=3.5,equalizer=f=9000:t=q:w=1.0:g=1.5,"
