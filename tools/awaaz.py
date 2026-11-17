@@ -124,7 +124,7 @@ def _edge(text, kirdaar, bhaav, out, jitter=(0, 0)):
 SMOOTH = True
 
 
-def _chunks(text, max_words=11):
+def _chunks(text, max_words=18):
     """Line ko insan wale saans ke hisson me todo."""
     import re
     t = str(text).replace("\n", " ").strip()
@@ -149,7 +149,7 @@ def _chunks(text, max_words=11):
 def _pause_for(chunk):
     """Punctuation ke hisaab se chup (smooth = chhote)."""
     c = chunk.strip()
-    scale = 0.55 if SMOOTH else 1.0
+    scale = 0.40 if SMOOTH else 1.0
     if c.endswith(("?", "?")):
         base = 0.30
     elif c.endswith(("!", "!")):
@@ -200,6 +200,13 @@ def bolo_natural(text, kirdaar, bhaav, out, kaccha=False):
     listf = os.path.join(tmpdir, "list.txt")
     with open(listf, "w") as lf:
         for idx, (f, gap) in enumerate(pieces):
+            # har hisse ke kinare par 25ms fade
+            fp = os.path.join(tmpdir, f"fade_{idx}.mp3")
+            subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", f,
+                            "-filter:a", "afade=t=in:st=0:d=0.025,areverse,afade=t=in:st=0:d=0.025,areverse",
+                            fp], capture_output=True)
+            if os.path.exists(fp) and os.path.getsize(fp) > 1000:
+                f = fp
             lf.write(f"file '{f}'\n")
             sil = os.path.join(tmpdir, f"sil_{idx}.wav")
             subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-f", "lavfi", "-i",
