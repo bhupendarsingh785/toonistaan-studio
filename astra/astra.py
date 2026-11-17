@@ -519,6 +519,39 @@ class SoundResult:
     meta: dict = field(default_factory=dict)
 
 
+def detect(text):
+    """Line ke shabdon se SFX naam (sfx_extra jaisa, ASTRA ke andar)."""
+    try:
+        import sfx_extra
+        return sfx_extra.detect(text)
+    except Exception:
+        low = str(text or "")
+        out = []
+        for words, g, _ in HINTS:
+            if any(w.lower() in low.lower() for w in words):
+                out.append(g)
+            if len(out) >= 2:
+                break
+        return out
+
+
+def ambience(kind="room", sec=3.0):
+    """Mahaul ki awaaz (rain/wind/night/village/room) — cinema ke liye."""
+    n = int(SR * sec)
+    if kind == "rain":
+        base = rain(max(0.5, sec))
+    elif kind == "wind":
+        base = wind(max(0.5, sec))
+    elif kind == "night":
+        base = cricket(max(0.5, sec)) * 0.5 + lp(noise(max(0.5, sec)), 500) * 0.2
+    elif kind == "village":
+        base = lp(noise(max(0.5, sec)), 400) * 0.35 + bird_chirp(max(0.5, sec)) * 0.15
+    else:
+        base = lp(noise(max(0.5, sec)), 500) * 0.15
+    base = np.pad(base, (0, max(0, n - len(base))))[:n]
+    return norm(base, 0.10)
+
+
 def parse(desc):
     """Text -> kaunsa generator + kaunse params."""
     low = str(desc or "").lower()
