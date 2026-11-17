@@ -1541,6 +1541,105 @@ DEFAULT_INDEX = {
    "radio"
   ],
   "license": "Pixabay"
+ },
+ "bubbles": {
+  "file": "water/bubbles.mp3",
+  "tags": [
+   "bubbles",
+   "bulbule",
+   "paani",
+   "पानी"
+  ],
+  "license": "Pixabay"
+ },
+ "lava_loop": {
+  "file": "water/lava_loop.mp3",
+  "tags": [
+   "lava",
+   "aag",
+   "आग",
+   "loop"
+  ],
+  "license": "Pixabay"
+ },
+ "pour_drink": {
+  "file": "water/pour_drink.mp3",
+  "tags": [
+   "pour",
+   "dalna",
+   "drink",
+   "paani"
+  ],
+  "license": "Pixabay"
+ },
+ "boiling": {
+  "file": "water/boiling.mp3",
+  "tags": [
+   "boil",
+   "ubalna",
+   "उबलना",
+   "paani"
+  ],
+  "license": "Pixabay"
+ },
+ "fizzy_pour": {
+  "file": "water/fizzy_pour.mp3",
+  "tags": [
+   "fizzy",
+   "cold drink",
+   "soda",
+   "pour"
+  ],
+  "license": "Pixabay"
+ },
+ "underwater": {
+  "file": "water/underwater.mp3",
+  "tags": [
+   "underwater",
+   "paani ke neeche",
+   "डूब"
+  ],
+  "license": "Pixabay"
+ },
+ "tea_boil": {
+  "file": "water/tea_boil.mp3",
+  "tags": [
+   "tea",
+   "chai",
+   "चाय",
+   "boil"
+  ],
+  "license": "Pixabay"
+ },
+ "pour_glass": {
+  "file": "water/pour_glass.mp3",
+  "tags": [
+   "pour",
+   "glass",
+   "गिलास",
+   "paani"
+  ],
+  "license": "Pixabay"
+ },
+ "kettle_pour": {
+  "file": "water/kettle_pour.mp3",
+  "tags": [
+   "kettle",
+   "ketli",
+   "केटली",
+   "pour"
+  ],
+  "license": "Pixabay"
+ },
+ "kettle_cup": {
+  "file": "water/kettle_cup.mp3",
+  "tags": [
+   "kettle",
+   "cup",
+   "chai",
+   "pour"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -1587,7 +1686,11 @@ VARIANTS = {
     "village": ["village_ambience"],
     "thunder": ["thunderstorm"],
     "birds": ["birds_in_rain"],
-    "water": ["water_relax"],
+    "water": ["water_relax", "pour_glass", "kettle_pour", "boiling"],
+    "chai": ["tea_boil", "kettle_cup", "boiling"],
+    "bubbles": ["bubbles"],
+    "underwater": ["underwater"],
+    "lava": ["lava_loop"],
 }
 
 INDOOR_WORDS = ["घर", "कमरा", "हवेली", "अंदर", "सीढ़ी", "छत", "room", "indoor", "hall", "floor"]
