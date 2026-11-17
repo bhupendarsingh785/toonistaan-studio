@@ -149,9 +149,9 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
                 pass
             try:
                 import sfx_extra
-                _sfx = sfx_extra.detect(text)[:2]
-                if not _sfx:
-                    _sfx = sfx_extra.detect_bhav(bhaav, 1)
+                _env = sc.get("env", "neutral")
+                _horror = any(x in (sc.get("music") or "") for x in ("horror", "suspense"))
+                _sfx = sfx_extra.detect_smart(text, _env, allow_horror=_horror)[:2]
                 for name in _sfx:
                     plan.append(("sfx", {"name": name, "start": t + 0.02, "text": text,
                                        "scene_end": t + 9.0}, t + 0.02))
