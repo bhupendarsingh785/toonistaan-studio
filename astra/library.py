@@ -2477,6 +2477,103 @@ DEFAULT_INDEX = {
    "gain"
   ],
   "license": "Pixabay"
+ },
+ "station_ambience": {
+  "file": "vehicles/station_ambience.mp3",
+  "tags": [
+   "station",
+   "रेलवे",
+   "train",
+   "bheed",
+   "ambience"
+  ],
+  "license": "Pixabay"
+ },
+ "train_horn_1": {
+  "file": "vehicles/train_horn_1.mp3",
+  "tags": [
+   "train",
+   "horn",
+   "रेलगाड़ी",
+   "सीटी"
+  ],
+  "license": "Pixabay"
+ },
+ "train_horn_2": {
+  "file": "vehicles/train_horn_2.mp3",
+  "tags": [
+   "train",
+   "horn",
+   "tuktuk"
+  ],
+  "license": "Pixabay"
+ },
+ "train_signal": {
+  "file": "vehicles/train_signal.mp3",
+  "tags": [
+   "train",
+   "signal",
+   "रेल"
+  ],
+  "license": "Pixabay"
+ },
+ "train_pass_1": {
+  "file": "vehicles/train_pass_1.mp3",
+  "tags": [
+   "train",
+   "pass",
+   "guzarna"
+  ],
+  "license": "Pixabay"
+ },
+ "train_running": {
+  "file": "vehicles/train_running.mp3",
+  "tags": [
+   "train",
+   "running",
+   "chalti"
+  ],
+  "license": "Pixabay"
+ },
+ "toy_train": {
+  "file": "vehicles/toy_train.mp3",
+  "tags": [
+   "toy",
+   "train",
+   "whistle",
+   "bachche"
+  ],
+  "license": "Pixabay"
+ },
+ "horn_1": {
+  "file": "vehicles/horn_1.mp3",
+  "tags": [
+   "horn",
+   "car",
+   "गाड़ी",
+   "सड़क"
+  ],
+  "license": "Pixabay"
+ },
+ "drum_sehnai": {
+  "file": "music/drum_sehnai.mp3",
+  "tags": [
+   "sehnai",
+   "shaadi",
+   "शादी",
+   "dhol",
+   "khushi"
+  ],
+  "license": "Pixabay"
+ },
+ "intro_1": {
+  "file": "music/intro_1.mp3",
+  "tags": [
+   "intro",
+   "music",
+   "shuruaat"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -2508,6 +2605,9 @@ VARIANTS = {
     "ghost": ["ghost", "ghosts_past", "ghost_past_2"],
     "bell": ["temple_bell", "shofar"],
     "jungle": ["jungle_nature"],
+    "train": ["train_pass_1", "train_running", "train_horn_1", "train_horn_2", "station_ambience"],
+    "horn": ["horn_1"],
+    "sehnai": ["drum_sehnai"],
     "dhol": ["dhol_1", "dhol_2", "dhol_shadi", "dhol_wedding", "dhol_bass", "dhol_beats"],
     "knock": ["knock_1", "knock_2", "knock_3", "knock_4", "knock_5", "knock_6", "knock_7", "knock_8", "knock_9", "door_pounding"],
     "dog": ["dog_bark_1", "dog_bark_2", "dog_bark_3", "dog_bark_4", "dog_bark_5", "dog_bark_6", "dog_bark_7", "dog_bark_8", "dog_bark_small", "dogs_howl", "dog_variety", "dog_barking_long"],
