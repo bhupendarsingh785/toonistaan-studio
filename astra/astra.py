@@ -64,6 +64,15 @@ def env_ad(n, a=0.005, d=0.25, curve=8.0):
     return e
 
 
+def _place(out, x, k, g=1.0):
+    """Safe add: kabhi crash nahi (index clamp)."""
+    k = int(max(0, min(k, max(0, len(out) - 1))))
+    m = min(len(x), len(out) - k)
+    if m > 0:
+        out[k:k + m] += x[:m] * g
+    return out
+
+
 def norm(x, peak=0.9):
     p = float(np.abs(x).max()) if len(x) else 0.0
     return (x / p * peak).astype(np.float32) if p > 0 else x.astype(np.float32)
@@ -171,7 +180,7 @@ def rain(d=4.0, intensity=0.6):
         k = np.random.randint(0, max(1, len(drops) - int(SR * 0.03)))
         f = np.random.uniform(900, 4000)
         tt = T(0.03)
-        drops[k:k + len(tt)] += (np.sin(2 * np.pi * f * tt) * np.exp(-tt * 90)).astype(np.float32) * np.random.uniform(0.2, 0.7)
+        _place(drops, (np.sin(2 * np.pi * f * tt) * np.exp(-tt * 90)).astype(np.float32), k, np.random.uniform(0.2, 0.7))
     return norm(hiss * 0.5 + drops * 0.6, 0.8)
 
 
@@ -196,7 +205,7 @@ def water_drop(d=0.5, n=1):
         f = f0 * (1 + 1.6 * tt / 0.12)
         s = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-tt * 30)
         k = int(SR * (i * d))
-        out[k:k + len(s)] += s.astype(np.float32)
+        _place(out, s, k)
     return norm(out, 0.8)
 
 
@@ -206,7 +215,7 @@ def fire(d=4.0, intensity=0.6):
     for _ in range(int(40 * d * intensity)):
         k = np.random.randint(0, max(1, len(crackle) - int(SR * 0.03)))
         s = hp(noise(0.02), 2000) * np.exp(-T(0.02) * 60)
-        crackle[k:k + len(s)] += s[:len(crackle) - k] * np.random.uniform(0.3, 1.0)
+        _place(crackle, s, k, np.random.uniform(0.3, 1.0))
     return norm(roar + crackle * 0.7, 0.85)
 
 
@@ -262,7 +271,7 @@ def coins(d=0.9):
         f = np.random.uniform(2600, 5200)
         tt = T(0.16)
         k = np.random.randint(0, max(1, len(out) - len(tt)))
-        out[k:k + len(tt)] += (np.sin(2 * np.pi * f * tt) * np.exp(-tt * 26) * 0.5).astype(np.float32)
+        _place(out, (np.sin(2 * np.pi * f * tt) * np.exp(-tt * 26) * 0.5).astype(np.float32), k)
     return norm(out, 0.8)
 
 
@@ -311,7 +320,7 @@ def dog_bark(d=1.6, n=2):
         f = 420 - 180 * tt / 0.18
         x = (np.sin(2 * np.pi * np.cumsum(f) / SR) + 0.5 * bp(noise(0.18), 300, 2200)) * np.exp(-tt * 18)
         k = int(SR * (0.15 + i * 0.45))
-        out[k:k + len(x)] += x.astype(np.float32)
+        _place(out, x, k)
     return norm(out, 0.85)
 
 
@@ -331,7 +340,7 @@ def bird_chirp(d=2.0, n=5):
         f = f0 * (1 + 0.6 * np.sin(np.pi * tt / dur))
         x = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.sin(np.pi * tt / dur)
         k = int(SR * np.random.uniform(0, d - dur))
-        out[k:k + len(x)] += x.astype(np.float32)
+        _place(out, x, k)
     return norm(out, 0.7)
 
 
@@ -358,7 +367,7 @@ def magic_sparkle(d=2.0):
         tt = T(0.25)
         s = np.sin(2 * np.pi * f * tt) * np.exp(-tt * 12)
         k = np.random.randint(0, max(1, len(out) - len(s)))
-        out[k:k + len(s)] += s.astype(np.float32) * np.random.uniform(0.2, 0.8)
+        _place(out, s, k, np.random.uniform(0.2, 0.8))
     pad = np.sin(2 * np.pi * 220 * T(d)) * 0.1
     return norm(out * 0.7 + pad, 0.8)
 
@@ -395,7 +404,7 @@ def laugh(d=1.8):
         f = 220 - 40 * tt / dur
         x = (np.sin(2 * np.pi * np.cumsum(f) / SR) + 0.4 * bp(noise(dur), 400, 2000)) * np.sin(np.pi * tt / dur)
         k = int(SR * (i * 0.33))
-        out[k:k + len(x)] += x.astype(np.float32) * 0.8
+        _place(out, x, k, 0.8)
     return norm(out, 0.8)
 
 
