@@ -21,13 +21,19 @@ jobs:
           pip install -q --upgrade pip
           pip install -q numpy edge-tts
 
-      - name: Keys check
+      - name: Voice probe
         env:
-          FREESOUND_API_KEY: ${{ secrets.FREESOUND_API_KEY }}
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
         run: |
-          [ -z "$FREESOUND_API_KEY" ] && echo "FREESOUND_KEY: nahi" || echo "FREESOUND_KEY: mili (${#FREESOUND_API_KEY})"
-          [ -z "$ELEVENLABS_API_KEY" ] && echo "ELEVEN_KEY: nahi (edge-tts chalega)" || echo "ELEVEN_KEY: mili (${#ELEVENLABS_API_KEY})"
+          python - <<'PY'
+          import sys, os
+          sys.path.insert(0, "tools")
+          import voice_provider as V
+          print("key:", V.have_eleven())
+          for k in ["madhur", "swara", "swara_bachcha", "madhur_bachcha", "swara_dadi", "madhur_dada"]:
+              ok = V.eleven_tts("नमस्ते, यह एक जाँच है।", k, f"/tmp/{k}.mp3")
+              print("PROBE", k, "OK" if ok else "FAIL", flush=True)
+          PY
 
       - name: Cinema (kahani se audio drama)
         env:
