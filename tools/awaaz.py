@@ -67,6 +67,13 @@ KIRDAAR = {
     "mukhiya": ("hi-IN-MadhurNeural", -10, -14, "Gaon ka mukhiya"),
     "kaka": ("hi-IN-MadhurNeural", -2, -6, "Dukan wala kaka"),
     "bhabhi": ("hi-IN-SwaraNeural", 6, 2, "Bhabhi"),
+    "ramesh": ("hi-IN-MadhurNeural", 2, -4, "Mazdoor (hero)"),
+    "salim": ("hi-IN-MadhurNeural", 8, 0, "Dost"),
+    "chaiwala": ("hi-IN-MadhurNeural", 14, 6, "Chai wala"),
+    "announce": ("hi-IN-SwaraNeural", -2, -8, "Station announcement"),
+    "aurat": ("hi-IN-SwaraNeural", 2, 0, "Aurat (co-passenger)"),
+    "maa": ("hi-IN-SwaraNeural", -14, -14, "Maa"),
+    "behen": ("hi-IN-SwaraNeural", 20, 8, "Chhoti behen"),
 }
 
 BODY = ("equalizer=f=220:t=q:w=1.0:g=-2,equalizer=f=3200:t=q:w=1.2:g=3.5,equalizer=f=9000:t=q:w=1.0:g=1.5,"
