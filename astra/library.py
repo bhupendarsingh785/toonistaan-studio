@@ -1735,6 +1735,104 @@ DEFAULT_INDEX = {
    "ubalna"
   ],
   "license": "Pixabay"
+ },
+ "paper_1": {
+  "file": "foley/paper_1.mp3",
+  "tags": [
+   "paper",
+   "kagaz",
+   "कागज़",
+   "chitthi",
+   "पन्ने"
+  ],
+  "license": "Pixabay"
+ },
+ "paper_2": {
+  "file": "foley/paper_2.mp3",
+  "tags": [
+   "paper",
+   "kagaz",
+   "कागज़"
+  ],
+  "license": "Pixabay"
+ },
+ "paper_rip_2": {
+  "file": "foley/paper_rip_2.mp3",
+  "tags": [
+   "paper",
+   "rip",
+   "fatna",
+   "फटना"
+  ],
+  "license": "Pixabay"
+ },
+ "paper_rip_fast": {
+  "file": "foley/paper_rip_fast.mp3",
+  "tags": [
+   "paper",
+   "rip",
+   "fatna",
+   "tez"
+  ],
+  "license": "Pixabay"
+ },
+ "paper_slide": {
+  "file": "foley/paper_slide.mp3",
+  "tags": [
+   "paper",
+   "slide",
+   "khisakna"
+  ],
+  "license": "Pixabay"
+ },
+ "paper_riser": {
+  "file": "foley/paper_riser.mp3",
+  "tags": [
+   "paper",
+   "riser",
+   "tension"
+  ],
+  "license": "Pixabay"
+ },
+ "paper_turn": {
+  "file": "foley/paper_turn.mp3",
+  "tags": [
+   "paper",
+   "turn",
+   "palatna",
+   "kitab"
+  ],
+  "license": "Pixabay"
+ },
+ "paper_tear": {
+  "file": "foley/paper_tear.mp3",
+  "tags": [
+   "paper",
+   "tear",
+   "phadna",
+   "फाड़ना"
+  ],
+  "license": "Pixabay"
+ },
+ "paper_cut": {
+  "file": "foley/paper_cut.mp3",
+  "tags": [
+   "paper",
+   "cut",
+   "katna",
+   "काटना"
+  ],
+  "license": "Pixabay"
+ },
+ "paper_flutter": {
+  "file": "foley/paper_flutter.mp3",
+  "tags": [
+   "paper",
+   "flutter",
+   "hawa",
+   "udna"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -1766,6 +1864,8 @@ VARIANTS = {
     "ghost": ["ghost", "ghosts_past", "ghost_past_2"],
     "bell": ["temple_bell", "shofar"],
     "jungle": ["jungle_nature"],
+    "paper": ["paper_1", "paper_2", "paper_turn", "paper_rip_2", "paper_flutter"],
+    "paper_rip": ["paper_rip_2", "paper_rip_fast", "paper_tear"],
     "rain": ["rain_gentle_1", "rain_gentle_7", "rain_midday", "rain_window", "rain_on_glass", "thunderstorm"],
     "rain_tin": ["rain_tin_roof", "rain_tin_metal", "rain_tent"],
     "stairs": ["steps_stairs_up", "steps_stairs_down", "steps_grass_to_stairs"],
