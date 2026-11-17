@@ -92,6 +92,29 @@ def tts(text, kirdaar, bhaav, out_mp3):
     return r.returncode == 0 and os.path.exists(out_mp3)
 
 
+# har SFX kitna lamba chal sakta hai (chhoti cheezein chhoti)
+SFX_MAX = {
+    "train": 7.0, "train_pass": 7.0, "train_horn": 6.0, "station": 8.0,
+    "footsteps": 3.5, "steps": 3.5, "run": 3.0, "door": 4.0, "gate": 4.0, "knock": 3.0,
+    "heartbeat": 4.0, "scream": 3.0, "roar": 3.5, "thunder": 5.0,
+}
+
+
+def sfx_limit(name):
+    n = str(name or "").lower()
+    for k, v in SFX_MAX.items():
+        if k in n:
+            return v
+    return 5.0
+
+
+SCENE_BED = {
+    "village": ("birds", 0.42), "room": ("clock", 0.30), "street": ("crowd", 0.34),
+    "night": ("crickets", 0.34), "station": ("crowd", 0.36), "jungle": ("leaves", 0.36),
+    "hall": ("clock", 0.30), "cave": ("water", 0.34), "neutral": ("paper_1", 0.22),
+}
+
+
 def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
     import astra as A  # same folder
     import sfx as S
@@ -102,7 +125,8 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
         sys.exit("story me 'scenes' nahi mila")
 
     tmp = tempfile.mkdtemp(prefix="cinema_")
-    cue = {"title": data.get("title", ""), "scenes": []}
+    cue = {"title": data.get("title", ""), "scenes": [], "world_engine": None}
+    actual_durations = []
 
     # pehle poora timeline banao (lambai pata chale)
     plan = []      # (kind, payload, start)
@@ -112,9 +136,10 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
         music = sc.get("music", "calm")
         sc_start = t
         cues = []
+        scene_durations = [0.0] * len(sc.get("lines", []))
         # mahaul ka ambience (scene bhar)
-        amb = A.ambience(env if env in ("rain", "wind", "night", "village", "room") else "room", 1.0)
-        plan.append(("amb", {"env": env, "dur": 0.0, "start": sc_start}, sc_start))
+        amb_event = {"env": env, "dur": 0.0, "start": sc_start}
+        plan.append(("amb", amb_event, sc_start))
 
         for li, item in enumerate(sc.get("lines", [])):
             if isinstance(item, str):
@@ -126,6 +151,7 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
             if not str(text).strip():
                 continue
 
+            line_start = t
             mp3 = os.path.join(tmp, f"s{si}_l{li}.mp3")
             ok = tts(text, kirdaar, bhaav, mp3)
             wav = os.path.join(tmp, f"s{si}_l{li}.wav")
@@ -142,9 +168,11 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
             else:
                 if verbose:
                     print("TTS_FAIL", si, li, flush=True)
-            t += dur + gap
+            line_end = line_start + dur
+            scene_durations[li] = dur
+            t = line_end + gap
 
-            # line ke shabdon se SFX (max 2), thodi doori/pan ke saath
+            # line ke shabdon se SFX (max 2), dialogue ke turant baad.
             for name in A.detect(text) if hasattr(A, "detect") else []:
                 pass
             try:
@@ -152,17 +180,114 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
                 _env = sc.get("env", "neutral")
                 _horror = any(x in (sc.get("music") or "") for x in ("horror", "suspense"))
                 _sfx = sfx_extra.detect_smart(text, _env, allow_horror=_horror)[:2]
+                # Avoid a duplicate one-shot footsteps hit when the World Engine
+                # is already creating a continuous, speaker-aware movement bed.
+                try:
+                    from world_engine import _event_matches
+                    _has_world_movement = any(
+                        ev in ("movement_start", "movement_run", "movement_stop")
+                        for ev, _asset, _mode in _event_matches(text)
+                    )
+                    if _has_world_movement:
+                        _sfx = [name for name in _sfx if name != "footsteps"]
+                except Exception:
+                    pass
                 for name in _sfx:
-                    plan.append(("sfx", {"name": name, "start": t + 0.02, "text": text,
-                                       "scene_end": t + 9.0}, t + 0.02))
-                    cues.append({"type": "sfx", "name": name, "start": round(t + 0.02, 2)})
+                    sfx_start = line_end + 0.02
+                    plan.append(("sfx", {"name": name, "start": sfx_start, "text": text,
+                                       "scene_end": 0.0}, sfx_start))
+                    cues.append({"type": "sfx", "name": name, "start": round(sfx_start, 2)})
             except Exception:
                 pass
+        actual_durations.append(scene_durations)
+        # Scene ka ambience aur SFX agle scene me leak na hon.
+        scene_end = t + 0.6
+        amb_event["dur"] = max(0.5, scene_end - sc_start)
+        for _kind, _payload, _start in plan:
+            if _kind == "sfx" and _payload.get("scene_end") == 0.0 and _payload["start"] >= sc_start:
+                _payload["scene_end"] = scene_end
         # scene ka music
-        plan.append(("music", {"mood": music, "start": sc_start, "end": t + 0.6}, sc_start))
+        plan.append(("music", {"mood": music, "start": sc_start, "end": scene_end}, sc_start))
+        # khaali scene na lage — ek mahaul ki awaaz
+        try:
+            import sfx_extra as _SE
+            _env = sc.get("env", "neutral")
+            _n = 0
+            for _ln in sc.get("lines", []):
+                _t = _ln[1] if isinstance(_ln, (list, tuple)) and len(_ln) > 1 else str(_ln)
+                _n += len(_SE.detect_smart(_t, _env))
+            if _n < 2 and _env in SCENE_BED:
+                _nm, _vol = SCENE_BED[_env]
+                plan.append(("sfx", {"name": _nm, "start": sc_start + 0.5, "text": "",
+                                     "scene_end": scene_end, "vol": _vol}, sc_start + 0.5))
+        except Exception:
+            pass
         cue["scenes"].append({"env": env, "music": music, "start": round(sc_start, 2),
-                              "end": round(t + 0.6, 2), "cues": cues})
-        t += scene_gap
+                              "end": round(scene_end, 2), "cues": cues})
+        t = scene_end + scene_gap
+
+    # Additive World Engine integration: use actual TTS durations and preserve
+    # the legacy cue/render path. No legacy SFX, ambience, music or voice is removed.
+    world_events = []
+    try:
+        from world_engine import plan_world
+        world_scenes = []
+        for sc in scenes:
+            world_scenes.append({
+                "env": sc.get("env", "neutral"),
+                "lines": sc.get("lines", []),
+                "line_gap": gap,
+                # cinema.py adds 0.6s scene tail and then scene_gap
+                "scene_gap": scene_gap + 0.6,
+            })
+        world_result = plan_world(
+            {"title": data.get("title", ""), "scenes": world_scenes},
+            line_durations=actual_durations,
+            include_ambient=False,  # legacy Cinema already renders scene ambience
+        )
+        cue["world_engine"] = {
+            "version": world_result.get("version"),
+            "mode": "integrated_additive",
+            "duration_source": "measured_tts_audio_or_existing_2s_tts_failure_fallback",
+            "events": [],
+        }
+        for world_scene in world_result.get("scenes", []):
+            for wc in world_scene.get("cues", []):
+                if wc.get("type") == "state_start":
+                    event = {
+                        "kind": "world_state",
+                        "asset": wc.get("asset"),
+                        "start": 0.9 + float(wc.get("start", 0.0)),
+                        "end": 0.9 + float(wc.get("end", wc.get("start", 0.0))),
+                        "scene_end": 0.9 + float(world_scene.get("end", 0.0)),
+                        "event": wc.get("event"),
+                    }
+                    world_events.append(event)
+                elif wc.get("type") == "sfx":
+                    event = {
+                        "kind": "world_sfx",
+                        "asset": wc.get("asset"),
+                        "start": 0.9 + float(wc.get("start", 0.0)),
+                        "end": 0.9 + float(wc.get("end", wc.get("start", 0.0))),
+                        "scene_end": 0.9 + float(world_scene.get("end", 0.0)),
+                        "event": wc.get("event"),
+                    }
+                    world_events.append(event)
+        for event in world_events:
+            event["cue_status"] = "pending"
+            cue["world_engine"]["events"].append({
+                "event": event["event"], "asset": event["asset"],
+                "kind": event["kind"], "start": round(event["start"], 3),
+                "end": round(event["end"], 3), "status": "pending",
+            })
+            plan.append((event["kind"], event, event["start"]))
+        if verbose:
+            print("WORLD_ENGINE_INTEGRATED", len(world_events), "events", flush=True)
+    except Exception as e:
+        # Fail open: the original cinema render must continue unchanged.
+        cue["world_engine"] = {"mode": "integration_skipped", "error": str(e)[:180], "events": []}
+        if verbose:
+            print("WORLD_ENGINE_SKIPPED", str(e)[:120], flush=True)
 
     total = t + 0.35
     n = int(SR * total)
@@ -175,6 +300,69 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
         if kind == "line":
             a = read_wav(p["wav"])
             place(voice, a, p["start"], 1.0)
+        elif kind == "world_state":
+            # Continuous movement bed: footsteps persist until the planner's stop
+            # point. Running uses a faster cadence. Keep it subtle under dialogue.
+            status = "unavailable"
+            try:
+                import sfx_extra
+                duration = max(0.0, min(180.0, float(p.get("end", p["start"])) - float(p["start"])))
+                if duration > 0.05:
+                    bpm = 148 if p.get("event") == "movement_run" else 108
+                    snd = sfx_extra.footsteps(d=duration, bpm=bpm)
+                    fade = min(int(SR * 0.08), len(snd) // 4)
+                    if fade > 1:
+                        snd[:fade] *= np.linspace(0, 1, fade)
+                        snd[-fade:] *= np.linspace(1, 0, fade)
+                    place(fx, snd, p["start"], 0.34 if bpm < 140 else 0.40)
+                    status = "rendered_local_footsteps"
+            except Exception as e:
+                status = "failed:" + str(e)[:100]
+            p["cue_status"] = status
+            if verbose:
+                print("WORLD_MOVEMENT", p.get("event"), status, flush=True)
+        elif kind == "world_sfx":
+            # Resolve exact semantic recordings first; use a local fallback only
+            # when it is a defensible match. Never replace bangles/cloth/breathing
+            # with an unrelated sound just to avoid silence.
+            status = "asset_unavailable"
+            aliases = {
+                "door_open": "gate_open",
+                "door_close": "gate_close",
+                "vehicle_pass_by": "car",
+                "water_splash": "water",
+            }
+            try:
+                import real_audio
+                import sfx_extra
+                asset = str(p.get("asset", ""))
+                alias = aliases.get(asset, asset)
+                rp = real_audio.fetch(alias, context=p.get("event", ""))
+                snd = None
+                if rp:
+                    snd = read_wav(rp)
+                    status = "rendered_real_asset"
+                elif alias in sfx_extra.ALL:
+                    snd = sfx_extra.ALL[alias]()
+                    status = "rendered_local_fallback"
+                if snd is not None and len(snd):
+                    cap = max(0.0, min(30.0, float(p.get("scene_end", p["start"])) - p["start"]))
+                    if cap > 0:
+                        snd = snd[:int(SR * cap)]
+                    if len(snd):
+                        snd = norm(snd, 0.55)
+                        fade = min(int(SR * 0.04), len(snd) // 4)
+                        if fade > 1:
+                            snd[:fade] *= np.linspace(0, 1, fade)
+                            snd[-fade:] *= np.linspace(1, 0, fade)
+                        place(fx, snd, p["start"], 0.48)
+                else:
+                    status = "asset_unavailable_no_misleading_substitute"
+            except Exception as e:
+                status = "failed:" + str(e)[:100]
+            p["cue_status"] = status
+            if verbose:
+                print("WORLD_SFX", p.get("asset"), status, flush=True)
         elif kind == "sfx":
             done = False
             # 1) pehle ASLI recording (Freesound) — key ho to
@@ -185,6 +373,13 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
                     rw = read_wav(rp)
                     rw = norm(rw, 0.85)
                     rw = A.reverb(rw, 0.10)
+                    cap = max(0.0, float(p.get("scene_end", p["start"])) - p["start"])
+                    cap = min(cap, sfx_limit(p["name"]))
+                    if cap > 0:
+                        rw = rw[:int(SR * cap)]
+                        _f = min(int(SR * 0.3), max(1, len(rw) // 4))
+                        rw = rw.copy()
+                        rw[-_f:] *= np.linspace(1, 0, _f)
                     place(fx, rw, p["start"], p.get("vol", 0.88 if any(k in str(p["name"]) for k in ("door", "gate", "knock")) else 0.78))
                     done = True
                     if verbose:
@@ -195,16 +390,32 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
             if not done:
                 try:
                     import sfx_extra
-                    snd = sfx_extra.ALL[p["name"]]()
+                    name = p["name"]
+                    if name in sfx_extra.ALL:
+                        snd = sfx_extra.ALL[name]()
+                    else:
+                        # Detected actions ko available local generator se map karo;
+                        # missing key par sound ko chup-chaap drop na karo.
+                        fallback = {"run": "footsteps", "stairs": "footsteps", "chair": "wood",
+                                    "plate": "metal", "bed": "wood", "door": "door",
+                                    "gate_open": "door", "gate_close": "door"}.get(name, name)
+                        if fallback not in A.GENERATORS:
+                            if verbose:
+                                print("SFX_UNAVAILABLE", name, flush=True)
+                            continue
+                        snd = A.GENERATORS[fallback]()
                     snd = norm(snd, 0.85)
                     snd = A.reverb(snd, 0.25)
+                    cap = max(0.0, float(p.get("scene_end", p["start"])) - p["start"])
+                    if cap > 0:
+                        snd = snd[:int(SR * cap)]
                     place(fx, snd, p["start"], 0.55)
                 except Exception:
                     pass
         elif kind == "amb":
             env = p["env"]
             kind_amb = env if env in ("rain", "wind", "night", "village", "street", "jungle", "temple", "room") else "room"
-            need = max(1.0, t - p["start"])
+            need = max(0.5, float(p.get("dur") or 1.0))
             seg = None
             # 1) asli recording (Freesound)
             try:
@@ -285,6 +496,14 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
     if r.returncode != 0:
         sys.exit("master fail: " + r.stderr[-300:])
 
+    if cue.get("world_engine"):
+        rendered_status = {}
+        for _kind, _payload, _start in plan:
+            if _kind in ("world_state", "world_sfx"):
+                rendered_status[(round(_payload["start"], 3), _payload.get("asset"), _kind)] = _payload.get("cue_status", "pending")
+        for _event in cue["world_engine"].get("events", []):
+            _key = (round(_event["start"], 3), _event.get("asset"), _event.get("kind"))
+            _event["status"] = rendered_status.get(_key, "pending")
     cues_path = os.path.splitext(out_path)[0] + ".cues.json"
     json.dump(cue, open(cues_path, "w"), ensure_ascii=False, indent=1)
     print(f"TAIYAR {out_path} | {round(total,1)}s | {len(plan)} events | cues: {cues_path}")
