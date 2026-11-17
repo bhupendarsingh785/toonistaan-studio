@@ -77,6 +77,15 @@ def bolo(text, kirdaar, bhaav, out, kaccha=False):
     bhaav = bhaav or detect_emotion(text)
     r, p, v = prosody(bhaav, rate, pitch)
     tmp = tempfile.mktemp(suffix=".mp3")
+    # 0) Sarvam bulbul (Hindi storytelling) — key ho to
+    if voice_provider is not None and voice_provider.have_sarvam():
+        if voice_provider.sarvam_tts(text, kirdaar, tmp):
+            if kaccha:
+                os.replace(tmp, out)
+            else:
+                ffmpeg(tmp, out, TTS_AF); os.remove(tmp)
+            print(f"ban gaya (Sarvam): {out}  (kirdaar={kirdaar}, bhaav={bhaav})")
+            return
     # 1) ElevenLabs (asli jaisi awaaz) — key ho to
     if voice_provider is not None and voice_provider.have_eleven():
         if voice_provider.eleven_tts(text, kirdaar, tmp):
@@ -151,7 +160,9 @@ def bolo_natural(text, kirdaar, bhaav, out, jitter=True, kaccha=False):
             pp += random.choice([-3, -1, 0, 1, 3])
         f = os.path.join(tmpdir, f"c{i}.mp3")
         made = False
-        if voice_provider is not None and voice_provider.have_eleven():
+        if voice_provider is not None and voice_provider.have_sarvam():
+            made = voice_provider.sarvam_tts(chunk, kirdaar, f)
+        if not made and voice_provider is not None and voice_provider.have_eleven():
             made = voice_provider.eleven_tts(chunk, kirdaar, f)
         if not made:
             res = subprocess.run([sys.executable, "-m", "edge_tts", "--text", chunk, "--voice", name,
