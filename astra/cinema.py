@@ -185,7 +185,7 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
                     rw = read_wav(rp)
                     rw = norm(rw, 0.85)
                     rw = A.reverb(rw, 0.10)
-                    place(fx, rw, p["start"], 0.62)
+                    place(fx, rw, p["start"], p.get("vol", 0.88 if any(k in str(p["name"]) for k in ("door", "gate", "knock")) else 0.78))
                     done = True
                     if verbose:
                         print("SFX_REAL", p["name"], flush=True)
