@@ -83,6 +83,85 @@ def bolo(text, kirdaar, bhaav, out, kaccha=False):
     print(f"ban gaya: {out}  (kirdaar={kirdaar}, bhaav={bhaav}, raftaar={r}, pitch={p})")
 
 
+def _chunks(text, max_words=7):
+    """Line ko chhote hisson me todo — jahan insan saans leta hai."""
+    import re
+    t = str(text).replace("\n", " ")
+    # pehle punctuation par todo
+    parts = [x.strip() for x in re.split(r"(?<=[।,.!?;:—])\s+", t) if x.strip()]
+    out = []
+    for p in parts:
+        w = p.split()
+        if len(w) <= max_words:
+            out.append(p)
+            continue
+        buf = []
+        for word in w:
+            buf.append(word)
+            if len(buf) >= max_words:
+                out.append(" ".join(buf)); buf = []
+        if buf:
+            out.append(" ".join(buf))
+    return out or [t]
+
+
+def _pause_for(chunk):
+    """Punctuation ke hisaab se chup."""
+    c = chunk.strip()
+    if c.endswith(("?", "?")):
+        return 0.30
+    if c.endswith(("!", "!")):
+        return 0.26
+    if c.endswith(("।", ".", "…")):
+        return 0.30
+    if c.endswith((",", ";", ":", "—")):
+        return 0.16
+    return 0.12
+
+
+def bolo_natural(text, kirdaar, bhaav, out, jitter=True, kaccha=False):
+    """Insan jaisi awaaz: line chhote hisson me, beech me chhota chup, halka utar-chadhav."""
+    import random
+    if kirdaar not in KIRDAAR:
+        sys.exit(f"kirdaar '{kirdaar}' nahi pata. Ye hain: {', '.join(KIRDAAR)}")
+    name, pitch, rate, _ = KIRDAAR[kirdaar]
+    bhaav = bhaav or detect_emotion(text)
+    base_r, base_p, base_v = prosody(bhaav, rate, pitch)
+    tmpdir = tempfile.mkdtemp()
+    pieces = []
+    for i, chunk in enumerate(_chunks(text)):
+        rp = int(base_r.rstrip("%")) if str(base_r).endswith("%") else int(base_r)
+        pp = int(str(base_p).replace("Hz", "")) if "Hz" in str(base_p) else int(base_p)
+        if jitter:
+            rp += random.choice([-2, -1, 0, 1, 2])
+            pp += random.choice([-3, -1, 0, 1, 3])
+        f = os.path.join(tmpdir, f"c{i}.mp3")
+        res = subprocess.run([sys.executable, "-m", "edge_tts", "--text", chunk, "--voice", name,
+                              f"--rate={rp:+d}%", f"--pitch={pp:+d}Hz", f"--volume={base_v}",
+                              "--write-media", f], capture_output=True, text=True)
+        if res.returncode != 0 or not os.path.exists(f):
+            sys.exit("edge-tts nahi chala:\n" + res.stderr[-300:])
+        pieces.append((f, _pause_for(chunk)))
+    # jodo: piece + chup
+    from pathlib import Path
+    listf = os.path.join(tmpdir, "list.txt")
+    with open(listf, "w") as lf:
+        for f, gap in pieces:
+            lf.write(f"file '{f}'\n")
+            sil = os.path.join(tmpdir, f"sil_{len(lf.name)}.wav")
+            subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-f", "lavfi", "-i",
+                            f"anullsrc=r=24000:cl=mono", "-t", f"{gap:.2f}", sil], capture_output=True)
+            lf.write(f"file '{sil}'\n")
+    joined = os.path.join(tmpdir, "joined.mp3")
+    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-f", "concat", "-safe", "0",
+                    "-i", listf, "-c:a", "libmp3lame", "-b:a", "192k", joined], check=True)
+    if kaccha:
+        os.replace(joined, out)
+    else:
+        ffmpeg(joined, out, TTS_AF)
+    print(f"ban gaya (natural): {out}  (kirdaar={kirdaar}, bhaav={bhaav}, {len(pieces)} hisse)")
+
+
 def main():
     ap = argparse.ArgumentParser(description="Toonistaan awaaz tool")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -90,6 +169,7 @@ def main():
     b.add_argument("text"); b.add_argument("--kirdaar", default="madhur")
     b.add_argument("--bhaav", choices=list(PROSODY), help="na do to apne aap")
     b.add_argument("-o", "--out", default="awaaz.mp3"); b.add_argument("--kaccha", action="store_true", help="bina saaf kiye")
+    b.add_argument("--natural", action="store_true", help="insan jaisa: hisson me todo, chhote chup")
     c = sub.add_parser("saaf", help="apni recording saaf karo")
     c.add_argument("file"); c.add_argument("-o", "--out", default=None)
     c.add_argument("--shor", type=int, default=24, help="shor kitna hatana (8 halka ... 36 zyada), default 24")
@@ -100,7 +180,10 @@ def main():
             print(f"{k:16s} {d:22s} ({n}, pitch {p:+d}Hz, raftaar {r:+d}%)")
         print("bhaav:", ", ".join(PROSODY))
     elif a.cmd == "bolo":
-        bolo(a.text, a.kirdaar, a.bhaav, a.out, a.kaccha)
+        if getattr(a, "natural", False):
+            bolo_natural(a.text, a.kirdaar, a.bhaav, a.out, kaccha=a.kaccha)
+        else:
+            bolo(a.text, a.kirdaar, a.bhaav, a.out, a.kaccha)
     else:
         out = a.out or os.path.splitext(a.file)[0] + "_saaf.mp3"
         ffmpeg(a.file, out, clean_af(max(1, min(40, a.shor))))
