@@ -1,0 +1,35 @@
+name: Awaaz test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  awaaz:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Packages
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          pip install -q --upgrade pip
+          pip install -q numpy edge-tts
+      - name: Awaaz banao
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: |
+          python tools/awaaz_studio.py sunao studio/series/user/awaaz_demo.json -o awaaz-demo.mp3 --mahaul village --music calm
+      - name: Upload
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: awaaz
+          path: awaaz-demo.mp3
+          if-no-files-found: warn
+          retention-days: 14
