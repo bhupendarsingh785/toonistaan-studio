@@ -76,6 +76,8 @@ SARVAM_SPEAKER = {
     "dadi": "roopa", "pandit": "ashutosh", "constable": "ratan", "doctor": "varun",
     "bachcha": "soham", "sunita": "shreya", "driver": "manan", "bhoot": "aayan",
     "chudail": "ishita", "mukhiya": "sumit", "kaka": "kabir", "bhabhi": "pooja",
+    "ramesh": "aditya", "salim": "rohan", "chaiwala": "sunny", "announce": "mani",
+    "aurat": "neha", "maa": "kavitha", "behen": "tanya",
     # purane naam (compat)
     "swara": "ritu", "swara_bachcha": "priya", "madhur_bachcha": "rahul",
     "swara_dadi": "kavya", "madhur_dada": "dev",
@@ -92,7 +94,8 @@ SARVAM_TEMP = {
     "madhur": 0.85, "arjun": 0.8, "meera": 0.8, "chacha": 0.78, "chachi": 0.82,
     "dadi": 0.8, "pandit": 0.75, "constable": 0.7, "doctor": 0.7, "bachcha": 0.85,
     "sunita": 0.78, "driver": 0.75, "bhoot": 0.9, "chudail": 0.9, "mukhiya": 0.75,
-    "kaka": 0.75, "bhabhi": 0.8,
+    "kaka": 0.75, "bhabhi": 0.8, "ramesh": 0.8, "salim": 0.82, "chaiwala": 0.85,
+    "announce": 0.6, "aurat": 0.8, "maa": 0.85, "behen": 0.85,
     "swara": 0.8, "swara_bachcha": 0.75, "madhur_bachcha": 0.78,
     "swara_dadi": 0.82, "madhur_dada": 0.8,
 }
