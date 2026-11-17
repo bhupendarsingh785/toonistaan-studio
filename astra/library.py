@@ -3739,6 +3739,12 @@ def _variant(name, context=""):
     return find(name, context)
 
 
+# har library sound par safai: hiss/noise hatao, awaaz saaf karo
+CLEAN_AF = ("afftdn=nr=12:nf=-45:tn=1,highpass=f=70,"
+            "agate=threshold=0.02:ratio=3:range=0.10:attack=5:release=150,"
+            "loudnorm=I=-19:TP=-2:LRA=9")
+
+
 def fetch(name, context=""):
     """Asli library file ka wav (44.1k mono) — na mile to None."""
     key = _variant(name, context)
@@ -3751,13 +3757,14 @@ def fetch(name, context=""):
     if not os.path.exists(src):
         return None
     sp = speed_for(name, context)
-    out = os.path.join(CACHE, f"{key}_{sp:.2f}.wav")
+    out = os.path.join(CACHE, f"{key}_{sp:.2f}_clean.wav")
     if os.path.exists(out) and os.path.getsize(out) > 5000:
         return out
     cmd = [_ff(), "-loglevel", "error", "-y", "-i", src, "-ac", "1", "-ar", "44100"]
+    chain = [CLEAN_AF]
     if abs(sp - 1.0) > 0.02:
-        cmd += ["-filter:a", f"atempo={sp:.3f}"]
-    cmd += [out]
+        chain.insert(0, f"atempo={sp:.3f}")
+    cmd += ["-filter:a", ",".join(chain), out]
     r = subprocess.run(cmd, capture_output=True)
     if r.returncode == 0 and os.path.exists(out) and os.path.getsize(out) > 5000:
         print("LIB_OK", key, "speed", sp, meta.get("license", ""), flush=True)
