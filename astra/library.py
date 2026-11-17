@@ -2574,6 +2574,62 @@ DEFAULT_INDEX = {
    "shuruaat"
   ],
   "license": "Pixabay"
+ },
+ "train_horn_3": {
+  "file": "vehicles/train_horn_3.mp3",
+  "tags": [
+   "train",
+   "horn",
+   "सीटी"
+  ],
+  "license": "Pixabay"
+ },
+ "train_approaching": {
+  "file": "vehicles/train_approaching.mp3",
+  "tags": [
+   "train",
+   "approaching",
+   "aa rahi"
+  ],
+  "license": "Pixabay"
+ },
+ "train_crossing": {
+  "file": "vehicles/train_crossing.mp3",
+  "tags": [
+   "train",
+   "crossing",
+   "fatak",
+   "level"
+  ],
+  "license": "Pixabay"
+ },
+ "train_pass_2": {
+  "file": "vehicles/train_pass_2.mp3",
+  "tags": [
+   "train",
+   "pass",
+   "guzarna"
+  ],
+  "license": "Pixabay"
+ },
+ "train_pass_3": {
+  "file": "vehicles/train_pass_3.mp3",
+  "tags": [
+   "train",
+   "pass",
+   "guzarna"
+  ],
+  "license": "Pixabay"
+ },
+ "airchime": {
+  "file": "vehicles/airchime.mp3",
+  "tags": [
+   "airchime",
+   "horn",
+   "train",
+   "station"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -2605,7 +2661,7 @@ VARIANTS = {
     "ghost": ["ghost", "ghosts_past", "ghost_past_2"],
     "bell": ["temple_bell", "shofar"],
     "jungle": ["jungle_nature"],
-    "train": ["train_pass_1", "train_running", "train_horn_1", "train_horn_2", "station_ambience"],
+    "train": ["train_pass_1", "train_pass_2", "train_pass_3", "train_running", "train_approaching", "train_crossing", "train_horn_1", "train_horn_2", "train_horn_3", "station_ambience"],
     "horn": ["horn_1"],
     "sehnai": ["drum_sehnai"],
     "dhol": ["dhol_1", "dhol_2", "dhol_shadi", "dhol_wedding", "dhol_bass", "dhol_beats"],
