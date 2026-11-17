@@ -62,6 +62,16 @@ DEFAULT_INDEX = {
     "vampire_gaze":    {"file": "voices/vampire_gaze.mp3", "tags": ["vampire", "tension", "डर", "supernatural"], "license": "Pixabay"},
     "vampire_line":    {"file": "voices/vampire_line.mp3", "tags": ["vampire", "voice", "raat", "रात", "supernatural"], "license": "Pixabay"},
     "man_cough":       {"file": "voices/man_cough.mp3", "tags": ["cough", "khaansi", "खांसी", "beemar"], "license": "Pixabay"},
+    "man_scream_3": {"file": "voices/man_scream_3.mp3", "tags": ['scream', 'cheekh', 'चीख', 'aadmi'], "license": "Pixabay"},
+    "man_scream_pathetic": {"file": "voices/man_scream_pathetic.mp3", "tags": ['scream', 'cheekh', 'चीख', 'dard'], "license": "Pixabay"},
+    "man_laugh_2": {"file": "voices/man_laugh_2.mp3", "tags": ['laugh', 'hansi', 'हँसी', 'ठहाका'], "license": "Pixabay"},
+    "vampire_line_hunger": {"file": "voices/vampire_line_hunger.mp3", "tags": ['vampire', 'line', 'chudail', 'चुड़ैल', 'raat'], "license": "Pixabay"},
+    "vampire_line_humans": {"file": "voices/vampire_line_humans.mp3", "tags": ['vampire', 'line', 'chudail', 'insaan'], "license": "Pixabay"},
+    "vampire_line_soul": {"file": "voices/vampire_line_soul.mp3", "tags": ['vampire', 'line', 'aatma', 'आत्मा'], "license": "Pixabay"},
+    "vampire_hiss_attack": {"file": "voices/vampire_hiss_attack.mp3", "tags": ['vampire', 'hiss', 'attack', 'hamla', 'हमला'], "license": "Pixabay"},
+    "vampire_hiss": {"file": "voices/vampire_hiss.mp3", "tags": ['vampire', 'hiss', 'chudail', 'डर'], "license": "Pixabay"},
+    "vampire_growl": {"file": "voices/vampire_growl.mp3", "tags": ['vampire', 'growl', 'dahad', 'दहाड़'], "license": "Pixabay"},
+    "vampire_laugh": {"file": "voices/vampire_laugh.mp3", "tags": ['vampire', 'laugh', 'hansi', 'चुड़ैल', 'evil'], "license": "Pixabay"},
     "jungle_nature":     {"file": "nature/jungle_nature.mp3", "tags": ["jungle", "forest", "जंगल", "nature", "birds", "ambience"], "license": "Pixabay"},
 }
 
@@ -140,6 +150,8 @@ VARIANTS = {
     "talk": ["talk_crowd_1", "talk_crowd_2"],
     "scream": ["scream_woman", "man_scream", "man_scream_2", "man_death_scream"],
     "cry": ["man_cry", "man_sniffle"],
+    "vampire": ["vampire_hiss", "vampire_growl", "vampire_laugh", "vampire_shriek"],
+    "vampire_line": ["vampire_line_hunger", "vampire_line_humans", "vampire_line_soul", "vampire_line"],
     "footsteps_walk": ["footsteps_walk", "footsteps_parquet", "footsteps_concrete"],
 }
 
