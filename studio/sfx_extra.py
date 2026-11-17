@@ -157,10 +157,38 @@ KEYWORDS = [
 ]
 
 
+DOOR_WORDS = ["दरवाज़ा", "दरवाजा", "गेट", "द्वार", "door", "gate"]
+OPEN_WORDS = ["खुल", "खोल", "open"]
+CLOSE_WORDS = ["बंद", "बन्द", "close", "shut"]
+
+
+def _door_rule(low):
+    """Darwaza + khulna/band hona — shabd alag-alag ho to bhi pakde."""
+    if not any(w in low for w in DOOR_WORDS):
+        return []
+    out = []
+    if any(w in low for w in CLOSE_WORDS):
+        out.append("gate_close")
+    if any(w in low for w in OPEN_WORDS):
+        out.append("gate_open")
+    return out
+
+
 def detect(text):
     """Line ke shabdon se SFX chuno (max 2)."""
     out = []
     low = str(text or "")
+    out.extend(_door_rule(low))
+    if out:
+        # darwaza mil gaya to baaki (max 2) bhi jod do
+        for name, words in KEYWORDS:
+            if name in ("gate_open", "gate_close"):
+                continue
+            if any(w in low for w in words) and name not in out:
+                out.append(name)
+            if len(out) >= 2:
+                break
+        return out[:2]
     for name, words in KEYWORDS:
         if any(w in low for w in words):
             out.append(name)
