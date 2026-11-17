@@ -3204,6 +3204,100 @@ DEFAULT_INDEX = {
    "growl"
   ],
   "license": "Pixabay"
+ },
+ "tiger_attack": {
+  "file": "animals/tiger_attack.mp3",
+  "tags": [
+   "tiger",
+   "attack",
+   "hamla",
+   "शेर"
+  ],
+  "license": "Pixabay"
+ },
+ "tiger_roar_5": {
+  "file": "animals/tiger_roar_5.mp3",
+  "tags": [
+   "tiger",
+   "roar",
+   "loud"
+  ],
+  "license": "Pixabay"
+ },
+ "tiger_roar_6": {
+  "file": "animals/tiger_roar_6.mp3",
+  "tags": [
+   "tiger",
+   "roar"
+  ],
+  "license": "Pixabay"
+ },
+ "tiger_roar_light": {
+  "file": "animals/tiger_roar_light.mp3",
+  "tags": [
+   "tiger",
+   "roar",
+   "halka"
+  ],
+  "license": "Pixabay"
+ },
+ "big_cats_mix": {
+  "file": "animals/big_cats_mix.mp3",
+  "tags": [
+   "tiger",
+   "lion",
+   "leopard",
+   "werewolf",
+   "roar"
+  ],
+  "license": "Pixabay"
+ },
+ "cat_meow_1": {
+  "file": "animals/cat_meow_1.mp3",
+  "tags": [
+   "cat",
+   "billi",
+   "बिल्ली",
+   "meow",
+   "myau"
+  ],
+  "license": "Pixabay"
+ },
+ "cat_meow_2": {
+  "file": "animals/cat_meow_2.mp3",
+  "tags": [
+   "cat",
+   "billi",
+   "meow"
+  ],
+  "license": "Pixabay"
+ },
+ "cat_meow_3": {
+  "file": "animals/cat_meow_3.mp3",
+  "tags": [
+   "cat",
+   "billi",
+   "meow"
+  ],
+  "license": "Pixabay"
+ },
+ "cat_meow_4": {
+  "file": "animals/cat_meow_4.mp3",
+  "tags": [
+   "cat",
+   "billi",
+   "meow"
+  ],
+  "license": "Pixabay"
+ },
+ "cat_meow_5": {
+  "file": "animals/cat_meow_5.mp3",
+  "tags": [
+   "cat",
+   "billi",
+   "meow"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -3240,7 +3334,8 @@ VARIANTS = {
     "vinyl": ["vinyl_scratch", "vinyl_crackle", "vinyl_loop"],
     "blender": ["blender_1", "blender_2", "blender_3", "blender_4"],
     "dragon": ["dragon_roar", "dragon_growl", "dinosaur_roar"],
-    "tiger": ["tiger_roar_1", "tiger_roar_2", "tiger_roar_3", "tiger_roar_4"],
+    "tiger": ["tiger_roar_1", "tiger_roar_2", "tiger_roar_3", "tiger_roar_4", "tiger_roar_5", "tiger_roar_6", "tiger_attack", "big_cats_mix"],
+    "cat": ["cat_meow_1", "cat_meow_2", "cat_meow_3", "cat_meow_4", "cat_meow_5"],
     "monster": ["monster_roar_1", "monster_roar_2", "monster_roar_3", "monster_growl_1", "monster_lurk"],
     "wolf": ["wolf_growl"],
     "roar": ["roar_1", "tiger_roar_1", "monster_roar_1"],
