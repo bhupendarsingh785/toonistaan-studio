@@ -995,6 +995,113 @@ DEFAULT_INDEX = {
    "ambience"
   ],
   "license": "Pixabay"
+ },
+ "rain_on_glass": {
+  "file": "ambience/rain_on_glass.mp3",
+  "tags": [
+   "rain",
+   "baarish",
+   "बारिश",
+   "glass",
+   "thunder"
+  ],
+  "license": "Pixabay"
+ },
+ "heal_spell_2": {
+  "file": "ambience/heal_spell_2.mp3",
+  "tags": [
+   "heal",
+   "magic",
+   "जादू",
+   "spell"
+  ],
+  "license": "Pixabay"
+ },
+ "water_relax": {
+  "file": "ambience/water_relax.mp3",
+  "tags": [
+   "water",
+   "paani",
+   "पानी",
+   "relax",
+   "nadi"
+  ],
+  "license": "Pixabay"
+ },
+ "rune_seal": {
+  "file": "ambience/rune_seal.mp3",
+  "tags": [
+   "rune",
+   "magic",
+   "जादू",
+   "seal",
+   "mantra"
+  ],
+  "license": "Pixabay"
+ },
+ "holy_magic_short": {
+  "file": "ambience/holy_magic_short.mp3",
+  "tags": [
+   "holy",
+   "magic",
+   "जादू",
+   "chamak"
+  ],
+  "license": "Pixabay"
+ },
+ "rain_gentle_1": {
+  "file": "ambience/rain_gentle_1.mp3",
+  "tags": [
+   "rain",
+   "baarish",
+   "बारिश",
+   "gentle",
+   "halki"
+  ],
+  "license": "Pixabay"
+ },
+ "village_ambience": {
+  "file": "ambience/village_ambience.mp3",
+  "tags": [
+   "village",
+   "gaon",
+   "गाँव",
+   "ambience",
+   "mahol"
+  ],
+  "license": "Pixabay"
+ },
+ "birds_in_rain": {
+  "file": "ambience/birds_in_rain.mp3",
+  "tags": [
+   "birds",
+   "chidiya",
+   "चिड़िया",
+   "rain"
+  ],
+  "license": "Pixabay"
+ },
+ "thunderstorm": {
+  "file": "ambience/thunderstorm.mp3",
+  "tags": [
+   "thunder",
+   "bijli",
+   "बिजली",
+   "storm",
+   "toofan",
+   "rain"
+  ],
+  "license": "Pixabay"
+ },
+ "rain_midday": {
+  "file": "ambience/rain_midday.mp3",
+  "tags": [
+   "rain",
+   "baarish",
+   "बारिश",
+   "dopahar"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -1026,6 +1133,11 @@ VARIANTS = {
     "ghost": ["ghost", "ghosts_past", "ghost_past_2"],
     "bell": ["temple_bell", "shofar"],
     "jungle": ["jungle_nature"],
+    "rain": ["rain_gentle_1", "rain_midday", "rain_on_glass", "thunderstorm"],
+    "village": ["village_ambience"],
+    "thunder": ["thunderstorm"],
+    "birds": ["birds_in_rain"],
+    "water": ["water_relax"],
 }
 
 INDOOR_WORDS = ["घर", "कमरा", "हवेली", "अंदर", "सीढ़ी", "छत", "room", "indoor", "hall", "floor"]
