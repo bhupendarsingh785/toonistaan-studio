@@ -4156,6 +4156,101 @@ DEFAULT_INDEX = {
    "sad"
   ],
   "license": "Pixabay"
+ },
+ "coin_clatter": {
+  "file": "foley/coin_clatter.mp3",
+  "tags": [
+   "coin",
+   "sikka",
+   "clatter",
+   "girna"
+  ],
+  "license": "Pixabay"
+ },
+ "coins_falling_1": {
+  "file": "foley/coins_falling_1.mp3",
+  "tags": [
+   "coins",
+   "girna",
+   "paisa"
+  ],
+  "license": "Pixabay"
+ },
+ "coins_rattle": {
+  "file": "foley/coins_rattle.mp3",
+  "tags": [
+   "coins",
+   "rattle",
+   "khankhana"
+  ],
+  "license": "Pixabay"
+ },
+ "coins_jingle": {
+  "file": "foley/coins_jingle.mp3",
+  "tags": [
+   "coins",
+   "jingle",
+   "khankhna"
+  ],
+  "license": "Pixabay"
+ },
+ "coins_counting": {
+  "file": "foley/coins_counting.mp3",
+  "tags": [
+   "coins",
+   "count",
+   "ginna",
+   "paisa"
+  ],
+  "license": "Pixabay"
+ },
+ "coins_spilled": {
+  "file": "foley/coins_spilled.mp3",
+  "tags": [
+   "coins",
+   "spill",
+   "girna",
+   "bikharna"
+  ],
+  "license": "Pixabay"
+ },
+ "coins_on_plate": {
+  "file": "foley/coins_on_plate.mp3",
+  "tags": [
+   "coins",
+   "plate",
+   "thali",
+   "paisa"
+  ],
+  "license": "Pixabay"
+ },
+ "coins_in_bowl": {
+  "file": "foley/coins_in_bowl.mp3",
+  "tags": [
+   "coins",
+   "bowl",
+   "matka",
+   "gullak"
+  ],
+  "license": "Pixabay"
+ },
+ "coins_burst": {
+  "file": "foley/coins_burst.mp3",
+  "tags": [
+   "coins",
+   "burst",
+   "jackpot"
+  ],
+  "license": "Pixabay"
+ },
+ "jackpot_coins": {
+  "file": "foley/jackpot_coins.mp3",
+  "tags": [
+   "coins",
+   "jackpot",
+   "jeet"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -4179,7 +4274,8 @@ VARIANTS = {
     "scream": ["scream_woman", "man_scream", "man_scream_2", "man_death_scream"],
     "cry": ["man_cry", "man_sniffle", "man_cry_2"],
     "girl_cry": ["girl_cry_1", "child_cry_2"],
-    "coins": ["coin_drop_1", "coin_drop_2", "coins_dropping", "coins_1" if False else "coin_drop_1"],
+    "coins": ["coin_drop_1", "coin_drop_2", "coins_dropping", "coin_clatter", "coins_falling_1", "coins_rattle", "coins_jingle", "coins_counting", "coins_spilled", "coins_on_plate", "coins_in_bowl", "coins_burst", "jackpot_coins"],
+    "_old_coins": ["coin_drop_1", "coin_drop_2", "coins_dropping", "coins_1" if False else "coin_drop_1"],
     "baby": ["baby_cry_1", "baby_cry_2", "baby_cry_3", "baby_laugh_1", "baby_laugh_2", "baby_giggle_1", "baby_giggle_2", "baby_babble", "baby_moan", "baby_noises"],
     "woman_cry": ["woman_cry_1", "woman_cry_2", "soft_cry_1"],
     "kitten": ["kitten_1"],
