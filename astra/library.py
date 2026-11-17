@@ -4251,6 +4251,101 @@ DEFAULT_INDEX = {
    "jeet"
   ],
   "license": "Pixabay"
+ },
+ "coin_drop_3": {
+  "file": "foley/coin_drop_3.mp3",
+  "tags": [
+   "coin",
+   "sikka",
+   "drop"
+  ],
+  "license": "Pixabay"
+ },
+ "coin_drop_4": {
+  "file": "foley/coin_drop_4.mp3",
+  "tags": [
+   "coin",
+   "drop",
+   "single"
+  ],
+  "license": "Pixabay"
+ },
+ "coin_drop_5": {
+  "file": "foley/coin_drop_5.mp3",
+  "tags": [
+   "coin",
+   "drop",
+   "game"
+  ],
+  "license": "Pixabay"
+ },
+ "coin_spin": {
+  "file": "foley/coin_spin.mp3",
+  "tags": [
+   "coin",
+   "spin",
+   "chakra",
+   "table"
+  ],
+  "license": "Pixabay"
+ },
+ "coins_wooden_box": {
+  "file": "foley/coins_wooden_box.mp3",
+  "tags": [
+   "coins",
+   "wooden",
+   "box",
+   "gullak"
+  ],
+  "license": "Pixabay"
+ },
+ "coins_bag": {
+  "file": "foley/coins_bag.mp3",
+  "tags": [
+   "coins",
+   "bag",
+   "thaila",
+   "paisa"
+  ],
+  "license": "Pixabay"
+ },
+ "coins_spill_2": {
+  "file": "foley/coins_spill_2.mp3",
+  "tags": [
+   "coins",
+   "spill",
+   "bikharna"
+  ],
+  "license": "Pixabay"
+ },
+ "coins_counting_2": {
+  "file": "foley/coins_counting_2.mp3",
+  "tags": [
+   "coins",
+   "counting",
+   "ginna"
+  ],
+  "license": "Pixabay"
+ },
+ "desert_wind": {
+  "file": "ambience/desert_wind.mp3",
+  "tags": [
+   "desert",
+   "wind",
+   "registan",
+   "hawa"
+  ],
+  "license": "Pixabay"
+ },
+ "wind_blowing": {
+  "file": "ambience/wind_blowing.mp3",
+  "tags": [
+   "wind",
+   "hawa",
+   "blowing",
+   "toofan"
+  ],
+  "license": "Pixabay"
  }
 }
 
