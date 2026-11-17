@@ -1102,6 +1102,123 @@ DEFAULT_INDEX = {
    "dopahar"
   ],
   "license": "Pixabay"
+ },
+ "steps_frozen_grass": {
+  "file": "footsteps/steps_frozen_grass.mp3",
+  "tags": [
+   "steps",
+   "kadam",
+   "कदम",
+   "grass",
+   "frozen",
+   "bahar"
+  ],
+  "license": "Pixabay"
+ },
+ "steps_gravel": {
+  "file": "footsteps/steps_gravel.mp3",
+  "tags": [
+   "steps",
+   "kadam",
+   "कदम",
+   "gravel",
+   "kankad",
+   "रोड़ी"
+  ],
+  "license": "Pixabay"
+ },
+ "steps_stairs_up": {
+  "file": "footsteps/steps_stairs_up.mp3",
+  "tags": [
+   "steps",
+   "kadam",
+   "कदम",
+   "stairs",
+   "seedhi",
+   "सीढ़ी"
+  ],
+  "license": "Pixabay"
+ },
+ "steps_stairs_down": {
+  "file": "footsteps/steps_stairs_down.mp3",
+  "tags": [
+   "steps",
+   "kadam",
+   "कदम",
+   "stairs",
+   "seedhi",
+   "सीढ़ी",
+   "wood"
+  ],
+  "license": "Pixabay"
+ },
+ "steps_grass_to_stairs": {
+  "file": "footsteps/steps_grass_to_stairs.mp3",
+  "tags": [
+   "steps",
+   "kadam",
+   "कदम",
+   "grass",
+   "stairs"
+  ],
+  "license": "Pixabay"
+ },
+ "rain_tent": {
+  "file": "ambience/rain_tent.mp3",
+  "tags": [
+   "rain",
+   "baarish",
+   "बारिश",
+   "tent",
+   "tambu"
+  ],
+  "license": "Pixabay"
+ },
+ "rain_tin_metal": {
+  "file": "ambience/rain_tin_metal.mp3",
+  "tags": [
+   "rain",
+   "baarish",
+   "बारिश",
+   "tin",
+   "metal",
+   "chhat"
+  ],
+  "license": "Pixabay"
+ },
+ "rain_window": {
+  "file": "ambience/rain_window.mp3",
+  "tags": [
+   "rain",
+   "baarish",
+   "बारिश",
+   "window",
+   "khidki"
+  ],
+  "license": "Pixabay"
+ },
+ "rain_tin_roof": {
+  "file": "ambience/rain_tin_roof.mp3",
+  "tags": [
+   "rain",
+   "baarish",
+   "बारिश",
+   "tin",
+   "roof",
+   "chhat"
+  ],
+  "license": "Pixabay"
+ },
+ "rain_gentle_7": {
+  "file": "ambience/rain_gentle_7.mp3",
+  "tags": [
+   "rain",
+   "baarish",
+   "बारिश",
+   "gentle",
+   "halki"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -1133,7 +1250,11 @@ VARIANTS = {
     "ghost": ["ghost", "ghosts_past", "ghost_past_2"],
     "bell": ["temple_bell", "shofar"],
     "jungle": ["jungle_nature"],
-    "rain": ["rain_gentle_1", "rain_midday", "rain_on_glass", "thunderstorm"],
+    "rain": ["rain_gentle_1", "rain_gentle_7", "rain_midday", "rain_window", "rain_on_glass", "thunderstorm"],
+    "rain_tin": ["rain_tin_roof", "rain_tin_metal", "rain_tent"],
+    "stairs": ["steps_stairs_up", "steps_stairs_down", "steps_grass_to_stairs"],
+    "gravel": ["steps_gravel"],
+    "grass": ["steps_frozen_grass", "steps_grass_to_stairs"],
     "village": ["village_ambience"],
     "thunder": ["thunderstorm"],
     "birds": ["birds_in_rain"],
