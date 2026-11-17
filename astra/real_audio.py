@@ -85,8 +85,16 @@ AMBIENCE_TERMS = {
 }
 
 
+def _clean_key():
+    """Key me chhupa space/newline/quotes hata do (secret copy karte waqt aata hai)."""
+    import re
+    k = os.environ.get("FREESOUND_API_KEY", "") or ""
+    k = k.strip().strip('"').strip("'")
+    return re.sub(r"[^A-Za-z0-9]", "", k)
+
+
 def have_key():
-    return bool(os.environ.get("FREESOUND_API_KEY", "").strip())
+    return bool(_clean_key())
 
 
 def _get(url, timeout=25):
@@ -97,13 +105,17 @@ def _get(url, timeout=25):
 
 def search(query, limit=5, min_seconds=0.3, max_seconds=60):
     """Freesound par search. Key na ho to None."""
-    key = os.environ.get("FREESOUND_API_KEY", "").strip()
+    key = _clean_key()
     if not key:
         return None
-    q = urllib.parse.quote(str(query))
-    fields = "id,name,previews,duration,license,username"
-    url = (f"{API}?query={q}&fields={fields}&page_size={int(limit)}"
-           f"&filter=duration:[{min_seconds} TO {max_seconds}]&token={key}")
+    params = {
+        "query": str(query),
+        "fields": "id,name,previews,duration,license,username",
+        "page_size": str(int(limit)),
+        "filter": f"duration:[{min_seconds} TO {max_seconds}]",
+        "token": key,
+    }
+    url = API + "?" + urllib.parse.urlencode(params)
     try:
         data = _get(url)
     except Exception as e:
