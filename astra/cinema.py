@@ -180,8 +180,8 @@ def build(story_path, out_path, verbose=True):
                 if rp:
                     rw = read_wav(rp)
                     rw = norm(rw, 0.85)
-                    rw = A.reverb(rw, 0.20)
-                    place(fx, rw, p["start"], 0.75)
+                    rw = A.reverb(rw, 0.10)
+                    place(fx, rw, p["start"], 0.95)
                     done = True
                     if verbose:
                         print("SFX_REAL", p["name"], flush=True)
@@ -194,13 +194,31 @@ def build(story_path, out_path, verbose=True):
                     snd = sfx_extra.ALL[p["name"]]()
                     snd = norm(snd, 0.85)
                     snd = A.reverb(snd, 0.25)
-                    place(fx, snd, p["start"], 0.55)
+                    place(fx, snd, p["start"], 0.8)
                 except Exception:
                     pass
         elif kind == "amb":
             env = p["env"]
-            kind_amb = env if env in ("rain", "wind", "night", "village") else "room"
-            seg = A.ambience(kind_amb, max(1.0, t - p["start"]))
+            kind_amb = env if env in ("rain", "wind", "night", "village", "street", "jungle", "temple", "room") else "room"
+            need = max(1.0, t - p["start"])
+            seg = None
+            # 1) asli recording (Freesound)
+            try:
+                import real_audio
+                rp = real_audio.fetch(kind_amb)
+                if rp:
+                    rw = read_wav(rp)
+                    if len(rw) > SR * 0.5:
+                        reps = int(np.ceil((SR * need) / len(rw)))
+                        seg = np.tile(rw, max(1, reps))[: int(SR * need)]
+                        seg = norm(seg, 0.30)   # dheema, peeche
+                        if verbose:
+                            print("AMB_REAL", kind_amb, flush=True)
+            except Exception:
+                pass
+            # 2) na mile to synth
+            if seg is None:
+                seg = A.ambience(kind_amb, need)
             seg = np.pad(seg, (0, max(0, n - int(SR * p["start"]) - len(seg))))[: max(0, n - int(SR * p["start"]))]
             amb_bus[int(SR * p["start"]):int(SR * p["start"]) + len(seg)] += seg * 0.9
         elif kind == "music":
