@@ -307,3 +307,68 @@ def detect(text):
         if len(out) >= 2:
             break
     return out
+
+
+# ---------------------------------------------------------------- samajh (context)
+# Kaunse mahaul me kaunsi awaaz allowed hai — galat jagah galat sound na lage
+ENV_ALLOW = {
+    "street":  {"crowd", "car", "horn", "chai", "coins", "paper", "footsteps", "keys",
+                "phone", "traffic", "rickshaw", "cycle_bell", "shop_shutter"},
+    "station": {"train", "crowd", "horn", "chai", "footsteps", "announce", "coins",
+                "paper", "bag", "train_horn", "station"},
+    "night":   {"train", "crickets", "wind", "footsteps", "crowd", "owl", "frog",
+                "train_horn", "station", "heartbeat", "rain"},
+    "room":    {"clock", "paper", "water", "footsteps", "door", "knock", "coins",
+                "phone", "kettle", "chai", "cooker", "switch", "fan"},
+    "village": {"birds", "footsteps", "water", "chai", "cooker", "dog", "cow", "gate",
+                "bell", "temple", "crowd", "cycle_bell", "rain", "wind", "goat", "kids"},
+    "jungle":  {"leaves", "birds", "wind", "footsteps", "frog", "crickets", "water"},
+    "hall":    {"clock", "footsteps", "door", "crowd", "paper", "bell"},
+    "cave":    {"water", "wind", "footsteps", "heartbeat"},
+    "neutral": set(),
+}
+
+# shabd -> (sound, sirf in mahaul me)  |  env=None = har jagah
+CONTEXT_WORDS = [
+    (["ट्रेन", "रेलगाड़ी", "रेल", "स्टेशन", "प्लेटफ़ॉर्म", "गाड़ी आई", "ट्रेन आई"], "train", {"station", "night"}),
+    (["गाड़ी", "कार", "बस", "ट्रक"], "car", {"street", "station"}),
+    (["भीड़", "लोग", "बाज़ार", "मेला"], "crowd", {"street", "station", "village"}),
+    (["चाय", "केतली", "चायवाला"], "chai", {"street", "station", "room", "village"}),
+    (["सिक्के", "पैसे", "रुपये", "गुल्लक"], "coins", {"street", "room", "village"}),
+    (["दरवाज़ा", "दरवाजा", "गेट", "द्वार"], "gate_open", {"room", "village", "hall"}),
+    (["खिड़की", "खिड़की के बाहर"], "wind", {"room", "night", "village"}),
+    (["बारिश", "पानी", "बौछार"], "rain", {"village", "night", "street", "jungle"}),
+    (["पत्ते", "पेड़", "जंगल"], "leaves", {"jungle", "village"}),
+    (["मुर्गा", "मुर्गी", "चिड़िया", "पक्षी"], "birds", {"village", "jungle"}),
+    (["कुत्ता", "कुत्ते"], "dog", {"village", "street"}),
+    (["घड़ी", "टिक-टिक"], "clock", {"room", "hall"}),
+    (["चूल्हा", "रसोई", "थाली", "खाना"], "cooker", {"village", "room"}),
+    (["कागज़", "चिट्ठी", "पत्र", "टिकट"], "paper", {"street", "station", "room", "hall"}),
+    (["पैदल", "चलते", "चलना", "कदम", "आहट", "रास्ता", "भाग", "दौड़"], "footsteps", None),
+]
+
+
+def detect_smart(text, env="neutral", allow_horror=False):
+    """Mahaul dekh kar sound chuno — galat sound nahi lagta."""
+    low = str(text or "").lower()
+    allowed = ENV_ALLOW.get(env, set())
+    out = []
+    for words, snd, envs in CONTEXT_WORDS:
+        if not any(w in low for w in words):
+            continue
+        if envs is not None and env not in envs:
+            continue
+        if allowed and not any(snd.startswith(a) or a.startswith(snd) for a in allowed):
+            continue
+        if snd not in out:
+            out.append(snd)
+        if len(out) >= 2:
+            return out
+    if out:
+        return out
+    # kuch na mile to purana tareeka, par mahaul ke andar hi
+    for cand in detect(low)[:2]:
+        if allow_horror or not cand.startswith(("horror", "scary", "ghost", "monster", "scream")):
+            if not allowed or any(cand.startswith(a) or a.startswith(cand) for a in allowed):
+                out.append(cand)
+    return out[:2]
