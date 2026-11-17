@@ -312,6 +312,14 @@ def fetch(name, target_seconds=None, force=False):
     Naam (jaise 'footsteps') -> asli recording ka wav path (44.1k mono).
     Key na ho, na mile, ya fail ho -> None.
     """
+    # 0) apni library (sabse achi quality) — sabse pehle
+    try:
+        import library as L
+        lp = L.fetch(name)
+        if lp:
+            return lp
+    except Exception:
+        pass
     term = SEARCH_TERMS.get(name) or AMBIENCE_TERMS.get(name) or name
     out_wav = os.path.join(CACHE, f"{name}.wav")
     meta_path = os.path.join(CACHE, f"{name}.json")
