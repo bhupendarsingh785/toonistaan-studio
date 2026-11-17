@@ -149,7 +149,10 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
                 pass
             try:
                 import sfx_extra
-                for name in sfx_extra.detect(text)[:2]:
+                _sfx = sfx_extra.detect(text)[:2]
+                if not _sfx:
+                    _sfx = sfx_extra.detect_bhav(bhaav, 1)
+                for name in _sfx:
                     plan.append(("sfx", {"name": name, "start": t - 0.15, "text": text}, t - 0.15))
                     cues.append({"type": "sfx", "name": name, "start": round(t - 0.15, 2)})
             except Exception:
