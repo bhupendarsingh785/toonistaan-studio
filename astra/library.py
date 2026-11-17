@@ -4932,6 +4932,108 @@ DEFAULT_INDEX = {
    "bahar"
   ],
   "license": "Pixabay"
+ },
+ "electric_gate_open": {
+  "file": "door/electric_gate_open.mp3",
+  "tags": [
+   "gate",
+   "electric",
+   "open",
+   "khulna"
+  ],
+  "license": "Pixabay"
+ },
+ "gate_close_2": {
+  "file": "door/gate_close_2.mp3",
+  "tags": [
+   "gate",
+   "close",
+   "band",
+   "darwaza"
+  ],
+  "license": "Pixabay"
+ },
+ "door_creaky_steel_wood": {
+  "file": "door/door_creaky_steel_wood.mp3",
+  "tags": [
+   "door",
+   "creaky",
+   "steel",
+   "wood",
+   "chirana"
+  ],
+  "license": "Pixabay"
+ },
+ "iron_gate_courtyard": {
+  "file": "door/iron_gate_courtyard.mp3",
+  "tags": [
+   "iron",
+   "gate",
+   "courtyard",
+   "aangan"
+  ],
+  "license": "Pixabay"
+ },
+ "door_lock_open": {
+  "file": "door/door_lock_open.mp3",
+  "tags": [
+   "lock",
+   "key",
+   "chaabi",
+   "darwaza"
+  ],
+  "license": "Pixabay"
+ },
+ "door_iron_creak_old": {
+  "file": "door/door_iron_creak_old.mp3",
+  "tags": [
+   "iron",
+   "door",
+   "creak",
+   "purana",
+   "haveli"
+  ],
+  "license": "Pixabay"
+ },
+ "door_iron_creak_2": {
+  "file": "door/door_iron_creak_2.mp3",
+  "tags": [
+   "iron",
+   "door",
+   "creak",
+   "chirana"
+  ],
+  "license": "Pixabay"
+ },
+ "iron_door_open_2": {
+  "file": "door/iron_door_open_2.mp3",
+  "tags": [
+   "iron",
+   "door",
+   "open",
+   "khulna"
+  ],
+  "license": "Pixabay"
+ },
+ "car_interior": {
+  "file": "vehicles/car_interior.mp3",
+  "tags": [
+   "car",
+   "interior",
+   "andhar",
+   "gaadi"
+  ],
+  "license": "Pixabay"
+ },
+ "coffee_machine_2": {
+  "file": "machines/coffee_machine_2.mp3",
+  "tags": [
+   "coffee",
+   "machine",
+   "nespresso",
+   "kitchen"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -4949,7 +5051,7 @@ ALIAS = {
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
     "gate_open": ["door_open_a", "door_open_b", "door_open_c"],
-    "door": ["door_open_a", "door_open_b", "door_open_c"],
+    "door": ["electric_gate_open", "gate_close_2", "door_creaky_steel_wood", "iron_gate_courtyard", "door_lock_open", "door_iron_creak_old", "door_iron_creak_2", "iron_door_open_2", "door_open_a", "door_open_b", "door_open_c"],
     "gate_close": ["door_close_a", "door_close_b", "door_close_c"],
     "talk": ["talk_crowd_1", "talk_crowd_2"],
     "death": ["monster_death_scream", "sirenhead_death", "dark_knight_death", "man_falling_death", "scraped_death"],
