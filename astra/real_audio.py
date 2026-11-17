@@ -29,6 +29,120 @@ os.makedirs(CACHE, exist_ok=True)
 API = "https://freesound.org/apiv2/search/"
 UA = "ASTRA-Cinematic-Audio/1.0"
 
+# ---------------------------------------------------------------- Mixkit (free, key ki zaroorat nahi)
+# Mixkit par har category ka page hai: /free-sound-effects/<slug>/
+# Page me direct preview mp3 link milta hai (assets.mixkit.co/...-preview.mp3).
+MIXKIT_SLUG = {
+    "door": "door", "gate_open": "door", "gate_close": "door",
+    "footsteps": "footsteps", "heartbeat": "heartbeat", "paper": "paper",
+    "coins": "coins", "rain": "rain", "wind": "wind", "water": "water",
+    "fire": "fire", "thunder": "thunder", "glass": "glass", "metal": "metal",
+    "wood": "wood", "bell": "bell", "phone": "phone", "crowd": "crowd",
+    "engine": "car", "car": "car", "train": "train", "helicopter": "helicopter",
+    "machine": "machine", "dog": "dog", "cat": "cat", "bird": "birds",
+    "cricket": "crickets", "monster": "monster", "magic": "magic",
+    "laser": "laser", "explosion": "explosion", "laugh": "laughing",
+    "cry": "crying", "breath": "breathing", "scream": "scream",
+    "switch": "switch", "whoosh": "whoosh", "leaf_crush": "leaves",
+    "leaves": "leaves", "water_drop": "water", "village": "village",
+    "night": "night", "room": "room-tone", "street": "street", "jungle": "jungle",
+    "temple": "temple", "rain_amb": "rain",
+}
+
+MIXKIT_BASE = "https://mixkit.co/free-sound-effects/"
+
+
+def _ff():
+    """ffmpeg ka rasta — PATH me na ho to imageio-ffmpeg se lo."""
+    import shutil
+    exe = shutil.which("ffmpeg")
+    if exe:
+        return exe
+    try:
+        import imageio_ffmpeg
+        return imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:
+        return "ffmpeg"
+
+
+def _http_get(url, timeout=35):
+    import urllib.request
+    req = urllib.request.Request(url, headers={
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                      "(KHTML, like Gecko) Chrome/122.0 Safari/537.36",
+        "Accept-Language": "en-US,en;q=0.9"})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return r.read().decode("utf-8", "ignore")
+
+
+def mixkit_list(name):
+    """Mixkit page se (title, mp3 url) ki list — ek hi request, cache ke saath."""
+    import json as _json
+    slug = MIXKIT_SLUG.get(name, name)
+    cache = os.path.join(CACHE, f"_mixkit_{slug}.json")
+    if os.path.exists(cache):
+        try:
+            return _json.load(open(cache))
+        except Exception:
+            pass
+    try:
+        html = _http_get(MIXKIT_BASE + slug + "/")
+    except Exception as e:
+        print("MIXKIT_FAIL", slug, str(e)[:60], flush=True)
+        return []
+    import re as _re
+    titles = [t.strip() for t in _re.findall(r"item-grid-card__title[^>]*>\s*([^<]{2,90})", html)]
+    urls = _re.findall(r'data-audio-player-preview-url-value="([^"]+)"', html)
+    items = [{"name": t, "url": u} for t, u in zip(titles, urls)]
+    try:
+        _json.dump(items, open(cache, "w"), ensure_ascii=False)
+    except Exception:
+        pass
+    return items
+
+
+def fetch_mixkit(name, target_seconds=None):
+    """Mixkit se asli recording. Na mile to None."""
+    items = mixkit_list(name)
+    if not items:
+        return None
+    banned = ["cartoon", "8-bit", "chiptune", "meme", "funny", "scary", "horror", "creepy", "zombie"]
+    term = (SEARCH_TERMS.get(name) or AMBIENCE_TERMS.get(name) or name).lower()
+    words = [w for w in term.replace("-", " ").split() if len(w) > 3]
+
+    def score(it):
+        n = it["name"].lower()
+        sc = sum(2 for w in words if w in n)
+        if any(b in n for b in banned):
+            sc -= 6
+        return sc
+
+    good = sorted(items, key=score, reverse=True)
+    out_wav = os.path.join(CACHE, f"{name}.wav")
+    for it in good[:4]:
+        tmp = os.path.join(CACHE, f"_mx_{name}")
+        try:
+            if not _download(it["url"], tmp):
+                continue
+            cmd = [_ff(), "-loglevel", "error", "-y", "-i", tmp, "-ac", "1", "-ar", "44100"]
+            if target_seconds:
+                cmd += ["-t", f"{float(target_seconds):.2f}"]
+            cmd += [out_wav]
+            subprocess.run(cmd, check=True, capture_output=True)
+            if os.path.exists(out_wav) and os.path.getsize(out_wav) > 5000:
+                json.dump({"name": it["name"], "url": it["url"], "license": "Mixkit Free License",
+                           "local": out_wav}, open(os.path.join(CACHE, f"{name}.json"), "w"),
+                          ensure_ascii=False, indent=1)
+                print("MIXKIT_OK", name, it["name"][:40], flush=True)
+                return out_wav
+        except Exception as e:
+            print("MIXKIT_ITEM_FAIL", str(e)[:50], flush=True)
+        finally:
+            if os.path.exists(tmp):
+                os.remove(tmp)
+    return None
+
+
 # hamare SFX naam -> English search (Freesound me English tags hote hain)
 SEARCH_TERMS = {
     "footsteps": "footsteps walking",
@@ -205,13 +319,14 @@ def fetch(name, target_seconds=None, force=False):
         return out_wav
     results = search(term, limit=8, name_hint=name)
     if not results:
-        return None
+        # Freesound key nahi / kuch nahi mila -> Mixkit (free, key nahi chahiye)
+        return fetch_mixkit(name, target_seconds)
     for r in results:
         tmp = os.path.join(CACHE, f"_tmp_{name}")
         try:
             if not _download(r["url"], tmp):
                 continue
-            cmd = ["ffmpeg", "-loglevel", "error", "-y", "-i", tmp, "-ac", "1", "-ar", "44100"]
+            cmd = [_ff(), "-loglevel", "error", "-y", "-i", tmp, "-ac", "1", "-ar", "44100"]
             if target_seconds:
                 cmd += ["-t", f"{float(target_seconds):.2f}"]
             cmd += [out_wav]
@@ -234,7 +349,7 @@ def normalize_lufs(path, target=-16.0, out=None):
     out = out or path
     tmp = path + ".n.wav"
     af = f"loudnorm=I={target}:TP=-1.5:LRA=11"
-    r = subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", path, "-af", af,
+    r = subprocess.run([_ff(), "-loglevel", "error", "-y", "-i", path, "-af", af,
                         "-ar", "44100", "-ac", "1", tmp], capture_output=True)
     if r.returncode == 0 and os.path.exists(tmp):
         os.replace(tmp, out)
