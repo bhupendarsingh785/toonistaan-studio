@@ -2732,6 +2732,103 @@ DEFAULT_INDEX = {
    "भाप"
   ],
   "license": "Pixabay"
+ },
+ "train_horn_5": {
+  "file": "vehicles/train_horn_5.mp3",
+  "tags": [
+   "train",
+   "horn",
+   "सीटी"
+  ],
+  "license": "Pixabay"
+ },
+ "train_musical": {
+  "file": "vehicles/train_musical.mp3",
+  "tags": [
+   "train",
+   "musical",
+   "melody"
+  ],
+  "license": "Pixabay"
+ },
+ "diesel_horn": {
+  "file": "vehicles/diesel_horn.mp3",
+  "tags": [
+   "diesel",
+   "horn",
+   "truck",
+   "gaadi"
+  ],
+  "license": "Pixabay"
+ },
+ "train_horn_pass_distant": {
+  "file": "vehicles/train_horn_pass_distant.mp3",
+  "tags": [
+   "train",
+   "horn",
+   "distant",
+   "pass"
+  ],
+  "license": "Pixabay"
+ },
+ "train_horn_passing": {
+  "file": "vehicles/train_horn_passing.mp3",
+  "tags": [
+   "train",
+   "horn",
+   "passing"
+  ],
+  "license": "Pixabay"
+ },
+ "train_horn_asia": {
+  "file": "vehicles/train_horn_asia.mp3",
+  "tags": [
+   "train",
+   "horn",
+   "asia",
+   "india"
+  ],
+  "license": "Pixabay"
+ },
+ "train_horn_lofi_2": {
+  "file": "vehicles/train_horn_lofi_2.mp3",
+  "tags": [
+   "train",
+   "horn",
+   "lofi",
+   "purana"
+  ],
+  "license": "Pixabay"
+ },
+ "train_horn_6": {
+  "file": "vehicles/train_horn_6.mp3",
+  "tags": [
+   "train",
+   "horn",
+   "सीटी"
+  ],
+  "license": "Pixabay"
+ },
+ "steam_train_2": {
+  "file": "vehicles/steam_train_2.mp3",
+  "tags": [
+   "steam",
+   "train",
+   "purani",
+   "भाप"
+  ],
+  "license": "Pixabay"
+ },
+ "train_horn_blast": {
+  "file": "vehicles/train_horn_blast.mp3",
+  "tags": [
+   "train",
+   "horn",
+   "blast",
+   "flyby",
+   "zor"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -2763,7 +2860,7 @@ VARIANTS = {
     "ghost": ["ghost", "ghosts_past", "ghost_past_2"],
     "bell": ["temple_bell", "shofar"],
     "jungle": ["jungle_nature"],
-    "train": ["train_pass_1", "train_pass_2", "train_pass_3", "train_running", "train_approaching", "train_crossing", "train_horn_1", "train_horn_2", "train_horn_3", "train_horn_4", "train_horn_distant", "train_horn_lofi", "train_horn_comical", "train_departure", "train_passing_cars", "train_loud", "train_rural_india", "train_distant_birds", "steam_train", "station_ambience"],
+    "train": ["train_pass_1", "train_pass_2", "train_pass_3", "train_running", "train_approaching", "train_crossing", "train_horn_1", "train_horn_2", "train_horn_3", "train_horn_4", "train_horn_distant", "train_horn_lofi", "train_horn_comical", "train_departure", "train_passing_cars", "train_loud", "train_rural_india", "train_distant_birds", "steam_train", "steam_train_2", "train_horn_5", "train_horn_6", "train_horn_pass_distant", "train_horn_passing", "train_horn_asia", "train_horn_lofi_2", "train_horn_blast", "train_musical", "diesel_horn", "station_ambience"],
     "horn": ["horn_1"],
     "sehnai": ["drum_sehnai"],
     "dhol": ["dhol_1", "dhol_2", "dhol_shadi", "dhol_wedding", "dhol_bass", "dhol_beats"],
