@@ -86,6 +86,9 @@ def tts(text, kirdaar, bhaav, out_mp3):
     if bhaav:
         cmd += ["--bhaav", bhaav]
     r = sh(cmd)
+    for line in (r.stdout or "").splitlines():
+        if line.startswith(("ELEVEN_OK", "ELEVEN_FAIL", "ban gaya")):
+            print("VOICE:", line.strip()[:110], flush=True)
     return r.returncode == 0 and os.path.exists(out_mp3)
 
 
