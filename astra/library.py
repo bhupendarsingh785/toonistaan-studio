@@ -3757,14 +3757,13 @@ def fetch(name, context=""):
     if not os.path.exists(src):
         return None
     sp = speed_for(name, context)
-    out = os.path.join(CACHE, f"{key}_{sp:.2f}_clean.wav")
+    out = os.path.join(CACHE, f"{key}_{sp:.2f}.wav")
     if os.path.exists(out) and os.path.getsize(out) > 5000:
         return out
     cmd = [_ff(), "-loglevel", "error", "-y", "-i", src, "-ac", "1", "-ar", "44100"]
-    chain = [CLEAN_AF]
     if abs(sp - 1.0) > 0.02:
-        chain.insert(0, f"atempo={sp:.3f}")
-    cmd += ["-filter:a", ",".join(chain), out]
+        cmd += ["-filter:a", f"atempo={sp:.3f}"]
+    cmd += [out]
     r = subprocess.run(cmd, capture_output=True)
     if r.returncode == 0 and os.path.exists(out) and os.path.getsize(out) > 5000:
         print("LIB_OK", key, "speed", sp, meta.get("license", ""), flush=True)
