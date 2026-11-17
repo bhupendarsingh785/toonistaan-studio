@@ -2325,6 +2325,56 @@ DEFAULT_INDEX = {
    "थाप"
   ],
   "license": "Pixabay"
+ },
+ "dog_bark_5": {
+  "file": "animals/dog_bark_5.mp3",
+  "tags": [
+   "dog",
+   "kutta",
+   "कुत्ता",
+   "bark"
+  ],
+  "license": "Pixabay"
+ },
+ "dog_bark_6": {
+  "file": "animals/dog_bark_6.mp3",
+  "tags": [
+   "dog",
+   "kutta",
+   "कुत्ता",
+   "bark"
+  ],
+  "license": "Pixabay"
+ },
+ "dog_bark_7": {
+  "file": "animals/dog_bark_7.mp3",
+  "tags": [
+   "dog",
+   "kutta",
+   "कुत्ता",
+   "bark"
+  ],
+  "license": "Pixabay"
+ },
+ "dog_bark_8": {
+  "file": "animals/dog_bark_8.mp3",
+  "tags": [
+   "dog",
+   "kutta",
+   "कुत्ता",
+   "bark"
+  ],
+  "license": "Pixabay"
+ },
+ "dog_barking_long": {
+  "file": "animals/dog_barking_long.mp3",
+  "tags": [
+   "dog",
+   "kutta",
+   "barking",
+   "long"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -2358,7 +2408,7 @@ VARIANTS = {
     "jungle": ["jungle_nature"],
     "dhol": ["dhol_1", "dhol_2", "dhol_shadi", "dhol_wedding", "dhol_bass", "dhol_beats"],
     "knock": ["knock_1", "knock_2", "knock_3", "knock_4", "knock_5", "knock_6", "knock_7", "knock_8", "knock_9", "door_pounding"],
-    "dog": ["dog_bark_1", "dog_bark_2", "dog_bark_3", "dog_bark_4", "dog_bark_small", "dogs_howl", "dog_variety"],
+    "dog": ["dog_bark_1", "dog_bark_2", "dog_bark_3", "dog_bark_4", "dog_bark_5", "dog_bark_6", "dog_bark_7", "dog_bark_8", "dog_bark_small", "dogs_howl", "dog_variety", "dog_barking_long"],
     "knock_fast": ["knock_fast"],
     "bang": ["door_bang_echo"],
     "clock": ["grandfather_12", "old_clock_chime", "cuckoo_clock", "clock_twelve", "clock_tower_12", "westminster_hour", "clock_bell_1", "clock_11pm_rain"],
