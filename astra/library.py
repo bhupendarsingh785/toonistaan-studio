@@ -2034,6 +2034,104 @@ DEFAULT_INDEX = {
    "daravana"
   ],
   "license": "Pixabay"
+ },
+ "grandfather_12": {
+  "file": "bells/grandfather_12.mp3",
+  "tags": [
+   "clock",
+   "grandfather",
+   "12",
+   "घड़ी",
+   "chime"
+  ],
+  "license": "Pixabay"
+ },
+ "grandfather_half": {
+  "file": "bells/grandfather_half.mp3",
+  "tags": [
+   "clock",
+   "half",
+   "घड़ी",
+   "chime"
+  ],
+  "license": "Pixabay"
+ },
+ "old_clock_chime": {
+  "file": "bells/old_clock_chime.mp3",
+  "tags": [
+   "clock",
+   "old",
+   "purani",
+   "घड़ी"
+  ],
+  "license": "Pixabay"
+ },
+ "tower_westminster_2": {
+  "file": "bells/tower_westminster_2.mp3",
+  "tags": [
+   "clock",
+   "tower",
+   "westminster"
+  ],
+  "license": "Pixabay"
+ },
+ "clock_bell_chime": {
+  "file": "bells/clock_bell_chime.mp3",
+  "tags": [
+   "clock",
+   "bell",
+   "घंटी"
+  ],
+  "license": "Pixabay"
+ },
+ "timer_chime": {
+  "file": "bells/timer_chime.mp3",
+  "tags": [
+   "timer",
+   "chime",
+   "alarm"
+  ],
+  "license": "Pixabay"
+ },
+ "clock_chime_short": {
+  "file": "bells/clock_chime_short.mp3",
+  "tags": [
+   "clock",
+   "chime",
+   "छोटा"
+  ],
+  "license": "Pixabay"
+ },
+ "cuckoo_clock": {
+  "file": "bells/cuckoo_clock.mp3",
+  "tags": [
+   "cuckoo",
+   "clock",
+   "koel",
+   "घड़ी"
+  ],
+  "license": "Pixabay"
+ },
+ "bell_music": {
+  "file": "bells/bell_music.mp3",
+  "tags": [
+   "bell",
+   "music",
+   "घंटी",
+   "sacred"
+  ],
+  "license": "Pixabay"
+ },
+ "door_pounding": {
+  "file": "door/door_pounding.mp3",
+  "tags": [
+   "door",
+   "pounding",
+   "khatkhatana",
+   "दरवाज़ा",
+   "थाप"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -2066,7 +2164,8 @@ VARIANTS = {
     "bell": ["temple_bell", "shofar"],
     "jungle": ["jungle_nature"],
     "dhol": ["dhol_1", "dhol_2", "dhol_shadi", "dhol_wedding", "dhol_bass", "dhol_beats"],
-    "clock": ["clock_twelve", "clock_tower_12", "westminster_hour", "clock_bell_1", "clock_11pm_rain"],
+    "knock": ["door_pounding"],
+    "clock": ["grandfather_12", "old_clock_chime", "cuckoo_clock", "clock_twelve", "clock_tower_12", "westminster_hour", "clock_bell_1", "clock_11pm_rain"],
     "bell": ["bell_chime", "temple_bell", "shofar", "clock_bell_1"],
     "shaadi": ["dhol_wedding", "dhol_shadi", "mehndi_beat"],
     "paper": ["paper_1", "paper_2", "paper_turn", "paper_rip_2", "paper_flutter"],
