@@ -1934,6 +1934,106 @@ DEFAULT_INDEX = {
    "कागज़"
   ],
   "license": "Pixabay"
+ },
+ "dhol_2": {
+  "file": "music/dhol_2.mp3",
+  "tags": [
+   "dhol",
+   "ढोल",
+   "drum"
+  ],
+  "license": "Pixabay"
+ },
+ "dhol_beats": {
+  "file": "music/dhol_beats.mp3",
+  "tags": [
+   "dhol",
+   "beats",
+   "ढोल",
+   "shaadi"
+  ],
+  "license": "Pixabay"
+ },
+ "ding_backwards": {
+  "file": "bells/ding_backwards.mp3",
+  "tags": [
+   "ding",
+   "bell",
+   "reverse",
+   "daravana"
+  ],
+  "license": "Pixabay"
+ },
+ "clock_bell_1": {
+  "file": "bells/clock_bell_1.mp3",
+  "tags": [
+   "clock",
+   "bell",
+   "घड़ी",
+   "ghanti"
+  ],
+  "license": "Pixabay"
+ },
+ "bell_chime": {
+  "file": "bells/bell_chime.mp3",
+  "tags": [
+   "bell",
+   "chime",
+   "घंटी",
+   "mandir"
+  ],
+  "license": "Pixabay"
+ },
+ "clock_twelve": {
+  "file": "bells/clock_twelve.mp3",
+  "tags": [
+   "clock",
+   "twelve",
+   "12",
+   "घड़ी",
+   "raat"
+  ],
+  "license": "Pixabay"
+ },
+ "clock_tower_12": {
+  "file": "bells/clock_tower_12.mp3",
+  "tags": [
+   "clock",
+   "tower",
+   "12",
+   "ghanta"
+  ],
+  "license": "Pixabay"
+ },
+ "westminster_hour": {
+  "file": "bells/westminster_hour.mp3",
+  "tags": [
+   "clock",
+   "hour",
+   "bell",
+   "ghanta"
+  ],
+  "license": "Pixabay"
+ },
+ "clock_11pm_rain": {
+  "file": "bells/clock_11pm_rain.mp3",
+  "tags": [
+   "clock",
+   "rain",
+   "raat",
+   "11"
+  ],
+  "license": "Pixabay"
+ },
+ "bells_saw": {
+  "file": "bells/bells_saw.mp3",
+  "tags": [
+   "bell",
+   "saw",
+   "scream",
+   "daravana"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -1965,7 +2065,9 @@ VARIANTS = {
     "ghost": ["ghost", "ghosts_past", "ghost_past_2"],
     "bell": ["temple_bell", "shofar"],
     "jungle": ["jungle_nature"],
-    "dhol": ["dhol_1", "dhol_shadi", "dhol_wedding", "dhol_bass"],
+    "dhol": ["dhol_1", "dhol_2", "dhol_shadi", "dhol_wedding", "dhol_bass", "dhol_beats"],
+    "clock": ["clock_twelve", "clock_tower_12", "westminster_hour", "clock_bell_1", "clock_11pm_rain"],
+    "bell": ["bell_chime", "temple_bell", "shofar", "clock_bell_1"],
     "shaadi": ["dhol_wedding", "dhol_shadi", "mehndi_beat"],
     "paper": ["paper_1", "paper_2", "paper_turn", "paper_rip_2", "paper_flutter"],
     "paper_rip": ["paper_rip_2", "paper_rip_fast", "paper_tear"],
