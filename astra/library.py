@@ -1833,6 +1833,107 @@ DEFAULT_INDEX = {
    "udna"
   ],
   "license": "Pixabay"
+ },
+ "dhol_1": {
+  "file": "music/dhol_1.mp3",
+  "tags": [
+   "dhol",
+   "ढोल",
+   "drum",
+   "shaadi",
+   "tyohar"
+  ],
+  "license": "Pixabay"
+ },
+ "dhol_shadi": {
+  "file": "music/dhol_shadi.mp3",
+  "tags": [
+   "dhol",
+   "shaadi",
+   "शादी",
+   "baraat"
+  ],
+  "license": "Pixabay"
+ },
+ "dhol_bass": {
+  "file": "music/dhol_bass.mp3",
+  "tags": [
+   "dhol",
+   "bass",
+   "ढोल"
+  ],
+  "license": "Pixabay"
+ },
+ "dhol_wedding": {
+  "file": "music/dhol_wedding.mp3",
+  "tags": [
+   "dhol",
+   "wedding",
+   "shaadi",
+   "baraat"
+  ],
+  "license": "Pixabay"
+ },
+ "indian_beats_1": {
+  "file": "music/indian_beats_1.mp3",
+  "tags": [
+   "beats",
+   "indian",
+   "music",
+   "dholak"
+  ],
+  "license": "Pixabay"
+ },
+ "indian_beats_5": {
+  "file": "music/indian_beats_5.mp3",
+  "tags": [
+   "beats",
+   "indian",
+   "music",
+   "dholak"
+  ],
+  "license": "Pixabay"
+ },
+ "mehndi_beat": {
+  "file": "music/mehndi_beat.mp3",
+  "tags": [
+   "mehndi",
+   "shaadi",
+   "beat",
+   "music"
+  ],
+  "license": "Pixabay"
+ },
+ "indian_drum_loop": {
+  "file": "music/indian_drum_loop.mp3",
+  "tags": [
+   "drum",
+   "loop",
+   "indian",
+   "dholak"
+  ],
+  "license": "Pixabay"
+ },
+ "paper_handling": {
+  "file": "foley/paper_handling.mp3",
+  "tags": [
+   "paper",
+   "kagaz",
+   "कागज़",
+   "page",
+   "turn"
+  ],
+  "license": "Pixabay"
+ },
+ "paper_crumple": {
+  "file": "foley/paper_crumple.mp3",
+  "tags": [
+   "paper",
+   "crumple",
+   "kuchalna",
+   "कागज़"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -1864,6 +1965,8 @@ VARIANTS = {
     "ghost": ["ghost", "ghosts_past", "ghost_past_2"],
     "bell": ["temple_bell", "shofar"],
     "jungle": ["jungle_nature"],
+    "dhol": ["dhol_1", "dhol_shadi", "dhol_wedding", "dhol_bass"],
+    "shaadi": ["dhol_wedding", "dhol_shadi", "mehndi_beat"],
     "paper": ["paper_1", "paper_2", "paper_turn", "paper_rip_2", "paper_flutter"],
     "paper_rip": ["paper_rip_2", "paper_rip_fast", "paper_tear"],
     "rain": ["rain_gentle_1", "rain_gentle_7", "rain_midday", "rain_window", "rain_on_glass", "thunderstorm"],
