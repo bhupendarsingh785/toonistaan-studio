@@ -3561,7 +3561,9 @@ ALIAS = {
     "scream": "scream_woman", "man_scream": "man_scream", "laugh": "man_laugh",
     "angry": "man_angry", "yell": "man_yell", "fall": "man_fall", "grunt": "man_grunt",
     "talk": "talk_crowd_1", "braam": "braam_dark", "monster": "monster_lurk",
-    "panic": "crowd_panic", "sting": "scary_sting", "hit": "horror_hit",
+    "chair": "knock_1", "plate": "paper_1", "bed": "steps_parquet",
+    "stairs": "steps_stairs_up", "run": "steps_parquet",
+    "gate_open": "door_open_a", "gate_close": "door_close_a", "panic": "crowd_panic", "sting": "scary_sting", "hit": "horror_hit",
     "horror": "horror_ambience", "rain": "rain", "wind": "wind",
 }
 
