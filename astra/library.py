@@ -2225,6 +2225,106 @@ DEFAULT_INDEX = {
    "general"
   ],
   "license": "Pixabay"
+ },
+ "dog_bark_1": {
+  "file": "animals/dog_bark_1.mp3",
+  "tags": [
+   "dog",
+   "kutta",
+   "कुत्ता",
+   "bark",
+   "bhaunkna"
+  ],
+  "license": "Pixabay"
+ },
+ "dog_bark_2": {
+  "file": "animals/dog_bark_2.mp3",
+  "tags": [
+   "dog",
+   "kutta",
+   "कुत्ता",
+   "bark"
+  ],
+  "license": "Pixabay"
+ },
+ "dog_bark_3": {
+  "file": "animals/dog_bark_3.mp3",
+  "tags": [
+   "dog",
+   "kutta",
+   "कुत्ता",
+   "bark"
+  ],
+  "license": "Pixabay"
+ },
+ "dog_bark_4": {
+  "file": "animals/dog_bark_4.mp3",
+  "tags": [
+   "dog",
+   "kutta",
+   "कुत्ता",
+   "bark"
+  ],
+  "license": "Pixabay"
+ },
+ "dog_bark_small": {
+  "file": "animals/dog_bark_small.mp3",
+  "tags": [
+   "dog",
+   "kutta",
+   "puppy",
+   "bark"
+  ],
+  "license": "Pixabay"
+ },
+ "dogs_howl": {
+  "file": "animals/dogs_howl.mp3",
+  "tags": [
+   "dogs",
+   "howl",
+   "kutta",
+   "रोना",
+   "raat"
+  ],
+  "license": "Pixabay"
+ },
+ "dog_variety": {
+  "file": "animals/dog_variety.mp3",
+  "tags": [
+   "dog",
+   "kutta",
+   "bark",
+   "yelp",
+   "breath"
+  ],
+  "license": "Pixabay"
+ },
+ "knock_7": {
+  "file": "door/knock_7.mp3",
+  "tags": [
+   "knock",
+   "दरवाज़ा",
+   "थाप"
+  ],
+  "license": "Pixabay"
+ },
+ "knock_8": {
+  "file": "door/knock_8.mp3",
+  "tags": [
+   "knock",
+   "दरवाज़ा",
+   "थाप"
+  ],
+  "license": "Pixabay"
+ },
+ "knock_9": {
+  "file": "door/knock_9.mp3",
+  "tags": [
+   "knock",
+   "दरवाज़ा",
+   "थाप"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -2257,7 +2357,8 @@ VARIANTS = {
     "bell": ["temple_bell", "shofar"],
     "jungle": ["jungle_nature"],
     "dhol": ["dhol_1", "dhol_2", "dhol_shadi", "dhol_wedding", "dhol_bass", "dhol_beats"],
-    "knock": ["knock_1", "knock_2", "knock_3", "knock_4", "knock_5", "knock_6", "door_pounding"],
+    "knock": ["knock_1", "knock_2", "knock_3", "knock_4", "knock_5", "knock_6", "knock_7", "knock_8", "knock_9", "door_pounding"],
+    "dog": ["dog_bark_1", "dog_bark_2", "dog_bark_3", "dog_bark_4", "dog_bark_small", "dogs_howl", "dog_variety"],
     "knock_fast": ["knock_fast"],
     "bang": ["door_bang_echo"],
     "clock": ["grandfather_12", "old_clock_chime", "cuckoo_clock", "clock_twelve", "clock_tower_12", "westminster_hour", "clock_bell_1", "clock_11pm_rain"],
