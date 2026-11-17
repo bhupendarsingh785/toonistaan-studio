@@ -32,6 +32,9 @@ DEFAULT_INDEX = {
     "scream_woman":      {"file": "horror/scream_woman.mp3", "tags": ["scream", "cheekh", "चीख", "chillana", "aurat"], "license": "Pixabay"},
     "crowd_applause":    {"file": "crowd/crowd_applause.mp3", "tags": ["crowd", "applause", "tali", "ताली", "khushi", "भीड़"], "license": "Pixabay"},
     "crowd_panic":       {"file": "crowd/crowd_panic.mp3", "tags": ["crowd", "panic", "bhagdad", "भगदड़", "scream", "भीड़"], "license": "Pixabay"},
+    "footsteps_parquet": {"file": "footsteps/footsteps_parquet.mp3", "tags": ["footsteps", "kadam", "कदम", "parquet", "boots", "indoor", "ghar", "घर"], "license": "Pixabay"},
+    "footsteps_hallway": {"file": "footsteps/footsteps_hallway.mp3", "tags": ["footsteps", "kadam", "कदम", "hallway", "corridor", "हवेली", "indoor"], "license": "Pixabay"},
+    "footsteps_concrete": {"file": "footsteps/footsteps_concrete.mp3", "tags": ["footsteps", "kadam", "कदम", "concrete", "road", "सड़क", "bahar", "outdoor"], "license": "Pixabay"},
 }
 
 # hamare SFX naam -> library naam (seedha match)
@@ -75,8 +78,10 @@ def entries():
     return _index()
 
 
-def find(name):
-    """Naam ya tag se best entry ka key."""
+def find(name, context=""):
+    """Naam ya tag se best entry ka key (context se footsteps chunte hain)."""
+    if name in ("footsteps", "kadam", "कदम"):
+        return pick_footsteps(context)
     idx = _index()
     if name in idx:
         return name
@@ -91,9 +96,23 @@ def find(name):
     return None
 
 
-def fetch(name):
+INDOOR_WORDS = ["घर", "कमरा", "हवेली", "अंदर", "सीढ़ी", "छत", "room", "indoor", "hall", "floor"]
+OUTDOOR_WORDS = ["सड़क", "बाहर", "मिट्टी", "खेत", "बाज़ार", "गली", "road", "street", "outdoor", "concrete"]
+
+
+def pick_footsteps(text=""):
+    """Kahani ke vaakya se indoor/outdoor kadam chuno."""
+    t = str(text or "")
+    if any(w in t for w in INDOOR_WORDS):
+        return "footsteps_hallway" if "सीढ़ी" in t or "हवेली" in t else "footsteps_parquet"
+    if any(w in t for w in OUTDOOR_WORDS):
+        return "footsteps_concrete"
+    return "footsteps_parquet"
+
+
+def fetch(name, context=""):
     """Asli library file ka wav (44.1k mono) — na mile to None."""
-    key = find(name)
+    key = find(name, context)
     if not key:
         return None
     meta = _index()[key]
