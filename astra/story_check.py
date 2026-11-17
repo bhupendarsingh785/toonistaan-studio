@@ -23,6 +23,18 @@ sys.path.insert(0, os.path.join(os.path.dirname(HERE), "studio"))
 sys.path.insert(0, os.path.join(os.path.dirname(HERE), "tools"))
 
 
+def _line_parts(line):
+    """Return (speaker, text, emotion) for both string and list story formats."""
+    if isinstance(line, str):
+        return "madhur", line, None
+    if isinstance(line, (list, tuple)):
+        speaker = str(line[0]) if len(line) > 0 and line[0] else "madhur"
+        text = str(line[1]) if len(line) > 1 else ""
+        emotion = line[2] if len(line) > 2 else None
+        return speaker, text, emotion
+    return "madhur", "", None
+
+
 def main():
     if len(sys.argv) < 2:
         print("usage: story_check.py story.json")
@@ -46,8 +58,9 @@ def main():
     chars = []
     for sc in ep.get("scenes", []):
         for line in sc.get("lines", []):
-            if line and line[0] not in chars:
-                chars.append(line[0])
+            speaker, _text, _emotion = _line_parts(line)
+            if speaker not in chars:
+                chars.append(speaker)
 
     print("=" * 60)
     print("KAHANI CHECK:", ep.get("title", "?"))
@@ -80,7 +93,7 @@ def main():
         horror = any(x in (sc.get("music") or "") for x in ("horror", "suspense"))
         for line in sc.get("lines", []):
             total += 1
-            text = line[1] if len(line) > 1 else ""
+            _speaker, text, _emotion = _line_parts(line)
             got = sfx_extra.detect_smart(text, env, allow_horror=horror)
             if not got:
                 nosound += 1
@@ -93,7 +106,8 @@ def main():
     for sc in ep.get("scenes", []):
         env = sc.get("env", "neutral")
         for line in sc.get("lines", []):
-            for n in sfx_extra.detect_smart(line[1] if len(line) > 1 else "", env):
+            _speaker, text, _emotion = _line_parts(line)
+            for n in sfx_extra.detect_smart(text, env):
                 names.add(n)
     def _ok(n):
         try:
