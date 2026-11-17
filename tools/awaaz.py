@@ -15,6 +15,11 @@
 Zaroorat: ffmpeg ; bolo ke liye: pip install edge-tts"""
 import argparse, os, subprocess, sys, tempfile
 
+try:
+    import voice_provider
+except Exception:
+    voice_provider = None
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "studio"))
 sys.path.insert(0, HERE)
@@ -72,6 +77,15 @@ def bolo(text, kirdaar, bhaav, out, kaccha=False):
     bhaav = bhaav or detect_emotion(text)
     r, p, v = prosody(bhaav, rate, pitch)
     tmp = tempfile.mktemp(suffix=".mp3")
+    # 1) ElevenLabs (asli jaisi awaaz) — key ho to
+    if voice_provider is not None and voice_provider.have_eleven():
+        if voice_provider.eleven_tts(text, kirdaar, tmp):
+            if kaccha:
+                os.replace(tmp, out)
+            else:
+                ffmpeg(tmp, out, TTS_AF); os.remove(tmp)
+            print(f"ban gaya (ElevenLabs): {out}  (kirdaar={kirdaar}, bhaav={bhaav})")
+            return
     res = subprocess.run([sys.executable, "-m", "edge_tts", "--text", text, "--voice", name, f"--rate={r}", f"--pitch={p}",
                           f"--volume={v}", "--write-media", tmp], capture_output=True, text=True)
     if res.returncode != 0 or not os.path.exists(tmp):
@@ -136,11 +150,15 @@ def bolo_natural(text, kirdaar, bhaav, out, jitter=True, kaccha=False):
             rp += random.choice([-2, -1, 0, 1, 2])
             pp += random.choice([-3, -1, 0, 1, 3])
         f = os.path.join(tmpdir, f"c{i}.mp3")
-        res = subprocess.run([sys.executable, "-m", "edge_tts", "--text", chunk, "--voice", name,
-                              f"--rate={rp:+d}%", f"--pitch={pp:+d}Hz", f"--volume={base_v}",
-                              "--write-media", f], capture_output=True, text=True)
-        if res.returncode != 0 or not os.path.exists(f):
-            sys.exit("edge-tts nahi chala:\n" + res.stderr[-300:])
+        made = False
+        if voice_provider is not None and voice_provider.have_eleven():
+            made = voice_provider.eleven_tts(chunk, kirdaar, f)
+        if not made:
+            res = subprocess.run([sys.executable, "-m", "edge_tts", "--text", chunk, "--voice", name,
+                                  f"--rate={rp:+d}%", f"--pitch={pp:+d}Hz", f"--volume={base_v}",
+                                  "--write-media", f], capture_output=True, text=True)
+            if res.returncode != 0 or not os.path.exists(f):
+                sys.exit("edge-tts nahi chala:\n" + res.stderr[-300:])
         pieces.append((f, _pause_for(chunk)))
     # jodo: piece + chup
     from pathlib import Path
