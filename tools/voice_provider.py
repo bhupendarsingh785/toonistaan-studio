@@ -65,6 +65,47 @@ def _post(url, data, headers, timeout=90):
         return r.read()
 
 
+def list_voices():
+    """Account par jo voices available hain (free plan par sirf kuch)."""
+    key = eleven_key()
+    if not key:
+        return []
+    try:
+        req = urllib.request.Request("https://api.elevenlabs.io/v1/voices",
+                                     headers={"xi-api-key": key, "Accept": "application/json"})
+        with urllib.request.urlopen(req, timeout=40) as r:
+            data = json.loads(r.read().decode("utf-8", "ignore"))
+    except Exception as e:
+        print("VOICES_LIST_FAIL", str(e)[:70], flush=True)
+        return []
+    out = []
+    for v in (data.get("voices") or []):
+        labels = v.get("labels") or {}
+        out.append({"id": v.get("voice_id"), "name": v.get("name"),
+                    "gender": (labels.get("gender") or "").lower(),
+                    "category": v.get("category") or ""})
+    return out
+
+
+_CACHE = {}
+
+
+def pick_voice(gender="male"):
+    """Account ki available list se male/female voice chuno (cache)."""
+    if gender in _CACHE:
+        return _CACHE[gender]
+    vs = list_voices()
+    cand = [v for v in vs if v["gender"] == gender] or vs
+    if not cand:
+        _CACHE[gender] = ADAM
+        return ADAM
+    # premade pehle
+    cand.sort(key=lambda v: 0 if v["category"] == "premade" else 1)
+    _CACHE[gender] = cand[0]["id"]
+    print("VOICE_PICK", gender, cand[0]["name"], cand[0]["category"], flush=True)
+    return cand[0]["id"]
+
+
 def eleven_tts(text, kirdaar="madhur", out="out.mp3"):
     """ElevenLabs se awaaz. Fail -> False."""
     key = eleven_key()
@@ -72,7 +113,8 @@ def eleven_tts(text, kirdaar="madhur", out="out.mp3"):
         return False
     voice_name, speed, pitch = KIRDAAR_VOICE.get(kirdaar, ("male_adult", 1.0, 1.0))
     env_override = os.environ.get(f"ELEVEN_VOICE_{voice_name.split('_')[0].upper()}", "").strip()
-    voice_id = env_override or DEFAULT_VOICES.get(voice_name, DEFAULT_VOICES["male_adult"])
+    gender = "female" if voice_name.startswith("female") else "male"
+    voice_id = env_override or pick_voice(gender) or DEFAULT_VOICES.get(voice_name, ADAM)
     payload = {
         "text": text,
         "model_id": os.environ.get("ELEVEN_MODEL", "eleven_flash_v2_5"),
