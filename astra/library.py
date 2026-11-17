@@ -3774,6 +3774,106 @@ DEFAULT_INDEX = {
    "loop"
   ],
   "license": "Pixabay"
+ },
+ "mantra_gayatri": {
+  "file": "mantra/mantra_gayatri.mp3",
+  "tags": [
+   "gayatri",
+   "गायत्री",
+   "mantra",
+   "sandhya"
+  ],
+  "license": "Pixabay"
+ },
+ "mantra_gayatri_chorus": {
+  "file": "mantra/mantra_gayatri_chorus.mp3",
+  "tags": [
+   "gayatri",
+   "chorus",
+   "mantra",
+   "group"
+  ],
+  "license": "Pixabay"
+ },
+ "mantra_gayatri_soft": {
+  "file": "mantra/mantra_gayatri_soft.mp3",
+  "tags": [
+   "gayatri",
+   "soft",
+   "mantra",
+   "shaant"
+  ],
+  "license": "Pixabay"
+ },
+ "mantra_gayatri_meaning": {
+  "file": "mantra/mantra_gayatri_meaning.mp3",
+  "tags": [
+   "gayatri",
+   "meaning",
+   "arth",
+   "mantra"
+  ],
+  "license": "Pixabay"
+ },
+ "mantra_tryambakam": {
+  "file": "mantra/mantra_tryambakam.mp3",
+  "tags": [
+   "tryambakam",
+   "shiva",
+   "मंत्र",
+   "healing"
+  ],
+  "license": "Pixabay"
+ },
+ "mantra_mrityunjaya_sangat": {
+  "file": "mantra/mantra_mrityunjaya_sangat.mp3",
+  "tags": [
+   "mrityunjaya",
+   "sangat",
+   "group",
+   "mandir"
+  ],
+  "license": "Pixabay"
+ },
+ "mantra_krishna_intense": {
+  "file": "mantra/mantra_krishna_intense.mp3",
+  "tags": [
+   "krishna",
+   "intense",
+   "mantra",
+   "bhakti"
+  ],
+  "license": "Pixabay"
+ },
+ "mauna_meditation": {
+  "file": "music/mauna_meditation.mp3",
+  "tags": [
+   "mauna",
+   "silence",
+   "meditation",
+   "dhyan"
+  ],
+  "license": "Pixabay"
+ },
+ "sleep_meditation": {
+  "file": "music/sleep_meditation.mp3",
+  "tags": [
+   "sleep",
+   "meditation",
+   "raat",
+   "shaant"
+  ],
+  "license": "Pixabay"
+ },
+ "sitar_charukeshi": {
+  "file": "music/sitar_charukeshi.mp3",
+  "tags": [
+   "sitar",
+   "charukeshi",
+   "calm",
+   "raaga"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -3827,6 +3927,7 @@ VARIANTS = {
     "coffee": ["coffee_machine", "coffee_grinder_2", "coffee_grinder_3", "coffee_stir"],
     "horn": ["horn_1"],
     "sehnai": ["drum_sehnai"],
+    "gayatri": ["mantra_gayatri", "mantra_gayatri_chorus", "mantra_gayatri_soft", "mantra_gayatri_meaning"],
     "mantra": ["mantra_lakshmi", "mantra_krishna_love", "mantra_kali", "mantra_mrityunjaya", "mantra_shivaya", "mantra_govinda"],
     "sitar": ["sitar_raaga"],
     "bhajan": ["bhajan_maithili", "bhajan_rajasthani", "bhajan_desert", "bhajan_vishnu"],
