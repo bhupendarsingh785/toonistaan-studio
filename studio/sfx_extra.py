@@ -28,6 +28,10 @@ def _lp(x, hz):
     return np.convolve(x, np.ones(k) / k, "same").astype(np.float32)
 
 
+def _bp(x, lo, hi):
+    return _hp(_lp(x, hi), lo)
+
+
 def _hp(x, hz):
     return (x - _lp(x, hz)).astype(np.float32)
 
@@ -137,9 +141,84 @@ def whoosh(d=0.8):
     return (x * 0.35).astype(np.float32)
 
 
+def cooker_whistle(d=2.2):
+    """प्रेशर कुकर की सीटी — Indian ghar ki sabse pehchani awaaz."""
+    out = np.zeros(int(SR * d), np.float32)
+    for i, start in enumerate((0.0, 0.75, 1.5)):
+        dur = 0.55
+        tt = t(dur)
+        f = 2400 + 240 * np.sin(2 * np.pi * 7 * tt)
+        x = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.sin(np.pi * tt / dur) ** 2
+        x += 0.3 * _hp(_noise(dur), 3000) * np.sin(np.pi * tt / dur) ** 2
+        k = int(SR * start)
+        out[k:k + len(x)] += x[:len(out) - k] * (0.9 - i * 0.15)
+    return out * 0.6
+
+
+def chai_boil(d=3.0):
+    """चाय उबलना — halka bulbulana."""
+    tt = t(d)
+    base = _lp(_noise(d), 900) * 0.25
+    bub = np.zeros(int(SR * d), np.float32)
+    k = 0.0
+    while k < d - 0.2:
+        dur = np.random.uniform(0.05, 0.12)
+        w = t(dur)
+        f = np.random.uniform(300, 700)
+        x = np.sin(2 * np.pi * f * w) * np.exp(-w * 25)
+        i = int(SR * k)
+        bub[i:i + len(x)] += x[:len(bub) - i] * np.random.uniform(0.3, 0.8)
+        k += np.random.uniform(0.06, 0.18)
+    return (base + bub * 0.5)
+
+
+def keys_jingle(d=1.2):
+    """चाबियों की खनखन — jeb se nikalna."""
+    out = np.zeros(int(SR * d), np.float32)
+    for _ in range(14):
+        f = np.random.uniform(2200, 6200)
+        w = t(0.12)
+        k = np.random.randint(0, max(1, len(out) - len(w)))
+        out[k:k + len(w)] += (np.sin(2 * np.pi * f * w) * np.exp(-w * 30) * 0.4).astype(np.float32)
+    return out * 0.7
+
+
+def broom(d=2.0):
+    """झाड़ू — pharsh par jhaadu."""
+    out = np.zeros(int(SR * d), np.float32)
+    k = 0.0
+    while k < d - 0.4:
+        w = t(0.35)
+        x = _bp(_noise(0.35), 900, 6000) * np.sin(np.pi * w / 0.35) ** 2
+        i = int(SR * k)
+        out[i:i + len(x)] += x[:len(out) - i] * np.random.uniform(0.4, 0.7)
+        k += 0.42
+    return out * 0.8
+
+
+def matka_water(d=1.8):
+    """मटके में पानी डालना — Indian ghar."""
+    tt = t(d)
+    x = _hp(_noise(d), 500) * 0.35
+    mod = 0.4 + 0.6 * np.abs(np.sin(2 * np.pi * 4.5 * tt))
+    gurgle = np.sin(2 * np.pi * np.cumsum(180 + 90 * np.sin(2 * np.pi * 2.2 * tt)) / SR) * 0.25
+    return (x * mod + gurgle * np.exp(-tt * 1.2)) * 0.8
+
+
+def ceiling_fan(d=4.0):
+    """छत का पंखा — dheemi hum."""
+    tt = t(d)
+    hum = np.sin(2 * np.pi * 100 * tt) * 0.12 + np.sin(2 * np.pi * 200 * tt) * 0.06
+    air = _lp(_noise(d), 700) * 0.18
+    wobble = 0.9 + 0.1 * np.sin(2 * np.pi * 1.1 * tt)
+    return (hum + air) * wobble * 0.9
+
+
 ALL = {"coins": coins, "phone": phone_ring, "gate_open": gate_open, "gate_close": gate_close,
        "footsteps": footsteps, "heartbeat": heartbeat, "paper": paper, "crowd": crowd,
-       "bell": bell, "switch": switch, "car": car_pass, "water": water, "whoosh": whoosh}
+       "bell": bell, "switch": switch, "car": car_pass, "water": water, "whoosh": whoosh,
+       "cooker": cooker_whistle, "chai": chai_boil, "keys": keys_jingle,
+       "broom": broom, "matka": matka_water, "fan": ceiling_fan}
 
 KEYWORDS = [
     ("scream_woman", ["चीख", "चिल्ला", "cheekh", "scream", "दहाड़"]),
@@ -150,6 +229,12 @@ KEYWORDS = [
     ("horror_hit", ["धमाका", "टकराव", "impact", "धड़ाम"]),
     ("scary_sting", ["डरावनी आवाज़", "चौंक", "sting", "अचानक"]),
     ("horror_ambience", ["माहौल", "सन्नाटा", "डरावना", "ambience"]),
+    ("cooker", ["सीटी", "कुकर", "cooker", "प्रेशर"]),
+    ("chai", ["चाय", "केटली", "chai", "उबल"]),
+    ("keys", ["चाबी", "चाबियाँ", "चाबियों", "keys", "ताला"]),
+    ("broom", ["झाड़ू", "jhaadu", "broom", "सफ़ाई"]),
+    ("matka", ["मटका", "घड़ा", "matka", "पानी डाल"]),
+    ("fan", ["पंखा", "fan", "छत का पंखा"]),
     ("coins", ["सिक्के", "पैसे", "गुल्लक", "रुपये", "बैंक", "खाता", "पर्स", "नोट", "कमाई", "बचत", "मुद्रा"]),
     ("phone", ["फोन", "मोबाइल", "घंटी", "कॉल", "बजा", "बजी"]),
     ("gate_open", ["गेट खुला", "दरवाज़ा खुला", "दरवाजा खुला", "खटखट", "चरचरा"]),
