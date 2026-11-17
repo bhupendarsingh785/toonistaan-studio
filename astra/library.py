@@ -4080,6 +4080,102 @@ DEFAULT_INDEX = {
    "barsaat"
   ],
   "license": "Pixabay"
+ },
+ "coin_drop_1": {
+  "file": "foley/coin_drop_1.mp3",
+  "tags": [
+   "coin",
+   "sikka",
+   "सिक्का",
+   "drop",
+   "money"
+  ],
+  "license": "Pixabay"
+ },
+ "coin_drop_2": {
+  "file": "foley/coin_drop_2.mp3",
+  "tags": [
+   "coin",
+   "sikka",
+   "spin",
+   "money"
+  ],
+  "license": "Pixabay"
+ },
+ "coins_dropping": {
+  "file": "foley/coins_dropping.mp3",
+  "tags": [
+   "coins",
+   "sikke",
+   "paisa",
+   "gullak"
+  ],
+  "license": "Pixabay"
+ },
+ "baby_cry_4": {
+  "file": "voices/baby_cry_4.mp3",
+  "tags": [
+   "baby",
+   "cry",
+   "bachcha",
+   "rona"
+  ],
+  "license": "Pixabay"
+ },
+ "baby_cry_5": {
+  "file": "voices/baby_cry_5.mp3",
+  "tags": [
+   "baby",
+   "cry",
+   "rona"
+  ],
+  "license": "Pixabay"
+ },
+ "baby_cry_6": {
+  "file": "voices/baby_cry_6.mp3",
+  "tags": [
+   "baby",
+   "cry",
+   "rona"
+  ],
+  "license": "Pixabay"
+ },
+ "baby_cry_angry": {
+  "file": "voices/baby_cry_angry.mp3",
+  "tags": [
+   "baby",
+   "angry",
+   "cry",
+   "gussa"
+  ],
+  "license": "Pixabay"
+ },
+ "baby_shout": {
+  "file": "voices/baby_shout.mp3",
+  "tags": [
+   "baby",
+   "shout",
+   "chillana"
+  ],
+  "license": "Pixabay"
+ },
+ "cry_1": {
+  "file": "voices/cry_1.mp3",
+  "tags": [
+   "cry",
+   "rona",
+   "dukh"
+  ],
+  "license": "Pixabay"
+ },
+ "cry_2": {
+  "file": "voices/cry_2.mp3",
+  "tags": [
+   "cry",
+   "rona",
+   "sad"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -4103,6 +4199,7 @@ VARIANTS = {
     "scream": ["scream_woman", "man_scream", "man_scream_2", "man_death_scream"],
     "cry": ["man_cry", "man_sniffle", "man_cry_2"],
     "girl_cry": ["girl_cry_1", "child_cry_2"],
+    "coins": ["coin_drop_1", "coin_drop_2", "coins_dropping", "coins_1" if False else "coin_drop_1"],
     "baby": ["baby_cry_1", "baby_cry_2", "baby_cry_3", "baby_laugh_1", "baby_laugh_2", "baby_giggle_1", "baby_giggle_2", "baby_babble", "baby_moan", "baby_noises"],
     "woman_cry": ["woman_cry_1", "woman_cry_2", "soft_cry_1"],
     "kitten": ["kitten_1"],
