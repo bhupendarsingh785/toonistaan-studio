@@ -4736,6 +4736,105 @@ DEFAULT_INDEX = {
    "teer"
   ],
   "license": "Pixabay"
+ },
+ "male_death_scream": {
+  "file": "horror/male_death_scream.mp3",
+  "tags": [
+   "male",
+   "death",
+   "scream",
+   "aadmi"
+  ],
+  "license": "Pixabay"
+ },
+ "insect_death": {
+  "file": "horror/insect_death.mp3",
+  "tags": [
+   "insect",
+   "death",
+   "keeda",
+   "monster"
+  ],
+  "license": "Pixabay"
+ },
+ "necromancer_spell": {
+  "file": "horror/necromancer_spell.mp3",
+  "tags": [
+   "necromancer",
+   "spell",
+   "jaadu",
+   "mantra"
+  ],
+  "license": "Pixabay"
+ },
+ "dark_evil_code": {
+  "file": "horror/dark_evil_code.mp3",
+  "tags": [
+   "dark",
+   "evil",
+   "code",
+   "horror"
+  ],
+  "license": "Pixabay"
+ },
+ "disappear": {
+  "file": "horror/disappear.mp3",
+  "tags": [
+   "disappear",
+   "gayab",
+   "magic"
+  ],
+  "license": "Pixabay"
+ },
+ "battle_end": {
+  "file": "horror/battle_end.mp3",
+  "tags": [
+   "battle",
+   "end",
+   "yuddh",
+   "jeet"
+  ],
+  "license": "Pixabay"
+ },
+ "female_death_vocal": {
+  "file": "voices/female_death_vocal.mp3",
+  "tags": [
+   "female",
+   "death",
+   "vocal",
+   "maut"
+  ],
+  "license": "Pixabay"
+ },
+ "siren_laugh_evil": {
+  "file": "voices/siren_laugh_evil.mp3",
+  "tags": [
+   "siren",
+   "laugh",
+   "evil",
+   "hansi"
+  ],
+  "license": "Pixabay"
+ },
+ "siren_laugh_2": {
+  "file": "voices/siren_laugh_2.mp3",
+  "tags": [
+   "siren",
+   "laugh",
+   "kill",
+   "hansi"
+  ],
+  "license": "Pixabay"
+ },
+ "fall_impact": {
+  "file": "foley/fall_impact.mp3",
+  "tags": [
+   "fall",
+   "impact",
+   "girna",
+   "takkar"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -4757,7 +4856,9 @@ VARIANTS = {
     "gate_close": ["door_close_a", "door_close_b", "door_close_c"],
     "talk": ["talk_crowd_1", "talk_crowd_2"],
     "death": ["monster_death_scream", "sirenhead_death", "dark_knight_death", "man_falling_death", "scraped_death"],
-    "siren": ["siren_voice_line", "siren_menace"],
+    "siren": ["siren_voice_line", "siren_menace", "siren_laugh_evil", "siren_laugh_2"],
+    "magic": ["necromancer_spell", "disappear", "dark_evil_code"],
+    "_siren_old": ["siren_voice_line", "siren_menace"],
     "scream": ["scream_woman", "man_scream", "man_scream_2", "man_death_scream"],
     "cry": ["man_cry", "man_sniffle", "man_cry_2"],
     "girl_cry": ["girl_cry_1", "child_cry_2"],
