@@ -156,7 +156,7 @@ def sunao(script_path, out, mahaul="room", music="calm", gap=0.45, sfx_level=0.5
 
         # 2) awaaz
         mp3 = os.path.join(tmp, f"l{idx}.mp3")
-        cmd = [sys.executable, os.path.join(HERE, "awaaz.py"), "bolo", text, "--kirdaar", kirdaar, "-o", mp3]
+        cmd = [sys.executable, os.path.join(HERE, "awaaz.py"), "bolo", text, "--kirdaar", kirdaar, "-o", mp3, "--natural"]
         if bhaav:
             cmd += ["--bhaav", bhaav]
         r = sh(cmd)
