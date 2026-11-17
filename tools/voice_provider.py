@@ -41,12 +41,13 @@ SAFE_VOICE = {"male": "pNInz6obpgDQGcFmaJgB", "female": "21m00Tcm4TlvDq8ikWAM"}
 # hamare kirdaar -> kaunsi voice + settings
 # (voice, speed, pitch) — pitch 1.0 = normal, 1.2 = bachcha, 0.9 = budha
 KIRDAAR_VOICE = {
-    "madhur": ("male_adult", 0.95, 1.0),
-    "swara": ("female_adult", 0.97, 1.02),
-    "swara_bachcha": ("female_young", 1.05, 1.18),
-    "madhur_bachcha": ("male_young", 1.05, 1.16),
-    "swara_dadi": ("female_old", 0.88, 0.92),
-    "madhur_dada": ("male_old", 0.88, 0.90),
+    # (voice, speed, pitch) — bachche aur bade me saaf farak
+    "madhur": ("male_adult", 0.94, 0.96),        # narrator: bhaari, dheema
+    "swara": ("female_adult", 0.97, 1.00),       # aurat
+    "swara_bachcha": ("female_young", 1.12, 1.42),  # bachchi: patli + tez
+    "madhur_bachcha": ("male_young", 1.10, 1.38),   # ladka: patla + tez
+    "swara_dadi": ("female_old", 0.84, 0.86),    # dadi: bhaari + dheemi
+    "madhur_dada": ("male_old", 0.82, 0.84),     # dada: sabse bhaari
 }
 
 
