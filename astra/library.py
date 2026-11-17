@@ -1329,6 +1329,114 @@ DEFAULT_INDEX = {
    "कीचड़"
   ],
   "license": "Pixabay"
+ },
+ "horse_neigh": {
+  "file": "animals/horse_neigh.mp3",
+  "tags": [
+   "horse",
+   "ghoda",
+   "घोड़ा",
+   "hihina",
+   "neigh"
+  ],
+  "license": "Pixabay"
+ },
+ "horse_neigh_2": {
+  "file": "animals/horse_neigh_2.mp3",
+  "tags": [
+   "horse",
+   "ghoda",
+   "घोड़ा",
+   "neigh"
+  ],
+  "license": "Pixabay"
+ },
+ "horse_walk": {
+  "file": "animals/horse_walk.mp3",
+  "tags": [
+   "horse",
+   "ghoda",
+   "घोड़ा",
+   "walk",
+   "chaal"
+  ],
+  "license": "Pixabay"
+ },
+ "horse_walk_2": {
+  "file": "animals/horse_walk_2.mp3",
+  "tags": [
+   "horse",
+   "ghoda",
+   "घोड़ा",
+   "walk"
+  ],
+  "license": "Pixabay"
+ },
+ "horse_hooves": {
+  "file": "animals/horse_hooves.mp3",
+  "tags": [
+   "hooves",
+   "khure",
+   "खुर",
+   "horse",
+   "ghoda"
+  ],
+  "license": "Pixabay"
+ },
+ "horse_gallop": {
+  "file": "animals/horse_gallop.mp3",
+  "tags": [
+   "gallop",
+   "horse",
+   "daud",
+   "दौड़",
+   "ghoda"
+  ],
+  "license": "Pixabay"
+ },
+ "horse_snort": {
+  "file": "animals/horse_snort.mp3",
+  "tags": [
+   "snort",
+   "horse",
+   "ghoda",
+   "saans"
+  ],
+  "license": "Pixabay"
+ },
+ "steps_muddy_road_2": {
+  "file": "footsteps/steps_muddy_road_2.mp3",
+  "tags": [
+   "steps",
+   "kadam",
+   "कदम",
+   "muddy",
+   "puddle"
+  ],
+  "license": "Pixabay"
+ },
+ "steps_fine_gravel": {
+  "file": "footsteps/steps_fine_gravel.mp3",
+  "tags": [
+   "steps",
+   "kadam",
+   "कदम",
+   "gravel",
+   "fine"
+  ],
+  "license": "Pixabay"
+ },
+ "steps_dirt": {
+  "file": "footsteps/steps_dirt.mp3",
+  "tags": [
+   "steps",
+   "kadam",
+   "कदम",
+   "dirt",
+   "mitti",
+   "मिट्टी"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -1364,7 +1472,9 @@ VARIANTS = {
     "rain_tin": ["rain_tin_roof", "rain_tin_metal", "rain_tent"],
     "stairs": ["steps_stairs_up", "steps_stairs_down", "steps_grass_to_stairs"],
     "gravel": ["steps_gravel", "steps_gravel_2", "steps_forest_road"],
-    "soil": ["steps_soil"],
+    "soil": ["steps_soil", "steps_dirt"],
+    "horse": ["horse_neigh", "horse_neigh_2", "horse_walk", "horse_gallop", "horse_snort"],
+    "hooves": ["horse_hooves"],
     "mud": ["steps_muddy_road", "steps_puddle"],
     "shoe": ["steps_shoe"],
     "grass": ["steps_frozen_grass", "steps_grass_to_stairs"],
