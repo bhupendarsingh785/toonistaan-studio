@@ -30,7 +30,11 @@ jobs:
           git add -A astra/library astra/library.py
           if git diff --cached --quiet; then
             echo "kuch naya nahi — sab saaf hai"
-          else
-            git commit -m "library: auto-clean (denoise + gate + loudnorm)"
-            git push
+            exit 0
           fi
+          git commit -m "library: auto-clean + dedupe"
+          for i in 1 2 3 4; do
+            git pull --rebase --autostash origin main && git push && echo "PUSH_OK" && exit 0
+            echo "push retry $i"; sleep 6
+          done
+          echo "push fail — agli baar"; exit 0
