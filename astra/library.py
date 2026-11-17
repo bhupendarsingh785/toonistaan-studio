@@ -1437,6 +1437,110 @@ DEFAULT_INDEX = {
    "मिट्टी"
   ],
   "license": "Pixabay"
+ },
+ "horse_steps_1": {
+  "file": "animals/horse_steps_1.mp3",
+  "tags": [
+   "horse",
+   "ghoda",
+   "घोड़ा",
+   "steps",
+   "hooves"
+  ],
+  "license": "Pixabay"
+ },
+ "horse_walk_3": {
+  "file": "animals/horse_walk_3.mp3",
+  "tags": [
+   "horse",
+   "ghoda",
+   "घोड़ा",
+   "walk"
+  ],
+  "license": "Pixabay"
+ },
+ "horse_walk_4": {
+  "file": "animals/horse_walk_4.mp3",
+  "tags": [
+   "horse",
+   "ghoda",
+   "घोड़ा",
+   "walk"
+  ],
+  "license": "Pixabay"
+ },
+ "fire_crackle_1": {
+  "file": "fire/fire_crackle_1.mp3",
+  "tags": [
+   "fire",
+   "aag",
+   "आग",
+   "crackle",
+   "jalna"
+  ],
+  "license": "Pixabay"
+ },
+ "fire_whoosh": {
+  "file": "fire/fire_whoosh.mp3",
+  "tags": [
+   "fire",
+   "aag",
+   "आग",
+   "whoosh",
+   "winds"
+  ],
+  "license": "Pixabay"
+ },
+ "fireplace": {
+  "file": "fire/fireplace.mp3",
+  "tags": [
+   "fire",
+   "aag",
+   "आग",
+   "fireplace",
+   "chulha",
+   "alav"
+  ],
+  "license": "Pixabay"
+ },
+ "crackle_1": {
+  "file": "fire/crackle_1.mp3",
+  "tags": [
+   "crackle",
+   "chirchirahat",
+   "aag"
+  ],
+  "license": "Pixabay"
+ },
+ "crackle_2": {
+  "file": "fire/crackle_2.mp3",
+  "tags": [
+   "crackle",
+   "chirchirahat",
+   "aag"
+  ],
+  "license": "Pixabay"
+ },
+ "vinyl_crackle": {
+  "file": "fire/vinyl_crackle.mp3",
+  "tags": [
+   "vinyl",
+   "crackle",
+   "purana",
+   "radio",
+   "record"
+  ],
+  "license": "Pixabay"
+ },
+ "vinyl_loop": {
+  "file": "fire/vinyl_loop.mp3",
+  "tags": [
+   "vinyl",
+   "loop",
+   "purana",
+   "radio"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -1473,7 +1577,9 @@ VARIANTS = {
     "stairs": ["steps_stairs_up", "steps_stairs_down", "steps_grass_to_stairs"],
     "gravel": ["steps_gravel", "steps_gravel_2", "steps_forest_road"],
     "soil": ["steps_soil", "steps_dirt"],
-    "horse": ["horse_neigh", "horse_neigh_2", "horse_walk", "horse_gallop", "horse_snort"],
+    "horse": ["horse_neigh", "horse_neigh_2", "horse_walk", "horse_walk_3", "horse_gallop", "horse_snort"],
+    "fire": ["fire_crackle_1", "fireplace", "crackle_1", "crackle_2", "fire_whoosh"],
+    "vinyl": ["vinyl_crackle", "vinyl_loop"],
     "hooves": ["horse_hooves"],
     "mud": ["steps_muddy_road", "steps_puddle"],
     "shoe": ["steps_shoe"],
