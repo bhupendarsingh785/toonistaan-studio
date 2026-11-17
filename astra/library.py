@@ -2925,6 +2925,97 @@ DEFAULT_INDEX = {
    "zor"
   ],
   "license": "Pixabay"
+ },
+ "vinyl_scratch": {
+  "file": "machines/vinyl_scratch.mp3",
+  "tags": [
+   "vinyl",
+   "scratch",
+   "dj",
+   "purana"
+  ],
+  "license": "Pixabay"
+ },
+ "food_mixer": {
+  "file": "machines/food_mixer.mp3",
+  "tags": [
+   "mixer",
+   "food",
+   "rasoi",
+   "grinder"
+  ],
+  "license": "Pixabay"
+ },
+ "mixer_2": {
+  "file": "machines/mixer_2.mp3",
+  "tags": [
+   "mixer",
+   "machine"
+  ],
+  "license": "Pixabay"
+ },
+ "coffee_machine": {
+  "file": "machines/coffee_machine.mp3",
+  "tags": [
+   "coffee",
+   "machine",
+   "nespresso"
+  ],
+  "license": "Pixabay"
+ },
+ "coffee_grinder_2": {
+  "file": "machines/coffee_grinder_2.mp3",
+  "tags": [
+   "coffee",
+   "grinder"
+  ],
+  "license": "Pixabay"
+ },
+ "coffee_grinder_3": {
+  "file": "machines/coffee_grinder_3.mp3",
+  "tags": [
+   "coffee",
+   "grinder"
+  ],
+  "license": "Pixabay"
+ },
+ "coffee_grinder_4": {
+  "file": "machines/coffee_grinder_4.mp3",
+  "tags": [
+   "coffee",
+   "grinder"
+  ],
+  "license": "Pixabay"
+ },
+ "coffee_stir": {
+  "file": "machines/coffee_stir.mp3",
+  "tags": [
+   "coffee",
+   "stir",
+   "chammach",
+   "cup"
+  ],
+  "license": "Pixabay"
+ },
+ "concrete_mixer": {
+  "file": "machines/concrete_mixer.mp3",
+  "tags": [
+   "concrete",
+   "mixer",
+   "construction",
+   "building"
+  ],
+  "license": "Pixabay"
+ },
+ "metal_scrape": {
+  "file": "machines/metal_scrape.mp3",
+  "tags": [
+   "metal",
+   "scrape",
+   "khurachna",
+   "loha"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -2957,7 +3048,9 @@ VARIANTS = {
     "bell": ["temple_bell", "shofar"],
     "jungle": ["jungle_nature"],
     "train": ["train_pass_1", "train_pass_2", "train_pass_3", "train_running", "train_approaching", "train_crossing", "train_horn_1", "train_horn_2", "train_horn_3", "train_horn_4", "train_horn_distant", "train_horn_lofi", "train_horn_comical", "train_departure", "train_passing_cars", "train_loud", "train_rural_india", "train_distant_birds", "steam_train", "steam_train_2", "train_horn_5", "train_horn_6", "train_horn_pass_distant", "train_horn_passing", "train_horn_asia", "train_horn_lofi_2", "train_horn_blast", "train_musical", "diesel_horn", "train_horn_7", "train_horn_8", "train_horn_fade", "train_horn_horror", "station_ambience"],
-    "machine": ["grinder_axe", "grinder_start", "mixer_beater", "coffee_grinder"],
+    "machine": ["grinder_axe", "grinder_start", "mixer_beater", "coffee_grinder", "food_mixer", "mixer_2", "coffee_machine", "coffee_grinder_2", "concrete_mixer", "metal_scrape"],
+    "vinyl": ["vinyl_scratch", "vinyl_crackle", "vinyl_loop"],
+    "coffee": ["coffee_machine", "coffee_grinder_2", "coffee_grinder_3", "coffee_stir"],
     "horn": ["horn_1"],
     "sehnai": ["drum_sehnai"],
     "dhol": ["dhol_1", "dhol_2", "dhol_shadi", "dhol_wedding", "dhol_bass", "dhol_beats"],
