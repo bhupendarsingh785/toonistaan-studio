@@ -2375,6 +2375,108 @@ DEFAULT_INDEX = {
    "long"
   ],
   "license": "Pixabay"
+ },
+ "breakup_theme": {
+  "file": "music/breakup_theme.mp3",
+  "tags": [
+   "music",
+   "breakup",
+   "sad",
+   "dukh",
+   "रोना"
+  ],
+  "license": "Pixabay"
+ },
+ "romantic_guitar": {
+  "file": "music/romantic_guitar.mp3",
+  "tags": [
+   "music",
+   "romantic",
+   "pyaar",
+   "प्यार",
+   "guitar"
+  ],
+  "license": "Pixabay"
+ },
+ "happy_folk": {
+  "file": "music/happy_folk.mp3",
+  "tags": [
+   "music",
+   "happy",
+   "khushi",
+   "folk",
+   "gaon"
+  ],
+  "license": "Pixabay"
+ },
+ "piano_logo": {
+  "file": "music/piano_logo.mp3",
+  "tags": [
+   "music",
+   "piano",
+   "logo",
+   "intro"
+  ],
+  "license": "Pixabay"
+ },
+ "man_death_2": {
+  "file": "voices/man_death_2.mp3",
+  "tags": [
+   "scream",
+   "death",
+   "maut",
+   "चीख"
+  ],
+  "license": "Pixabay"
+ },
+ "heartbeat_1": {
+  "file": "voices/heartbeat_1.mp3",
+  "tags": [
+   "heartbeat",
+   "dhadkan",
+   "धड़कन",
+   "dar"
+  ],
+  "license": "Pixabay"
+ },
+ "kiss_1": {
+  "file": "voices/kiss_1.mp3",
+  "tags": [
+   "kiss",
+   "chumma",
+   "चुम्मा",
+   "pyaar"
+  ],
+  "license": "Pixabay"
+ },
+ "kiss_2": {
+  "file": "voices/kiss_2.mp3",
+  "tags": [
+   "kiss",
+   "chumma",
+   "pyaar"
+  ],
+  "license": "Pixabay"
+ },
+ "smoke_breath": {
+  "file": "voices/smoke_breath.mp3",
+  "tags": [
+   "smoke",
+   "saans",
+   "सिगरेट",
+   "breath"
+  ],
+  "license": "Pixabay"
+ },
+ "spirit_gain_2": {
+  "file": "voices/spirit_gain_2.mp3",
+  "tags": [
+   "spirit",
+   "aatma",
+   "आत्मा",
+   "gain"
+  ],
+  "license": "Pixabay"
  }
 }
 
