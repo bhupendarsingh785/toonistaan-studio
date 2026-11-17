@@ -364,11 +364,41 @@ def detect_smart(text, env="neutral", allow_horror=False):
             out.append(snd)
         if len(out) >= 2:
             return out
+    for cand in detect_action(low, env):
+        if cand not in out:
+            out.append(cand)
     if out:
-        return out
+        return out[:2]
     # kuch na mile to purana tareeka, par mahaul ke andar hi
     for cand in detect(low)[:2]:
         if allow_horror or not cand.startswith(("horror", "scary", "ghost", "monster", "scream")):
             if not allowed or any(cand.startswith(a) or a.startswith(cand) for a in allowed):
                 out.append(cand)
     return out[:2]
+
+
+# ---------------------------------------------------------------- kaam (action) ke shabd
+ACTION_WORDS = [
+    (["खुला", "खोल", "खुल गया", "खुलती"], "gate_open", {"room", "village", "hall", "station"}),
+    (["बंद", "बन्द", "बंद हो"], "gate_close", {"room", "village", "hall"}),
+    (["कुर्सी", "चौकी", "बैठ"], "chair", {"room", "hall", "street"}),
+    (["थाली", "खाना खा", "परोस", "चम्मच"], "plate", {"room", "village"}),
+    (["पलंग", "सो", "लेट", "करवट"], "bed", {"room"}),
+    (["नहा", "स्नान", "बाल्टी"], "water", {"room", "village"}),
+    (["सीढ़ी", "चढ़", "उतर"], "stairs", {"room", "village", "hall"}),
+    (["दौड़", "भाग"], "run", {"street", "village", "jungle", "night"}),
+]
+
+
+def detect_action(text, env="neutral"):
+    """Kaam dekh kar awaaz — khulna, band hona, baithna, khana."""
+    low = str(text or "").lower()
+    out = []
+    for words, snd, envs in ACTION_WORDS:
+        if not any(w in low for w in words):
+            continue
+        if envs is not None and env not in envs:
+            continue
+        if snd not in out:
+            out.append(snd)
+    return out
