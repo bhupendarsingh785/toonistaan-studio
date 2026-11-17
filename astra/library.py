@@ -4639,6 +4639,103 @@ DEFAULT_INDEX = {
    "bheed"
   ],
   "license": "Pixabay"
+ },
+ "monster_death_scream": {
+  "file": "horror/monster_death_scream.mp3",
+  "tags": [
+   "monster",
+   "death",
+   "scream",
+   "rakshas"
+  ],
+  "license": "Pixabay"
+ },
+ "sirenhead_death": {
+  "file": "horror/sirenhead_death.mp3",
+  "tags": [
+   "sirenhead",
+   "death",
+   "monster"
+  ],
+  "license": "Pixabay"
+ },
+ "dark_knight_death": {
+  "file": "horror/dark_knight_death.mp3",
+  "tags": [
+   "death",
+   "dark",
+   "cinematic"
+  ],
+  "license": "Pixabay"
+ },
+ "man_falling_death": {
+  "file": "horror/man_falling_death.mp3",
+  "tags": [
+   "falling",
+   "death",
+   "girna",
+   "chillana"
+  ],
+  "license": "Pixabay"
+ },
+ "scraped_death": {
+  "file": "horror/scraped_death.mp3",
+  "tags": [
+   "scrape",
+   "death",
+   "horror"
+  ],
+  "license": "Pixabay"
+ },
+ "siren_voice_line": {
+  "file": "voices/siren_voice_line.mp3",
+  "tags": [
+   "siren",
+   "voice",
+   "female",
+   "monster"
+  ],
+  "license": "Pixabay"
+ },
+ "siren_menace": {
+  "file": "voices/siren_menace.mp3",
+  "tags": [
+   "siren",
+   "menace",
+   "threat",
+   "female"
+  ],
+  "license": "Pixabay"
+ },
+ "boss_attack_vocal": {
+  "file": "voices/boss_attack_vocal.mp3",
+  "tags": [
+   "boss",
+   "attack",
+   "vocal",
+   "roar"
+  ],
+  "license": "Pixabay"
+ },
+ "female_attack_vocal": {
+  "file": "voices/female_attack_vocal.mp3",
+  "tags": [
+   "female",
+   "attack",
+   "vocal",
+   "chillana"
+  ],
+  "license": "Pixabay"
+ },
+ "darts": {
+  "file": "foley/darts.mp3",
+  "tags": [
+   "darts",
+   "throw",
+   "fenkna",
+   "teer"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -4659,6 +4756,8 @@ VARIANTS = {
     "door": ["door_open_a", "door_open_b", "door_open_c"],
     "gate_close": ["door_close_a", "door_close_b", "door_close_c"],
     "talk": ["talk_crowd_1", "talk_crowd_2"],
+    "death": ["monster_death_scream", "sirenhead_death", "dark_knight_death", "man_falling_death", "scraped_death"],
+    "siren": ["siren_voice_line", "siren_menace"],
     "scream": ["scream_woman", "man_scream", "man_scream_2", "man_death_scream"],
     "cry": ["man_cry", "man_sniffle", "man_cry_2"],
     "girl_cry": ["girl_cry_1", "child_cry_2"],
