@@ -40,7 +40,7 @@ SEARCH_TERMS = {
     "water_drop": "water drop",
     "fire": "fire crackling",
     "thunder": "thunder",
-    "door": "old wooden door creak opening slow",
+    "door": "wooden door open close house interior",
     "glass": "glass break",
     "metal": "metal hit clang",
     "wood": "wood knock",
@@ -62,8 +62,8 @@ SEARCH_TERMS = {
     "cry": "crying",
     "breath": "breathing",
     "scream": "scream",
-    "gate_open": "metal gate creak rusty opening",
-    "gate_close": "metal gate slam shut",
+    "gate_open": "wooden door creak opening",
+    "gate_close": "wooden door close shut",
     "heartbeat": "heartbeat slow",
     "phone": "old telephone ring",
     "crowd": "crowd talking market ambience",
@@ -71,7 +71,7 @@ SEARCH_TERMS = {
     "switch": "light switch click",
     "car": "car passing by street",
     "whoosh": "whoosh transition",
-    "footsteps": "footsteps walking hard floor",
+    "footsteps": "footsteps walking indoor slow",
     "rain": "rain heavy ambience",
     "wind": "wind blowing ambience",
     "fire": "fire crackling close",
@@ -101,6 +101,34 @@ def have_key():
     return bool(_clean_key())
 
 
+BANNED_WORDS = ["horror", "scary", "jumpscare", "monster", "demonic", "gun", "storm",
+                "slam", "explosion", "scream", "creepy", "zombie", "alien"]
+
+TARGET_DUR = {
+    "door": (0.7, 4.5), "gate_open": (0.7, 4.5), "gate_close": (0.4, 3.5),
+    "footsteps": (1.5, 10.0), "heartbeat": (1.0, 8.0), "paper": (0.3, 3.0),
+    "coins": (0.4, 4.0), "bell": (1.0, 8.0), "phone": (1.0, 8.0),
+    "glass": (0.3, 3.5), "metal": (0.3, 4.0), "wood": (0.2, 2.5),
+}
+
+
+def _clean_name(name, target_name):
+    """Boring/realistic naam chuno — horror/slam wale hata do (jab tak khud na maanga ho)."""
+    n = str(name or "").lower()
+    if target_name in ("door", "gate_open", "gate_close", "footsteps", "paper", "coins"):
+        return not any(b in n for b in BANNED_WORDS)
+    return True
+
+
+def _dur_score(dur, target_name):
+    """Target duration ke andar wale ko zyada point."""
+    rng = TARGET_DUR.get(target_name)
+    if not rng or not dur:
+        return 0
+    lo, hi = rng
+    return 2 if lo <= float(dur) <= hi else 0
+
+
 def _license_ok(lic):
     """NC (non-commercial) aur ND (no-derivs) hata do — warna monetized video illegal ho jayegi."""
     l = str(lic or "").lower()
@@ -119,7 +147,7 @@ def _get(url, timeout=25):
         return json.loads(r.read().decode("utf-8", "ignore"))
 
 
-def search(query, limit=5, min_seconds=0.3, max_seconds=60):
+def search(query, limit=8, min_seconds=0.3, max_seconds=60, name_hint=""):
     """Freesound par search. Key na ho to None."""
     key = _clean_key()
     if not key:
@@ -139,6 +167,9 @@ def search(query, limit=5, min_seconds=0.3, max_seconds=60):
         return None
     out = []
     for s in (data.get("results") or []):
+        if not _clean_name(s.get("name"), name_hint):
+            print("REAL_SKIP_NAME", str(s.get("name", ""))[:34], flush=True)
+            continue
         pv = (s.get("previews") or {})
         link = pv.get("preview-hq-mp3") or pv.get("preview-lq-mp3") or pv.get("preview-hq-ogg")
         if not link:
@@ -148,7 +179,10 @@ def search(query, limit=5, min_seconds=0.3, max_seconds=60):
             continue
         out.append({"id": s.get("id"), "name": s.get("name"), "url": link,
                     "duration": s.get("duration"), "license": s.get("license"),
-                    "author": s.get("username")})
+                    "author": s.get("username"),
+                    "score": _dur_score(s.get("duration"), name_hint)
+                    + (2 if "zero" in str(s.get("license", "")).lower() else 0)})
+    out.sort(key=lambda r: -r.get("score", 0))
     return out
 
 
@@ -169,7 +203,7 @@ def fetch(name, target_seconds=None, force=False):
     meta_path = os.path.join(CACHE, f"{name}.json")
     if os.path.exists(out_wav) and os.path.getsize(out_wav) > 5000 and not force:
         return out_wav
-    results = search(term, limit=5)
+    results = search(term, limit=8, name_hint=name)
     if not results:
         return None
     for r in results:
