@@ -3109,6 +3109,101 @@ DEFAULT_INDEX = {
    "गुर्राना"
   ],
   "license": "Pixabay"
+ },
+ "tiger_roar_1": {
+  "file": "animals/tiger_roar_1.mp3",
+  "tags": [
+   "tiger",
+   "sher",
+   "शेर",
+   "roar",
+   "dahad"
+  ],
+  "license": "Pixabay"
+ },
+ "tiger_roar_2": {
+  "file": "animals/tiger_roar_2.mp3",
+  "tags": [
+   "tiger",
+   "sher",
+   "roar"
+  ],
+  "license": "Pixabay"
+ },
+ "tiger_roar_3": {
+  "file": "animals/tiger_roar_3.mp3",
+  "tags": [
+   "tiger",
+   "sher",
+   "roar"
+  ],
+  "license": "Pixabay"
+ },
+ "tiger_roar_4": {
+  "file": "animals/tiger_roar_4.mp3",
+  "tags": [
+   "tiger",
+   "monster",
+   "roar"
+  ],
+  "license": "Pixabay"
+ },
+ "monster_roar_1": {
+  "file": "animals/monster_roar_1.mp3",
+  "tags": [
+   "monster",
+   "rakshas",
+   "राक्षस",
+   "roar"
+  ],
+  "license": "Pixabay"
+ },
+ "monster_roar_2": {
+  "file": "animals/monster_roar_2.mp3",
+  "tags": [
+   "monster",
+   "warrior",
+   "roar"
+  ],
+  "license": "Pixabay"
+ },
+ "monster_roar_3": {
+  "file": "animals/monster_roar_3.mp3",
+  "tags": [
+   "monster",
+   "beast",
+   "roar",
+   "attack"
+  ],
+  "license": "Pixabay"
+ },
+ "monster_growl_1": {
+  "file": "animals/monster_growl_1.mp3",
+  "tags": [
+   "monster",
+   "growl",
+   "गुर्राना"
+  ],
+  "license": "Pixabay"
+ },
+ "roar_1": {
+  "file": "animals/roar_1.mp3",
+  "tags": [
+   "roar",
+   "dahad",
+   "डर"
+  ],
+  "license": "Pixabay"
+ },
+ "wolf_growl": {
+  "file": "animals/wolf_growl.mp3",
+  "tags": [
+   "wolf",
+   "bhediya",
+   "भेड़िया",
+   "growl"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -3145,6 +3240,10 @@ VARIANTS = {
     "vinyl": ["vinyl_scratch", "vinyl_crackle", "vinyl_loop"],
     "blender": ["blender_1", "blender_2", "blender_3", "blender_4"],
     "dragon": ["dragon_roar", "dragon_growl", "dinosaur_roar"],
+    "tiger": ["tiger_roar_1", "tiger_roar_2", "tiger_roar_3", "tiger_roar_4"],
+    "monster": ["monster_roar_1", "monster_roar_2", "monster_roar_3", "monster_growl_1", "monster_lurk"],
+    "wolf": ["wolf_growl"],
+    "roar": ["roar_1", "tiger_roar_1", "monster_roar_1"],
     "alien": ["alien_roar"],
     "coffee": ["coffee_machine", "coffee_grinder_2", "coffee_grinder_3", "coffee_stir"],
     "horn": ["horn_1"],
