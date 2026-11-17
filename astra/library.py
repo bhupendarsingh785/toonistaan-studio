@@ -4835,6 +4835,103 @@ DEFAULT_INDEX = {
    "takkar"
   ],
   "license": "Pixabay"
+ },
+ "insect_death_2": {
+  "file": "horror/insect_death_2.mp3",
+  "tags": [
+   "insect",
+   "death",
+   "keeda"
+  ],
+  "license": "Pixabay"
+ },
+ "insect_death_3": {
+  "file": "horror/insect_death_3.mp3",
+  "tags": [
+   "insect",
+   "death",
+   "monster"
+  ],
+  "license": "Pixabay"
+ },
+ "death_whistle": {
+  "file": "horror/death_whistle.mp3",
+  "tags": [
+   "death",
+   "whistle",
+   "seeti",
+   "horror"
+  ],
+  "license": "Pixabay"
+ },
+ "male_scream_2": {
+  "file": "voices/male_scream_2.mp3",
+  "tags": [
+   "male",
+   "scream",
+   "chillana",
+   "dar"
+  ],
+  "license": "Pixabay"
+ },
+ "metalscrape_2": {
+  "file": "foley/metalscrape_2.mp3",
+  "tags": [
+   "metal",
+   "scrape",
+   "khurachna",
+   "talwar"
+  ],
+  "license": "Pixabay"
+ },
+ "drum_loop_slap": {
+  "file": "music/drum_loop_slap.mp3",
+  "tags": [
+   "drum",
+   "loop",
+   "slap",
+   "beat"
+  ],
+  "license": "Pixabay"
+ },
+ "hand_grinder": {
+  "file": "kitchen/hand_grinder.mp3",
+  "tags": [
+   "grinder",
+   "chakki",
+   "silbatta",
+   "masala"
+  ],
+  "license": "Pixabay"
+ },
+ "food_processor": {
+  "file": "machines/food_processor.mp3",
+  "tags": [
+   "processor",
+   "machine",
+   "mixer"
+  ],
+  "license": "Pixabay"
+ },
+ "stirring_tea": {
+  "file": "kitchen/stirring_tea.mp3",
+  "tags": [
+   "stirring",
+   "tea",
+   "chai",
+   "chammach"
+  ],
+  "license": "Pixabay"
+ },
+ "field_recording_1": {
+  "file": "ambience/field_recording_1.mp3",
+  "tags": [
+   "field",
+   "ambience",
+   "outside",
+   "bahar"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -4931,7 +5028,7 @@ VARIANTS = {
     "thunder": ["thunderstorm"],
     "birds": ["birds_in_rain"],
     "water": ["water_relax", "pour_glass", "kettle_pour", "boiling"],
-    "chai": ["tea_boil", "kettle_cup", "boiling"],
+    "chai": ["chai_1", "stirring_tea", "tea_boil", "kettle_cup", "boiling"],
     "cooker": ["cooker_whistle", "cooker_1", "cooker_2", "cooker_release", "cooker_low"],
     "boil": ["boil_2", "boil_3", "boil_long", "boiling"],
     "bubbles": ["bubbles"],
