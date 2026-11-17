@@ -69,18 +69,34 @@ def _post(url, data, headers, timeout=90):
 # ---------------------------------------------------------------- Sarvam AI (bulbul)
 SARVAM_URL = "https://api.sarvam.ai/text-to-speech"
 SARVAM_SPEAKER = {
-    # kirdaar -> bulbul:v3 speaker
-    "madhur": "shubh",          # narrator (male, stable)
-    "swara": "ritu",            # aurat
-    "swara_bachcha": "priya",   # bachchi (halki awaaz)
-    "madhur_bachcha": "rahul",  # ladka
-    "swara_dadi": "kavya",      # dadi
-    "madhur_dada": "dev",       # dada (bhaari)
+    # narrator
+    "madhur": "shubh",
+    # 16 kirdaar — har ek ki alag awaaz
+    "arjun": "rahul", "meera": "ritu", "chacha": "dev", "chachi": "kavya",
+    "dadi": "roopa", "pandit": "ashutosh", "constable": "ratan", "doctor": "varun",
+    "bachcha": "soham", "sunita": "shreya", "driver": "manan", "bhoot": "aayan",
+    "chudail": "ishita", "mukhiya": "sumit", "kaka": "kabir", "bhabhi": "pooja",
+    # purane naam (compat)
+    "swara": "ritu", "swara_bachcha": "priya", "madhur_bachcha": "rahul",
+    "swara_dadi": "kavya", "madhur_dada": "dev",
 }
 SARVAM_PACE = {
-    "madhur": 0.95, "swara": 1.0, "swara_bachcha": 1.08, "madhur_bachcha": 1.06,
-    "swara_dadi": 0.88, "madhur_dada": 0.86,
+    "madhur": 1.0, "arjun": 1.02, "meera": 1.0, "chacha": 0.92, "chachi": 1.05,
+    "dadi": 0.86, "pandit": 0.88, "constable": 0.95, "doctor": 0.98, "bachcha": 1.1,
+    "sunita": 1.0, "driver": 1.0, "bhoot": 0.78, "chudail": 0.82, "mukhiya": 0.9,
+    "kaka": 0.95, "bhabhi": 1.02,
+    "swara": 1.0, "swara_bachcha": 1.08, "madhur_bachcha": 1.06,
+    "swara_dadi": 0.9, "madhur_dada": 0.88,
 }
+SARVAM_TEMP = {
+    "madhur": 0.85, "arjun": 0.8, "meera": 0.8, "chacha": 0.78, "chachi": 0.82,
+    "dadi": 0.8, "pandit": 0.75, "constable": 0.7, "doctor": 0.7, "bachcha": 0.85,
+    "sunita": 0.78, "driver": 0.75, "bhoot": 0.9, "chudail": 0.9, "mukhiya": 0.75,
+    "kaka": 0.75, "bhabhi": 0.8,
+    "swara": 0.8, "swara_bachcha": 0.75, "madhur_bachcha": 0.78,
+    "swara_dadi": 0.82, "madhur_dada": 0.8,
+}
+
 
 
 def sarvam_key():
