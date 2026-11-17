@@ -101,6 +101,18 @@ def have_key():
     return bool(_clean_key())
 
 
+def _license_ok(lic):
+    """NC (non-commercial) aur ND (no-derivs) hata do — warna monetized video illegal ho jayegi."""
+    l = str(lic or "").lower()
+    if "publicdomain" in l or "zero" in l:
+        return True
+    if "by-nc" in l or "/nc" in l or "noncommercial" in l:
+        return False
+    if "by-nd" in l or "/nd" in l or "noderiv" in l:
+        return False
+    return True
+
+
 def _get(url, timeout=25):
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     with urllib.request.urlopen(req, timeout=timeout) as r:
@@ -130,6 +142,9 @@ def search(query, limit=5, min_seconds=0.3, max_seconds=60):
         pv = (s.get("previews") or {})
         link = pv.get("preview-hq-mp3") or pv.get("preview-lq-mp3") or pv.get("preview-hq-ogg")
         if not link:
+            continue
+        if not _license_ok(s.get("license")):
+            print("REAL_SKIP_NC", s.get("name", "")[:30], s.get("license", "")[:40], flush=True)
             continue
         out.append({"id": s.get("id"), "name": s.get("name"), "url": link,
                     "duration": s.get("duration"), "license": s.get("license"),
