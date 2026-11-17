@@ -2829,6 +2829,102 @@ DEFAULT_INDEX = {
    "zor"
   ],
   "license": "Pixabay"
+ },
+ "grinder_axe": {
+  "file": "machines/grinder_axe.mp3",
+  "tags": [
+   "grinder",
+   "machine",
+   "axe",
+   "kharad"
+  ],
+  "license": "Pixabay"
+ },
+ "grinder_start": {
+  "file": "machines/grinder_start.mp3",
+  "tags": [
+   "grinder",
+   "machine",
+   "start"
+  ],
+  "license": "Pixabay"
+ },
+ "mixer_beater": {
+  "file": "machines/mixer_beater.mp3",
+  "tags": [
+   "mixer",
+   "beater",
+   "machine",
+   "rasoi"
+  ],
+  "license": "Pixabay"
+ },
+ "coffee_grinder": {
+  "file": "machines/coffee_grinder.mp3",
+  "tags": [
+   "grinder",
+   "coffee",
+   "machine"
+  ],
+  "license": "Pixabay"
+ },
+ "horrible_sound": {
+  "file": "horror/horrible_sound.mp3",
+  "tags": [
+   "horror",
+   "daravana",
+   "bura",
+   "डर"
+  ],
+  "license": "Pixabay"
+ },
+ "vinyl_dj_pause": {
+  "file": "horror/vinyl_dj_pause.mp3",
+  "tags": [
+   "vinyl",
+   "dj",
+   "pause",
+   "purana"
+  ],
+  "license": "Pixabay"
+ },
+ "train_horn_fade": {
+  "file": "vehicles/train_horn_fade.mp3",
+  "tags": [
+   "train",
+   "horn",
+   "fade"
+  ],
+  "license": "Pixabay"
+ },
+ "train_horn_horror": {
+  "file": "vehicles/train_horn_horror.mp3",
+  "tags": [
+   "train",
+   "horn",
+   "horror",
+   "dar"
+  ],
+  "license": "Pixabay"
+ },
+ "train_horn_7": {
+  "file": "vehicles/train_horn_7.mp3",
+  "tags": [
+   "train",
+   "horn",
+   "सीटी"
+  ],
+  "license": "Pixabay"
+ },
+ "train_horn_8": {
+  "file": "vehicles/train_horn_8.mp3",
+  "tags": [
+   "train",
+   "horn",
+   "loud",
+   "zor"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -2860,7 +2956,8 @@ VARIANTS = {
     "ghost": ["ghost", "ghosts_past", "ghost_past_2"],
     "bell": ["temple_bell", "shofar"],
     "jungle": ["jungle_nature"],
-    "train": ["train_pass_1", "train_pass_2", "train_pass_3", "train_running", "train_approaching", "train_crossing", "train_horn_1", "train_horn_2", "train_horn_3", "train_horn_4", "train_horn_distant", "train_horn_lofi", "train_horn_comical", "train_departure", "train_passing_cars", "train_loud", "train_rural_india", "train_distant_birds", "steam_train", "steam_train_2", "train_horn_5", "train_horn_6", "train_horn_pass_distant", "train_horn_passing", "train_horn_asia", "train_horn_lofi_2", "train_horn_blast", "train_musical", "diesel_horn", "station_ambience"],
+    "train": ["train_pass_1", "train_pass_2", "train_pass_3", "train_running", "train_approaching", "train_crossing", "train_horn_1", "train_horn_2", "train_horn_3", "train_horn_4", "train_horn_distant", "train_horn_lofi", "train_horn_comical", "train_departure", "train_passing_cars", "train_loud", "train_rural_india", "train_distant_birds", "steam_train", "steam_train_2", "train_horn_5", "train_horn_6", "train_horn_pass_distant", "train_horn_passing", "train_horn_asia", "train_horn_lofi_2", "train_horn_blast", "train_musical", "diesel_horn", "train_horn_7", "train_horn_8", "train_horn_fade", "train_horn_horror", "station_ambience"],
+    "machine": ["grinder_axe", "grinder_start", "mixer_beater", "coffee_grinder"],
     "horn": ["horn_1"],
     "sehnai": ["drum_sehnai"],
     "dhol": ["dhol_1", "dhol_2", "dhol_shadi", "dhol_wedding", "dhol_bass", "dhol_beats"],
