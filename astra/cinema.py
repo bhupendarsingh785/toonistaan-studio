@@ -150,7 +150,7 @@ def build(story_path, out_path, verbose=True):
             try:
                 import sfx_extra
                 for name in sfx_extra.detect(text)[:2]:
-                    plan.append(("sfx", {"name": name, "start": t - 0.15}, t - 0.15))
+                    plan.append(("sfx", {"name": name, "start": t - 0.15, "text": text}, t - 0.15))
                     cues.append({"type": "sfx", "name": name, "start": round(t - 0.15, 2)})
             except Exception:
                 pass
@@ -176,7 +176,7 @@ def build(story_path, out_path, verbose=True):
             # 1) pehle ASLI recording (Freesound) — key ho to
             try:
                 import real_audio
-                rp = real_audio.fetch(p["name"])
+                rp = real_audio.fetch(p["name"], context=p.get("text", ""))
                 if rp:
                     rw = read_wav(rp)
                     rw = norm(rw, 0.85)
