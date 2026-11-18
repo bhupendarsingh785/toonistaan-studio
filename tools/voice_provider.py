@@ -145,6 +145,103 @@ def sarvam_key():
     return re.sub(r"[^A-Za-z0-9\-_]", "", k)
 
 
+# ---------------------------------------------------------------- PIPER (offline, free)
+PIPER_BASE = "https://huggingface.co/rhasspy/piper-voices/resolve/main/hi/hi_IN"
+PIPER_VOICES = {
+    "male": "pratham",
+    "female": "priyamvada",
+}
+
+
+def _piper_dir():
+    d = os.environ.get("ASTRA_PIPER_DIR") or os.path.expanduser("~/.cache/astra_piper")
+    os.makedirs(d, exist_ok=True)
+    return d
+
+
+def have_piper():
+    """piper install hai? (model baad me download hoga)"""
+    try:
+        import importlib.util
+        return importlib.util.find_spec("piper") is not None
+    except Exception:
+        return False
+
+
+def _piper_model(gender="male"):
+    """Hindi voice model — ek baar download, phir offline."""
+    name = PIPER_VOICES.get(gender, "pratham")
+    d = _piper_dir()
+    onnx = os.path.join(d, f"hi_IN-{name}-medium.onnx")
+    conf = onnx + ".json"
+    if os.path.exists(onnx) and os.path.exists(conf) and os.path.getsize(onnx) > 1_000_000:
+        return onnx
+    import urllib.request
+    for f in (os.path.basename(onnx), os.path.basename(conf)):
+        url = f"{PIPER_BASE}/{name}/medium/{f}"
+        try:
+            urllib.request.urlretrieve(url, os.path.join(d, f))
+        except Exception as e:
+            print("PIPER_DL_FAIL", f, str(e)[:50], flush=True)
+            return None
+    return onnx if os.path.exists(onnx) else None
+
+
+def _piper_gender(kirdaar):
+    """Kirdaar female hai ya male — awaaz chunne ke liye."""
+    female = {"maa", "behen", "aurat", "meera", "sunita", "chachi", "bhabhi", "swara",
+              "swara_dadi", "dadi", "chudail", "kavya", "ritu", "tanya", "priya",
+              "kavitha", "neha", "roopa", "swara_bachcha", "bachchi"}
+    return "female" if str(kirdaar).lower() in female else "male"
+
+
+def piper_tts(text, kirdaar="madhur", out="out.wav"):
+    """PIPER = poora OFFLINE (internet band ho to bhi chalta hai). 0 kharch."""
+    if not have_piper():
+        return False
+    model = _piper_model(_piper_gender(kirdaar))
+    if not model:
+        return False
+    tmp = out + ".piper.wav"
+    cmd = [sys.executable, "-m", "piper", "--model", model, "--output_file", tmp]
+    # lambai = bolne ki raftaar (length_scale: chhota = tez)
+    pace = SARVAM_PACE.get(kirdaar, 1.0)
+    try:
+        cmd += ["--length_scale", f"{1.0 / max(0.7, min(1.3, pace)):.3f}"]
+    except Exception:
+        pass
+    try:
+        r = subprocess.run(cmd, input=str(text).encode("utf-8"), capture_output=True, timeout=180)
+    except Exception:
+        return False
+    if r.returncode != 0 or not os.path.exists(tmp) or os.path.getsize(tmp) < 3000:
+        print("PIPER_FAIL", (r.stderr or b"")[-120:].decode("utf-8", "ignore"), flush=True)
+        return False
+
+    # kirdaar ka pitch (baaki engines jaisa hi)
+    pitch = SARVAM_PITCH.get(kirdaar, 1.0)
+    ff = None
+    try:
+        import shutil
+        ff = shutil.which("ffmpeg")
+        if not ff:
+            import imageio_ffmpeg
+            ff = imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:
+        return False
+    af = []
+    if abs(pitch - 1.0) > 0.02:
+        af.append(f"asetrate=22050*{pitch:.4f},aresample=44100,atempo={1 / pitch:.4f}")
+    af.append("highpass=f=60")
+    r2 = subprocess.run([ff, "-loglevel", "error", "-y", "-i", tmp, "-filter:a", ",".join(af),
+                         "-ac", "1", "-ar", "44100", "-b:a", "128k", out], capture_output=True)
+    try:
+        os.remove(tmp)
+    except Exception:
+        pass
+    return r2.returncode == 0 and os.path.exists(out) and os.path.getsize(out) > 3000
+
+
 def have_sarvam():
     return bool(sarvam_key())
 

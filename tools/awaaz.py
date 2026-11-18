@@ -99,7 +99,7 @@ def ffmpeg(src, dst, af):
 # ASTRA_VOICE_ENGINE=auto|sarvam|eleven|edge   (edge = 0 kharch, key nahi)
 ENGINE = (os.environ.get("ASTRA_VOICE_ENGINE") or "auto").strip().lower()
 CACHE_DIR = os.environ.get("ASTRA_TTS_CACHE") or os.path.join(tempfile.gettempdir(), "astra_tts_cache")
-USED = {"sarvam": 0, "eleven": 0, "edge": 0, "cache": 0}
+USED = {"sarvam": 0, "eleven": 0, "piper": 0, "edge": 0, "cache": 0}
 
 
 def _cache_path(text, kirdaar, engine):
@@ -129,6 +129,10 @@ def _providers(text, kirdaar, out):
     if who is None and ENGINE in ("auto", "eleven") and voice_provider is not None:
         if voice_provider.have_eleven() and voice_provider.eleven_tts(text, kirdaar, out):
             who = "eleven"
+    if who is None and ENGINE in ("auto", "piper") and voice_provider is not None:
+        if getattr(voice_provider, "have_piper", lambda: False)() and \
+                voice_provider.piper_tts(text, kirdaar, out):
+            who = "piper"
 
     if who and cp:
         try:
