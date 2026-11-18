@@ -1,9 +1,9 @@
 {
-"count": 1089,
+"count": 1109,
 "files": {
 "library/.cleaned.json": {
-"size": 36410,
-"md5": "9b75f8ca569e661d5e5f5b44445313f5"
+"size": 36718,
+"md5": "a89dcd87d235731afd109cb5e6b23243"
 },
 "library/README.md": {
 "size": 1760,
@@ -4089,6 +4089,10 @@
 "size": 46645,
 "md5": "4d92996bf20d471e31f22ce01157a0ef"
 },
+"library/foley/lighter_30.mp3": {
+"size": 10648,
+"md5": "98ad64cb3366c04524302c103a5218f2"
+},
 "library/foley/paper_riser.mp3": {
 "size": 43510,
 "md5": "e66584f2d4078ad072b3508a12d74ce7"
@@ -4113,6 +4117,10 @@
 "size": 1506,
 "md5": "66866dcd83472727e932c08ec57df66e"
 },
+"library/foley/lighter_25.mp3": {
+"size": 1688,
+"md5": "f4563575dcbdca40fcd6813c2458922a"
+},
 "library/foley/lighter_2.mp3": {
 "size": 4013,
 "md5": "c03ee6e3b5545cb5bf648d195f689c4f"
@@ -4122,8 +4130,8 @@
 "md5": "aacc32850988dd1fe1b4ce8297d87496"
 },
 "library/foley/lighter_20.mp3": {
-"size": 2054,
-"md5": "9db5d8e85536e256df8ded98f72c88e3"
+"size": 2341,
+"md5": "08d6162383809440ea8c03cc3ee87084"
 },
 "library/foley/lighter_4_thin.mp3": {
 "size": 3804,
@@ -4136,6 +4144,10 @@
 "library/foley/rope_climb_demo.mp3": {
 "size": 72558,
 "md5": "ac85519b7ef45ddfb6d175ede7af19ad"
+},
+"library/foley/lighter_32.mp3": {
+"size": 1323,
+"md5": "db774ad1ae0c0d0045e34f6e91f2ad5c"
 },
 "library/foley/coins_wooden_box.mp3": {
 "size": 14880,
@@ -4161,6 +4173,10 @@
 "size": 7357,
 "md5": "452a181689f88ebde600f64ae45c083f"
 },
+"library/foley/lighter_29.mp3": {
+"size": 1506,
+"md5": "dbb7b8f347a1d44359a05a38aa408fe5"
+},
 "library/foley/lighter_8.mp3": {
 "size": 1506,
 "md5": "8cce45fb5405838d9e73ef1040b184e3"
@@ -4168,6 +4184,10 @@
 "library/foley/coins_spilled.mp3": {
 "size": 15925,
 "md5": "9c67d9ad1fac25f660777e8fda2cd0e5"
+},
+"library/foley/lighter_34.mp3": {
+"size": 2603,
+"md5": "41fb5ca1da0c4e0494366a94ee16d37b"
 },
 "library/foley/coins_jingle.mp3": {
 "size": 82589,
@@ -4177,21 +4197,49 @@
 "size": 229293,
 "md5": "88e46c086a86356d96418829dbf83dfa"
 },
+"library/foley/lighter_31.mp3": {
+"size": 11197,
+"md5": "25c3f4439629442bcc33b1c6f06fdbc5"
+},
+"library/foley/lighter_37.mp3": {
+"size": 3700,
+"md5": "90569dc00bc4dd008689c344039df5ae"
+},
 "library/foley/cigarette_3.mp3": {
 "size": 37450,
 "md5": "80e18a7e235e947d87fe001c0571a5c1"
 },
+"library/foley/lighter_41.mp3": {
+"size": 2603,
+"md5": "ca61ab19f6bfa7a2aaf6ee75da554e47"
+},
+"library/foley/lighter_42.mp3": {
+"size": 1506,
+"md5": "ef7d2a1ed1e3aa93c1ce849f62a34585"
+},
 "library/foley/lighter_1.mp3": {
 "size": 1323,
 "md5": "3e8231b1f4dd075ee354336a9b8e48a0"
+},
+"library/foley/lighter_24.mp3": {
+"size": 4614,
+"md5": "6a098208d616b6704b81432db52c2986"
+},
+"library/foley/lighter_36.mp3": {
+"size": 1506,
+"md5": "378657e288a99fddb27f4d7e4427969f"
 },
 "library/foley/paper_rip_fast.mp3": {
 "size": 8820,
 "md5": "6caeda6fb80f5ba9e50bfe81c880bda6"
 },
 "library/foley/lighter_18.mp3": {
-"size": 1871,
-"md5": "6e040b3c315a652060558f07ef38fe2a"
+"size": 2132,
+"md5": "4bf236acfda1b792be9a3b9d2182de8a"
+},
+"library/foley/lighter_40.mp3": {
+"size": 4431,
+"md5": "54d171aeb5bf2c4b72d0cafa7f58a373"
 },
 "library/foley/lighter_7.mp3": {
 "size": 1506,
@@ -4238,8 +4286,8 @@
 "md5": "8cb32f3f74dbf1635ae24c81cb0085dd"
 },
 "library/foley/lighter_15.mp3": {
-"size": 2237,
-"md5": "eb62d5a166435b69ce84d679c27be57d"
+"size": 2550,
+"md5": "75b39a4f3a38e4ac975ef10f665df30a"
 },
 "library/foley/lighter_12.mp3": {
 "size": 1688,
@@ -4254,12 +4302,24 @@
 "md5": "ce150ed762f07da018761d3498925308"
 },
 "library/foley/lighter_4.mp3": {
-"size": 3334,
-"md5": "66cff1cc2e48f6e85188cb8ce3691c71"
+"size": 3804,
+"md5": "d7dd3e8dac9b69e825e4d2f70c0f9691"
+},
+"library/foley/lighter_23.mp3": {
+"size": 8088,
+"md5": "cb90e8636eea0d5fca549ed47b60d3a0"
 },
 "library/foley/lighter_16.mp3": {
-"size": 2054,
-"md5": "86bdfa19d9ff0b40cf480c9a4b32473e"
+"size": 2341,
+"md5": "97699c23e5f4052a398f92e91ed24be6"
+},
+"library/foley/lighter_38.mp3": {
+"size": 7906,
+"md5": "a3b02eb108fced67c8eaddf46215106b"
+},
+"library/foley/lighter_28.mp3": {
+"size": 2237,
+"md5": "d765c5b09d7d0456b60b9149385c648f"
 },
 "library/foley/paper_turn.mp3": {
 "size": 86560,
@@ -4273,9 +4333,13 @@
 "size": 112892,
 "md5": "5920685d9a002a1304460560be52961d"
 },
+"library/foley/lighter_35.mp3": {
+"size": 22168,
+"md5": "e978e98927eeb39d9aabeb8d9cb1d373"
+},
 "library/foley/lighter_11.mp3": {
-"size": 5711,
-"md5": "07330bcfd837e52b2eb55581f4580a1e"
+"size": 6521,
+"md5": "7a7842def2fcc62fecf4b9eb5e0d7d52"
 },
 "library/foley/coins_dropping.mp3": {
 "size": 38495,
@@ -4305,13 +4369,21 @@
 "size": 18224,
 "md5": "5123472de7924bc80a2d0a78a3bdd1da"
 },
+"library/foley/lighter_27.mp3": {
+"size": 8454,
+"md5": "bf547f23fc65257aa6fd9751ceddd9f3"
+},
 "library/foley/lighter_14.mp3": {
-"size": 4431,
-"md5": "b9207a8033666ebb1d413dea8c4c7805"
+"size": 5058,
+"md5": "44f5c08006f4192a95329982bc8b68c7"
 },
 "library/foley/lighter_9.mp3": {
-"size": 9003,
-"md5": "9593a198b7c462e3d3284c397487eea4"
+"size": 10283,
+"md5": "e583d54fdf52f319f8cd15a2c1873edd"
+},
+"library/foley/lighter_26.mp3": {
+"size": 2054,
+"md5": "dbcc6311cf83d4fad96ffebbe279c22e"
 },
 "library/foley/cloth_rustle.mp3": {
 "size": 11745,
@@ -4322,12 +4394,16 @@
 "md5": "1e57c004f5af1432f9ee4155c7f40e19"
 },
 "library/foley/lighter_19.mp3": {
-"size": 2237,
-"md5": "6915322072d020234333826adbc9b9ef"
+"size": 2550,
+"md5": "d6003984c49d059b13b30ef7315ba663"
+},
+"library/foley/lighter_39.mp3": {
+"size": 5163,
+"md5": "48eb4366929725b9378e9f92e328ab16"
 },
 "library/foley/lighter_22.mp3": {
-"size": 8454,
-"md5": "06297bf098b30c9875a530a11c47c339"
+"size": 9656,
+"md5": "db47d47f2eacc5a1665e19ac9ac9f9fd"
 },
 "library/foley/coin_drop_5.mp3": {
 "size": 9238,
@@ -4340,6 +4416,10 @@
 "library/foley/coin_clatter.mp3": {
 "size": 26165,
 "md5": "e3a6dcd5541df7a244e5f2f4d66c6b91"
+},
+"library/foley/lighter_33.mp3": {
+"size": 22900,
+"md5": "a1ce15e655b6bb3461b0bd8ddd05a79f"
 },
 "library/foley/paper_rip_2.mp3": {
 "size": 13835,
