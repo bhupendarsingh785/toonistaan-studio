@@ -17993,6 +17993,46 @@ DEFAULT_INDEX = {
    "action"
   ],
   "license": "CC0/BVKER"
+ },
+ "transition_bvk_1": {
+  "file": "transitions/transition_bvk_1.mp3",
+  "tags": [
+   "transition",
+   "whoosh",
+   "scene",
+   "change"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "transition_bvk_2": {
+  "file": "transitions/transition_bvk_2.mp3",
+  "tags": [
+   "transition",
+   "whoosh",
+   "scene",
+   "change"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "transition_bvk_3": {
+  "file": "transitions/transition_bvk_3.mp3",
+  "tags": [
+   "transition",
+   "whoosh",
+   "scene",
+   "change"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "transition_bvk_4": {
+  "file": "transitions/transition_bvk_4.mp3",
+  "tags": [
+   "transition",
+   "whoosh",
+   "scene",
+   "change"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -18009,6 +18049,7 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "transition_bvk": ["transition_bvk_1", "transition_bvk_2", "transition_bvk_3", "transition_bvk_4"],
     "laser": ["laser_1", "laser_2", "laser_3", "laser_4", "laser_5", "laser_6", "laser_7", "laser_8"],
     "horror_bvk": ["horror_bvk_1", "horror_bvk_2", "horror_bvk_3"],
     "failure": ["failure_1", "failure_2", "failure_3"],
