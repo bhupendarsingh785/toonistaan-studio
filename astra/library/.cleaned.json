@@ -513,6 +513,7 @@
  "foley/rope.mp3": true,
  "foley/rope_climb_demo.mp3": true,
  "foley/rope_knot.mp3": true,
+ "foley/wood_knock.mp3": true,
  "footsteps/branch_crack.mp3": true,
  "footsteps/bvk_footsteps_1.mp3": true,
  "footsteps/bvk_footsteps_2.mp3": true,
@@ -1079,8 +1080,17 @@
  "water/kettle_cup.mp3": true,
  "water/kettle_pour.mp3": true,
  "water/lava_loop.mp3": true,
+ "water/peeing_forest.mp3": true,
  "water/pour_drink.mp3": true,
  "water/pour_glass.mp3": true,
+ "water/splash_1.mp3": true,
+ "water/splash_2.mp3": true,
+ "water/splash_3.mp3": true,
+ "water/splash_4.mp3": true,
+ "water/splash_5.mp3": true,
  "water/tea_boil.mp3": true,
- "water/underwater.mp3": true
+ "water/underwater.mp3": true,
+ "water/waterfall_1.mp3": true,
+ "water/waterfall_2.mp3": true,
+ "water/waterfall_3.mp3": true
 }
