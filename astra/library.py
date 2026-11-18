@@ -8519,6 +8519,103 @@ DEFAULT_INDEX = {
    "shaam"
   ],
   "license": "Pixabay"
+ },
+ "tinamou_variegated": {
+  "file": "birds/tinamou_variegated.mp3",
+  "tags": [
+   "tinamou",
+   "bird",
+   "jungle",
+   "chidiya"
+  ],
+  "license": "Pixabay"
+ },
+ "tinamou_cinereous": {
+  "file": "birds/tinamou_cinereous.mp3",
+  "tags": [
+   "tinamou",
+   "bird",
+   "forest"
+  ],
+  "license": "Pixabay"
+ },
+ "tinamou_little": {
+  "file": "birds/tinamou_little.mp3",
+  "tags": [
+   "tinamou",
+   "bird",
+   "small"
+  ],
+  "license": "Pixabay"
+ },
+ "tern_black": {
+  "file": "birds/tern_black.mp3",
+  "tags": [
+   "tern",
+   "bird",
+   "sea",
+   "samundar"
+  ],
+  "license": "Pixabay"
+ },
+ "tern_black_2": {
+  "file": "birds/tern_black_2.mp3",
+  "tags": [
+   "tern",
+   "bird",
+   "coast"
+  ],
+  "license": "Pixabay"
+ },
+ "hawk_cooper": {
+  "file": "birds/hawk_cooper.mp3",
+  "tags": [
+   "hawk",
+   "bird",
+   "cheel",
+   "चील",
+   "hunter"
+  ],
+  "license": "Pixabay"
+ },
+ "cormorant": {
+  "file": "birds/cormorant.mp3",
+  "tags": [
+   "cormorant",
+   "bird",
+   "water",
+   "jal"
+  ],
+  "license": "Pixabay"
+ },
+ "sunbittern": {
+  "file": "birds/sunbittern.mp3",
+  "tags": [
+   "sunbittern",
+   "bird",
+   "tropical"
+  ],
+  "license": "Pixabay"
+ },
+ "quail_montezuma": {
+  "file": "birds/quail_montezuma.mp3",
+  "tags": [
+   "quail",
+   "bird",
+   "bater",
+   "बटेर"
+  ],
+  "license": "Pixabay"
+ },
+ "bird_france": {
+  "file": "birds/bird_france.mp3",
+  "tags": [
+   "bird",
+   "france",
+   "chidiya",
+   "dawn"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -8535,8 +8632,10 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "myna": ["myna_bird"],
-    "chidiya": ["myna_bird", "birds"],
+    "cheel": ["hawk_cooper"],
+    "bater": ["quail_montezuma"],
+    "myna": ["myna_bird", "bird_france"],
+    "chidiya": ["bird_france", "tinamou_variegated", "quail_montezuma", "myna_bird", "birds"],
     "sher": ["lion_real", "lion_loud", "lion_angry", "lion_majestic", "lion_evil", "lion_roar"],
     "बाघ": ["tiger_roar_1"],
     "elephant": ["elephant_african", "elephant_asian", "elephant_roar", "elephant_growl", "elephant_short", "elephant_mighty", "elephant_trunk"],
