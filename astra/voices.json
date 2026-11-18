@@ -1,0 +1,306 @@
+{
+  "_note": "ASTRA ki awaaz ki poori list. Yahan naam, Sarvam speaker, pitch, pace aur target Hz — sab ek jagah. Badalna ho to sirf yahi file chhedo. voice_provider.py ise khud padhta hai.",
+  "_version": 1,
+  "characters": {
+    "sutradhar": {
+      "naam": "Sutradhar (kahani sunane wala)",
+      "kism": "narrator",
+      "sarvam": "shubh",
+      "pitch": 1.0,
+      "pace": 0.96,
+      "hz": 112,
+      "bhaav": "neutral",
+      "sfx": [
+        "ambience"
+      ]
+    },
+    "madhur": {
+      "naam": "Madhur — jawan aadmi, shaant",
+      "kism": "male_young",
+      "sarvam": "shubh",
+      "pitch": 1.0,
+      "pace": 1.0,
+      "hz": 112,
+      "bhaav": "neutral",
+      "sfx": [
+        "footsteps"
+      ]
+    },
+    "arjun": {
+      "naam": "Arjun — jawan, himmat wala",
+      "kism": "male_young",
+      "sarvam": "rahul",
+      "pitch": 1.0,
+      "pace": 1.02,
+      "hz": 110,
+      "bhaav": "confident",
+      "sfx": [
+        "footsteps"
+      ]
+    },
+    "ramesh": {
+      "naam": "Ramesh — gaon ka aadmi",
+      "kism": "male_mid",
+      "sarvam": "aditya",
+      "pitch": 0.86,
+      "pace": 0.98,
+      "hz": 118,
+      "bhaav": "neutral",
+      "sfx": [
+        "footsteps"
+      ]
+    },
+    "salim": {
+      "naam": "Salim — tez bolne wala",
+      "kism": "male_young",
+      "sarvam": "rohan",
+      "pitch": 1.03,
+      "pace": 1.04,
+      "hz": 138,
+      "bhaav": "excited",
+      "sfx": [
+        "footsteps"
+      ]
+    },
+    "chaiwala": {
+      "naam": "Chaiwala — halka, mazakiya",
+      "kism": "male_young",
+      "sarvam": "sunny",
+      "pitch": 1.15,
+      "pace": 1.05,
+      "hz": 150,
+      "bhaav": "happy",
+      "sfx": [
+        "kitchen"
+      ]
+    },
+    "driver": {
+      "naam": "Driver — gaadi chalane wala",
+      "kism": "male_mid",
+      "sarvam": "manan",
+      "pitch": 1.02,
+      "pace": 1.0,
+      "hz": 122,
+      "bhaav": "neutral",
+      "sfx": [
+        "car"
+      ]
+    },
+    "constable": {
+      "naam": "Constable — police",
+      "kism": "male_mid",
+      "sarvam": "ratan",
+      "pitch": 0.97,
+      "pace": 1.0,
+      "hz": 126,
+      "bhaav": "strict",
+      "sfx": [
+        "whistle"
+      ]
+    },
+    "doctor": {
+      "naam": "Doctor — shaant, bharosa",
+      "kism": "male_mid",
+      "sarvam": "varun",
+      "pitch": 1.0,
+      "pace": 0.97,
+      "hz": 112,
+      "bhaav": "calm",
+      "sfx": [
+        "hospital"
+      ]
+    },
+    "pandit": {
+      "naam": "Pandit — budha, dhima",
+      "kism": "male_old",
+      "sarvam": "ashutosh",
+      "pitch": 0.92,
+      "pace": 0.97,
+      "hz": 100,
+      "bhaav": "calm",
+      "sfx": [
+        "temple"
+      ]
+    },
+    "chacha": {
+      "naam": "Chacha — budha, garv",
+      "kism": "male_old",
+      "sarvam": "dev",
+      "pitch": 0.94,
+      "pace": 0.98,
+      "hz": 98,
+      "bhaav": "strict",
+      "sfx": [
+        "footsteps"
+      ]
+    },
+    "kaka": {
+      "naam": "Kaka — bahut budha",
+      "kism": "male_old",
+      "sarvam": "kabir",
+      "pitch": 0.95,
+      "pace": 0.95,
+      "hz": 92,
+      "bhaav": "tired",
+      "sfx": [
+        "footsteps"
+      ]
+    },
+    "mukhiya": {
+      "naam": "Mukhiya — gaon ka sarpanch",
+      "kism": "male_old",
+      "sarvam": "sumit",
+      "pitch": 0.9,
+      "pace": 0.96,
+      "hz": 96,
+      "bhaav": "strict",
+      "sfx": [
+        "crowd"
+      ]
+    },
+    "bhoot": {
+      "naam": "Bhoot — daravani, gehri",
+      "kism": "creature",
+      "sarvam": "aayan",
+      "pitch": 0.8,
+      "pace": 0.88,
+      "hz": 86,
+      "bhaav": "eerie",
+      "sfx": [
+        "horror"
+      ]
+    },
+    "meera": {
+      "naam": "Meera — jawan aurat",
+      "kism": "female_young",
+      "sarvam": "ritu",
+      "pitch": 1.04,
+      "pace": 1.0,
+      "hz": 210,
+      "bhaav": "neutral",
+      "sfx": [
+        "footsteps"
+      ]
+    },
+    "sunita": {
+      "naam": "Sunita — ghar ki aurat",
+      "kism": "female_mid",
+      "sarvam": "shreya",
+      "pitch": 1.03,
+      "pace": 1.0,
+      "hz": 205,
+      "bhaav": "warm",
+      "sfx": [
+        "kitchen"
+      ]
+    },
+    "aurat": {
+      "naam": "Aurat — aam awaaz",
+      "kism": "female_mid",
+      "sarvam": "neha",
+      "pitch": 1.03,
+      "pace": 1.0,
+      "hz": 200,
+      "bhaav": "neutral",
+      "sfx": [
+        "footsteps"
+      ]
+    },
+    "maa": {
+      "naam": "Maa — pyaar, thodi thaki",
+      "kism": "female_mid",
+      "sarvam": "kavitha",
+      "pitch": 0.94,
+      "pace": 0.98,
+      "hz": 228,
+      "bhaav": "warm",
+      "sfx": [
+        "kitchen"
+      ]
+    },
+    "behen": {
+      "naam": "Behen — chhoti, chulbuli",
+      "kism": "female_young",
+      "sarvam": "tanya",
+      "pitch": 1.16,
+      "pace": 1.04,
+      "hz": 252,
+      "bhaav": "happy",
+      "sfx": [
+        "footsteps"
+      ]
+    },
+    "chachi": {
+      "naam": "Chachi — bolti tez",
+      "kism": "female_mid",
+      "sarvam": "kavya",
+      "pitch": 1.02,
+      "pace": 1.03,
+      "hz": 220,
+      "bhaav": "annoyed",
+      "sfx": [
+        "kitchen"
+      ]
+    },
+    "bhabhi": {
+      "naam": "Bhabhi — ghar ki bahu",
+      "kism": "female_mid",
+      "sarvam": "pooja",
+      "pitch": 1.05,
+      "pace": 1.0,
+      "hz": 215,
+      "bhaav": "warm",
+      "sfx": [
+        "kitchen"
+      ]
+    },
+    "dadi": {
+      "naam": "Dadi — budhi, dhimi",
+      "kism": "female_old",
+      "sarvam": "roopa",
+      "pitch": 0.86,
+      "pace": 0.95,
+      "hz": 186,
+      "bhaav": "warm",
+      "sfx": [
+        "footsteps"
+      ]
+    },
+    "chudail": {
+      "naam": "Chudail — daravani aurat",
+      "kism": "creature",
+      "sarvam": "ishita",
+      "pitch": 0.88,
+      "pace": 0.9,
+      "hz": 172,
+      "bhaav": "eerie",
+      "sfx": [
+        "horror"
+      ]
+    },
+    "bachcha": {
+      "naam": "Bachcha — 6-8 saal",
+      "kism": "child",
+      "sarvam": "priya",
+      "pitch": 1.3,
+      "pace": 1.05,
+      "hz": 285,
+      "bhaav": "happy",
+      "sfx": [
+        "playground"
+      ]
+    },
+    "announce": {
+      "naam": "Announcement — station/airport",
+      "kism": "announce",
+      "sarvam": "mani",
+      "pitch": 1.35,
+      "pace": 1.0,
+      "hz": 168,
+      "bhaav": "neutral",
+      "sfx": [
+        "announcement"
+      ]
+    }
+  }
+}

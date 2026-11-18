@@ -118,6 +118,42 @@ SARVAM_PITCH = {
 }
 
 
+# ---------------------------------------------------------------- awaaz ki list (astra/voices.json)
+def _load_voices():
+    """astra/voices.json se kirdaar, speaker, pitch, pace, hz padho.
+    JSON me jo ho wahi jeetta hai; jo nahi hai wo neeche wale default rahenge."""
+    import os as _os, json as _json
+    here = _os.path.dirname(_os.path.abspath(__file__))
+    path = _os.path.join(_os.path.dirname(here), "astra", "voices.json")
+    if not _os.path.exists(path):
+        return {}
+    try:
+        data = _json.load(open(path, encoding="utf-8"))
+        return data.get("characters", {})
+    except Exception:
+        return {}
+
+
+VOICES = _load_voices()
+for _k, _v in VOICES.items():
+    if _v.get("sarvam"):
+        SARVAM_SPEAKER[_k] = _v["sarvam"]
+    if isinstance(_v.get("pitch"), (int, float)):
+        SARVAM_PITCH[_k] = float(_v["pitch"])
+    if isinstance(_v.get("hz"), (int, float)):
+        SARVAM_TARGET_HZ[_k] = int(_v["hz"])
+
+
+def voice_cast():
+    """Poori list — naam, kism, speaker, pitch, hz."""
+    out = {}
+    for k, v in VOICES.items():
+        out[k] = {"naam": v.get("naam", k), "kism": v.get("kism", ""),
+                  "sarvam": SARVAM_SPEAKER.get(k), "pitch": SARVAM_PITCH.get(k),
+                  "pace": v.get("pace"), "hz": SARVAM_TARGET_HZ.get(k)}
+    return out
+
+
 SARVAM_PACE = {
     "ramesh": 0.98, "salim": 1.02, "chaiwala": 1.06, "announce": 1.12,
     "aurat": 1.0, "maa": 0.98, "behen": 1.12,
