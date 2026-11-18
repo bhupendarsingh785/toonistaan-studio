@@ -6518,6 +6518,106 @@ DEFAULT_INDEX = {
    "modern"
   ],
   "license": "Pixabay"
+ },
+ "bass_music": {
+  "file": "music/bass_music.mp3",
+  "tags": [
+   "bass",
+   "music",
+   "groove"
+  ],
+  "license": "Pixabay"
+ },
+ "cybernetic_flow": {
+  "file": "music/cybernetic_flow.mp3",
+  "tags": [
+   "cybernetic",
+   "edm",
+   "tech",
+   "flow"
+  ],
+  "license": "Pixabay"
+ },
+ "chill_edm": {
+  "file": "music/chill_edm.mp3",
+  "tags": [
+   "chill",
+   "edm",
+   "relax",
+   "modern"
+  ],
+  "license": "Pixabay"
+ },
+ "faith_loop": {
+  "file": "music/faith_loop.mp3",
+  "tags": [
+   "faith",
+   "loop",
+   "hopeful",
+   "spiritual"
+  ],
+  "license": "Pixabay"
+ },
+ "deep_breath_edm": {
+  "file": "music/deep_breath_edm.mp3",
+  "tags": [
+   "deep",
+   "breath",
+   "edm",
+   "calm"
+  ],
+  "license": "Pixabay"
+ },
+ "jazz_fusion": {
+  "file": "music/jazz_fusion.mp3",
+  "tags": [
+   "jazz",
+   "fusion",
+   "bass",
+   "classy"
+  ],
+  "license": "Pixabay"
+ },
+ "dnb": {
+  "file": "music/dnb.mp3",
+  "tags": [
+   "dnb",
+   "drum",
+   "bass",
+   "fast",
+   "chase"
+  ],
+  "license": "Pixabay"
+ },
+ "uk_bass": {
+  "file": "music/uk_bass.mp3",
+  "tags": [
+   "uk",
+   "bass",
+   "beat",
+   "modern"
+  ],
+  "license": "Pixabay"
+ },
+ "future_bass": {
+  "file": "music/future_bass.mp3",
+  "tags": [
+   "future",
+   "bass",
+   "edm",
+   "sneakers"
+  ],
+  "license": "Pixabay"
+ },
+ "the_fast_way": {
+  "file": "music/the_fast_way.mp3",
+  "tags": [
+   "fast",
+   "edm",
+   "drive",
+   "action"
+  ],
+  "license": "Pixabay"
  }
 }
 
