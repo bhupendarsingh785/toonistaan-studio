@@ -7816,17 +7816,6 @@ DEFAULT_INDEX = {
   ],
   "license": "Pixabay"
  },
- "zoo_ambience_2": {
-  "file": "animals/zoo_ambience_2.mp3",
-  "tags": [
-   "zoo",
-   "animals",
-   "elephant",
-   "zebra",
-   "bear"
-  ],
-  "license": "Pixabay"
- },
  "kangaroo": {
   "file": "animals/kangaroo.mp3",
   "tags": [
