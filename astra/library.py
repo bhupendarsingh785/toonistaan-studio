@@ -9002,6 +9002,105 @@ DEFAULT_INDEX = {
    "call"
   ],
   "license": "Wikimedia/XC"
+ },
+ "frog_single_5": {
+  "file": "animals/frog_single_5.mp3",
+  "tags": [
+   "frog",
+   "single",
+   "moor frog",
+   "call"
+  ],
+  "license": "Wikimedia/PLOS"
+ },
+ "frog_croak": {
+  "file": "animals/frog_croak.mp3",
+  "tags": [
+   "frog",
+   "croak",
+   "mendhak",
+   "single"
+  ],
+  "license": "Wikimedia/PLOS"
+ },
+ "frog_choir_4": {
+  "file": "animals/frog_choir_4.mp3",
+  "tags": [
+   "frog",
+   "choir",
+   "tree frog",
+   "raat"
+  ],
+  "license": "Wikimedia/PLOS"
+ },
+ "frog_choir_5": {
+  "file": "animals/frog_choir_5.mp3",
+  "tags": [
+   "frog",
+   "choir",
+   "midwife",
+   "pond"
+  ],
+  "license": "Wikimedia/PLOS"
+ },
+ "frog_choir_6": {
+  "file": "animals/frog_choir_6.mp3",
+  "tags": [
+   "frog",
+   "choir",
+   "baarish",
+   "talab"
+  ],
+  "license": "Wikimedia/PLOS"
+ },
+ "frog_single_6": {
+  "file": "animals/frog_single_6.mp3",
+  "tags": [
+   "frog",
+   "single",
+   "tree frog"
+  ],
+  "license": "Wikimedia/PLOS"
+ },
+ "frog_single_7": {
+  "file": "animals/frog_single_7.mp3",
+  "tags": [
+   "frog",
+   "single",
+   "natterjack"
+  ],
+  "license": "Wikimedia/PLOS"
+ },
+ "cicada_1": {
+  "file": "animals/cicada_1.mp3",
+  "tags": [
+   "cicada",
+   "chichdi",
+   "चींटी-सा",
+   "summer",
+   "din"
+  ],
+  "license": "Wikimedia/PLOS"
+ },
+ "cicada_2": {
+  "file": "animals/cicada_2.mp3",
+  "tags": [
+   "cicada",
+   "insect",
+   "summer",
+   "noise"
+  ],
+  "license": "Wikimedia/PLOS"
+ },
+ "beetle_ant_song": {
+  "file": "animals/beetle_ant_song.mp3",
+  "tags": [
+   "beetle",
+   "ant",
+   "insect",
+   "buzz"
+  ],
+  "license": "Wikimedia/PLOS"
  }
 }
 
@@ -9018,7 +9117,10 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "mendhak": ["frog_choir_1", "frog_choir_2", "frog_choir_3", "frog_single_1", "frog_single_2", "frog_alarm"],
+    "cicada": ["cicada_1", "cicada_2"],
+    "chichdi": ["cicada_1", "cicada_2"],
+    "keede": ["beetle_ant_song", "cicada_1", "insects"],
+    "mendhak": ["frog_choir_4", "frog_choir_5", "frog_choir_6", "frog_choir_1", "frog_choir_2", "frog_choir_3", "frog_croak", "frog_single_1", "frog_single_2", "frog_alarm"],
     "frog": ["frog_choir_1", "frog_choir_2", "frog_choir_3", "frog_single_1", "frog_single_2", "frog_alarm"],
     "talab": ["frog_choir_1", "pond", "water"],
     "koyal": ["cuckoo_brush", "cuckoo"],
