@@ -5034,6 +5034,105 @@ DEFAULT_INDEX = {
    "kitchen"
   ],
   "license": "Pixabay"
+ },
+ "halloween_bgm": {
+  "file": "music/halloween_bgm.mp3",
+  "tags": [
+   "halloween",
+   "spooky",
+   "horror",
+   "bgm"
+  ],
+  "license": "Pixabay"
+ },
+ "halloween_scary": {
+  "file": "music/halloween_scary.mp3",
+  "tags": [
+   "halloween",
+   "scary",
+   "horror",
+   "dark"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_whispers": {
+  "file": "music/forest_whispers.mp3",
+  "tags": [
+   "forest",
+   "jungle",
+   "whispers",
+   "mystic"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_morning_mist": {
+  "file": "music/forest_morning_mist.mp3",
+  "tags": [
+   "forest",
+   "morning",
+   "mist",
+   "calm"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_pathway": {
+  "file": "music/forest_pathway.mp3",
+  "tags": [
+   "forest",
+   "path",
+   "journey",
+   "calm"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_spirits_piano": {
+  "file": "music/forest_spirits_piano.mp3",
+  "tags": [
+   "forest",
+   "piano",
+   "nostalgic",
+   "sad"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_relax": {
+  "file": "music/forest_relax.mp3",
+  "tags": [
+   "forest",
+   "relax",
+   "calm",
+   "sleep"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_scent": {
+  "file": "music/forest_scent.mp3",
+  "tags": [
+   "forest",
+   "nature",
+   "peaceful"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_harp": {
+  "file": "music/forest_harp.mp3",
+  "tags": [
+   "forest",
+   "harp",
+   "magic",
+   "fairy"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_adventure": {
+  "file": "music/forest_adventure.mp3",
+  "tags": [
+   "forest",
+   "adventure",
+   "journey",
+   "action"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -5050,6 +5149,8 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "forest": ["forest_whispers", "forest_morning_mist", "forest_pathway", "forest_spirits_piano", "forest_relax", "forest_scent", "forest_harp", "forest_adventure"],
+    "halloween": ["halloween_bgm", "halloween_scary"],
     "gate_open": ["door_open_a", "door_open_b", "door_open_c"],
     "door": ["electric_gate_open", "gate_close_2", "door_creaky_steel_wood", "iron_gate_courtyard", "door_lock_open", "door_iron_creak_old", "door_iron_creak_2", "iron_door_open_2", "door_open_a", "door_open_b", "door_open_c"],
     "gate_close": ["door_close_a", "door_close_b", "door_close_c"],
