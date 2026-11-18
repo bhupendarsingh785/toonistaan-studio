@@ -6897,6 +6897,106 @@ DEFAULT_INDEX = {
    "indian"
   ],
   "license": "Pixabay"
+ },
+ "industrial_flow": {
+  "file": "music/industrial_flow.mp3",
+  "tags": [
+   "industrial",
+   "flow",
+   "machine",
+   "dark"
+  ],
+  "license": "Pixabay"
+ },
+ "countdown_teaser": {
+  "file": "music/countdown_teaser.mp3",
+  "tags": [
+   "countdown",
+   "teaser",
+   "trailer",
+   "build"
+  ],
+  "license": "Pixabay"
+ },
+ "bond_theme": {
+  "file": "music/bond_theme.mp3",
+  "tags": [
+   "bond",
+   "spy",
+   "theme",
+   "thriller"
+  ],
+  "license": "Pixabay"
+ },
+ "phonk_trap": {
+  "file": "music/phonk_trap.mp3",
+  "tags": [
+   "phonk",
+   "trap",
+   "beat",
+   "energy"
+  ],
+  "license": "Pixabay"
+ },
+ "phonk_house": {
+  "file": "music/phonk_house.mp3",
+  "tags": [
+   "phonk",
+   "house",
+   "beat",
+   "dance"
+  ],
+  "license": "Pixabay"
+ },
+ "afro_bongo_loop": {
+  "file": "music/afro_bongo_loop.mp3",
+  "tags": [
+   "afro",
+   "bongo",
+   "tribal",
+   "loop"
+  ],
+  "license": "Pixabay"
+ },
+ "intense_drum_loop": {
+  "file": "music/intense_drum_loop.mp3",
+  "tags": [
+   "drum",
+   "intense",
+   "loop",
+   "action"
+  ],
+  "license": "Pixabay"
+ },
+ "glitch_bass": {
+  "file": "music/glitch_bass.mp3",
+  "tags": [
+   "glitch",
+   "bass",
+   "stutter",
+   "tech"
+  ],
+  "license": "Pixabay"
+ },
+ "groovy_bass_trap": {
+  "file": "music/groovy_bass_trap.mp3",
+  "tags": [
+   "groovy",
+   "bass",
+   "trap",
+   "swagger"
+  ],
+  "license": "Pixabay"
+ },
+ "giddy_uploop": {
+  "file": "music/giddy_uploop.mp3",
+  "tags": [
+   "giddy",
+   "upbeat",
+   "loop",
+   "fun"
+  ],
+  "license": "Pixabay"
  }
 }
 
