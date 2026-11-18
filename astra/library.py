@@ -17156,6 +17156,66 @@ DEFAULT_INDEX = {
    "bhaari"
   ],
   "license": "CC0/BVKER"
+ },
+ "thud_11": {
+  "file": "foley/thud_11.mp3",
+  "tags": [
+   "thud",
+   "dhap",
+   "girna",
+   "impact"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "thud_12": {
+  "file": "foley/thud_12.mp3",
+  "tags": [
+   "thud",
+   "dhap",
+   "girna",
+   "impact"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "thud_13": {
+  "file": "foley/thud_13.mp3",
+  "tags": [
+   "thud",
+   "dhap",
+   "girna",
+   "impact"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "thud_14": {
+  "file": "foley/thud_14.mp3",
+  "tags": [
+   "thud",
+   "dhap",
+   "girna",
+   "impact"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "thud_15": {
+  "file": "foley/thud_15.mp3",
+  "tags": [
+   "thud",
+   "dhap",
+   "girna",
+   "impact"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "thud_16": {
+  "file": "foley/thud_16.mp3",
+  "tags": [
+   "thud",
+   "dhap",
+   "girna",
+   "impact"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -17172,8 +17232,8 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "thud": ["thud_1", "thud_2", "thud_3", "thud_4", "thud_5", "thud_6", "thud_7", "thud_8", "thud_9", "thud_10"],
-    "dhap": ["thud_1", "thud_2", "thud_3", "thud_4", "thud_5", "thud_6", "thud_7", "thud_8", "thud_9", "thud_10"],
+    "thud": ["thud_1", "thud_2", "thud_3", "thud_4", "thud_5", "thud_6", "thud_7", "thud_8", "thud_9", "thud_10", "thud_11", "thud_12", "thud_13", "thud_14", "thud_15", "thud_16"],
+    "dhap": ["thud_1", "thud_2", "thud_3", "thud_4", "thud_5", "thud_6", "thud_7", "thud_8", "thud_9", "thud_10", "thud_11", "thud_12", "thud_13", "thud_14", "thud_15", "thud_16"],
     "scissors": ["scissors_1", "scissors_2", "scissors_3", "scissors_4", "scissors_5", "scissors_6", "scissors_7", "scissors_8", "scissors_9", "scissors_10", "scissors_11", "scissors_12", "scissors_13", "scissors_14"],
     "kainchi": ["scissors_1", "scissors_2", "scissors_3", "scissors_4", "scissors_5", "scissors_6", "scissors_7", "scissors_8", "scissors_9", "scissors_10", "scissors_11", "scissors_12", "scissors_13", "scissors_14"],
     "haircut": ["haircut_1", "haircut_2", "haircut_3"],
