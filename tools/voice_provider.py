@@ -120,13 +120,13 @@ SARVAM_PITCH = {
 
 SARVAM_PACE = {
     "ramesh": 0.98, "salim": 1.02, "chaiwala": 1.06, "announce": 1.12,
-    "aurat": 1.0, "maa": 0.90, "behen": 1.12,
-    "madhur": 1.0, "arjun": 1.02, "meera": 1.0, "chacha": 0.92, "chachi": 1.05,
-    "dadi": 0.86, "pandit": 0.88, "constable": 0.95, "doctor": 0.98, "bachcha": 1.1,
-    "sunita": 1.0, "driver": 1.0, "bhoot": 0.78, "chudail": 0.82, "mukhiya": 0.9,
+    "aurat": 1.0, "maa": 0.98, "behen": 1.12,
+    "madhur": 1.0, "arjun": 1.02, "meera": 1.0, "chacha": 0.98, "chachi": 1.05,
+    "dadi": 0.97, "pandit": 0.97, "constable": 0.95, "doctor": 0.98, "bachcha": 1.1,
+    "sunita": 1.0, "driver": 1.0, "bhoot": 0.9, "chudail": 0.92, "mukhiya": 0.97,
     "kaka": 0.95, "bhabhi": 1.02,
     "swara": 1.0, "swara_bachcha": 1.08, "madhur_bachcha": 1.06,
-    "swara_dadi": 0.9, "madhur_dada": 0.88,
+    "swara_dadi": 0.97, "madhur_dada": 0.97,
 }
 SARVAM_TEMP = {
     "madhur": 0.85, "arjun": 0.8, "meera": 0.8, "chacha": 0.78, "chachi": 0.82,
@@ -215,6 +215,11 @@ def sarvam_tts(text, kirdaar="madhur", out="out.wav"):
 
     # (closed-loop tuning band — usne sab kirdaaron ko ek hi pitch par le liya tha)
 
+    try:
+        _naturalize(out, text)
+    except Exception:
+        pass
+
     print("SARVAM_OK", kirdaar, speaker, payload["pace"], f"pitch={pitch}", len(audio), flush=True)
     return True
 
@@ -297,6 +302,65 @@ def _tune_to_target(path, kirdaar):
                     os.replace(tmp2, path)
         return True
     return False
+
+
+def _naturalize(path, text):
+    """Bolne ki raftaar normal karo: na khinch kar bolna, na bahut jaldi.
+
+    Hindi narration ~ 12.5 akshar/second. Isse zyada lamba = khinch raha hai.
+    """
+    if not text:
+        return False
+    n_chars = len(re.sub(r"\s+", "", text))
+    if n_chars < 8:
+        return False
+    cur = _dur_seconds(path)
+    if not cur or cur <= 0.2:
+        return False
+    target = n_chars / 12.5
+    ratio = cur / target              # >1 = dheema/khincha hua
+    if ratio <= 1.12 and ratio >= 0.80:
+        return False                  # theek hai, chhedo mat
+    factor = max(0.85, min(1.30, ratio))   # atempo se theek karo
+    if abs(factor - 1.0) < 0.04:
+        return False
+    ff = None
+    try:
+        import shutil
+        ff = shutil.which("ffmpeg")
+        if not ff:
+            import imageio_ffmpeg
+            ff = imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:
+        return False
+    import tempfile
+    tmp = tempfile.mktemp(suffix=".wav")
+    r = subprocess.run([ff, "-loglevel", "error", "-y", "-i", path,
+                        "-filter:a", f"atempo={factor:.4f}",
+                        "-ac", "1", "-ar", "44100", tmp], capture_output=True)
+    if r.returncode == 0 and os.path.exists(tmp) and os.path.getsize(tmp) > 2000:
+        os.replace(tmp, path)
+        return True
+    return False
+
+
+def _dur_seconds(path):
+    ff = None
+    try:
+        import shutil
+        ff = shutil.which("ffmpeg")
+        if not ff:
+            import imageio_ffmpeg
+            ff = imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:
+        return 0.0
+    r = subprocess.run([ff, "-i", path], capture_output=True)
+    for line in (r.stderr or b"").decode("utf-8", "ignore").splitlines():
+        if "Duration:" in line:
+            t = line.split("Duration:")[1].split(",")[0].strip()
+            h, m2, sec = t.split(":")
+            return int(h) * 3600 + int(m2) * 60 + float(sec)
+    return 0.0
 
 
 def list_voices():
