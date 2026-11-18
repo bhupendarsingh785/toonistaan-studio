@@ -6330,6 +6330,100 @@ DEFAULT_INDEX = {
    "sports"
   ],
   "license": "Pixabay"
+ },
+ "phonk_sport": {
+  "file": "music/phonk_sport.mp3",
+  "tags": [
+   "phonk",
+   "sport",
+   "beat",
+   "energy"
+  ],
+  "license": "Pixabay"
+ },
+ "chill_instrumental": {
+  "file": "music/chill_instrumental.mp3",
+  "tags": [
+   "chill",
+   "instrumental",
+   "lofi",
+   "relax"
+  ],
+  "license": "Pixabay"
+ },
+ "club_instrumental": {
+  "file": "music/club_instrumental.mp3",
+  "tags": [
+   "club",
+   "instrumental",
+   "dance",
+   "party"
+  ],
+  "license": "Pixabay"
+ },
+ "sport_instrumental": {
+  "file": "music/sport_instrumental.mp3",
+  "tags": [
+   "sport",
+   "instrumental",
+   "energy"
+  ],
+  "license": "Pixabay"
+ },
+ "afrobeat_instrumental": {
+  "file": "music/afrobeat_instrumental.mp3",
+  "tags": [
+   "afrobeat",
+   "instrumental",
+   "groove"
+  ],
+  "license": "Pixabay"
+ },
+ "phonk_2": {
+  "file": "music/phonk_2.mp3",
+  "tags": [
+   "phonk",
+   "instrumental",
+   "beat"
+  ],
+  "license": "Pixabay"
+ },
+ "phonk_drift": {
+  "file": "music/phonk_drift.mp3",
+  "tags": [
+   "phonk",
+   "drift",
+   "beat"
+  ],
+  "license": "Pixabay"
+ },
+ "energy_instrumental": {
+  "file": "music/energy_instrumental.mp3",
+  "tags": [
+   "energy",
+   "instrumental",
+   "action"
+  ],
+  "license": "Pixabay"
+ },
+ "luxury_instrumental": {
+  "file": "music/luxury_instrumental.mp3",
+  "tags": [
+   "luxury",
+   "instrumental",
+   "rich",
+   "style"
+  ],
+  "license": "Pixabay"
+ },
+ "instrumental_bg": {
+  "file": "music/instrumental_bg.mp3",
+  "tags": [
+   "instrumental",
+   "background",
+   "bed"
+  ],
+  "license": "Pixabay"
  }
 }
 
