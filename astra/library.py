@@ -5234,6 +5234,104 @@ DEFAULT_INDEX = {
    "water"
   ],
   "license": "Pixabay"
+ },
+ "forest_relax_2": {
+  "file": "music/forest_relax_2.mp3",
+  "tags": [
+   "forest",
+   "relax",
+   "calm",
+   "sleep"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_folk_song": {
+  "file": "music/forest_folk_song.mp3",
+  "tags": [
+   "folk",
+   "acoustic",
+   "forest",
+   "song"
+  ],
+  "license": "Pixabay"
+ },
+ "halloween_spooky": {
+  "file": "music/halloween_spooky.mp3",
+  "tags": [
+   "halloween",
+   "spooky",
+   "dark",
+   "horror"
+  ],
+  "license": "Pixabay"
+ },
+ "halloween_bgm_2": {
+  "file": "music/halloween_bgm_2.mp3",
+  "tags": [
+   "halloween",
+   "bgm",
+   "mystery"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_celtic_mystic": {
+  "file": "music/forest_celtic_mystic.mp3",
+  "tags": [
+   "celtic",
+   "mystic",
+   "forest",
+   "magic"
+  ],
+  "license": "Pixabay"
+ },
+ "haunting_bgm": {
+  "file": "music/haunting_bgm.mp3",
+  "tags": [
+   "haunting",
+   "bhoot",
+   "dark",
+   "sad"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_dark_ambient": {
+  "file": "music/forest_dark_ambient.mp3",
+  "tags": [
+   "dark",
+   "ambient",
+   "forest",
+   "horror"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_tales_orchestral": {
+  "file": "music/forest_tales_orchestral.mp3",
+  "tags": [
+   "orchestral",
+   "forest",
+   "story",
+   "cinematic"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_tales_halloween": {
+  "file": "music/forest_tales_halloween.mp3",
+  "tags": [
+   "orchestral",
+   "halloween",
+   "dark"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_morning_birds": {
+  "file": "ambience/forest_morning_birds.mp3",
+  "tags": [
+   "morning",
+   "forest",
+   "birds",
+   "subah"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -5250,8 +5348,8 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "forest": ["forest_lofi_piano", "forest_enchanted", "forest_reflections", "forest_epic_ballad", "forest_morning_harp", "forest_guitar", "forest_whispers", "forest_morning_mist", "forest_pathway", "forest_spirits_piano", "forest_relax", "forest_scent", "forest_harp", "forest_adventure"],
-    "halloween": ["halloween_bgm", "halloween_scary"],
+    "forest": ["forest_relax_2", "forest_folk_song", "forest_celtic_mystic", "forest_dark_ambient", "forest_tales_orchestral", "forest_tales_halloween", "forest_lofi_piano", "forest_enchanted", "forest_reflections", "forest_epic_ballad", "forest_morning_harp", "forest_guitar", "forest_whispers", "forest_morning_mist", "forest_pathway", "forest_spirits_piano", "forest_relax", "forest_scent", "forest_harp", "forest_adventure"],
+    "halloween": ["halloween_bgm", "halloween_bgm_2", "halloween_scary", "halloween_spooky", "forest_tales_halloween"],
     "gate_open": ["door_open_a", "door_open_b", "door_open_c"],
     "door": ["electric_gate_open", "gate_close_2", "door_creaky_steel_wood", "iron_gate_courtyard", "door_lock_open", "door_iron_creak_old", "door_iron_creak_2", "iron_door_open_2", "door_open_a", "door_open_b", "door_open_c"],
     "gate_close": ["door_close_a", "door_close_b", "door_close_c"],
