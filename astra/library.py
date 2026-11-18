@@ -18531,6 +18531,46 @@ DEFAULT_INDEX = {
    "loop"
   ],
   "license": "Freesound/CC0"
+ },
+ "groove_bed_loop": {
+  "file": "music/groove_bed_loop.mp3",
+  "tags": [
+   "groove",
+   "loop",
+   "bed",
+   "music"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "lofi_loop": {
+  "file": "music/lofi_loop.mp3",
+  "tags": [
+   "lofi",
+   "chill",
+   "loop",
+   "study"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "dance_loop": {
+  "file": "music/dance_loop.mp3",
+  "tags": [
+   "dance",
+   "loop",
+   "beat"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "sunrise_indian_percussion": {
+  "file": "music/sunrise_indian_percussion.mp3",
+  "tags": [
+   "indian",
+   "percussion",
+   "desi",
+   "sunrise",
+   "music"
+  ],
+  "license": "Freesound/CC0"
  }
 }
 
