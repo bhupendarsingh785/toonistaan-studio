@@ -80,7 +80,8 @@ def _speak_natural(text, voice, out, gap=0.16):
         i = len(parts)
         pf = 1.0 + 0.022 * (1 if i % 3 == 0 else (-1 if i % 3 == 1 else 0))
         tf = 1.0 + 0.02 * (1 if i % 2 == 0 else -1)
-        af = (f"asetrate=44100*{pf:.4f},aresample=44100,atempo={1/pf:.4f},atempo={tf:.4f},"
+        # pehle 44100 par lao — warna asetrate file ke asli rate se takrata hai
+        af = (f"aresample=44100,asetrate=44100*{pf:.4f},aresample=44100,atempo={1/pf:.4f},atempo={tf:.4f},"
               "silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.02,"
               "areverse,silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.05,areverse,"
               "loudnorm=I=-16:TP=-1.5:LRA=11")
