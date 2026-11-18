@@ -5956,6 +5956,97 @@ DEFAULT_INDEX = {
    "build"
   ],
   "license": "Pixabay"
+ },
+ "dramatic_whoosh_hit": {
+  "file": "transitions/dramatic_whoosh_hit.mp3",
+  "tags": [
+   "whoosh",
+   "dramatic",
+   "hit",
+   "impact"
+  ],
+  "license": "Pixabay"
+ },
+ "whoosh_cine_1": {
+  "file": "transitions/whoosh_cine_1.mp3",
+  "tags": [
+   "whoosh",
+   "cinematic",
+   "transition"
+  ],
+  "license": "Pixabay"
+ },
+ "whoosh_cine_2": {
+  "file": "transitions/whoosh_cine_2.mp3",
+  "tags": [
+   "whoosh",
+   "cinematic",
+   "transition"
+  ],
+  "license": "Pixabay"
+ },
+ "whoosh_cine_3": {
+  "file": "transitions/whoosh_cine_3.mp3",
+  "tags": [
+   "whoosh",
+   "cinematic",
+   "transition"
+  ],
+  "license": "Pixabay"
+ },
+ "whoosh_cine_4": {
+  "file": "transitions/whoosh_cine_4.mp3",
+  "tags": [
+   "whoosh",
+   "cinematic",
+   "transition"
+  ],
+  "license": "Pixabay"
+ },
+ "whoosh_cine_5": {
+  "file": "transitions/whoosh_cine_5.mp3",
+  "tags": [
+   "whoosh",
+   "cinematic",
+   "transition"
+  ],
+  "license": "Pixabay"
+ },
+ "whoosh_cine_6": {
+  "file": "transitions/whoosh_cine_6.mp3",
+  "tags": [
+   "whoosh",
+   "cinematic",
+   "transition"
+  ],
+  "license": "Pixabay"
+ },
+ "riser_leberch": {
+  "file": "music/riser_leberch.mp3",
+  "tags": [
+   "riser",
+   "build",
+   "tension"
+  ],
+  "license": "Pixabay"
+ },
+ "riser_music_leberch": {
+  "file": "music/riser_music_leberch.mp3",
+  "tags": [
+   "riser",
+   "music",
+   "build"
+  ],
+  "license": "Pixabay"
+ },
+ "tension_riser_leberch": {
+  "file": "music/tension_riser_leberch.mp3",
+  "tags": [
+   "riser",
+   "tension",
+   "suspense"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -5975,8 +6066,8 @@ VARIANTS = {
     "transition": ["whoosh_1", "whoosh_2", "trailer_slam_hit", "trailer_hit_marker", "epic_transition", "time_transition", "quartz_drift", "tension_riser_atlas", "tension_riser_2", "sub_bass_drop", "whoosh_reverse_8", "crystal_swell", "tonal_riser_cinematic_7", "tonal_riser_cinematic_3", "logo_snap_tech", "tonal_riser_1", "tonal_riser_3", "tonal_riser_smooth_2", "tonal_riser_smooth_7",
                    "tonal_riser_smooth_8", "tonal_riser_cinematic_8", "whoosh_reverse_low",
                    "choir_transition", "cyber_crash"],
-    "riser": ["tonal_riser_1", "tonal_riser_3", "tonal_riser_cinematic_8"],
-    "whoosh": ["whoosh_1", "whoosh_2", "whoosh_reverse_low", "whoosh_reverse_8"],
+    "riser": ["riser_leberch", "riser_music_leberch", "tension_riser_leberch", "tonal_riser_1", "tonal_riser_3", "tonal_riser_cinematic_8"],
+    "whoosh": ["dramatic_whoosh_hit", "whoosh_cine_1", "whoosh_cine_2", "whoosh_cine_3", "whoosh_cine_4", "whoosh_cine_5", "whoosh_cine_6", "whoosh_1", "whoosh_2", "whoosh_reverse_low", "whoosh_reverse_8"],
     "sting": ["logo_sting_synthwave", "cyber_crash"],
     "epic": ["final_stand", "aggressive_trailer_intro", "epic_hybrid_orchestra", "deep_breath_epic", "countdown_action", "trailer_lacrimosa", "trailer_teaser"],
     "trailer": ["trailer_teaser", "trailer_lacrimosa", "countdown_action"],
