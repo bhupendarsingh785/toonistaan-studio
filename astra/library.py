@@ -7256,6 +7256,75 @@ DEFAULT_INDEX = {
    "78bpm"
   ],
   "license": "Pixabay"
+ },
+ "rope": {
+  "file": "foley/rope.mp3",
+  "tags": [
+   "rope",
+   "rassi",
+   "रस्सी",
+   "friction",
+   "pull",
+   "khinch"
+  ],
+  "license": "ASTRA-synth (khud banaya)"
+ },
+ "rope_knot": {
+  "file": "foley/rope_knot.mp3",
+  "tags": [
+   "rope",
+   "knot",
+   "gaandh",
+   "गांठ",
+   "tighten"
+  ],
+  "license": "ASTRA-synth (khud banaya)"
+ },
+ "cloth_rustle": {
+  "file": "foley/cloth_rustle.mp3",
+  "tags": [
+   "cloth",
+   "rustle",
+   "kapda",
+   "कपड़ा",
+   "saree"
+  ],
+  "license": "ASTRA-synth (khud banaya)"
+ },
+ "leaves_dry": {
+  "file": "footsteps/leaves_dry.mp3",
+  "tags": [
+   "leaves",
+   "dry",
+   "sookhe",
+   "पत्ते",
+   "crunch",
+   "kadam"
+  ],
+  "license": "ASTRA-synth (khud banaya)"
+ },
+ "ladder_wood": {
+  "file": "footsteps/ladder_wood.mp3",
+  "tags": [
+   "ladder",
+   "seedhi",
+   "सीढ़ी",
+   "wood",
+   "creak"
+  ],
+  "license": "ASTRA-synth (khud banaya)"
+ },
+ "wood_creak": {
+  "file": "door/wood_creak.mp3",
+  "tags": [
+   "wood",
+   "creak",
+   "lakdi",
+   "लकड़ी",
+   "purana",
+   "floor"
+  ],
+  "license": "ASTRA-synth (khud banaya)"
  }
 }
 
@@ -7272,6 +7341,11 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "rope": ["rope", "rope_knot"],
+    "cloth_rustle": ["cloth_rustle"],
+    "leaves_dry": ["leaves_dry"],
+    "ladder": ["ladder_wood"],
+    "wood_creak": ["wood_creak"],
     "ambient": ["ambient_calm_dreamscape", "ambient_soft_2", "ambient_leberch", "ambient_landscape", "ambient_inspiration", "ambient_dystopian", "ambient_horror_creepy", "timelapse_bg", "ambient_soft", "ambient_clean", "ambient_dreamy", "ambient_piano",
                 "ambient_dark_2", "ambient_dark_dreamscape", "ambient_business"],
     "drone": ["drone_horror_cinematic", "drone_mirostar", "drone_atlas", "drone_subclair", "drone_tanpura_divine", "drone_tanpura_432", "drone_ambient", "drone_deep", "drone_cyberpunk", "ambient_dark_dreamscape"],
