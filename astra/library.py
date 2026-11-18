@@ -5863,6 +5863,99 @@ DEFAULT_INDEX = {
    "transition"
   ],
   "license": "Pixabay"
+ },
+ "whoosh_1": {
+  "file": "transitions/whoosh_1.mp3",
+  "tags": [
+   "whoosh",
+   "swoosh",
+   "transition"
+  ],
+  "license": "Pixabay"
+ },
+ "whoosh_2": {
+  "file": "transitions/whoosh_2.mp3",
+  "tags": [
+   "whoosh",
+   "swoosh",
+   "transition"
+  ],
+  "license": "Pixabay"
+ },
+ "trailer_hit_marker": {
+  "file": "transitions/trailer_hit_marker.mp3",
+  "tags": [
+   "hit",
+   "impact",
+   "marker",
+   "trailer"
+  ],
+  "license": "Pixabay"
+ },
+ "tension_riser_atlas": {
+  "file": "transitions/tension_riser_atlas.mp3",
+  "tags": [
+   "riser",
+   "tension",
+   "build"
+  ],
+  "license": "Pixabay"
+ },
+ "tension_riser_2": {
+  "file": "transitions/tension_riser_2.mp3",
+  "tags": [
+   "riser",
+   "tension",
+   "suspense"
+  ],
+  "license": "Pixabay"
+ },
+ "epic_transition": {
+  "file": "transitions/epic_transition.mp3",
+  "tags": [
+   "epic",
+   "transition",
+   "swell"
+  ],
+  "license": "Pixabay"
+ },
+ "time_transition": {
+  "file": "transitions/time_transition.mp3",
+  "tags": [
+   "time",
+   "transition",
+   "warp"
+  ],
+  "license": "Pixabay"
+ },
+ "trailer_slam_hit": {
+  "file": "transitions/trailer_slam_hit.mp3",
+  "tags": [
+   "slam",
+   "hit",
+   "trailer",
+   "impact"
+  ],
+  "license": "Pixabay"
+ },
+ "quartz_drift": {
+  "file": "transitions/quartz_drift.mp3",
+  "tags": [
+   "drift",
+   "transition",
+   "ethereal"
+  ],
+  "license": "Pixabay"
+ },
+ "riser_inspirational": {
+  "file": "music/riser_inspirational.mp3",
+  "tags": [
+   "riser",
+   "inspirational",
+   "hope",
+   "build"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -5879,11 +5972,11 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "transition": ["sub_bass_drop", "whoosh_reverse_8", "crystal_swell", "tonal_riser_cinematic_7", "tonal_riser_cinematic_3", "logo_snap_tech", "tonal_riser_1", "tonal_riser_3", "tonal_riser_smooth_2", "tonal_riser_smooth_7",
+    "transition": ["whoosh_1", "whoosh_2", "trailer_slam_hit", "trailer_hit_marker", "epic_transition", "time_transition", "quartz_drift", "tension_riser_atlas", "tension_riser_2", "sub_bass_drop", "whoosh_reverse_8", "crystal_swell", "tonal_riser_cinematic_7", "tonal_riser_cinematic_3", "logo_snap_tech", "tonal_riser_1", "tonal_riser_3", "tonal_riser_smooth_2", "tonal_riser_smooth_7",
                    "tonal_riser_smooth_8", "tonal_riser_cinematic_8", "whoosh_reverse_low",
                    "choir_transition", "cyber_crash"],
     "riser": ["tonal_riser_1", "tonal_riser_3", "tonal_riser_cinematic_8"],
-    "whoosh": ["whoosh_reverse_low"],
+    "whoosh": ["whoosh_1", "whoosh_2", "whoosh_reverse_low", "whoosh_reverse_8"],
     "sting": ["logo_sting_synthwave", "cyber_crash"],
     "epic": ["final_stand", "aggressive_trailer_intro", "epic_hybrid_orchestra", "deep_breath_epic", "countdown_action", "trailer_lacrimosa", "trailer_teaser"],
     "trailer": ["trailer_teaser", "trailer_lacrimosa", "countdown_action"],
