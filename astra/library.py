@@ -17905,6 +17905,94 @@ DEFAULT_INDEX = {
    "music"
   ],
   "license": "CC0/BVKER"
+ },
+ "laser_1": {
+  "file": "ui/laser_1.mp3",
+  "tags": [
+   "laser",
+   "pew",
+   "sci-fi",
+   "gun",
+   "action"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "laser_2": {
+  "file": "ui/laser_2.mp3",
+  "tags": [
+   "laser",
+   "pew",
+   "sci-fi",
+   "gun",
+   "action"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "laser_3": {
+  "file": "ui/laser_3.mp3",
+  "tags": [
+   "laser",
+   "pew",
+   "sci-fi",
+   "gun",
+   "action"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "laser_4": {
+  "file": "ui/laser_4.mp3",
+  "tags": [
+   "laser",
+   "pew",
+   "sci-fi",
+   "gun",
+   "action"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "laser_5": {
+  "file": "ui/laser_5.mp3",
+  "tags": [
+   "laser",
+   "pew",
+   "sci-fi",
+   "gun",
+   "action"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "laser_6": {
+  "file": "ui/laser_6.mp3",
+  "tags": [
+   "laser",
+   "pew",
+   "sci-fi",
+   "gun",
+   "action"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "laser_7": {
+  "file": "ui/laser_7.mp3",
+  "tags": [
+   "laser",
+   "pew",
+   "sci-fi",
+   "gun",
+   "action"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "laser_8": {
+  "file": "ui/laser_8.mp3",
+  "tags": [
+   "laser",
+   "pew",
+   "sci-fi",
+   "gun",
+   "action"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -17921,6 +18009,7 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "laser": ["laser_1", "laser_2", "laser_3", "laser_4", "laser_5", "laser_6", "laser_7", "laser_8"],
     "horror_bvk": ["horror_bvk_1", "horror_bvk_2", "horror_bvk_3"],
     "failure": ["failure_1", "failure_2", "failure_3"],
     "beep": ["beep_2", "beep_5", "beep_7", "beep_8"],
