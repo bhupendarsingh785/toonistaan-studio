@@ -10465,6 +10465,116 @@ DEFAULT_INDEX = {
    "jingle"
   ],
   "license": "CC0/BVKER"
+ },
+ "coin_bvker_11": {
+  "file": "coins/coin_bvker_11.mp3",
+  "tags": [
+   "coin",
+   "sikka",
+   "सिक्का",
+   "money",
+   "paisa"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "coin_bvker_12": {
+  "file": "coins/coin_bvker_12.mp3",
+  "tags": [
+   "coin",
+   "sikka",
+   "सिक्का",
+   "money",
+   "paisa"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "coin_bvker_13": {
+  "file": "coins/coin_bvker_13.mp3",
+  "tags": [
+   "coin",
+   "sikka",
+   "सिक्का",
+   "money",
+   "paisa"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "coin_bvker_14": {
+  "file": "coins/coin_bvker_14.mp3",
+  "tags": [
+   "coin",
+   "sikka",
+   "सिक्का",
+   "money",
+   "paisa"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "coin_bvker_15": {
+  "file": "coins/coin_bvker_15.mp3",
+  "tags": [
+   "coin",
+   "sikka",
+   "सिक्का",
+   "money",
+   "paisa"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "coin_bvker_16": {
+  "file": "coins/coin_bvker_16.mp3",
+  "tags": [
+   "coin",
+   "sikka",
+   "सिक्का",
+   "money",
+   "paisa"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "coin_bvker_17": {
+  "file": "coins/coin_bvker_17.mp3",
+  "tags": [
+   "coin",
+   "sikka",
+   "सिक्का",
+   "money",
+   "paisa"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "coin_bvker_18": {
+  "file": "coins/coin_bvker_18.mp3",
+  "tags": [
+   "coin",
+   "sikka",
+   "सिक्का",
+   "money",
+   "paisa"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "coin_bvker_19": {
+  "file": "coins/coin_bvker_19.mp3",
+  "tags": [
+   "coin",
+   "sikka",
+   "सिक्का",
+   "money",
+   "paisa"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "coin_bvker_20": {
+  "file": "coins/coin_bvker_20.mp3",
+  "tags": [
+   "coin",
+   "sikka",
+   "सिक्का",
+   "money",
+   "paisa"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -10481,7 +10591,7 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "sikka": ["coin_bvker_1", "coin_bvker_2", "coin_bvker_3", "coin_bvker_4", "coin_bvker_5", "coin_bvker_6", "coin_bvker_7", "coin_bvker_8", "coin_bvker_9", "coin_bvker_10"],
+    "sikka": ["coin_bvker_1", "coin_bvker_2", "coin_bvker_3", "coin_bvker_4", "coin_bvker_5", "coin_bvker_6", "coin_bvker_7", "coin_bvker_8", "coin_bvker_9", "coin_bvker_10", "coin_bvker_11", "coin_bvker_12", "coin_bvker_13", "coin_bvker_14", "coin_bvker_15", "coin_bvker_16", "coin_bvker_17", "coin_bvker_18", "coin_bvker_19", "coin_bvker_20"],
     "paisa": ["coin_bvker_1", "coin_bvker_2", "coins"],
     "mouth_click": ["mouth_click_1", "mouth_click_2", "mouth_click_3", "mouth_click_4", "mouth_click_5", "mouth_click_6", "mouth_click_7", "mouth_click_8", "mouth_click_9", "mouth_click_10"],
     "tutak": ["mouth_click_1", "mouth_click_2"],
