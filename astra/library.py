@@ -11557,6 +11557,106 @@ DEFAULT_INDEX = {
    "toast"
   ],
   "license": "CC0/BVKER"
+ },
+ "glass_bvk_11": {
+  "file": "foley/glass_bvk_11.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "glass_bvk_12": {
+  "file": "foley/glass_bvk_12.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "glass_bvk_13": {
+  "file": "foley/glass_bvk_13.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "glass_bvk_14": {
+  "file": "foley/glass_bvk_14.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "glass_bvk_15": {
+  "file": "foley/glass_bvk_15.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "glass_bvk_16": {
+  "file": "foley/glass_bvk_16.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "glass_bvk_17": {
+  "file": "foley/glass_bvk_17.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "glass_bvk_18": {
+  "file": "foley/glass_bvk_18.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "glass_bvk_19": {
+  "file": "foley/glass_bvk_19.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "glass_bvk_20": {
+  "file": "foley/glass_bvk_20.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -11608,7 +11708,7 @@ VARIANTS = {
     "bathroom": ["bathroom_1", "bathroom_2", "bathroom_3", "shower"],
     "kulla": ["gargling", "rinse"],
     "siyar": ["jackal", "dingo_howl"],
-    "kanch": ["glass_bvk_1", "glass_bvk_2", "glass_bvk_3", "glass_bvk_4", "glass_bvk_5", "glass_bvk_6", "glass_bvk_7", "glass_bvk_8", "glass_bvk_9", "glass_bvk_10", "glass"],
+    "kanch": ["glass_bvk_1", "glass_bvk_2", "glass_bvk_3", "glass_bvk_4", "glass_bvk_5", "glass_bvk_6", "glass_bvk_7", "glass_bvk_8", "glass_bvk_9", "glass_bvk_10", "glass_bvk_11", "glass_bvk_12", "glass_bvk_13", "glass_bvk_14", "glass_bvk_15", "glass_bvk_16", "glass_bvk_17", "glass_bvk_18", "glass_bvk_19", "glass_bvk_20", "glass"],
     "ghaas": ["run_tall_grass", "steps_grass"],
     "cicada": ["cicada_1", "cicada_2"],
     "chichdi": ["cicada_1", "cicada_2"],
