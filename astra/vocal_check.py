@@ -57,8 +57,11 @@ def _pitch_of(audio, start, dur):
     return float(np.median(pv)), float(np.percentile(pv, 90) - np.percentile(pv, 10))
 
 
-def check(audio_path, cues_path, verbose=True):
-    cues = json.load(open(cues_path, encoding="utf-8"))
+def check(audio_path, cues_path=None, cues=None, verbose=True):
+    if cues is None:
+        if not cues_path or not os.path.exists(cues_path):
+            return {"ok": False, "reason": "cues nahi mile"}
+        cues = json.load(open(cues_path, encoding="utf-8"))
     lines = _lines(cues)
     if not lines:
         return {"ok": False, "reason": "cues me dialogue nahi mila"}
