@@ -7724,6 +7724,108 @@ DEFAULT_INDEX = {
    "chillana"
   ],
   "license": "Pixabay"
+ },
+ "monkey_cry": {
+  "file": "animals/monkey_cry.mp3",
+  "tags": [
+   "monkey",
+   "cry",
+   "jungle",
+   "bandar"
+  ],
+  "license": "Pixabay"
+ },
+ "monkey_laugh": {
+  "file": "animals/monkey_laugh.mp3",
+  "tags": [
+   "monkey",
+   "laugh",
+   "hasna",
+   "bandar"
+  ],
+  "license": "Pixabay"
+ },
+ "monkey_giggle": {
+  "file": "animals/monkey_giggle.mp3",
+  "tags": [
+   "monkey",
+   "giggle",
+   "funny",
+   "bandar"
+  ],
+  "license": "Pixabay"
+ },
+ "monkey_attention": {
+  "file": "animals/monkey_attention.mp3",
+  "tags": [
+   "monkey",
+   "attention",
+   "call"
+  ],
+  "license": "Pixabay"
+ },
+ "monkey_imitate": {
+  "file": "animals/monkey_imitate.mp3",
+  "tags": [
+   "monkey",
+   "imitate",
+   "funny",
+   "bandar"
+  ],
+  "license": "Pixabay"
+ },
+ "rhino_growl": {
+  "file": "animals/rhino_growl.mp3",
+  "tags": [
+   "rhino",
+   "growl",
+   "genda",
+   "गैंडा",
+   "old"
+  ],
+  "license": "Pixabay"
+ },
+ "rhino_clash": {
+  "file": "animals/rhino_clash.mp3",
+  "tags": [
+   "rhino",
+   "clash",
+   "fight",
+   "horn",
+   "genda"
+  ],
+  "license": "Pixabay"
+ },
+ "rhino_young": {
+  "file": "animals/rhino_young.mp3",
+  "tags": [
+   "rhino",
+   "young",
+   "call",
+   "genda"
+  ],
+  "license": "Pixabay"
+ },
+ "rhino_snort": {
+  "file": "animals/rhino_snort.mp3",
+  "tags": [
+   "rhino",
+   "snort",
+   "grunt",
+   "genda"
+  ],
+  "license": "Pixabay"
+ },
+ "zoo_ambience_2": {
+  "file": "animals/zoo_ambience_2.mp3",
+  "tags": [
+   "zoo",
+   "animals",
+   "elephant",
+   "zebra",
+   "bear"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -7740,8 +7842,9 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "rhino": ["rhino_growl", "rhino_snort", "rhino_clash", "rhino_young"],
     "panda": ["panda", "panda_bleat", "panda_grumbling", "panda_purr", "panda_zoo"],
-    "monkey": ["monkey_calls", "monkey_nature", "monkey_fight", "chimpanzee"],
+    "monkey": ["monkey_calls", "monkey_laugh", "monkey_giggle", "monkey_cry", "monkey_attention", "monkey_nature", "monkey_fight", "monkey_imitate", "chimpanzee"],
     "wombat": ["wombat_growl", "wombat_roar", "wombat_call", "wombat_chewing", "wombat_snort", "wombat_screech"],
     "rat": ["rat_wounded", "mouse_squeaks"],
     "dingo": ["dingo_howl", "dingo_call", "dingo_bark", "dingo_field", "dingo_throat"],
