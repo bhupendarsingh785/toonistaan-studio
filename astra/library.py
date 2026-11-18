@@ -18143,6 +18143,58 @@ DEFAULT_INDEX = {
    "texture"
   ],
   "license": "CC0/BVKER"
+ },
+ "orchestral_toms_loop": {
+  "file": "music/orchestral_toms_loop.mp3",
+  "tags": [
+   "orchestral",
+   "toms",
+   "loop",
+   "music",
+   "epic"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "slide_door": {
+  "file": "door/slide_door.mp3",
+  "tags": [
+   "door",
+   "slide",
+   "darwaza",
+   "khulna"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "window_breaking": {
+  "file": "foley/window_breaking.mp3",
+  "tags": [
+   "window",
+   "glass",
+   "break",
+   "kanch",
+   "tootna"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "rope_tension": {
+  "file": "foley/rope_tension.mp3",
+  "tags": [
+   "rope",
+   "rassi",
+   "tension",
+   "khinchav"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "rope_pull_stretch": {
+  "file": "foley/rope_pull_stretch.mp3",
+  "tags": [
+   "rope",
+   "rassi",
+   "pull",
+   "stretch"
+  ],
+  "license": "Freesound/CC0"
  }
 }
 
