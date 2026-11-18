@@ -8616,6 +8616,96 @@ DEFAULT_INDEX = {
    "dawn"
   ],
   "license": "Pixabay"
+ },
+ "gannet": {
+  "file": "birds/gannet.mp3",
+  "tags": [
+   "gannet",
+   "bird",
+   "sea",
+   "samundar"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "tit_great": {
+  "file": "birds/tit_great.mp3",
+  "tags": [
+   "tit",
+   "bird",
+   "garden",
+   "chidiya"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "wren_carolina": {
+  "file": "birds/wren_carolina.mp3",
+  "tags": [
+   "wren",
+   "bird",
+   "small",
+   "chidiya"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "birds_france_2": {
+  "file": "birds/birds_france_2.mp3",
+  "tags": [
+   "birds",
+   "france",
+   "dawn",
+   "jungle"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "sparrow_henslow": {
+  "file": "birds/sparrow_henslow.mp3",
+  "tags": [
+   "sparrow",
+   "gauraiya",
+   "गौरैया",
+   "bird"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "shorebirds_close": {
+  "file": "birds/shorebirds_close.mp3",
+  "tags": [
+   "shorebirds",
+   "beach",
+   "coast",
+   "samundar"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "shorebirds_distant": {
+  "file": "birds/shorebirds_distant.mp3",
+  "tags": [
+   "shorebirds",
+   "distant",
+   "beach"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "sunbittern_song": {
+  "file": "birds/sunbittern_song.mp3",
+  "tags": [
+   "sunbittern",
+   "song",
+   "tropical",
+   "bird"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "marsh_provancher": {
+  "file": "ambience/marsh_provancher.mp3",
+  "tags": [
+   "marsh",
+   "ambience",
+   "wetland",
+   "frogs",
+   "dal-dal"
+  ],
+  "license": "Wikimedia/XC"
  }
 }
 
@@ -8632,10 +8722,13 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "gauraiya": ["sparrow_henslow", "chick_1"],
+    "samundar": ["shorebirds_close", "shorebirds_distant", "tern_black", "waves"],
+    "marsh": ["marsh_provancher"],
     "cheel": ["hawk_cooper"],
     "bater": ["quail_montezuma"],
     "myna": ["myna_bird", "bird_france"],
-    "chidiya": ["bird_france", "tinamou_variegated", "quail_montezuma", "myna_bird", "birds"],
+    "chidiya": ["birds_france_2", "bird_france", "tit_great", "wren_carolina", "sparrow_henslow", "tinamou_variegated", "quail_montezuma", "myna_bird", "birds"],
     "sher": ["lion_real", "lion_loud", "lion_angry", "lion_majestic", "lion_evil", "lion_roar"],
     "बाघ": ["tiger_roar_1"],
     "elephant": ["elephant_african", "elephant_asian", "elephant_roar", "elephant_growl", "elephant_short", "elephant_mighty", "elephant_trunk"],
