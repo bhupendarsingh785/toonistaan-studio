@@ -2,6 +2,10 @@ name: Awaaz test
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - "studio/series/user/story_demo.json"
+      - ".render-trigger"
 
 permissions:
   contents: read
