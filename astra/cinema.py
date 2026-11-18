@@ -550,6 +550,13 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
     if r.returncode != 0:
         sys.exit("master fail: " + r.stderr[-300:])
 
+    # ---- voice engine report (kitna API kharch hua) ----
+    try:
+        import awaaz as _AZ
+        _AZ.engine_report()
+    except Exception:
+        pass
+
     # ---- vocal check (awaaz ki jaanch — pitch takraav) ----
     try:
         import vocal_check as _VC
