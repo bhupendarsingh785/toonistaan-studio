@@ -7628,6 +7628,102 @@ DEFAULT_INDEX = {
    "snort"
   ],
   "license": "Pixabay"
+ },
+ "monkey_calls": {
+  "file": "animals/monkey_calls.mp3",
+  "tags": [
+   "monkey",
+   "bandar",
+   "बंदर",
+   "call"
+  ],
+  "license": "Pixabay"
+ },
+ "monkey_nature": {
+  "file": "animals/monkey_nature.mp3",
+  "tags": [
+   "monkey",
+   "jungle",
+   "nature",
+   "bandar"
+  ],
+  "license": "Pixabay"
+ },
+ "monkey_fight": {
+  "file": "animals/monkey_fight.mp3",
+  "tags": [
+   "monkey",
+   "fight",
+   "ladai",
+   "bandar"
+  ],
+  "license": "Pixabay"
+ },
+ "panda": {
+  "file": "animals/panda.mp3",
+  "tags": [
+   "panda",
+   "zoo",
+   "animal"
+  ],
+  "license": "Pixabay"
+ },
+ "panda_bleat": {
+  "file": "animals/panda_bleat.mp3",
+  "tags": [
+   "panda",
+   "bleat",
+   "soft",
+   "call"
+  ],
+  "license": "Pixabay"
+ },
+ "panda_grumbling": {
+  "file": "animals/panda_grumbling.mp3",
+  "tags": [
+   "panda",
+   "grumble",
+   "bamboo",
+   "gussa"
+  ],
+  "license": "Pixabay"
+ },
+ "panda_purr": {
+  "file": "animals/panda_purr.mp3",
+  "tags": [
+   "panda",
+   "purr",
+   "khush",
+   "play"
+  ],
+  "license": "Pixabay"
+ },
+ "panda_zoo": {
+  "file": "animals/panda_zoo.mp3",
+  "tags": [
+   "panda",
+   "zoo",
+   "chinese"
+  ],
+  "license": "Pixabay"
+ },
+ "wombat_snort": {
+  "file": "animals/wombat_snort.mp3",
+  "tags": [
+   "wombat",
+   "snort",
+   "gussa"
+  ],
+  "license": "Pixabay"
+ },
+ "wombat_screech": {
+  "file": "animals/wombat_screech.mp3",
+  "tags": [
+   "wombat",
+   "screech",
+   "chillana"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -7644,7 +7740,9 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "wombat": ["wombat_growl", "wombat_roar", "wombat_call", "wombat_chewing"],
+    "panda": ["panda", "panda_bleat", "panda_grumbling", "panda_purr", "panda_zoo"],
+    "monkey": ["monkey_calls", "monkey_nature", "monkey_fight", "chimpanzee"],
+    "wombat": ["wombat_growl", "wombat_roar", "wombat_call", "wombat_chewing", "wombat_snort", "wombat_screech"],
     "rat": ["rat_wounded", "mouse_squeaks"],
     "dingo": ["dingo_howl", "dingo_call", "dingo_bark", "dingo_field", "dingo_throat"],
     "mouse": ["mouse_squeaks", "mouse_scratches", "mouse_alarm", "mouse_gnaw", "mouse_call"],
