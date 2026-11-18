@@ -18160,7 +18160,7 @@ ALIAS = {
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
     "vinyl_crackle_bvk": ["vinyl_crackle_bvk_1", "vinyl_crackle_bvk_2", "vinyl_crackle_bvk_3", "vinyl_crackle_bvk_4", "vinyl_crackle_bvk_5", "vinyl_crackle_bvk_6", "vinyl_crackle_bvk_7", "vinyl_crackle_bvk_8", "vinyl_crackle_bvk_9", "vinyl_crackle_bvk_10"],
-    "vinyl": ["vinyl_crackle_bvk_1", "vinyl_crackle_bvk_2", "vinyl_crackle_bvk_3", "vinyl_crackle_bvk_4", "vinyl_crackle_bvk_5", "vinyl_crackle_bvk_6", "vinyl_crackle_bvk_7", "vinyl_crackle_bvk_8", "vinyl_crackle_bvk_9", "vinyl_crackle_bvk_10"],
+    "vinyl": ["vinyl_crackle_bvk_1", "vinyl_crackle_bvk_2", "vinyl_crackle_bvk_3", "vinyl_crackle_bvk_4", "vinyl_crackle_bvk_5", "vinyl_crackle_bvk_6", "vinyl_crackle_bvk_7", "vinyl_crackle_bvk_8", "vinyl_crackle_bvk_9", "vinyl_crackle_bvk_10", "vinyl_crackle"],
     "transition_bvk": ["transition_bvk_1", "transition_bvk_2", "transition_bvk_3", "transition_bvk_4"],
     "laser": ["laser_1", "laser_2", "laser_3", "laser_4", "laser_5", "laser_6", "laser_7", "laser_8"],
     "horror_bvk": ["horror_bvk_1", "horror_bvk_2", "horror_bvk_3"],
