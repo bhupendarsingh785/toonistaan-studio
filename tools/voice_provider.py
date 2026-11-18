@@ -87,7 +87,7 @@ SARVAM_SPEAKER = {
 # umar (age) ke hisaab se awaaz ki unchaai — dadi, ladki, bacchi, jawan, budha sab alag
 # har kirdaar ki awaaz kis pitch par baithe (Hz me) — isse takraav nahi hota
 SARVAM_TARGET_HZ = {
-    "madhur": 112, "ramesh": 124, "salim": 138, "chaiwala": 150, "announce": 166,
+    "madhur": 112, "ramesh": 118, "salim": 138, "chaiwala": 150, "announce": 168,
     "constable": 126, "driver": 122, "doctor": 112,
     "maa": 232, "behen": 252, "aurat": 200, "meera": 210, "sunita": 205,
     "chachi": 225, "bhabhi": 215, "swara": 240, "swara_dadi": 190, "dadi": 186,
@@ -105,8 +105,8 @@ SARVAM_PITCH = {
     "dadi": 0.86, "chacha": 0.94, "pandit": 0.92, "mukhiya": 0.90, "kaka": 0.95,
     "madhur_dada": 0.88, "swara_dadi": 0.87,
     # jawan mard
-    "madhur": 1.0, "arjun": 1.0, "ramesh": 0.94, "salim": 1.03, "driver": 1.02,
-    "constable": 0.97, "doctor": 1.0, "chaiwala": 1.06, "madhur_bachcha": 1.12,
+    "madhur": 1.0, "arjun": 1.0, "ramesh": 0.86, "salim": 1.03, "driver": 1.02,
+    "constable": 0.97, "doctor": 1.0, "chaiwala": 1.15, "madhur_bachcha": 1.12,
     # jawan aurat
     "meera": 1.04, "sunita": 1.03, "aurat": 1.03, "chachi": 1.02, "bhabhi": 1.05,
     "swara": 1.02, "behen": 1.16, "maa": 0.94,
@@ -114,7 +114,7 @@ SARVAM_PITCH = {
     "bachcha": 1.34, "swara_bachcha": 1.30,
     # daravani
     "bhoot": 0.80, "chudail": 0.88,
-    "announce": 1.12,
+    "announce": 1.35,
 }
 
 
@@ -213,11 +213,7 @@ def sarvam_tts(text, kirdaar="madhur", out="out.wav"):
         except Exception as e:
             print("SARVAM_PITCH_FAIL", str(e)[:50], flush=True)
 
-    # ---- closed loop: naap kar target pitch par le jao (awaazein na milen) ----
-    try:
-        _tune_to_target(out, kirdaar)
-    except Exception as e:
-        print("SARVAM_TUNE_SKIP", str(e)[:50], flush=True)
+    # (closed-loop tuning band — usne sab kirdaaron ko ek hi pitch par le liya tha)
 
     print("SARVAM_OK", kirdaar, speaker, payload["pace"], f"pitch={pitch}", len(audio), flush=True)
     return True
