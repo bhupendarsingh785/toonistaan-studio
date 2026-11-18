@@ -6047,6 +6047,106 @@ DEFAULT_INDEX = {
    "suspense"
   ],
   "license": "Pixabay"
+ },
+ "ambient_dark_dreamscape": {
+  "file": "music/ambient_dark_dreamscape.mp3",
+  "tags": [
+   "ambient",
+   "dark",
+   "dreamscape",
+   "mystic"
+  ],
+  "license": "Pixabay"
+ },
+ "ambient_piano": {
+  "file": "music/ambient_piano.mp3",
+  "tags": [
+   "ambient",
+   "piano",
+   "soft",
+   "calm"
+  ],
+  "license": "Pixabay"
+ },
+ "drone_deep": {
+  "file": "music/drone_deep.mp3",
+  "tags": [
+   "drone",
+   "deep",
+   "dark",
+   "bed"
+  ],
+  "license": "Pixabay"
+ },
+ "ambient_business": {
+  "file": "music/ambient_business.mp3",
+  "tags": [
+   "ambient",
+   "business",
+   "clean",
+   "background"
+  ],
+  "license": "Pixabay"
+ },
+ "tibetan_dreams": {
+  "file": "music/tibetan_dreams.mp3",
+  "tags": [
+   "tibetan",
+   "meditation",
+   "spiritual",
+   "bowl"
+  ],
+  "license": "Pixabay"
+ },
+ "ambient_soft": {
+  "file": "music/ambient_soft.mp3",
+  "tags": [
+   "ambient",
+   "soft",
+   "calm",
+   "bed"
+  ],
+  "license": "Pixabay"
+ },
+ "drone_cyberpunk": {
+  "file": "music/drone_cyberpunk.mp3",
+  "tags": [
+   "drone",
+   "cyberpunk",
+   "tech",
+   "dark"
+  ],
+  "license": "Pixabay"
+ },
+ "ambient_dark_2": {
+  "file": "music/ambient_dark_2.mp3",
+  "tags": [
+   "ambient",
+   "dark",
+   "tension",
+   "bed"
+  ],
+  "license": "Pixabay"
+ },
+ "ambient_dreamy": {
+  "file": "music/ambient_dreamy.mp3",
+  "tags": [
+   "ambient",
+   "dreamy",
+   "soft",
+   "romantic"
+  ],
+  "license": "Pixabay"
+ },
+ "ambient_clean": {
+  "file": "music/ambient_clean.mp3",
+  "tags": [
+   "ambient",
+   "clean",
+   "neutral",
+   "bed"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -6063,6 +6163,10 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "ambient": ["ambient_soft", "ambient_clean", "ambient_dreamy", "ambient_piano",
+                "ambient_dark_2", "ambient_dark_dreamscape", "ambient_business"],
+    "drone": ["drone_deep", "drone_cyberpunk", "ambient_dark_dreamscape"],
+    "meditation": ["tibetan_dreams", "meditation_indian", "mauna_meditation"],
     "transition": ["whoosh_1", "whoosh_2", "trailer_slam_hit", "trailer_hit_marker", "epic_transition", "time_transition", "quartz_drift", "tension_riser_atlas", "tension_riser_2", "sub_bass_drop", "whoosh_reverse_8", "crystal_swell", "tonal_riser_cinematic_7", "tonal_riser_cinematic_3", "logo_snap_tech", "tonal_riser_1", "tonal_riser_3", "tonal_riser_smooth_2", "tonal_riser_smooth_7",
                    "tonal_riser_smooth_8", "tonal_riser_cinematic_8", "whoosh_reverse_low",
                    "choir_transition", "cyber_crash"],
