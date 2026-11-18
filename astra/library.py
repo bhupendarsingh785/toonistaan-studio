@@ -7077,6 +7077,96 @@ DEFAULT_INDEX = {
    "fun"
   ],
   "license": "Pixabay"
+ },
+ "mythical_moments": {
+  "file": "music/mythical_moments.mp3",
+  "tags": [
+   "mythical",
+   "magic",
+   "fantasy",
+   "epic"
+  ],
+  "license": "Pixabay"
+ },
+ "fusion_drum_110": {
+  "file": "music/fusion_drum_110.mp3",
+  "tags": [
+   "drum",
+   "loop",
+   "fusion",
+   "110bpm"
+  ],
+  "license": "Pixabay"
+ },
+ "rock_melody": {
+  "file": "music/rock_melody.mp3",
+  "tags": [
+   "rock",
+   "distorted",
+   "melody",
+   "energy"
+  ],
+  "license": "Pixabay"
+ },
+ "edm_132_cmajor": {
+  "file": "music/edm_132_cmajor.mp3",
+  "tags": [
+   "edm",
+   "loop",
+   "132bpm",
+   "dance"
+  ],
+  "license": "Pixabay"
+ },
+ "drums_claps": {
+  "file": "music/drums_claps.mp3",
+  "tags": [
+   "drums",
+   "claps",
+   "beat",
+   "loop"
+  ],
+  "license": "Pixabay"
+ },
+ "rock_guitar_loop": {
+  "file": "music/rock_guitar_loop.mp3",
+  "tags": [
+   "rock",
+   "guitar",
+   "loop",
+   "energy"
+  ],
+  "license": "Pixabay"
+ },
+ "house_rap": {
+  "file": "music/house_rap.mp3",
+  "tags": [
+   "house",
+   "rap",
+   "theme",
+   "urban"
+  ],
+  "license": "Pixabay"
+ },
+ "race_loop": {
+  "file": "music/race_loop.mp3",
+  "tags": [
+   "race",
+   "fast",
+   "loop",
+   "chase"
+  ],
+  "license": "Pixabay"
+ },
+ "fighting_spirit": {
+  "file": "music/fighting_spirit.mp3",
+  "tags": [
+   "fight",
+   "spirit",
+   "battle",
+   "motivation"
+  ],
+  "license": "Pixabay"
  }
 }
 
