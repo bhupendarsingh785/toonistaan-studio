@@ -7167,6 +7167,95 @@ DEFAULT_INDEX = {
    "motivation"
   ],
   "license": "Pixabay"
+ },
+ "fashion_abstract": {
+  "file": "music/fashion_abstract.mp3",
+  "tags": [
+   "fashion",
+   "abstract",
+   "modern",
+   "style"
+  ],
+  "license": "Pixabay"
+ },
+ "michaelavon_short": {
+  "file": "music/michaelavon_short.mp3",
+  "tags": [
+   "theme",
+   "urban",
+   "rap",
+   "short"
+  ],
+  "license": "Pixabay"
+ },
+ "coach_theme": {
+  "file": "music/coach_theme.mp3",
+  "tags": [
+   "coach",
+   "sport",
+   "motivation",
+   "theme"
+  ],
+  "license": "Pixabay"
+ },
+ "dnb_synapse": {
+  "file": "music/dnb_synapse.mp3",
+  "tags": [
+   "dnb",
+   "drum",
+   "bass",
+   "fast"
+  ],
+  "license": "Pixabay"
+ },
+ "ceremonial_dance": {
+  "file": "music/ceremonial_dance.mp3",
+  "tags": [
+   "ceremonial",
+   "tribal",
+   "dance",
+   "ritual"
+  ],
+  "license": "Pixabay"
+ },
+ "dnb_slow": {
+  "file": "music/dnb_slow.mp3",
+  "tags": [
+   "dnb",
+   "slow",
+   "bass",
+   "dark"
+  ],
+  "license": "Pixabay"
+ },
+ "countdown_cook": {
+  "file": "music/countdown_cook.mp3",
+  "tags": [
+   "countdown",
+   "tension",
+   "build"
+  ],
+  "license": "Pixabay"
+ },
+ "upbeat_drums": {
+  "file": "music/upbeat_drums.mp3",
+  "tags": [
+   "drums",
+   "upbeat",
+   "beat",
+   "loop"
+  ],
+  "license": "Pixabay"
+ },
+ "dub_reggae_78": {
+  "file": "music/dub_reggae_78.mp3",
+  "tags": [
+   "dub",
+   "reggae",
+   "groove",
+   "78bpm"
+  ],
+  "license": "Pixabay"
  }
 }
 
