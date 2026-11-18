@@ -1,9 +1,9 @@
 {
-"count": 1050,
+"count": 1059,
 "files": {
 "library/.cleaned.json": {
-"size": 35172,
-"md5": "6134958f469f77deb12cc5c62089fcb6"
+"size": 35503,
+"md5": "21dd2c65e163f76d141fce1d00e84f8e"
 },
 "library/README.md": {
 "size": 1760,
@@ -2969,33 +2969,49 @@
 "size": 3386,
 "md5": "279b210a590aa9ba072a7b530604c618"
 },
+"library/coins/coin_bvker_24.mp3": {
+"size": 2786,
+"md5": "7844205b408c482751d6adcd98848dd2"
+},
 "library/coins/coin_bvker_15.mp3": {
 "size": 7540,
 "md5": "5c82f1a79d0ed4b99fdac0e89d5405e7"
 },
+"library/coins/coin_bvker_22.mp3": {
+"size": 2420,
+"md5": "5e6764165cb793b5508ef653e3b22383"
+},
 "library/coins/coin_bvker_2.mp3": {
-"size": 6260,
-"md5": "94819298acc9b872d3f37614489a7a32"
+"size": 7148,
+"md5": "db68f902e8125d82d7163e0928c5bdb2"
+},
+"library/coins/coin_bvker_27.mp3": {
+"size": 14854,
+"md5": "eda82713cde3d2d9ca9dc9b3cb270a78"
 },
 "library/coins/coin_bvker_6.mp3": {
-"size": 3151,
-"md5": "a762bbaacbc64b41f15598d736ff9292"
+"size": 3595,
+"md5": "22ccf0c1e7bc4756c3a6e0b759faa204"
 },
 "library/coins/coin_bvker_8.mp3": {
-"size": 3334,
-"md5": "9630d8ca3fdfdd65878fd90205403c0a"
+"size": 3804,
+"md5": "7fc2f677d4aa0948cfb8739c84a7976a"
 },
 "library/coins/coin_bvker_13.mp3": {
 "size": 3700,
 "md5": "c688da52da08c3f275b51f7f77007678"
+},
+"library/coins/coin_bvker_26.mp3": {
+"size": 6077,
+"md5": "fe997cc4e03903bc1eef48554ff602b5"
 },
 "library/coins/coin_bvker_14.mp3": {
 "size": 8637,
 "md5": "509bb20cef6a2e36837093a3ac3c385c"
 },
 "library/coins/coin_bvker_1.mp3": {
-"size": 10466,
-"md5": "34fab7bb77dcc16de349a2711a941ba4"
+"size": 11954,
+"md5": "605cbc3b158f090db3a2fa5fb2cb5e30"
 },
 "library/coins/coin_bvker_18.mp3": {
 "size": 4066,
@@ -3005,37 +3021,53 @@
 "size": 5528,
 "md5": "878e8e798598576a57dd2ad103c08f29"
 },
+"library/coins/coin_bvker_29.mp3": {
+"size": 13208,
+"md5": "f4e58806a185ccb52a338f6119f23cfd"
+},
+"library/coins/coin_bvker_23.mp3": {
+"size": 3151,
+"md5": "b89bd93b4852fbe0a88fd32eadc7bca7"
+},
+"library/coins/coin_bvker_28.mp3": {
+"size": 5528,
+"md5": "789ae64368e979080330b63c925c0a87"
+},
 "library/coins/coin_bvker_7.mp3": {
-"size": 4797,
-"md5": "58ba10cb4db78a55af9bf5a7d7a8e0d9"
+"size": 5476,
+"md5": "ff7caed8b584190188f0553c0b68ab73"
 },
 "library/coins/coin_bvker_16.mp3": {
 "size": 4248,
 "md5": "94014fdcbc501163220b6bb1ffaf4baf"
+},
+"library/coins/coin_bvker_25.mp3": {
+"size": 17231,
+"md5": "ee61c7870cda9d1d9bafdc9aa4d19424"
 },
 "library/coins/coin_bvker_11.mp3": {
 "size": 5163,
 "md5": "7fc5dda226e71266b15e00131a5b6862"
 },
 "library/coins/coin_bvker_4.mp3": {
-"size": 2786,
-"md5": "0b5ea76d7242ae899b143c67de6474a6"
+"size": 3177,
+"md5": "45336ab5e2d61f25849659739ccf234a"
 },
 "library/coins/coin_bvker_5.mp3": {
-"size": 12843,
-"md5": "7f56c103eab433cd7fb05f15cd9489f2"
+"size": 14671,
+"md5": "381507236da3c9e72979e18c7d457b9e"
 },
 "library/coins/coin_bvker_3.mp3": {
-"size": 11563,
-"md5": "513ffa520abdd570c48bc9caef7b4309"
+"size": 13208,
+"md5": "3d2cb833f9b1e122fe3776e59250130b"
 },
 "library/coins/coin_bvker_17.mp3": {
 "size": 4614,
 "md5": "555f97a3652b774acffee8233a3d12e5"
 },
 "library/coins/coin_bvker_9.mp3": {
-"size": 3151,
-"md5": "69f2b7e500749e2e1dced7c4cafde73a"
+"size": 3595,
+"md5": "4419284b5b36000839bfe51165cd6509"
 },
 "library/coins/coin_bvker_20.mp3": {
 "size": 6443,
@@ -3046,8 +3078,12 @@
 "md5": "338fe7a530c52d7057c0c2dda7ebd7cd"
 },
 "library/coins/coin_bvker_10.mp3": {
-"size": 6626,
-"md5": "ba645b9b6098692b0806de975cc0e23b"
+"size": 7566,
+"md5": "ffd2e465875f85e572ff83725be29013"
+},
+"library/coins/coin_bvker_21.mp3": {
+"size": 3700,
+"md5": "a60c94cdf85cb75d9c31976f1d7f675e"
 },
 "library/temple/shankh.mp3": {
 "size": 96382,
