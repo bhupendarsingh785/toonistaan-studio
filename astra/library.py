@@ -17869,6 +17869,42 @@ DEFAULT_INDEX = {
    "wrong"
   ],
   "license": "CC0/BVKER"
+ },
+ "horror_bvk_1": {
+  "file": "music/horror_bvk_1.mp3",
+  "tags": [
+   "horror",
+   "darr",
+   "bhoot",
+   "dark",
+   "tension",
+   "music"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "horror_bvk_2": {
+  "file": "music/horror_bvk_2.mp3",
+  "tags": [
+   "horror",
+   "darr",
+   "bhoot",
+   "dark",
+   "tension",
+   "music"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "horror_bvk_3": {
+  "file": "music/horror_bvk_3.mp3",
+  "tags": [
+   "horror",
+   "darr",
+   "bhoot",
+   "dark",
+   "tension",
+   "music"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -17885,6 +17921,7 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "horror_bvk": ["horror_bvk_1", "horror_bvk_2", "horror_bvk_3"],
     "failure": ["failure_1", "failure_2", "failure_3"],
     "beep": ["beep_2", "beep_5", "beep_7", "beep_8"],
     "emergency": ["emergency_broadcast"],
