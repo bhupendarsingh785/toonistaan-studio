@@ -17545,6 +17545,126 @@ DEFAULT_INDEX = {
    "shehar"
   ],
   "license": "CC0/BVKER"
+ },
+ "bass_drop_1": {
+  "file": "music/bass_drop_1.mp3",
+  "tags": [
+   "bass",
+   "drop",
+   "music",
+   "edm",
+   "dhamaka",
+   "beat"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "bass_drop_10": {
+  "file": "music/bass_drop_10.mp3",
+  "tags": [
+   "bass",
+   "drop",
+   "music",
+   "edm",
+   "dhamaka",
+   "beat"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "bass_drop_2": {
+  "file": "music/bass_drop_2.mp3",
+  "tags": [
+   "bass",
+   "drop",
+   "music",
+   "edm",
+   "dhamaka",
+   "beat"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "bass_drop_3": {
+  "file": "music/bass_drop_3.mp3",
+  "tags": [
+   "bass",
+   "drop",
+   "music",
+   "edm",
+   "dhamaka",
+   "beat"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "bass_drop_4": {
+  "file": "music/bass_drop_4.mp3",
+  "tags": [
+   "bass",
+   "drop",
+   "music",
+   "edm",
+   "dhamaka",
+   "beat"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "bass_drop_5": {
+  "file": "music/bass_drop_5.mp3",
+  "tags": [
+   "bass",
+   "drop",
+   "music",
+   "edm",
+   "dhamaka",
+   "beat"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "bass_drop_6": {
+  "file": "music/bass_drop_6.mp3",
+  "tags": [
+   "bass",
+   "drop",
+   "music",
+   "edm",
+   "dhamaka",
+   "beat"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "bass_drop_7": {
+  "file": "music/bass_drop_7.mp3",
+  "tags": [
+   "bass",
+   "drop",
+   "music",
+   "edm",
+   "dhamaka",
+   "beat"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "bass_drop_8": {
+  "file": "music/bass_drop_8.mp3",
+  "tags": [
+   "bass",
+   "drop",
+   "music",
+   "edm",
+   "dhamaka",
+   "beat"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "bass_drop_9": {
+  "file": "music/bass_drop_9.mp3",
+  "tags": [
+   "bass",
+   "drop",
+   "music",
+   "edm",
+   "dhamaka",
+   "beat"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -17561,6 +17681,8 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "bass_drop": ["bass_drop_1", "bass_drop_2", "bass_drop_3", "bass_drop_4", "bass_drop_5", "bass_drop_6", "bass_drop_7", "bass_drop_8", "bass_drop_9", "bass_drop_10"],
+    "bass": ["bass_drop_1", "bass_drop_2", "bass_drop_3", "bass_drop_4", "bass_drop_5", "bass_drop_6", "bass_drop_7", "bass_drop_8", "bass_drop_9", "bass_drop_10"],
     "urban_footsteps": ["urban_footsteps_1", "urban_footsteps_2"],
     "urban_static": ["urban_static_1"],
     "urban_ambience": ["urban_ambience_1", "urban_ambience_2", "urban_ambience_3", "urban_ambience_4", "urban_ambience_5", "urban_ambience_6", "urban_ambience_7"],
