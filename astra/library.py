@@ -18195,6 +18195,56 @@ DEFAULT_INDEX = {
    "stretch"
   ],
   "license": "Freesound/CC0"
+ },
+ "percussion_intro": {
+  "file": "music/percussion_intro.mp3",
+  "tags": [
+   "percussion",
+   "drums",
+   "intro",
+   "music"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "happy_music": {
+  "file": "music/happy_music.mp3",
+  "tags": [
+   "happy",
+   "khushi",
+   "music",
+   "fun"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "fast_drum_beat": {
+  "file": "music/fast_drum_beat.mp3",
+  "tags": [
+   "drums",
+   "fast",
+   "beat",
+   "music"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "tribal_drums": {
+  "file": "music/tribal_drums.mp3",
+  "tags": [
+   "tribal",
+   "drums",
+   "jungle",
+   "music"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "trap_loop": {
+  "file": "music/trap_loop.mp3",
+  "tags": [
+   "trap",
+   "loop",
+   "beat",
+   "music"
+  ],
+  "license": "Freesound/CC0"
  }
 }
 
