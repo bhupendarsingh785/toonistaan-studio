@@ -214,6 +214,10 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
                 _env = sc.get("env", "neutral")
                 _horror = any(x in (sc.get("music") or "") for x in ("horror", "suspense"))
                 _sfx = sfx_extra.detect_smart(text, _env, allow_horror=_horror)[:2]
+                if not _sfx and actions:
+                    _sfx = list(actions.get(text, []))[:2]
+                    if _sfx and verbose:
+                        print("ACTION_BRAIN_USED", _sfx, text[:30], flush=True)
                 if not _sfx and brain:
                     _sfx = list(brain.get(text, []))[:2]
                     if _sfx and verbose:
