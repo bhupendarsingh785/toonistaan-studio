@@ -12823,6 +12823,106 @@ DEFAULT_INDEX = {
    "khushi"
   ],
   "license": "CC0/BVKER"
+ },
+ "snap_1": {
+  "file": "voices/snap_1.mp3",
+  "tags": [
+   "snap",
+   "chutki",
+   "चुटकी",
+   "finger"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "snap_2": {
+  "file": "voices/snap_2.mp3",
+  "tags": [
+   "snap",
+   "chutki",
+   "चुटकी",
+   "finger"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "snap_3": {
+  "file": "voices/snap_3.mp3",
+  "tags": [
+   "snap",
+   "chutki",
+   "चुटकी",
+   "finger"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "snap_4": {
+  "file": "voices/snap_4.mp3",
+  "tags": [
+   "snap",
+   "chutki",
+   "चुटकी",
+   "finger"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "snap_5": {
+  "file": "voices/snap_5.mp3",
+  "tags": [
+   "snap",
+   "chutki",
+   "चुटकी",
+   "finger"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "cough_1": {
+  "file": "voices/cough_1.mp3",
+  "tags": [
+   "cough",
+   "khansi",
+   "खांसी",
+   "bimar"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "cough_2": {
+  "file": "voices/cough_2.mp3",
+  "tags": [
+   "cough",
+   "khansi",
+   "खांसी",
+   "bimar"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "cough_3": {
+  "file": "voices/cough_3.mp3",
+  "tags": [
+   "cough",
+   "khansi",
+   "खांसी",
+   "bimar"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "cough_4": {
+  "file": "voices/cough_4.mp3",
+  "tags": [
+   "cough",
+   "khansi",
+   "खांसी",
+   "bimar"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "cough_5": {
+  "file": "voices/cough_5.mp3",
+  "tags": [
+   "cough",
+   "khansi",
+   "खांसी",
+   "bimar"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -12839,6 +12939,10 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "snap": ["snap_1", "snap_2", "snap_3", "snap_4", "snap_5"],
+    "chutki": ["snap_1", "snap_2", "snap_3"],
+    "khansi": ["cough_1", "cough_2", "cough_3", "cough_4", "cough_5"],
+    "cough": ["cough_1", "cough_2", "cough_3"],
     "tali": ["clap_1", "clap_2", "clap_3", "clap_4", "clap_5", "clap_6", "clap_7", "clap_8", "clap_9", "clap_10"],
     "clap": ["clap_1", "clap_2", "clap_3"],
     "noisy_floor": ["noisy_floor_1", "noisy_floor_2", "noisy_floor_3", "noisy_floor_4", "noisy_floor_5"],
