@@ -17836,6 +17836,39 @@ DEFAULT_INDEX = {
    "note_D"
   ],
   "license": "CC0/BVKER"
+ },
+ "failure_1": {
+  "file": "ui/failure_1.mp3",
+  "tags": [
+   "failure",
+   "error",
+   "galat",
+   "buzz",
+   "wrong"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "failure_2": {
+  "file": "ui/failure_2.mp3",
+  "tags": [
+   "failure",
+   "error",
+   "galat",
+   "buzz",
+   "wrong"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "failure_3": {
+  "file": "ui/failure_3.mp3",
+  "tags": [
+   "failure",
+   "error",
+   "galat",
+   "buzz",
+   "wrong"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -17852,6 +17885,7 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "failure": ["failure_1", "failure_2", "failure_3"],
     "beep": ["beep_2", "beep_5", "beep_7", "beep_8"],
     "emergency": ["emergency_broadcast"],
     "bass_drop": ["bass_drop_1", "bass_drop_2", "bass_drop_3", "bass_drop_4", "bass_drop_5", "bass_drop_6", "bass_drop_7", "bass_drop_8", "bass_drop_9", "bass_drop_10"],
