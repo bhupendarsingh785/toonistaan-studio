@@ -1,9 +1,9 @@
 {
-"count": 1248,
+"count": 1254,
 "files": {
 "library/.cleaned.json": {
-"size": 40235,
-"md5": "5e41d2dc30405a2e9af908d56a29150e"
+"size": 40885,
+"md5": "9dbfdc3c72f381805e3553a627260b69"
 },
 "library/README.md": {
 "size": 1760,
@@ -3129,6 +3129,10 @@
 "size": 96382,
 "md5": "a815165a41a2d6ef08a0326e377661fc"
 },
+"library/footsteps/noisy_floor_1.mp3": {
+"size": 6808,
+"md5": "05dda2f5d87edcaec640b85a4bf04e60"
+},
 "library/footsteps/steps_grass_to_stairs.mp3": {
 "size": 209649,
 "md5": "92d09063508a2c31a8d940aea7e59f1f"
@@ -3172,6 +3176,10 @@
 "library/footsteps/steps_a.mp3": {
 "size": 249146,
 "md5": "a283c47ffc10c5f0328b2e96ac18390a"
+},
+"library/footsteps/noisy_floor_5.mp3": {
+"size": 12111,
+"md5": "a281af565b61f72e07e7a2c01a21423c"
 },
 "library/footsteps/branch_crack.mp3": {
 "size": 5685,
@@ -3221,9 +3229,21 @@
 "size": 509743,
 "md5": "ff8fa46cc86b7c6162c1f785590dee86"
 },
+"library/footsteps/noisy_floor_3.mp3": {
+"size": 8088,
+"md5": "49a5fe69e932143c08d2813b20729c8a"
+},
 "library/footsteps/footsteps_hallway.mp3": {
 "size": 87605,
 "md5": "420856fff9f318e3b752ab403e67001a"
+},
+"library/footsteps/noisy_floor_4.mp3": {
+"size": 13026,
+"md5": "019be13cd7949ad2c3b48cbb77b839a6"
+},
+"library/footsteps/noisy_floor_2.mp3": {
+"size": 2054,
+"md5": "1ff4b4982a39667e9575eff1beea9c28"
 },
 "library/footsteps/bvk_footsteps_1.mp3": {
 "size": 25538,
@@ -3574,8 +3594,8 @@
 "md5": "9a44ee26e3e56f10a288cc9c4b0c7ebf"
 },
 "library/door/bvk_door_31.mp3": {
-"size": 8271,
-"md5": "a91061c1eec9d552ba2a6ae0a64052e9"
+"size": 9447,
+"md5": "28f489299bddde99f0ffb8d0e5458cb5"
 },
 "library/door/knock_9.mp3": {
 "size": 12999,
@@ -3586,16 +3606,16 @@
 "md5": "172ef96a8a21ac6bd485ae90da304532"
 },
 "library/door/bvk_door_32.mp3": {
-"size": 9734,
-"md5": "5d8da17f6e24f43ac8d034c764ef0a57"
+"size": 11118,
+"md5": "1d6256e8b5446aad3722d7d58dbd9a47"
 },
 "library/door/knock_8.mp3": {
 "size": 7984,
 "md5": "dc49141380131237af7dd358b1bf7b3f"
 },
 "library/door/bvk_door_21.mp3": {
-"size": 31311,
-"md5": "60d15f3b15fd5e8d534625e42f84994b"
+"size": 35778,
+"md5": "f75a7194bc02858be5e390b6d8b93be4"
 },
 "library/door/bvk_door_18.mp3": {
 "size": 4431,
@@ -3614,8 +3634,8 @@
 "md5": "17a0823ce11041b0b2465a50f0b0385c"
 },
 "library/door/bvk_door_36.mp3": {
-"size": 17963,
-"md5": "9260e254fa9de7d42b39df74de51559d"
+"size": 20523,
+"md5": "c423dfaaffb78f62791647fefd171387"
 },
 "library/door/knock_3.mp3": {
 "size": 23239,
@@ -3642,8 +3662,8 @@
 "md5": "103ff9ec35f111ee5aef0643ebc9485e"
 },
 "library/door/bvk_door_29.mp3": {
-"size": 7723,
-"md5": "8521ce330cefb9ece92cb3888dd82036"
+"size": 8820,
+"md5": "c17fb3d18859ed4da296a9940b3d48fc"
 },
 "library/door/bvk_door_4.mp3": {
 "size": 3804,
@@ -3658,16 +3678,16 @@
 "md5": "3d0a3debf67f4de61fa3fb77904b28ce"
 },
 "library/door/bvk_door_27.mp3": {
-"size": 7906,
-"md5": "ff59aab911653821e5b75d6b16c05120"
+"size": 9029,
+"md5": "c76231e181ba61410b1586a83f835ef9"
 },
 "library/door/bvk_door_40.mp3": {
 "size": 15951,
 "md5": "6c892a8fe260da9012f7eaaf4b5efcf5"
 },
 "library/door/bvk_door_30.mp3": {
-"size": 7723,
-"md5": "76754d55fdbd6118f25ca246971b354d"
+"size": 8820,
+"md5": "29d9e9ebdea758f481337d2dcd15734a"
 },
 "library/door/knock_6.mp3": {
 "size": 13417,
@@ -3686,12 +3706,12 @@
 "md5": "dc022342767ed87dcffa4790c3d91407"
 },
 "library/door/bvk_door_25.mp3": {
-"size": 8820,
-"md5": "fe0b57ce176b3d56432f4efb719b2b53"
+"size": 10074,
+"md5": "64a53d12c9c3b8cc764285bdb1c410c7"
 },
 "library/door/bvk_door_33.mp3": {
-"size": 56363,
-"md5": "719a78cc09cc6283df22f89e10a38a30"
+"size": 64408,
+"md5": "801f18ee47b4229605160a3ac842342e"
 },
 "library/door/bvk_door_13.mp3": {
 "size": 5058,
@@ -3702,8 +3722,8 @@
 "md5": "cdf66a25c6f5c7fc8144f8658ac36a29"
 },
 "library/door/bvk_door_22.mp3": {
-"size": 11014,
-"md5": "2361e7d5116304cdb895de32d9eb9ec3"
+"size": 12581,
+"md5": "c8c6c8f30619d3e6ccfc1f627fceec47"
 },
 "library/door/padlock_chain.mp3": {
 "size": 391043,
@@ -3714,20 +3734,20 @@
 "md5": "25779f1348aebedb4737a1b7d8a3296a"
 },
 "library/door/bvk_door_23.mp3": {
-"size": 7357,
-"md5": "63c0ebb62da0a5bea926406c0116e6cc"
+"size": 8402,
+"md5": "ec2bee7a9c6236e94ff92521a05d4d29"
 },
 "library/door/bvk_door_35.mp3": {
-"size": 15768,
-"md5": "1e97a75976207e949d1daaa54ce466aa"
+"size": 18015,
+"md5": "b96778a9a9d4dc90bd778ebf143a37fd"
 },
 "library/door/bvk_door_2.mp3": {
 "size": 2341,
 "md5": "8f2365b64f379c8c4cf552529bbfc869"
 },
 "library/door/bvk_door_38.mp3": {
-"size": 5894,
-"md5": "414167908c77eb799dd9b4264125d33c"
+"size": 6730,
+"md5": "54f0c10f881227284e0a01652e268449"
 },
 "library/door/bvk_door_5.mp3": {
 "size": 4640,
@@ -3746,16 +3766,16 @@
 "md5": "dd0ab6848897f847d02403e9b6362099"
 },
 "library/door/bvk_door_20.mp3": {
-"size": 6443,
-"md5": "2e295f86660a938437d064f612ecb3c6"
+"size": 7357,
+"md5": "84b4138ee69fe38d08afb05e990679b7"
 },
 "library/door/key_lock_2.mp3": {
 "size": 75887,
 "md5": "f9b8d74e2b26251a49b538b8a8903c0f"
 },
 "library/door/bvk_door_26.mp3": {
-"size": 7174,
-"md5": "b0655192f5d88ad2f38ee8dac406b039"
+"size": 8193,
+"md5": "917aef8622d69cce40e174f8083116b0"
 },
 "library/door/door_close_a.mp3": {
 "size": 22403,
@@ -3782,12 +3802,12 @@
 "md5": "9e8e71c3109be86220e5f34ae7a37787"
 },
 "library/door/bvk_door_28.mp3": {
-"size": 7906,
-"md5": "469494eb4f595700fa6544977bc7f7aa"
+"size": 9029,
+"md5": "7cd73f656c2bf685a36932330ea01b29"
 },
 "library/door/bvk_door_34.mp3": {
-"size": 22351,
-"md5": "554a3b26c96de23e5788ab0dca42b133"
+"size": 25538,
+"md5": "1932b232be585d8331ed03f34fe7bf19"
 },
 "library/door/bvk_door_12.mp3": {
 "size": 7775,
@@ -3798,8 +3818,8 @@
 "md5": "3b9a6951d098d4289934a56e268b795c"
 },
 "library/door/bvk_door_9.mp3": {
-"size": 1871,
-"md5": "bad31d4883e7a3f83c4a19df283969cc"
+"size": 2132,
+"md5": "1e494b99888c3bf73e7ed4bb9622664e"
 },
 "library/door/knock_intense.mp3": {
 "size": 16970,
@@ -3810,16 +3830,16 @@
 "md5": "0b3408880bdfeb37dd93de30b831aa0a"
 },
 "library/door/bvk_door_19.mp3": {
-"size": 4066,
-"md5": "b046b79829b6ae906175939afebb04cd"
+"size": 4640,
+"md5": "9e3909e1c80e52d265a45a69d69a0e4a"
 },
 "library/door/bvk_door_37.mp3": {
-"size": 9186,
-"md5": "7b879fd3a2e898f274171d0d569f86af"
+"size": 10492,
+"md5": "68fdabfb60b177296d4790dc1c7cfe36"
 },
 "library/door/bvk_door_24.mp3": {
-"size": 6626,
-"md5": "bace941676797fa460027f1f7bdb9c5d"
+"size": 7566,
+"md5": "e583e649e786091d268c18be5260cce2"
 },
 "library/door/bvk_door_10.mp3": {
 "size": 1506,
@@ -4404,6 +4424,10 @@
 "library/foley/coins_spill_2.mp3": {
 "size": 163674,
 "md5": "c7c7e0ecbb529900f8884e774ac9da65"
+},
+"library/foley/drawer_9.mp3": {
+"size": 12111,
+"md5": "77c9aaf89dfa705f8586144e906458dd"
 },
 "library/foley/lighter_17.mp3": {
 "size": 1506,
