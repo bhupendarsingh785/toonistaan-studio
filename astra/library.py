@@ -13099,6 +13099,7 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "chaabi": ["keys_1", "keys_2", "keys_3", "keys_4", "keys_5", "car_keys_1", "door_lock_open"],
     "keys": ["keys_1", "keys_2", "keys_3", "keys_4", "keys_5", "keys_6", "keys_7", "keys_8", "keys_9", "keys_10"],
     "snap": ["snap_1", "snap_2", "snap_3", "snap_4", "snap_5", "snap_6", "snap_7", "snap_8", "snap_9", "snap_10"],
     "chutki": ["snap_1", "snap_2", "snap_3", "snap_4", "snap_5", "snap_6", "snap_7", "snap_8", "snap_9", "snap_10"],
