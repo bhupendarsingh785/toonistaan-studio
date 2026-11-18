@@ -149,13 +149,13 @@ def _chunks(text, max_words=18):
 def _pause_for(chunk):
     """Punctuation ke hisaab se chup (smooth = chhote)."""
     c = chunk.strip()
-    scale = 0.40 if SMOOTH else 1.0
+    scale = 0.30 if SMOOTH else 0.75
     if c.endswith(("?", "?")):
         base = 0.30
     elif c.endswith(("!", "!")):
         base = 0.26
     elif c.endswith(("।", ".", "…")):
-        base = 0.28
+        base = 0.22
     elif c.endswith((",", ";", ":", "—")):
         base = 0.14
     else:
@@ -210,7 +210,7 @@ def bolo_natural(text, kirdaar, bhaav, out, kaccha=False):
             lf.write(f"file '{f}'\n")
             sil = os.path.join(tmpdir, f"sil_{idx}.wav")
             subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-f", "lavfi", "-i",
-                            "anullsrc=r=24000:cl=mono", "-t", f"{gap:.2f}", sil], capture_output=True)
+                            "anullsrc=r=24000:cl=mono", "-t", f"{min(gap, 0.32):.2f}", sil], capture_output=True)
             lf.write(f"file '{sil}'\n")
     joined = os.path.join(tmpdir, "joined.mp3")
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-f", "concat", "-safe", "0",
