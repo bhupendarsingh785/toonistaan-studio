@@ -58,7 +58,7 @@ def _load_catalog(source: str | Path | dict | list) -> list[dict]:
 
 def _event_terms(event: dict) -> set[str]:
     terms = _tokens(" ".join(str(event.get(k, "")) for k in
-        ("event_type","event","label","text","description","sound","setting","environment")))
+        ("event_type","event","action","action_label","sound_family","label","text","description","sound","setting","environment","asset_search_tags")))
     kind = str(event.get("event_type", "")).lower()
     for canonical, words in SYNONYMS.items():
         if kind == canonical or terms.intersection(words):
