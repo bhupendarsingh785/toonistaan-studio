@@ -5133,6 +5133,107 @@ DEFAULT_INDEX = {
    "action"
   ],
   "license": "Pixabay"
+ },
+ "piano_inspiring": {
+  "file": "music/piano_inspiring.mp3",
+  "tags": [
+   "piano",
+   "inspiring",
+   "emotional",
+   "hope"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_lofi_piano": {
+  "file": "music/forest_lofi_piano.mp3",
+  "tags": [
+   "lofi",
+   "piano",
+   "forest",
+   "memories",
+   "chill"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_enchanted": {
+  "file": "music/forest_enchanted.mp3",
+  "tags": [
+   "enchanted",
+   "forest",
+   "magic",
+   "fairy"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_reflections": {
+  "file": "music/forest_reflections.mp3",
+  "tags": [
+   "forest",
+   "reflections",
+   "calm",
+   "thought"
+  ],
+  "license": "Pixabay"
+ },
+ "night_quiet": {
+  "file": "music/night_quiet.mp3",
+  "tags": [
+   "night",
+   "quiet",
+   "raat",
+   "calm"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_epic_ballad": {
+  "file": "music/forest_epic_ballad.mp3",
+  "tags": [
+   "epic",
+   "ballad",
+   "forest",
+   "journey"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_morning_harp": {
+  "file": "music/forest_morning_harp.mp3",
+  "tags": [
+   "harp",
+   "morning",
+   "forest",
+   "soft"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_guitar": {
+  "file": "music/forest_guitar.mp3",
+  "tags": [
+   "guitar",
+   "forest",
+   "folk",
+   "warm"
+  ],
+  "license": "Pixabay"
+ },
+ "nature_bed": {
+  "file": "ambience/nature_bed.mp3",
+  "tags": [
+   "nature",
+   "ambience",
+   "outside",
+   "jungle"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_river_bed": {
+  "file": "ambience/forest_river_bed.mp3",
+  "tags": [
+   "forest",
+   "river",
+   "nature",
+   "water"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -5149,7 +5250,7 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "forest": ["forest_whispers", "forest_morning_mist", "forest_pathway", "forest_spirits_piano", "forest_relax", "forest_scent", "forest_harp", "forest_adventure"],
+    "forest": ["forest_lofi_piano", "forest_enchanted", "forest_reflections", "forest_epic_ballad", "forest_morning_harp", "forest_guitar", "forest_whispers", "forest_morning_mist", "forest_pathway", "forest_spirits_piano", "forest_relax", "forest_scent", "forest_harp", "forest_adventure"],
     "halloween": ["halloween_bgm", "halloween_scary"],
     "gate_open": ["door_open_a", "door_open_b", "door_open_c"],
     "door": ["electric_gate_open", "gate_close_2", "door_creaky_steel_wood", "iron_gate_courtyard", "door_lock_open", "door_iron_creak_old", "door_iron_creak_2", "iron_door_open_2", "door_open_a", "door_open_b", "door_open_c"],
