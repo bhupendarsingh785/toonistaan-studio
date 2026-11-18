@@ -12923,6 +12923,56 @@ DEFAULT_INDEX = {
    "bimar"
   ],
   "license": "CC0/BVKER"
+ },
+ "snap_6": {
+  "file": "voices/snap_6.mp3",
+  "tags": [
+   "snap",
+   "chutki",
+   "चुटकी",
+   "finger"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "snap_7": {
+  "file": "voices/snap_7.mp3",
+  "tags": [
+   "snap",
+   "chutki",
+   "चुटकी",
+   "finger"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "snap_8": {
+  "file": "voices/snap_8.mp3",
+  "tags": [
+   "snap",
+   "chutki",
+   "चुटकी",
+   "finger"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "snap_9": {
+  "file": "voices/snap_9.mp3",
+  "tags": [
+   "snap",
+   "chutki",
+   "चुटकी",
+   "finger"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "snap_10": {
+  "file": "voices/snap_10.mp3",
+  "tags": [
+   "snap",
+   "chutki",
+   "चुटकी",
+   "finger"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -12939,8 +12989,8 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "snap": ["snap_1", "snap_2", "snap_3", "snap_4", "snap_5"],
-    "chutki": ["snap_1", "snap_2", "snap_3"],
+    "snap": ["snap_1", "snap_2", "snap_3", "snap_4", "snap_5", "snap_6", "snap_7", "snap_8", "snap_9", "snap_10"],
+    "chutki": ["snap_1", "snap_2", "snap_3", "snap_4", "snap_5", "snap_6", "snap_7", "snap_8", "snap_9", "snap_10"],
     "khansi": ["cough_1", "cough_2", "cough_3", "cough_4", "cough_5"],
     "cough": ["cough_1", "cough_2", "cough_3"],
     "tali": ["clap_1", "clap_2", "clap_3", "clap_4", "clap_5", "clap_6", "clap_7", "clap_8", "clap_9", "clap_10"],
