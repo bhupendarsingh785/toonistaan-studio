@@ -1,5 +1,5 @@
 {
-"count": 1145,
+"count": 1155,
 "files": {
 "library/.cleaned.json": {
 "size": 37872,
@@ -1389,6 +1389,10 @@
 "size": 12163,
 "md5": "df70a54bcf1991988ab89a8fb80c25cd"
 },
+"library/foley/glass_bvk_19.mp3": {
+"size": 11197,
+"md5": "8cce2290d0c18933c64d6999b87c1686"
+},
 "library/foley/lighter_31.mp3": {
 "size": 12790,
 "md5": "50b724da15b75a87cbf7f993d7538cbe"
@@ -1420,6 +1424,10 @@
 "library/foley/lighter_8.mp3": {
 "size": 1506,
 "md5": "8cce45fb5405838d9e73ef1040b184e3"
+},
+"library/foley/glass_bvk_12.mp3": {
+"size": 2237,
+"md5": "82fc99f278cac1e43bf787160ab4572a"
 },
 "library/foley/glass_bvk_8.mp3": {
 "size": 1506,
@@ -1481,6 +1489,10 @@
 "size": 2550,
 "md5": "bc5cac8aa6a73e9fe7d5b108afc9e8b4"
 },
+"library/foley/glass_bvk_13.mp3": {
+"size": 2786,
+"md5": "7307b5cd2eab5029ccb58566324933da"
+},
 "library/foley/paper_flutter.mp3": {
 "size": 437019,
 "md5": "dac1e9c831d22af4cf9261516a465811"
@@ -1508,6 +1520,10 @@
 "library/foley/coins_jingle.mp3": {
 "size": 82589,
 "md5": "368a8b99e9f9dc091d0a48fb7dd732ba"
+},
+"library/foley/glass_bvk_16.mp3": {
+"size": 1506,
+"md5": "a88ae133a6a09dba2dbe02214b68d574"
 },
 "library/foley/glass_bvk_1.mp3": {
 "size": 1323,
@@ -1548,6 +1564,10 @@
 "library/foley/coin_spin.mp3": {
 "size": 17179,
 "md5": "9575aa5205661c5e726157d2eb2fffbe"
+},
+"library/foley/glass_bvk_18.mp3": {
+"size": 6808,
+"md5": "77a82fc4a4ce4956aef0e40c44aff3b9"
 },
 "library/foley/coin_drop_2.mp3": {
 "size": 7357,
@@ -1616,6 +1636,10 @@
 "library/foley/glass_bvk_10.mp3": {
 "size": 2237,
 "md5": "03fbda5b316980c88fddd904aafaf64d"
+},
+"library/foley/glass_bvk_20.mp3": {
+"size": 3517,
+"md5": "b08739a347513d722f9bb6e4647996af"
 },
 "library/foley/lighter_24.mp3": {
 "size": 5267,
@@ -1717,6 +1741,10 @@
 "size": 7775,
 "md5": "734a355dcc644195e760a5a89e0d41f4"
 },
+"library/foley/glass_bvk_15.mp3": {
+"size": 1323,
+"md5": "ff79c8af54fd0ce7d20b1db53e76059f"
+},
 "library/foley/lighter_4.mp3": {
 "size": 3804,
 "md5": "d7dd3e8dac9b69e825e4d2f70c0f9691"
@@ -1729,6 +1757,10 @@
 "size": 49362,
 "md5": "4fbbed4be4f0e22f2f057d7bd743ee24"
 },
+"library/foley/glass_bvk_11.mp3": {
+"size": 1688,
+"md5": "d7085fb530bad52c89d250cdc85f0106"
+},
 "library/foley/lighter_40.mp3": {
 "size": 5058,
 "md5": "a4e02dd430b21773067b12ffad229625"
@@ -1737,6 +1769,10 @@
 "size": 4222,
 "md5": "6b42a7cfcfad9643ca514829bad16cad"
 },
+"library/foley/glass_bvk_17.mp3": {
+"size": 1871,
+"md5": "f30c8779bf2fb863cf022efb33d292c5"
+},
 "library/foley/rope.mp3": {
 "size": 18224,
 "md5": "5123472de7924bc80a2d0a78a3bdd1da"
@@ -1744,6 +1780,10 @@
 "library/foley/lighter_12.mp3": {
 "size": 1688,
 "md5": "af6f0eb5e4db6488a7a9875c4ee4dafb"
+},
+"library/foley/glass_bvk_14.mp3": {
+"size": 1688,
+"md5": "092242d2e2ada380e5821a1da46cad3d"
 },
 "library/foley/lighter_13.mp3": {
 "size": 1506,
