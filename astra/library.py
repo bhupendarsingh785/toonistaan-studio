@@ -16936,6 +16936,116 @@ DEFAULT_INDEX = {
    "bijli"
   ],
   "license": "CC0/BVKER"
+ },
+ "switch_21": {
+  "file": "ui/switch_21.mp3",
+  "tags": [
+   "switch",
+   "button",
+   "on",
+   "off",
+   "bijli"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "switch_22": {
+  "file": "ui/switch_22.mp3",
+  "tags": [
+   "switch",
+   "button",
+   "on",
+   "off",
+   "bijli"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "switch_23": {
+  "file": "ui/switch_23.mp3",
+  "tags": [
+   "switch",
+   "button",
+   "on",
+   "off",
+   "bijli"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "switch_24": {
+  "file": "ui/switch_24.mp3",
+  "tags": [
+   "switch",
+   "button",
+   "on",
+   "off",
+   "bijli"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "switch_25": {
+  "file": "ui/switch_25.mp3",
+  "tags": [
+   "switch",
+   "button",
+   "on",
+   "off",
+   "bijli"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "switch_26": {
+  "file": "ui/switch_26.mp3",
+  "tags": [
+   "switch",
+   "button",
+   "on",
+   "off",
+   "bijli"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "switch_27": {
+  "file": "ui/switch_27.mp3",
+  "tags": [
+   "switch",
+   "button",
+   "on",
+   "off",
+   "bijli"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "switch_28": {
+  "file": "ui/switch_28.mp3",
+  "tags": [
+   "switch",
+   "button",
+   "on",
+   "off",
+   "bijli"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "switch_29": {
+  "file": "ui/switch_29.mp3",
+  "tags": [
+   "switch",
+   "button",
+   "on",
+   "off",
+   "bijli"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "switch_30": {
+  "file": "ui/switch_30.mp3",
+  "tags": [
+   "switch",
+   "button",
+   "on",
+   "off",
+   "bijli"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -16997,7 +17107,7 @@ VARIANTS = {
     "mouth_click": ["mouth_click_1", "mouth_click_2", "mouth_click_3", "mouth_click_4", "mouth_click_5", "mouth_click_6", "mouth_click_7", "mouth_click_8", "mouth_click_9", "mouth_click_10"],
     "tutak": ["mouth_click_1", "mouth_click_2"],
     "click": ["click_1", "click_2", "click_3", "click_4", "click_5", "click_6", "click_7", "click_8", "click_9", "click_10", "click_11", "click_12", "click_13", "click_14", "click_15", "click_16", "click_17", "click_18", "click_19", "click_20", "click_21", "click_22", "click_23", "click_24", "click_25", "click_26", "click_27", "click_28", "click_29", "click_30"],
-    "switch": ["switch_1", "switch_2", "switch_3", "switch_4", "switch_5", "switch_6", "switch_7", "switch_8", "switch_9", "switch_10", "switch_11", "switch_12", "switch_13", "switch_14", "switch_15", "switch_16", "switch_17", "switch_18", "switch_19", "switch_20"],
+    "switch": ["switch_1", "switch_2", "switch_3", "switch_4", "switch_5", "switch_6", "switch_7", "switch_8", "switch_9", "switch_10", "switch_11", "switch_12", "switch_13", "switch_14", "switch_15", "switch_16", "switch_17", "switch_18", "switch_19", "switch_20", "switch_21", "switch_22", "switch_23", "switch_24", "switch_25", "switch_26", "switch_27", "switch_28", "switch_29", "switch_30"],
     "car_window": ["car_window_1", "car_window_2"],
     "car_random": ["car_random_1", "car_random_2", "car_random_3", "car_random_4", "car_random_5", "car_random_6", "car_random_7"],
     "car_keys": ["car_keys_1", "car_keys_2", "car_keys_3"],
