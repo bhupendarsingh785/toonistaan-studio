@@ -10105,6 +10105,116 @@ DEFAULT_INDEX = {
    "tik"
   ],
   "license": "CC0/BVKER"
+ },
+ "click_21": {
+  "file": "ui/click_21.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_22": {
+  "file": "ui/click_22.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_23": {
+  "file": "ui/click_23.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_24": {
+  "file": "ui/click_24.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_25": {
+  "file": "ui/click_25.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_26": {
+  "file": "ui/click_26.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_27": {
+  "file": "ui/click_27.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_28": {
+  "file": "ui/click_28.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_29": {
+  "file": "ui/click_29.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_30": {
+  "file": "ui/click_30.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -10121,7 +10231,7 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "click": ["click_1", "click_2", "click_3", "click_4", "click_5", "click_6", "click_7", "click_8", "click_9", "click_10", "click_11", "click_12", "click_13", "click_14", "click_15", "click_16", "click_17", "click_18", "click_19", "click_20"],
+    "click": ["click_1", "click_2", "click_3", "click_4", "click_5", "click_6", "click_7", "click_8", "click_9", "click_10", "click_11", "click_12", "click_13", "click_14", "click_15", "click_16", "click_17", "click_18", "click_19", "click_20", "click_21", "click_22", "click_23", "click_24", "click_25", "click_26", "click_27", "click_28", "click_29", "click_30"],
     "switch": ["click_1", "click_2", "click_3"],
     "car_window": ["car_window_1", "car_window_2"],
     "car_random": ["car_random_1", "car_random_2", "car_random_3", "car_random_4", "car_random_5", "car_random_6", "car_random_7"],
