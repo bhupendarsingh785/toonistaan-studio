@@ -28,7 +28,7 @@ try:
 except ImportError:
     PROSODY = {"neutral": (0, 0, 0), "happy": (6, 8, 5), "sad": (-16, -10, -12), "angry": (8, -2, 15),
                "scared": (12, 16, -4), "surprised": (4, 20, 10), "calm": (-8, -3, -5), "excited": (12, 14, 10),
-               "whisper": (-10, -4, -40)}
+               "whisper": (-10, -4, -40), "emotional": (-10, -4, -8)}
 
     def detect_emotion(t):
         return "neutral"
