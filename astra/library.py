@@ -8775,15 +8775,6 @@ DEFAULT_INDEX = {
   ],
   "license": "Wikimedia/XC"
  },
- "hawk_cooper_2": {
-  "file": "birds/hawk_cooper_2.mp3",
-  "tags": [
-   "hawk",
-   "cheel",
-   "bird"
-  ],
-  "license": "Wikimedia/XC"
- },
  "gulls_sandbar": {
   "file": "birds/gulls_sandbar.mp3",
   "tags": [
