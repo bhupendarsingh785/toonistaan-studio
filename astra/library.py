@@ -8435,6 +8435,8 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "sher": ["lion_real", "lion_loud", "lion_angry", "lion_majestic", "lion_evil", "lion_roar"],
+    "बाघ": ["tiger_roar_1"],
     "elephant": ["elephant_mighty", "elephant_trunk"],
     "hathi": ["elephant_mighty", "elephant_trunk"],
     "lion": ["lion_real", "lion_loud", "lion_angry", "lion_majestic", "lion_evil", "lion_roar", "lion_father", "lion_sfx", "lion_short", "lion_cub_purr"],
