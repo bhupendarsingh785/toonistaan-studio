@@ -15512,6 +15512,106 @@ DEFAULT_INDEX = {
    "clank"
   ],
   "license": "CC0/BVKER"
+ },
+ "pot_21": {
+  "file": "kitchen/pot_21.mp3",
+  "tags": [
+   "pot",
+   "bartan",
+   "बर्तन",
+   "clank"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "pot_22": {
+  "file": "kitchen/pot_22.mp3",
+  "tags": [
+   "pot",
+   "bartan",
+   "बर्तन",
+   "clank"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "pot_23": {
+  "file": "kitchen/pot_23.mp3",
+  "tags": [
+   "pot",
+   "bartan",
+   "बर्तन",
+   "clank"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "pot_24": {
+  "file": "kitchen/pot_24.mp3",
+  "tags": [
+   "pot",
+   "bartan",
+   "बर्तन",
+   "clank"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "pot_25": {
+  "file": "kitchen/pot_25.mp3",
+  "tags": [
+   "pot",
+   "bartan",
+   "बर्तन",
+   "clank"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "pot_26": {
+  "file": "kitchen/pot_26.mp3",
+  "tags": [
+   "pot",
+   "bartan",
+   "बर्तन",
+   "clank"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "pot_27": {
+  "file": "kitchen/pot_27.mp3",
+  "tags": [
+   "pot",
+   "bartan",
+   "बर्तन",
+   "clank"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "pot_28": {
+  "file": "kitchen/pot_28.mp3",
+  "tags": [
+   "pot",
+   "bartan",
+   "बर्तन",
+   "clank"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "pot_29": {
+  "file": "kitchen/pot_29.mp3",
+  "tags": [
+   "pot",
+   "bartan",
+   "बर्तन",
+   "clank"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "pot_30": {
+  "file": "kitchen/pot_30.mp3",
+  "tags": [
+   "pot",
+   "bartan",
+   "बर्तन",
+   "clank"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -15528,8 +15628,8 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "pot": ["pot_1", "pot_2", "pot_3", "pot_4", "pot_5", "pot_6", "pot_7", "pot_8", "pot_9", "pot_10", "pot_11", "pot_12", "pot_13", "pot_14", "pot_15", "pot_16", "pot_17", "pot_18", "pot_19", "pot_20"],
-    "bartan": ["pot_1", "pot_2", "pot_3", "pot_4", "pot_5", "pot_6", "pot_7", "pot_8", "pot_9", "pot_10", "pot_11", "pot_12", "pot_13", "pot_14", "pot_15", "pot_16", "pot_17", "pot_18", "pot_19", "pot_20"],
+    "pot": ["pot_1", "pot_2", "pot_3", "pot_4", "pot_5", "pot_6", "pot_7", "pot_8", "pot_9", "pot_10", "pot_11", "pot_12", "pot_13", "pot_14", "pot_15", "pot_16", "pot_17", "pot_18", "pot_19", "pot_20", "pot_21", "pot_22", "pot_23", "pot_24", "pot_25", "pot_26", "pot_27", "pot_28", "pot_29", "pot_30"],
+    "bartan": ["pot_1", "pot_2", "pot_3", "pot_4", "pot_5", "pot_6", "pot_7", "pot_8", "pot_9", "pot_10", "pot_11", "pot_12", "pot_13", "pot_14", "pot_15", "pot_16", "pot_17", "pot_18", "pot_19", "pot_20", "pot_21", "pot_22", "pot_23", "pot_24", "pot_25", "pot_26", "pot_27", "pot_28", "pot_29", "pot_30"],
     "woop": ["woop_1", "woop_2"],
     "pop": ["pop_1", "pop_2", "pop_3", "pop_4", "pop_5", "pop_6", "pop_7", "pop_8", "pop_9", "pop_10", "pop_11", "pop_12", "pop_13", "pop_14", "pop_15"],
     "office_foley": ["office_foley_1", "office_foley_2", "office_foley_3", "office_foley_4", "office_foley_5", "office_foley_6", "office_foley_7", "office_foley_8", "office_foley_9", "office_foley_10", "office_foley_11", "office_foley_12", "office_foley_13", "office_foley_14", "office_foley_15", "office_foley_16", "office_foley_17", "office_foley_18", "office_foley_19", "office_foley_20", "office_foley_21", "office_foley_22", "office_foley_23", "office_foley_24", "office_foley_25", "office_foley_26", "office_foley_27", "office_foley_28", "office_foley_29", "office_foley_30", "office_foley_31", "office_foley_32", "office_foley_33", "office_foley_34", "office_foley_35", "office_foley_36", "office_foley_37", "office_foley_38", "office_foley_39", "office_foley_40", "office_foley_42", "office_foley_43", "office_foley_44", "office_foley_45", "office_foley_46", "office_foley_47", "office_foley_48", "office_foley_49", "office_foley_50", "office_foley_51", "office_foley_52", "office_foley_53", "office_foley_54", "office_foley_55", "office_foley_56", "office_foley_57", "office_foley_58", "office_foley_59", "office_foley_60", "office_foley_61", "office_foley_62", "office_foley_63", "office_foley_64", "office_foley_65", "office_foley_66", "office_foley_67", "office_foley_68", "office_foley_69", "office_foley_70", "office_foley_71", "office_foley_72", "office_foley_73", "office_foley_74", "office_foley_75", "office_foley_76", "office_foley_77", "office_foley_78", "office_foley_79", "office_foley_80", "office_foley_81", "office_foley_82", "office_foley_83", "office_foley_84", "office_foley_85", "office_foley_86", "office_foley_87", "office_foley_88", "office_foley_89", "office_foley_90", "office_foley_91", "office_foley_92", "office_foley_93", "office_foley_94", "office_foley_95", "office_foley_96", "office_foley_97", "office_foley_98", "office_foley_99", "office_foley_100", "office_foley_101", "office_foley_102", "office_foley_103", "office_foley_104", "office_foley_105", "office_foley_106", "office_foley_107", "office_foley_108", "office_foley_109", "office_foley_110", "office_foley_111", "office_foley_112", "office_foley_113", "office_foley_114", "office_foley_115", "office_foley_116", "office_foley_117", "office_foley_118", "office_foley_119", "office_foley_120", "office_foley_122"],
