@@ -1,9 +1,9 @@
 {
-"count": 1736,
+"count": 1741,
 "files": {
 "library/.cleaned.json": {
-"size": 53790,
-"md5": "edcab4fc4478e649eee4eabd5add56d1"
+"size": 54111,
+"md5": "ed1bf940dbe9f9eb6fc0e103263afde0"
 },
 "library/README.md": {
 "size": 1760,
@@ -1449,6 +1449,10 @@
 "size": 2968,
 "md5": "39c115b63e0975c329a66d0e41cd48df"
 },
+"library/ui/beep_2.mp3": {
+"size": 7540,
+"md5": "f1abb3c735de873cff4e7556e1cca1bc"
+},
 "library/ui/click_6.mp3": {
 "size": 4222,
 "md5": "8754d04bd1c23a0c85882aab270b0c58"
@@ -1460,6 +1464,10 @@
 "library/ui/click_7.mp3": {
 "size": 2132,
 "md5": "b8567a150f36cdafbc5a721c07e09d7f"
+},
+"library/ui/beep_5.mp3": {
+"size": 9917,
+"md5": "1a61eb3186ee6cb48e4d7490d59f9532"
 },
 "library/ui/switch_23.mp3": {
 "size": 2759,
@@ -1581,6 +1589,10 @@
 "size": 3595,
 "md5": "4ddc32d4cbb0cdab723726ec8b45ed61"
 },
+"library/ui/beep_8.mp3": {
+"size": 84523,
+"md5": "75270efc0d56964f8632bb9df7231088"
+},
 "library/ui/click_15.mp3": {
 "size": 2759,
 "md5": "320be75c6d0edd3046274da2c5640e7a"
@@ -1616,6 +1628,10 @@
 "library/ui/click_8.mp3": {
 "size": 4640,
 "md5": "df47fd9c4d91d4bb764a01c4f184fae7"
+},
+"library/ui/beep_7.mp3": {
+"size": 84523,
+"md5": "21dff2d39463d305272164788e35b009"
 },
 "library/ui/switch_12.mp3": {
 "size": 1323,
@@ -1766,8 +1782,8 @@
 "md5": "1fcadcc9faed56af1248cc941fb31a29"
 },
 "library/music/bass_drop_7.mp3": {
-"size": 35517,
-"md5": "d30e319ab3206a8f98ea03b15e978a88"
+"size": 40585,
+"md5": "13811e1583c5bdf7aa815e9dc277ed40"
 },
 "library/music/submerged_beta_focus.mp3": {
 "size": 720604,
@@ -1962,8 +1978,8 @@
 "md5": "61c7441748f74f711171f36cd9e4a7c8"
 },
 "library/music/bass_drop_2.mp3": {
-"size": 14488,
-"md5": "72b789b2dd65de5cfff4db5d118160a5"
+"size": 16552,
+"md5": "0f3032b5ea3a4682872a9eb4fb3be351"
 },
 "library/music/energy_instrumental.mp3": {
 "size": 720604,
@@ -2010,8 +2026,8 @@
 "md5": "19a9f3c5474f45c40286b8b3dacf0c3b"
 },
 "library/music/bass_drop_10.mp3": {
-"size": 38991,
-"md5": "4964ac0b8f394026503a86e4750392db"
+"size": 44555,
+"md5": "1c1a964f5c19d7af2df3029d10130625"
 },
 "library/music/phonk_instrumental.mp3": {
 "size": 720604,
@@ -2026,8 +2042,8 @@
 "md5": "5950ba445b91dbd98066d28c6b619d67"
 },
 "library/music/bass_drop_6.mp3": {
-"size": 24911,
-"md5": "f211047ebf3c8f10051dfb8ea672e8b6"
+"size": 28464,
+"md5": "e68ca34c14099e9b9fbc659438a612aa"
 },
 "library/music/cinematic_redline.mp3": {
 "size": 720604,
@@ -2066,8 +2082,8 @@
 "md5": "fa818a8048dbc9edc6d5ddfc850ada5a"
 },
 "library/music/bass_drop_8.mp3": {
-"size": 28568,
-"md5": "c447c869d8b9b331815628673ddbf351"
+"size": 32643,
+"md5": "b8040a49dcc8e6305c5b8426f6647300"
 },
 "library/music/forest_relax.mp3": {
 "size": 720604,
@@ -2106,8 +2122,8 @@
 "md5": "8a028e1ec87180d522a073ddaaa7bbc4"
 },
 "library/music/bass_drop_1.mp3": {
-"size": 42466,
-"md5": "4b56016e193f133bf5c3fcf496fe41a4"
+"size": 48526,
+"md5": "37ed5821c9316212c7581f1afa96a457"
 },
 "library/music/cybernetic_flow.mp3": {
 "size": 720604,
@@ -2262,8 +2278,8 @@
 "md5": "8ee8eb2e07186fbc8155c0798e3b8ff5"
 },
 "library/music/bass_drop_4.mp3": {
-"size": 56546,
-"md5": "d413f54cb2f7f86eb758a46a48eb9b9d"
+"size": 64617,
+"md5": "9cc8d1725f52e64324b2f70e9dda3eba"
 },
 "library/music/forest_hiding_place.mp3": {
 "size": 720604,
@@ -2298,8 +2314,8 @@
 "md5": "8a6e07ed6e4a961ba53095dbf7c7a586"
 },
 "library/music/bass_drop_5.mp3": {
-"size": 42466,
-"md5": "2d9034f7e6d9128dcc90a3a2a756c981"
+"size": 48526,
+"md5": "74e3718299b316b6c5891b0bc7524444"
 },
 "library/music/romantic_crazy_love.mp3": {
 "size": 720604,
@@ -2354,8 +2370,8 @@
 "md5": "4819f5e286f9be9a8946df2448d3a3da"
 },
 "library/music/bass_drop_9.mp3": {
-"size": 28568,
-"md5": "8493fc0282d3a865a2f206cb41846b88"
+"size": 32643,
+"md5": "30f3c8bfc9bfcbb788d8d1329f11bfa7"
 },
 "library/music/elli.mp3": {
 "size": 720604,
@@ -2638,8 +2654,8 @@
 "md5": "7463d98eaccce28382cae8c3b7647330"
 },
 "library/music/bass_drop_3.mp3": {
-"size": 24911,
-"md5": "d55cd67041289b5494dd38b2968e8368"
+"size": 28464,
+"md5": "260e2c6296087362fcfdb3c0ed9ccd32"
 },
 "library/music/guitar_riff_10.mp3": {
 "size": 15716,
@@ -3952,6 +3968,10 @@
 "library/voices/man_scream_2.mp3": {
 "size": 13417,
 "md5": "7f9ddc0f4348822d706926877f715cbd"
+},
+"library/voices/emergency_broadcast.mp3": {
+"size": 448408,
+"md5": "8e829311feeac2e3e3ace908f5fa3446"
 },
 "library/voices/mouth_click_4.mp3": {
 "size": 1323,
