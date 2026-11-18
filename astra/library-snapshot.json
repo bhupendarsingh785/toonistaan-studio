@@ -1,5 +1,5 @@
 {
-"count": 1178,
+"count": 1188,
 "files": {
 "library/.cleaned.json": {
 "size": 38626,
@@ -585,6 +585,10 @@
 "size": 81127,
 "md5": "e7f69f3c5583ca26c8301ca9f55492f4"
 },
+"library/music/guitar_riff_8.mp3": {
+"size": 11563,
+"md5": "c86faedf8b5843dbcec7bab3cd43ef0e"
+},
 "library/music/forest_celtic_mystic.mp3": {
 "size": 720604,
 "md5": "1fcadcc9faed56af1248cc941fb31a29"
@@ -817,6 +821,10 @@
 "size": 720604,
 "md5": "fdc09c39720121a6a20b6f32dd5be164"
 },
+"library/music/guitar_riff_1.mp3": {
+"size": 7540,
+"md5": "c02b0b3156aef54e734036cab2a47f09"
+},
 "library/music/forest_reflections.mp3": {
 "size": 720604,
 "md5": "19a9f3c5474f45c40286b8b3dacf0c3b"
@@ -948,6 +956,10 @@
 "library/music/travel_instrumental.mp3": {
 "size": 720604,
 "md5": "7a5ce67ca1cffb8414455630560b255f"
+},
+"library/music/guitar_riff_2.mp3": {
+"size": 7357,
+"md5": "d13c0467cc4df108ddbd1b183122844b"
 },
 "library/music/dhol_shadi.mp3": {
 "size": 1386413,
@@ -1117,6 +1129,10 @@
 "size": 320617,
 "md5": "b830cd7df82b1c02844670163cab4758"
 },
+"library/music/guitar_riff_3.mp3": {
+"size": 8637,
+"md5": "08419906eb9adb155c07c69e83c7e597"
+},
 "library/music/indian_drum_loop.mp3": {
 "size": 65244,
 "md5": "e44e8c703b7f7dce150752cad21aeb46"
@@ -1124,6 +1140,10 @@
 "library/music/layered_new_1.mp3": {
 "size": 320617,
 "md5": "f857a8ed4c3258e0809e460f0c75c4b1"
+},
+"library/music/guitar_riff_6.mp3": {
+"size": 18694,
+"md5": "849de6b683861d1dbcb709a9183a1af3"
 },
 "library/music/dhol_1.mp3": {
 "size": 23030,
@@ -1221,6 +1241,10 @@
 "size": 61274,
 "md5": "c7311b7073350e4ee758145f4c5735b3"
 },
+"library/music/guitar_riff_7.mp3": {
+"size": 6443,
+"md5": "3ae1c91baa8f257257ad6d670b68f848"
+},
 "library/music/coach_theme.mp3": {
 "size": 472545,
 "md5": "65f9dce1e42e5e969ee8614743bc6b8a"
@@ -1232,6 +1256,10 @@
 "library/music/epic_hybrid_orchestra.mp3": {
 "size": 720604,
 "md5": "eb5239bb8002a46110dc3496d2725dff"
+},
+"library/music/guitar_riff_9.mp3": {
+"size": 9734,
+"md5": "e384ad983994d1cd6ef1ca7101f63b54"
 },
 "library/music/meditation_indian.mp3": {
 "size": 720604,
@@ -1317,6 +1345,10 @@
 "size": 720604,
 "md5": "ed59ae9edbbc04bf0dd6e35d0b8ee9a6"
 },
+"library/music/guitar_riff_5.mp3": {
+"size": 2420,
+"md5": "67c9fed6698df7ec83bb451851fed4d3"
+},
 "library/music/made_horror.mp3": {
 "size": 320617,
 "md5": "4c6371c2ac6b4e22c1a4a7d9f7835074"
@@ -1397,6 +1429,10 @@
 "size": 720604,
 "md5": "7463d98eaccce28382cae8c3b7647330"
 },
+"library/music/guitar_riff_10.mp3": {
+"size": 13757,
+"md5": "1ba689e96f54b101393c8eeba9190642"
+},
 "library/music/gymnopedie.mp3": {
 "size": 720604,
 "md5": "53b94128800c3cff5caf45581cbfeced"
@@ -1416,6 +1452,10 @@
 "library/music/forest_pathway.mp3": {
 "size": 720604,
 "md5": "9cee1fabad08f2384dfa82b9b8f04d3b"
+},
+"library/music/guitar_riff_4.mp3": {
+"size": 7540,
+"md5": "5ef97d0184df8f733a3f8817ef31979a"
 },
 "library/music/romantic_guitar.mp3": {
 "size": 144865,
