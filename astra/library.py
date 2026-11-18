@@ -9192,6 +9192,103 @@ DEFAULT_INDEX = {
    "chadhna"
   ],
   "license": "Freesound/CC"
+ },
+ "hairdryer_1": {
+  "file": "bathroom/hairdryer_1.mp3",
+  "tags": [
+   "hairdryer",
+   "hajaam",
+   "बाल सुखाने",
+   "hair"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "hairdryer_2": {
+  "file": "bathroom/hairdryer_2.mp3",
+  "tags": [
+   "hairdryer",
+   "hair",
+   "dryer"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "hairdryer_3": {
+  "file": "bathroom/hairdryer_3.mp3",
+  "tags": [
+   "hairdryer",
+   "hair",
+   "bathroom"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "shower": {
+  "file": "bathroom/shower.mp3",
+  "tags": [
+   "shower",
+   "nahana",
+   "स्नान",
+   "paani",
+   "bath"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "peeing": {
+  "file": "bathroom/peeing.mp3",
+  "tags": [
+   "peeing",
+   "toilet",
+   "susu",
+   "bathroom"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "gargling": {
+  "file": "bathroom/gargling.mp3",
+  "tags": [
+   "gargle",
+   "kulla",
+   "gurgle",
+   "bathroom"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "rinse": {
+  "file": "bathroom/rinse.mp3",
+  "tags": [
+   "rinse",
+   "kulla",
+   "water",
+   "bathroom"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "bathroom_1": {
+  "file": "bathroom/bathroom_1.mp3",
+  "tags": [
+   "bathroom",
+   "washroom",
+   "ghar",
+   "ambience"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "bathroom_2": {
+  "file": "bathroom/bathroom_2.mp3",
+  "tags": [
+   "bathroom",
+   "washroom",
+   "ambience"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "bathroom_3": {
+  "file": "bathroom/bathroom_3.mp3",
+  "tags": [
+   "bathroom",
+   "washroom",
+   "ambience"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -9208,6 +9305,10 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "hairdryer": ["hairdryer_1", "hairdryer_2", "hairdryer_3"],
+    "nahana": ["shower", "rinse", "water"],
+    "bathroom": ["bathroom_1", "bathroom_2", "bathroom_3", "shower"],
+    "kulla": ["gargling", "rinse"],
     "siyar": ["jackal", "dingo_howl"],
     "kanch": ["glass", "glass_break"],
     "ghaas": ["run_tall_grass", "steps_grass"],
