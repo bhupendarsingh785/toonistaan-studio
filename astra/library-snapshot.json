@@ -1,9 +1,9 @@
 {
-"count": 1079,
+"count": 1089,
 "files": {
 "library/.cleaned.json": {
-"size": 36149,
-"md5": "19cde7e9aa6b31275837d06de7c7dac3"
+"size": 36410,
+"md5": "9b75f8ca569e661d5e5f5b44445313f5"
 },
 "library/README.md": {
 "size": 1760,
@@ -4082,8 +4082,8 @@
 "md5": "3dd50aacc0c40e4e764efecd423fc354"
 },
 "library/foley/lighter_3_thin.mp3": {
-"size": 3700,
-"md5": "70e38036e2fdda02e957392f8cbb1db4"
+"size": 4222,
+"md5": "6b42a7cfcfad9643ca514829bad16cad"
 },
 "library/foley/coins_counting.mp3": {
 "size": 46645,
@@ -4109,17 +4109,25 @@
 "size": 163674,
 "md5": "c7c7e0ecbb529900f8884e774ac9da65"
 },
+"library/foley/lighter_17.mp3": {
+"size": 1506,
+"md5": "66866dcd83472727e932c08ec57df66e"
+},
 "library/foley/lighter_2.mp3": {
-"size": 3517,
-"md5": "2fe7e22f8d677604bfa5829c61e144c4"
+"size": 4013,
+"md5": "c03ee6e3b5545cb5bf648d195f689c4f"
 },
 "library/foley/lighter_1_thin.mp3": {
 "size": 1323,
 "md5": "aacc32850988dd1fe1b4ce8297d87496"
 },
+"library/foley/lighter_20.mp3": {
+"size": 2054,
+"md5": "9db5d8e85536e256df8ded98f72c88e3"
+},
 "library/foley/lighter_4_thin.mp3": {
-"size": 3334,
-"md5": "2002d21762a969a85040d95ae24dfac7"
+"size": 3804,
+"md5": "a0e7c82d7676d8c83718269c6cad2c20"
 },
 "library/foley/coins_in_bowl.mp3": {
 "size": 64826,
@@ -4170,8 +4178,8 @@
 "md5": "88e46c086a86356d96418829dbf83dfa"
 },
 "library/foley/cigarette_3.mp3": {
-"size": 32774,
-"md5": "e3382728f3748f26cb7f09b552bc6b4a"
+"size": 37450,
+"md5": "80e18a7e235e947d87fe001c0571a5c1"
 },
 "library/foley/lighter_1.mp3": {
 "size": 1323,
@@ -4181,13 +4189,17 @@
 "size": 8820,
 "md5": "6caeda6fb80f5ba9e50bfe81c880bda6"
 },
+"library/foley/lighter_18.mp3": {
+"size": 1871,
+"md5": "6e040b3c315a652060558f07ef38fe2a"
+},
 "library/foley/lighter_7.mp3": {
 "size": 1506,
 "md5": "b70d78700853494354aadd5586178c61"
 },
 "library/foley/lighter_3.mp3": {
-"size": 3700,
-"md5": "ee12dc0d68c27051684aacdcb4584e89"
+"size": 4222,
+"md5": "ff3aac4e4a944aecd05e56fb3c4d226d"
 },
 "library/foley/lighter_5_thin.mp3": {
 "size": 1323,
@@ -4214,12 +4226,20 @@
 "md5": "dac1e9c831d22af4cf9261516a465811"
 },
 "library/foley/cigarette_2.mp3": {
-"size": 55083,
-"md5": "7c5ef7808d2954c7b727028cbe0781ea"
+"size": 62945,
+"md5": "932121a3393d74e5a6aa50e3b80e9bb3"
+},
+"library/foley/lighter_21.mp3": {
+"size": 1688,
+"md5": "924fcce1c507d6220a0e96cb99ff6363"
 },
 "library/foley/coin_drop_1.mp3": {
 "size": 13208,
 "md5": "8cb32f3f74dbf1635ae24c81cb0085dd"
+},
+"library/foley/lighter_15.mp3": {
+"size": 2237,
+"md5": "eb62d5a166435b69ce84d679c27be57d"
 },
 "library/foley/lighter_12.mp3": {
 "size": 1688,
@@ -4236,6 +4256,10 @@
 "library/foley/lighter_4.mp3": {
 "size": 3334,
 "md5": "66cff1cc2e48f6e85188cb8ce3691c71"
+},
+"library/foley/lighter_16.mp3": {
+"size": 2054,
+"md5": "86bdfa19d9ff0b40cf480c9a4b32473e"
 },
 "library/foley/paper_turn.mp3": {
 "size": 86560,
@@ -4261,9 +4285,13 @@
 "size": 69842,
 "md5": "3627ea8340477f9c61b7edd587190397"
 },
+"library/foley/lighter_13.mp3": {
+"size": 1506,
+"md5": "3a79e3a2f3a9d2e7ea2e3e90cebbeda6"
+},
 "library/foley/cigarette_1.mp3": {
-"size": 38991,
-"md5": "97f736d0adceb5cd3255d0497b7b9ba3"
+"size": 44555,
+"md5": "466c5e96fe2cc535608aba3e878fd216"
 },
 "library/foley/lighter_6.mp3": {
 "size": 1688,
@@ -4277,6 +4305,10 @@
 "size": 18224,
 "md5": "5123472de7924bc80a2d0a78a3bdd1da"
 },
+"library/foley/lighter_14.mp3": {
+"size": 4431,
+"md5": "b9207a8033666ebb1d413dea8c4c7805"
+},
 "library/foley/lighter_9.mp3": {
 "size": 9003,
 "md5": "9593a198b7c462e3d3284c397487eea4"
@@ -4288,6 +4320,14 @@
 "library/foley/paper_cut.mp3": {
 "size": 480487,
 "md5": "1e57c004f5af1432f9ee4155c7f40e19"
+},
+"library/foley/lighter_19.mp3": {
+"size": 2237,
+"md5": "6915322072d020234333826adbc9b9ef"
+},
+"library/foley/lighter_22.mp3": {
+"size": 8454,
+"md5": "06297bf098b30c9875a530a11c47c339"
 },
 "library/foley/coin_drop_5.mp3": {
 "size": 9238,
@@ -4306,8 +4346,8 @@
 "md5": "c7b062b6adf2fa1935ee5226c2b7c17c"
 },
 "library/foley/lighter_2_thin.mp3": {
-"size": 3517,
-"md5": "69e00b85094277a419607c59e6c2f7a1"
+"size": 4013,
+"md5": "b37f81dda4118c0f00fc608451881d35"
 },
 "library/foley/coin_drop_4.mp3": {
 "size": 7357,
