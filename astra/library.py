@@ -9101,6 +9101,97 @@ DEFAULT_INDEX = {
    "buzz"
   ],
   "license": "Wikimedia/PLOS"
+ },
+ "run_dry_leaves": {
+  "file": "footsteps/run_dry_leaves.mp3",
+  "tags": [
+   "run",
+   "dry leaves",
+   "sookhe patte",
+   "bhaagna"
+  ],
+  "license": "Freesound/CC"
+ },
+ "walk_dry_leaves": {
+  "file": "footsteps/walk_dry_leaves.mp3",
+  "tags": [
+   "walk",
+   "dry leaves",
+   "sookhe patte",
+   "chalna"
+  ],
+  "license": "Freesound/CC"
+ },
+ "feet_leaves": {
+  "file": "footsteps/feet_leaves.mp3",
+  "tags": [
+   "feet",
+   "leaves",
+   "kadam",
+   "patte"
+  ],
+  "license": "Freesound/CC"
+ },
+ "run_dry_path": {
+  "file": "footsteps/run_dry_path.mp3",
+  "tags": [
+   "run",
+   "dry path",
+   "leaves",
+   "bhaag"
+  ],
+  "license": "Freesound/CC"
+ },
+ "run_tall_grass": {
+  "file": "footsteps/run_tall_grass.mp3",
+  "tags": [
+   "run",
+   "grass",
+   "ghaas",
+   "bhaagna"
+  ],
+  "license": "Freesound/CC"
+ },
+ "camel_cry_fr": {
+  "file": "animals/camel_cry_fr.mp3",
+  "tags": [
+   "camel",
+   "oont",
+   "cry",
+   "ऊँट"
+  ],
+  "license": "Freesound/CC"
+ },
+ "jackal": {
+  "file": "animals/jackal.mp3",
+  "tags": [
+   "jackal",
+   "siyar",
+   "सियार",
+   "howl",
+   "raat"
+  ],
+  "license": "Freesound/CC"
+ },
+ "glass": {
+  "file": "foley/glass.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "Freesound/CC"
+ },
+ "rope_climb_demo": {
+  "file": "foley/rope_climb_demo.mp3",
+  "tags": [
+   "rope",
+   "climb",
+   "rassi",
+   "chadhna"
+  ],
+  "license": "Freesound/CC"
  }
 }
 
@@ -9117,6 +9208,9 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "siyar": ["jackal", "dingo_howl"],
+    "kanch": ["glass", "glass_break"],
+    "ghaas": ["run_tall_grass", "steps_grass"],
     "cicada": ["cicada_1", "cicada_2"],
     "chichdi": ["cicada_1", "cicada_2"],
     "keede": ["beetle_ant_song", "cicada_1", "insects"],
@@ -9166,9 +9260,9 @@ VARIANTS = {
     "crocodile": ["crocodile_hiss", "crocodile_scream"],
     "tortoise": ["tortoise_water"],
     "zoo": ["zoo_ambience"],
-    "rope": ["rope", "rope_knot"],
+    "rope": ["rope_climb_demo", "rope", "rope_knot"],
     "cloth_rustle": ["cloth_rustle"],
-    "leaves_dry": ["leaves_dry"],
+    "leaves_dry": ["run_dry_leaves", "walk_dry_leaves", "feet_leaves", "run_dry_path", "leaves_dry"],
     "ladder": ["ladder_wood"],
     "wood_creak": ["wood_creak"],
     "ambient": ["ambient_calm_dreamscape", "ambient_soft_2", "ambient_leberch", "ambient_landscape", "ambient_inspiration", "ambient_dystopian", "ambient_horror_creepy", "timelapse_bg", "ambient_soft", "ambient_clean", "ambient_dreamy", "ambient_piano",
