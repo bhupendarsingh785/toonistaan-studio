@@ -1,9 +1,9 @@
 {
-"count": 1741,
+"count": 1751,
 "files": {
 "library/.cleaned.json": {
-"size": 54111,
-"md5": "ed1bf940dbe9f9eb6fc0e103263afde0"
+"size": 54248,
+"md5": "2f0b772dd80d6558fcc0e9c26eb1a75b"
 },
 "library/README.md": {
 "size": 1760,
@@ -1450,8 +1450,8 @@
 "md5": "39c115b63e0975c329a66d0e41cd48df"
 },
 "library/ui/beep_2.mp3": {
-"size": 7540,
-"md5": "f1abb3c735de873cff4e7556e1cca1bc"
+"size": 8611,
+"md5": "af2ae3ab0786346cb598c53cf68d2324"
 },
 "library/ui/click_6.mp3": {
 "size": 4222,
@@ -1466,8 +1466,8 @@
 "md5": "b8567a150f36cdafbc5a721c07e09d7f"
 },
 "library/ui/beep_5.mp3": {
-"size": 9917,
-"md5": "1a61eb3186ee6cb48e4d7490d59f9532"
+"size": 11327,
+"md5": "a7aa426f32c0b6a602a3932570c17b08"
 },
 "library/ui/switch_23.mp3": {
 "size": 2759,
@@ -1590,8 +1590,8 @@
 "md5": "4ddc32d4cbb0cdab723726ec8b45ed61"
 },
 "library/ui/beep_8.mp3": {
-"size": 84523,
-"md5": "75270efc0d56964f8632bb9df7231088"
+"size": 96591,
+"md5": "dac1290efc971ff5b1c2befa8e508a8d"
 },
 "library/ui/click_15.mp3": {
 "size": 2759,
@@ -1630,8 +1630,8 @@
 "md5": "df47fd9c4d91d4bb764a01c4f184fae7"
 },
 "library/ui/beep_7.mp3": {
-"size": 84523,
-"md5": "21dff2d39463d305272164788e35b009"
+"size": 96591,
+"md5": "88669097d36abc6a44ad11170df1ad4f"
 },
 "library/ui/switch_12.mp3": {
 "size": 1323,
@@ -1809,6 +1809,10 @@
 "size": 720604,
 "md5": "bd6017423ca25eb56e351bd815e245eb"
 },
+"library/music/drone_04_a.mp3": {
+"size": 225871,
+"md5": "bcd4a6ca9f5f79b5a177b43b5352961c"
+},
 "library/music/rock_melody.mp3": {
 "size": 425734,
 "md5": "cd3a7a281ec558cfb72fb887d8d4ad8b"
@@ -1936,6 +1940,10 @@
 "library/music/giddy_uploop.mp3": {
 "size": 248519,
 "md5": "de1c5a171b586c9a688edc41dde8d228"
+},
+"library/music/drone_10_d.mp3": {
+"size": 213254,
+"md5": "c9216640bcd44bb1343ee99c84e1cdce"
 },
 "library/music/match_join_1.mp3": {
 "size": 217799,
@@ -2077,6 +2085,10 @@
 "size": 720604,
 "md5": "c08b11ace6e80d62f89474cfa8a9f855"
 },
+"library/music/drone_02_g.mp3": {
+"size": 225871,
+"md5": "077603b6fd728f72fc9fdb4454575372"
+},
 "library/music/drone_ambient.mp3": {
 "size": 720604,
 "md5": "fa818a8048dbc9edc6d5ddfc850ada5a"
@@ -2181,6 +2193,10 @@
 "size": 720604,
 "md5": "70d5b6d1f9772e82fca8fe9357e465a0"
 },
+"library/music/drone_01_e.mp3": {
+"size": 225323,
+"md5": "ebeb698d3887849a514622de10d3725e"
+},
 "library/music/forest_celtic_mystic_2.mp3": {
 "size": 720604,
 "md5": "620cec0d6d6cf7496b053e27bdfade75"
@@ -2237,6 +2253,10 @@
 "size": 720604,
 "md5": "e1be4b6bb9cbb75f16c7f9f9056aa16d"
 },
+"library/music/drone_03_g.mp3": {
+"size": 225871,
+"md5": "7d57e58f9695fac1c598c5f3e9fe61d4"
+},
 "library/music/lamento_ninfa.mp3": {
 "size": 720604,
 "md5": "75d8ce54f1537c5eeff3a798ac39b457"
@@ -2244,6 +2264,10 @@
 "library/music/ambient_calm_dreamscape.mp3": {
 "size": 720604,
 "md5": "081f8b8f4dd043e80c13e6b30da2b53b"
+},
+"library/music/drone_05_f.mp3": {
+"size": 225871,
+"md5": "0e6336c9c32f241ccb9e233e793bbe9c"
 },
 "library/music/mythical_moments.mp3": {
 "size": 720604,
@@ -2292,6 +2316,10 @@
 "library/music/hiphop_energy.mp3": {
 "size": 720604,
 "md5": "1b29bd0a54a8916b7b46a0f38087ff43"
+},
+"library/music/drone_06_d.mp3": {
+"size": 225871,
+"md5": "8f1fc6f5dbc421a01561ea79b58f0151"
 },
 "library/music/house_rap.mp3": {
 "size": 720604,
@@ -2409,6 +2437,10 @@
 "size": 720604,
 "md5": "e579fa09501d01c6e5e8df1de218d0cb"
 },
+"library/music/drone_09_d.mp3": {
+"size": 226603,
+"md5": "4616e91777873504266e94afa44832bb"
+},
 "library/music/low_signal.mp3": {
 "size": 720604,
 "md5": "4272460ab16ee0808a89c172f17b26c9"
@@ -2456,6 +2488,10 @@
 "library/music/fiddle_ballad.mp3": {
 "size": 695736,
 "md5": "488c6e8974ed8115179da0836f95b057"
+},
+"library/music/drone_08_c.mp3": {
+"size": 227334,
+"md5": "2eb595f258d5a9bb784279282c2985ae"
 },
 "library/music/chill_edm.mp3": {
 "size": 720604,
@@ -2632,6 +2668,10 @@
 "library/music/mehndi_beat.mp3": {
 "size": 240787,
 "md5": "c6c3b58fed0866bdc42222fc3e5f1b99"
+},
+"library/music/drone_07_e.mp3": {
+"size": 225871,
+"md5": "2f64d77b4908df3055a3d10389ffc999"
 },
 "library/music/piano_logo.mp3": {
 "size": 78201,
@@ -3970,8 +4010,8 @@
 "md5": "7f9ddc0f4348822d706926877f715cbd"
 },
 "library/voices/emergency_broadcast.mp3": {
-"size": 448408,
-"md5": "8e829311feeac2e3e3ace908f5fa3446"
+"size": 512460,
+"md5": "dad4cd55990a5b543f096d7761de7a21"
 },
 "library/voices/mouth_click_4.mp3": {
 "size": 1323,
