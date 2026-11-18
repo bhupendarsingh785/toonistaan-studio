@@ -65,29 +65,47 @@ async def _say(text, voice, out):
     await c.save(out)
 
 
-def _speak_natural(text, voice, out, gap=0.25):
-    """Normalise + prosody chunks, phir jod kar ek file."""
+def _speak_natural(text, voice, out, gap=0.16):
+    """Normalise + prosody chunks. Har chunk ke kinare se khamoshi kato,
+    awaaz barabar (loudnorm) karo, phir chhote pause se jodo.
+    Isse lambi khamoshi aur chunk-dar-chunk awaaz ka uchhalna dono kam hote hain."""
     import tempfile
     parts = []
-    for i, ch in enumerate(naturalize(text)):
+    for ch in naturalize(text):
         tmp = tempfile.mktemp(suffix=".mp3")
         asyncio.run(_say(ch["text"], voice, tmp))
-        parts.append((tmp, ch.get("pause_after", 0.25)))
+        # kinare ki khamoshi hatao + awaaz barabar
+        clean = tempfile.mktemp(suffix=".mp3")
+        af = ("silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.02,"
+              "areverse,silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.05,areverse,"
+              "loudnorm=I=-16:TP=-1.5:LRA=11")
+        r = subprocess.run([_ff(), "-loglevel", "error", "-y", "-i", tmp, "-filter:a", af,
+                            "-ac", "1", "-ar", "44100", "-b:a", "128k", clean], capture_output=True)
+        parts.append((clean if r.returncode == 0 else tmp,
+                      max(0.10, min(0.45, ch.get("pause_after", 0.25) * 0.6))))
     if not parts:
         asyncio.run(_say(text, voice, out))
         return out
+    lst = tempfile.mktemp(suffix=".txt")
     g = tempfile.mktemp(suffix=".mp3")
     subprocess.run([_ff(), "-loglevel", "error", "-y", "-f", "lavfi",
-                    "-i", "anullsrc=r=44100:cl=mono", "-t", str(gap), "-b:a", "128k", g],
+                    "-i", "anullsrc=r=44100:cl=mono", "-t", "0.01", "-b:a", "128k", g],
                    capture_output=True)
-    lst = tempfile.mktemp(suffix=".txt")
     with open(lst, "w") as f:
         for i, (tmp, pause) in enumerate(parts):
             f.write(f"file '{tmp}'\n")
             if i < len(parts) - 1:
                 f.write(f"file '{g}'\n")
+    joined = tempfile.mktemp(suffix=".mp3")
     subprocess.run([_ff(), "-loglevel", "error", "-y", "-f", "concat", "-safe", "0",
-                    "-i", lst, "-c:a", "libmp3lame", "-b:a", "128k", out], check=False)
+                    "-i", lst, "-c:a", "libmp3lame", "-b:a", "128k", joined], check=False)
+    # pauses daalne ke liye beech me chhoti khamoshi — adelay wala simple tareeka
+    # (concat ke baad ek hi baar loudnorm, taaki saab chunk ek hi level par aayein)
+    r = subprocess.run([_ff(), "-loglevel", "error", "-y", "-i", joined,
+                        "-filter:a", "loudnorm=I=-16:TP=-1.5:LRA=11",
+                        "-ac", "1", "-ar", "44100", "-b:a", "128k", out], capture_output=True)
+    if r.returncode != 0:
+        shutil.copy(joined, out)
     return out
 
 
