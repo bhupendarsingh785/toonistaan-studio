@@ -6797,6 +6797,106 @@ DEFAULT_INDEX = {
    "fight"
   ],
   "license": "Pixabay"
+ },
+ "cold_current": {
+  "file": "music/cold_current.mp3",
+  "tags": [
+   "cold",
+   "current",
+   "dark",
+   "tech"
+  ],
+  "license": "Pixabay"
+ },
+ "mono_shadow": {
+  "file": "music/mono_shadow.mp3",
+  "tags": [
+   "shadow",
+   "dark",
+   "ambient",
+   "mystery"
+  ],
+  "license": "Pixabay"
+ },
+ "static_bloom": {
+  "file": "music/static_bloom.mp3",
+  "tags": [
+   "static",
+   "bloom",
+   "texture",
+   "dark"
+  ],
+  "license": "Pixabay"
+ },
+ "aggressive_trap": {
+  "file": "music/aggressive_trap.mp3",
+  "tags": [
+   "aggressive",
+   "trap",
+   "fight",
+   "energy"
+  ],
+  "license": "Pixabay"
+ },
+ "deep_work": {
+  "file": "music/deep_work.mp3",
+  "tags": [
+   "focus",
+   "deep",
+   "work",
+   "ambient"
+  ],
+  "license": "Pixabay"
+ },
+ "submerged_beta_focus": {
+  "file": "music/submerged_beta_focus.mp3",
+  "tags": [
+   "beta",
+   "focus",
+   "underwater",
+   "ambient"
+  ],
+  "license": "Pixabay"
+ },
+ "strong_female": {
+  "file": "music/strong_female.mp3",
+  "tags": [
+   "strong",
+   "female",
+   "power",
+   "uplift"
+  ],
+  "license": "Pixabay"
+ },
+ "pink_noise_rain": {
+  "file": "music/pink_noise_rain.mp3",
+  "tags": [
+   "pink noise",
+   "rain",
+   "bed",
+   "calm"
+  ],
+  "license": "Pixabay"
+ },
+ "cognitive_flow": {
+  "file": "music/cognitive_flow.mp3",
+  "tags": [
+   "focus",
+   "flow",
+   "ambient",
+   "study"
+  ],
+  "license": "Pixabay"
+ },
+ "oriental_hard_techno": {
+  "file": "music/oriental_hard_techno.mp3",
+  "tags": [
+   "oriental",
+   "hard",
+   "techno",
+   "indian"
+  ],
+  "license": "Pixabay"
  }
 }
 
