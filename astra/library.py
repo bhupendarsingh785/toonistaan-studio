@@ -6618,6 +6618,104 @@ DEFAULT_INDEX = {
    "action"
   ],
   "license": "Pixabay"
+ },
+ "elli": {
+  "file": "music/elli.mp3",
+  "tags": [
+   "electronic",
+   "edm",
+   "groove"
+  ],
+  "license": "Pixabay"
+ },
+ "zynth_syza": {
+  "file": "music/zynth_syza.mp3",
+  "tags": [
+   "synth",
+   "electronic",
+   "tech"
+  ],
+  "license": "Pixabay"
+ },
+ "pulse_drift": {
+  "file": "music/pulse_drift.mp3",
+  "tags": [
+   "pulse",
+   "drift",
+   "electronic",
+   "tension"
+  ],
+  "license": "Pixabay"
+ },
+ "stings_bings": {
+  "file": "music/stings_bings.mp3",
+  "tags": [
+   "sting",
+   "electronic",
+   "alert"
+  ],
+  "license": "Pixabay"
+ },
+ "iron_loop": {
+  "file": "music/iron_loop.mp3",
+  "tags": [
+   "iron",
+   "loop",
+   "industrial",
+   "dark"
+  ],
+  "license": "Pixabay"
+ },
+ "brass_trap": {
+  "file": "music/brass_trap.mp3",
+  "tags": [
+   "brass",
+   "trap",
+   "energy",
+   "swagger"
+  ],
+  "license": "Pixabay"
+ },
+ "hiphop_energy": {
+  "file": "music/hiphop_energy.mp3",
+  "tags": [
+   "hiphop",
+   "energy",
+   "beat",
+   "modern"
+  ],
+  "license": "Pixabay"
+ },
+ "low_signal": {
+  "file": "music/low_signal.mp3",
+  "tags": [
+   "low",
+   "signal",
+   "dark",
+   "mystery"
+  ],
+  "license": "Pixabay"
+ },
+ "ignition_fire": {
+  "file": "music/ignition_fire.mp3",
+  "tags": [
+   "ignition",
+   "fire",
+   "soul",
+   "motivation"
+  ],
+  "license": "Pixabay"
+ },
+ "bach_air": {
+  "file": "music/bach_air.mp3",
+  "tags": [
+   "bach",
+   "classical",
+   "soft",
+   "sad",
+   "elegant"
+  ],
+  "license": "Pixabay"
  }
 }
 
