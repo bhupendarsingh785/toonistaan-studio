@@ -5776,6 +5776,93 @@ DEFAULT_INDEX = {
    "transition"
   ],
   "license": "Pixabay"
+ },
+ "suspense_tense": {
+  "file": "music/suspense_tense.mp3",
+  "tags": [
+   "suspense",
+   "tension",
+   "tense",
+   "suspenseful"
+  ],
+  "license": "Pixabay"
+ },
+ "build_up_riser": {
+  "file": "music/build_up_riser.mp3",
+  "tags": [
+   "build",
+   "up",
+   "riser",
+   "climax"
+  ],
+  "license": "Pixabay"
+ },
+ "inspirational_epic_riser": {
+  "file": "music/inspirational_epic_riser.mp3",
+  "tags": [
+   "inspirational",
+   "epic",
+   "riser",
+   "hope"
+  ],
+  "license": "Pixabay"
+ },
+ "inspirational_epic_2": {
+  "file": "music/inspirational_epic_2.mp3",
+  "tags": [
+   "inspirational",
+   "epic",
+   "uplift"
+  ],
+  "license": "Pixabay"
+ },
+ "soft_music": {
+  "file": "music/soft_music.mp3",
+  "tags": [
+   "soft",
+   "calm",
+   "gentle",
+   "narm"
+  ],
+  "license": "Pixabay"
+ },
+ "sub_bass_drop": {
+  "file": "transitions/sub_bass_drop.mp3",
+  "tags": [
+   "sub",
+   "bass",
+   "drop",
+   "impact",
+   "hit"
+  ],
+  "license": "Pixabay"
+ },
+ "tonal_riser_smooth_1": {
+  "file": "transitions/tonal_riser_smooth_1.mp3",
+  "tags": [
+   "riser",
+   "smooth",
+   "transition"
+  ],
+  "license": "Pixabay"
+ },
+ "tonal_riser_smooth_6": {
+  "file": "transitions/tonal_riser_smooth_6.mp3",
+  "tags": [
+   "riser",
+   "smooth",
+   "transition"
+  ],
+  "license": "Pixabay"
+ },
+ "tonal_riser_cinematic_4": {
+  "file": "transitions/tonal_riser_cinematic_4.mp3",
+  "tags": [
+   "riser",
+   "cinematic",
+   "transition"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -5792,7 +5879,7 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "transition": ["whoosh_reverse_8", "crystal_swell", "tonal_riser_cinematic_7", "tonal_riser_cinematic_3", "logo_snap_tech", "tonal_riser_1", "tonal_riser_3", "tonal_riser_smooth_2", "tonal_riser_smooth_7",
+    "transition": ["sub_bass_drop", "whoosh_reverse_8", "crystal_swell", "tonal_riser_cinematic_7", "tonal_riser_cinematic_3", "logo_snap_tech", "tonal_riser_1", "tonal_riser_3", "tonal_riser_smooth_2", "tonal_riser_smooth_7",
                    "tonal_riser_smooth_8", "tonal_riser_cinematic_8", "whoosh_reverse_low",
                    "choir_transition", "cyber_crash"],
     "riser": ["tonal_riser_1", "tonal_riser_3", "tonal_riser_cinematic_8"],
