@@ -12973,6 +12973,116 @@ DEFAULT_INDEX = {
    "finger"
   ],
   "license": "CC0/BVKER"
+ },
+ "keys_1": {
+  "file": "foley/keys_1.mp3",
+  "tags": [
+   "keys",
+   "chaabi",
+   "चाबी",
+   "jingle",
+   "taala"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "keys_2": {
+  "file": "foley/keys_2.mp3",
+  "tags": [
+   "keys",
+   "chaabi",
+   "चाबी",
+   "jingle",
+   "taala"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "keys_3": {
+  "file": "foley/keys_3.mp3",
+  "tags": [
+   "keys",
+   "chaabi",
+   "चाबी",
+   "jingle",
+   "taala"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "keys_4": {
+  "file": "foley/keys_4.mp3",
+  "tags": [
+   "keys",
+   "chaabi",
+   "चाबी",
+   "jingle",
+   "taala"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "keys_5": {
+  "file": "foley/keys_5.mp3",
+  "tags": [
+   "keys",
+   "chaabi",
+   "चाबी",
+   "jingle",
+   "taala"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "keys_6": {
+  "file": "foley/keys_6.mp3",
+  "tags": [
+   "keys",
+   "chaabi",
+   "चाबी",
+   "jingle",
+   "taala"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "keys_7": {
+  "file": "foley/keys_7.mp3",
+  "tags": [
+   "keys",
+   "chaabi",
+   "चाबी",
+   "jingle",
+   "taala"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "keys_8": {
+  "file": "foley/keys_8.mp3",
+  "tags": [
+   "keys",
+   "chaabi",
+   "चाबी",
+   "jingle",
+   "taala"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "keys_9": {
+  "file": "foley/keys_9.mp3",
+  "tags": [
+   "keys",
+   "chaabi",
+   "चाबी",
+   "jingle",
+   "taala"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "keys_10": {
+  "file": "foley/keys_10.mp3",
+  "tags": [
+   "keys",
+   "chaabi",
+   "चाबी",
+   "jingle",
+   "taala"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -12989,6 +13099,7 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "keys": ["keys_1", "keys_2", "keys_3", "keys_4", "keys_5", "keys_6", "keys_7", "keys_8", "keys_9", "keys_10"],
     "snap": ["snap_1", "snap_2", "snap_3", "snap_4", "snap_5", "snap_6", "snap_7", "snap_8", "snap_9", "snap_10"],
     "chutki": ["snap_1", "snap_2", "snap_3", "snap_4", "snap_5", "snap_6", "snap_7", "snap_8", "snap_9", "snap_10"],
     "khansi": ["cough_1", "cough_2", "cough_3", "cough_4", "cough_5"],
