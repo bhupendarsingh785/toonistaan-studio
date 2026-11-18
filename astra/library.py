@@ -13463,6 +13463,106 @@ DEFAULT_INDEX = {
    "ambience"
   ],
   "license": "CC0/BVKER"
+ },
+ "kitchen_28": {
+  "file": "kitchen/kitchen_28.mp3",
+  "tags": [
+   "kitchen",
+   "rasoi",
+   "रसोई",
+   "bartan"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "kitchen_29": {
+  "file": "kitchen/kitchen_29.mp3",
+  "tags": [
+   "kitchen",
+   "rasoi",
+   "रसोई",
+   "bartan"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "kitchen_30": {
+  "file": "kitchen/kitchen_30.mp3",
+  "tags": [
+   "kitchen",
+   "rasoi",
+   "रसोई",
+   "bartan"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "kitchen_31": {
+  "file": "kitchen/kitchen_31.mp3",
+  "tags": [
+   "kitchen",
+   "rasoi",
+   "रसोई",
+   "bartan"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "kitchen_32": {
+  "file": "kitchen/kitchen_32.mp3",
+  "tags": [
+   "kitchen",
+   "rasoi",
+   "रसोई",
+   "bartan"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "kitchen_33": {
+  "file": "kitchen/kitchen_33.mp3",
+  "tags": [
+   "kitchen",
+   "rasoi",
+   "रसोई",
+   "bartan"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "kitchen_34": {
+  "file": "kitchen/kitchen_34.mp3",
+  "tags": [
+   "kitchen",
+   "rasoi",
+   "रसोई",
+   "bartan"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "kitchen_35": {
+  "file": "kitchen/kitchen_35.mp3",
+  "tags": [
+   "kitchen",
+   "rasoi",
+   "रसोई",
+   "bartan"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "kitchen_36": {
+  "file": "kitchen/kitchen_36.mp3",
+  "tags": [
+   "kitchen",
+   "rasoi",
+   "रसोई",
+   "bartan"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "kitchen_37": {
+  "file": "kitchen/kitchen_37.mp3",
+  "tags": [
+   "kitchen",
+   "rasoi",
+   "रसोई",
+   "bartan"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -13481,7 +13581,7 @@ ALIAS = {
 VARIANTS = {
     "egg": ["egg_1", "egg_2", "egg_3"],
     "anda": ["egg_1", "egg_2", "egg_3"],
-    "rasoi": ["kitchen_1", "kitchen_2", "kitchen_3", "kitchen_4", "kitchen_5", "kitchen_6", "kitchen_7", "kitchen_8", "kitchen_9", "kitchen_10", "kitchen_11", "kitchen_12", "kitchen_13", "kitchen_14", "kitchen_15", "kitchen_16", "kitchen_17", "kitchen_18", "kitchen_19", "kitchen_20", "kitchen_21", "kitchen_22", "kitchen_23", "kitchen_24", "kitchen_25", "kitchen_26", "kitchen_27"],
+    "rasoi": ["kitchen_1", "kitchen_2", "kitchen_3", "kitchen_4", "kitchen_5", "kitchen_6", "kitchen_7", "kitchen_8", "kitchen_9", "kitchen_10", "kitchen_11", "kitchen_12", "kitchen_13", "kitchen_14", "kitchen_15", "kitchen_16", "kitchen_17", "kitchen_18", "kitchen_19", "kitchen_20", "kitchen_21", "kitchen_22", "kitchen_23", "kitchen_24", "kitchen_25", "kitchen_26", "kitchen_27", "kitchen_28", "kitchen_29", "kitchen_30", "kitchen_31", "kitchen_32", "kitchen_33", "kitchen_34", "kitchen_35", "kitchen_36", "kitchen_37"],
     "chaabi": ["keys_1", "keys_2", "keys_3", "keys_4", "keys_5", "keys_6", "keys_7", "keys_8", "keys_9", "keys_10", "keys_11", "keys_12", "keys_13", "keys_14", "keys_15", "car_keys_1"],
     "keys": ["keys_1", "keys_2", "keys_3", "keys_4", "keys_5", "keys_6", "keys_7", "keys_8", "keys_9", "keys_10", "keys_11", "keys_12", "keys_13", "keys_14", "keys_15"],
     "snap": ["snap_1", "snap_2", "snap_3", "snap_4", "snap_5", "snap_6", "snap_7", "snap_8", "snap_9", "snap_10"],
