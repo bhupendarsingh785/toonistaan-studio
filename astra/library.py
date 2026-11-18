@@ -5332,6 +5332,101 @@ DEFAULT_INDEX = {
    "subah"
   ],
   "license": "Pixabay"
+ },
+ "birds_forest_1": {
+  "file": "ambience/birds_forest_1.mp3",
+  "tags": [
+   "birds",
+   "forest",
+   "chidiyan",
+   "jungle"
+  ],
+  "license": "Pixabay"
+ },
+ "birds_forest_2": {
+  "file": "ambience/birds_forest_2.mp3",
+  "tags": [
+   "birds",
+   "forest",
+   "chidiyan"
+  ],
+  "license": "Pixabay"
+ },
+ "birds_chirp_1": {
+  "file": "ambience/birds_chirp_1.mp3",
+  "tags": [
+   "birds",
+   "chirping",
+   "subah",
+   "chidiyan"
+  ],
+  "license": "Pixabay"
+ },
+ "birds_chirp_2": {
+  "file": "ambience/birds_chirp_2.mp3",
+  "tags": [
+   "birds",
+   "chirping",
+   "morning"
+  ],
+  "license": "Pixabay"
+ },
+ "bird_chirp_3": {
+  "file": "ambience/bird_chirp_3.mp3",
+  "tags": [
+   "bird",
+   "chirp",
+   "chidiya"
+  ],
+  "license": "Pixabay"
+ },
+ "birds_forest_chirp": {
+  "file": "ambience/birds_forest_chirp.mp3",
+  "tags": [
+   "birds",
+   "forest",
+   "chirping"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_birds_river": {
+  "file": "ambience/forest_birds_river.mp3",
+  "tags": [
+   "forest",
+   "birds",
+   "river",
+   "nature"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_celtic_mystic_2": {
+  "file": "music/forest_celtic_mystic_2.mp3",
+  "tags": [
+   "celtic",
+   "mystic",
+   "forest"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_walk_band": {
+  "file": "music/forest_walk_band.mp3",
+  "tags": [
+   "forest",
+   "walk",
+   "band",
+   "folk"
+  ],
+  "license": "Pixabay"
+ },
+ "forest_hiding_place": {
+  "file": "music/forest_hiding_place.mp3",
+  "tags": [
+   "forest",
+   "suspense",
+   "hiding",
+   "tension"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -5348,7 +5443,7 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "forest": ["forest_relax_2", "forest_folk_song", "forest_celtic_mystic", "forest_dark_ambient", "forest_tales_orchestral", "forest_tales_halloween", "forest_lofi_piano", "forest_enchanted", "forest_reflections", "forest_epic_ballad", "forest_morning_harp", "forest_guitar", "forest_whispers", "forest_morning_mist", "forest_pathway", "forest_spirits_piano", "forest_relax", "forest_scent", "forest_harp", "forest_adventure"],
+    "forest": ["forest_celtic_mystic_2", "forest_walk_band", "forest_hiding_place", "forest_relax_2", "forest_folk_song", "forest_celtic_mystic", "forest_dark_ambient", "forest_tales_orchestral", "forest_tales_halloween", "forest_lofi_piano", "forest_enchanted", "forest_reflections", "forest_epic_ballad", "forest_morning_harp", "forest_guitar", "forest_whispers", "forest_morning_mist", "forest_pathway", "forest_spirits_piano", "forest_relax", "forest_scent", "forest_harp", "forest_adventure"],
     "halloween": ["halloween_bgm", "halloween_bgm_2", "halloween_scary", "halloween_spooky", "forest_tales_halloween"],
     "gate_open": ["door_open_a", "door_open_b", "door_open_c"],
     "door": ["electric_gate_open", "gate_close_2", "door_creaky_steel_wood", "iron_gate_courtyard", "door_lock_open", "door_iron_creak_old", "door_iron_creak_2", "iron_door_open_2", "door_open_a", "door_open_b", "door_open_c"],
@@ -5428,7 +5523,7 @@ VARIANTS = {
     "grass": ["steps_frozen_grass", "steps_grass_to_stairs"],
     "village": ["village_ambience"],
     "thunder": ["thunderstorm"],
-    "birds": ["birds_in_rain"],
+    "birds": ["birds_forest_1", "birds_forest_2", "birds_chirp_1", "birds_chirp_2", "bird_chirp_3", "birds_forest_chirp", "birds_in_rain"],
     "water": ["water_relax", "pour_glass", "kettle_pour", "boiling"],
     "chai": ["chai_1", "stirring_tea", "tea_boil", "kettle_cup", "boiling"],
     "cooker": ["cooker_whistle", "cooker_1", "cooker_2", "cooker_release", "cooker_low"],
