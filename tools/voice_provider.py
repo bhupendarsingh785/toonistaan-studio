@@ -246,20 +246,72 @@ def have_sarvam():
     return bool(sarvam_key())
 
 
-def sarvam_tts(text, kirdaar="madhur", out="out.wav"):
-    """Sarvam bulbul se awaaz (Hindi storytelling). Fail -> False."""
+# ---------------------------------------------------------------- bhaav (emotion) style
+# (temperature, pace-guna, pitch-guna) — Sarvam ke andar bhaav laane ke liye
+EMOTION_STYLE = {
+    "calm":      (0.70, 1.00, 1.00),
+    "normal":    (0.70, 1.00, 1.00),
+    "sad":       (0.62, 0.94, 0.96),   # dheema, dabba hua
+    "dukh":      (0.62, 0.94, 0.96),
+    "emotional": (0.66, 0.96, 0.97),
+    "scared":    (0.86, 1.08, 1.06),   # tez, kaanpta
+    "dar":       (0.86, 1.08, 1.06),
+    "happy":     (0.82, 1.06, 1.07),
+    "khushi":    (0.82, 1.06, 1.07),
+    "excited":   (0.88, 1.12, 1.10),
+    "angry":     (0.90, 1.10, 0.97),   # tez, gehra
+    "gussa":     (0.90, 1.10, 0.97),
+    "surprised": (0.85, 1.08, 1.08),
+    "whisper":   (0.60, 0.92, 1.02),
+}
+
+# Hindi me swabhavik rukavat ke liye jodne wale shabd
+_JOINERS = (" और ", " पर ", " लेकिन ", " क्योंकि ", " इसलिए ", " फिर ", " जब ", " जैसे ", " मगर ")
+
+
+def prep_text(text):
+    """Sarvam ko insan jaisi Hindi do: number shabd, comma, saaf spacing."""
+    t = str(text).strip()
+    if not t:
+        return t
+    t = re.sub(r"\s+", " ", t)
+    # angrezi ank -> Hindi shabd (chhote ank)
+    _num = {0: "शून्य", 1: "एक", 2: "दो", 3: "तीन", 4: "चार", 5: "पाँच", 6: "छह",
+            7: "सात", 8: "आठ", 9: "नौ", 10: "दस", 11: "ग्यारह", 12: "बारह",
+            20: "बीस", 30: "तीस", 40: "चालीस", 50: "पचास", 100: "सौ"}
+    def _n(m):
+        try:
+            v = int(m.group(0))
+        except Exception:
+            return m.group(0)
+        return _num.get(v, m.group(0))
+    t = re.sub(r"\b\d{1,3}\b", _n, t)
+    # jodne wale shabd se pehle comma (swabhavik saans)
+    for j in _JOINERS:
+        t = t.replace(j, " " + j.strip() + ", ")
+    t = re.sub(r",\s*,+", ",", t)
+    t = re.sub(r"\s{2,}", " ", t)
+    t = re.sub(r"\s+([,.।!?])", r"\1", t)
+    if not t.endswith((".", "।", "?", "!", "…")):
+        t += "।"
+    return t
+
+
+def sarvam_tts(text, kirdaar="madhur", out="out.wav", bhaav=None):
+    """Sarvam bulbul se awaaz — bhaav (emotion) ke saath. Fail -> False."""
     key = sarvam_key()
     if not key:
         return False
     import base64
     speaker = os.environ.get(f"SARVAM_SPEAKER_{kirdaar.upper()}") or SARVAM_SPEAKER.get(kirdaar, "shubh")
+    temp0, pace0, pitch0 = EMOTION_STYLE.get(str(bhaav or "calm").lower(), EMOTION_STYLE["calm"])
     payload = {
-        "text": str(text)[:2400],
+        "text": prep_text(text)[:2400],
         "language_code": os.environ.get("SARVAM_LANG", "hi-IN"),
         "speaker": speaker,
         "model": os.environ.get("SARVAM_MODEL", "bulbul:v3"),
-        "pace": float(os.environ.get("SARVAM_PACE", SARVAM_PACE.get(kirdaar, 1.0))),
-        "temperature": float(os.environ.get("SARVAM_TEMP", "0.7")),
+        "pace": round(float(os.environ.get("SARVAM_PACE", SARVAM_PACE.get(kirdaar, 1.0))) * pace0, 3),
+        "temperature": float(os.environ.get("SARVAM_TEMP", str(temp0))),
         "speech_sample_rate": 24000,
         "output_audio_codec": "wav",
     }
@@ -293,7 +345,7 @@ def sarvam_tts(text, kirdaar="madhur", out="out.wav"):
     open(out, "wb").write(audio)
 
     # pitch (umar ke hisaab se) — dadi bhaari, bacchi patli
-    pitch = SARVAM_PITCH.get(kirdaar, 1.0)
+    pitch = SARVAM_PITCH.get(kirdaar, 1.0) * pitch0
     if abs(pitch - 1.0) > 0.02:
         try:
             import shutil, subprocess, tempfile

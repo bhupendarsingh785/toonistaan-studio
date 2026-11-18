@@ -109,7 +109,7 @@ def _cache_path(text, kirdaar, engine):
     return os.path.join(CACHE_DIR, f"{h}.mp3")
 
 
-def _providers(text, kirdaar, out):
+def _providers(text, kirdaar, out, bhaav=None):
     """Ek line ko provider se banao. Jo chala wahi naam lauta."""
     # cache: ye line pehle ban chuki hai to API call hi nahi
     try:
@@ -124,7 +124,11 @@ def _providers(text, kirdaar, out):
 
     who = None
     if ENGINE in ("auto", "sarvam") and voice_provider is not None:
-        if voice_provider.have_sarvam() and voice_provider.sarvam_tts(text, kirdaar, out):
+        try:
+            _ok = voice_provider.sarvam_tts(text, kirdaar, out, bhaav=bhaav)
+        except TypeError:
+            _ok = voice_provider.sarvam_tts(text, kirdaar, out)
+        if voice_provider.have_sarvam() and _ok:
             who = "sarvam"
     if who is None and ENGINE in ("auto", "eleven") and voice_provider is not None:
         if voice_provider.have_eleven() and voice_provider.eleven_tts(text, kirdaar, out):
@@ -213,7 +217,7 @@ def bolo(text, kirdaar, bhaav, out, kaccha=False):
     if kirdaar not in KIRDAAR:
         sys.exit(f"kirdaar '{kirdaar}' nahi pata. Ye hain: {', '.join(KIRDAAR)}")
     tmp = tempfile.mktemp(suffix=".mp3")
-    who = _providers(text, kirdaar, tmp)
+    who = _providers(text, kirdaar, tmp, bhaav=bhaav)
     if who is None:
         _edge(text, kirdaar, bhaav, tmp)
         who = "edge"
@@ -235,7 +239,7 @@ def bolo_natural(text, kirdaar, bhaav, out, kaccha=False):
     used = set()
     for i, chunk in enumerate(_chunks(text)):
         f = os.path.join(tmpdir, f"c{i}.mp3")
-        who = _providers(chunk, kirdaar, f)
+        who = _providers(chunk, kirdaar, f, bhaav=bhaav)
         if who is None:
             _edge(chunk, kirdaar, bhaav, f, jitter=(random.choice([-2, -1, 0, 1, 2]),
                                                     random.choice([-3, -1, 0, 1, 3])))
