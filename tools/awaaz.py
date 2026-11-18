@@ -96,14 +96,56 @@ def ffmpeg(src, dst, af):
 
 
 # ---------------------------------------------------------------- provider chain
+# ASTRA_VOICE_ENGINE=auto|sarvam|eleven|edge   (edge = 0 kharch, key nahi)
+ENGINE = (os.environ.get("ASTRA_VOICE_ENGINE") or "auto").strip().lower()
+CACHE_DIR = os.environ.get("ASTRA_TTS_CACHE") or os.path.join(tempfile.gettempdir(), "astra_tts_cache")
+USED = {"sarvam": 0, "eleven": 0, "edge": 0, "cache": 0}
+
+
+def _cache_path(text, kirdaar, engine):
+    import hashlib
+    key = f"{engine}|{kirdaar}|{text.strip()}"
+    h = hashlib.sha1(key.encode("utf-8")).hexdigest()[:24]
+    return os.path.join(CACHE_DIR, f"{h}.mp3")
+
+
 def _providers(text, kirdaar, out):
-    """Ek line ko provider se banao. Jo chala wahi True."""
-    if voice_provider is not None:
+    """Ek line ko provider se banao. Jo chala wahi naam lauta."""
+    # cache: ye line pehle ban chuki hai to API call hi nahi
+    try:
+        cp = _cache_path(text, kirdaar, ENGINE)
+        if os.path.exists(cp) and os.path.getsize(cp) > 1500:
+            import shutil
+            shutil.copy(cp, out)
+            USED["cache"] += 1
+            return "cache"
+    except Exception:
+        cp = None
+
+    who = None
+    if ENGINE in ("auto", "sarvam") and voice_provider is not None:
         if voice_provider.have_sarvam() and voice_provider.sarvam_tts(text, kirdaar, out):
-            return "sarvam"
+            who = "sarvam"
+    if who is None and ENGINE in ("auto", "eleven") and voice_provider is not None:
         if voice_provider.have_eleven() and voice_provider.eleven_tts(text, kirdaar, out):
-            return "eleven"
-    return None
+            who = "eleven"
+
+    if who and cp:
+        try:
+            os.makedirs(CACHE_DIR, exist_ok=True)
+            import shutil
+            shutil.copy(out, cp)
+        except Exception:
+            pass
+    if who:
+        USED[who] = USED.get(who, 0) + 1
+    return who
+
+
+def engine_report():
+    total = sum(v for k, v in USED.items())
+    print("VOICE_ENGINE " + " ".join(f"{k}={v}" for k, v in USED.items() if v),
+          f"| total={total} | mode={ENGINE}", flush=True)
 
 
 def _edge(text, kirdaar, bhaav, out, jitter=(0, 0)):
@@ -194,6 +236,7 @@ def bolo_natural(text, kirdaar, bhaav, out, kaccha=False):
             _edge(chunk, kirdaar, bhaav, f, jitter=(random.choice([-2, -1, 0, 1, 2]),
                                                     random.choice([-3, -1, 0, 1, 3])))
             who = "edge"
+            USED["edge"] += 1
         used.add(who)
         pieces.append((f, _pause_for(chunk)))
 
