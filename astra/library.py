@@ -5677,6 +5677,105 @@ DEFAULT_INDEX = {
    "interface"
   ],
   "license": "Pixabay"
+ },
+ "fast_beat": {
+  "file": "music/fast_beat.mp3",
+  "tags": [
+   "fast",
+   "beat",
+   "action",
+   "tez",
+   "chase"
+  ],
+  "license": "Pixabay"
+ },
+ "final_stand": {
+  "file": "music/final_stand.mp3",
+  "tags": [
+   "final",
+   "stand",
+   "battle",
+   "epic",
+   "climax"
+  ],
+  "license": "Pixabay"
+ },
+ "tension_trailer_bed": {
+  "file": "music/tension_trailer_bed.mp3",
+  "tags": [
+   "tension",
+   "trailer",
+   "bed",
+   "suspense"
+  ],
+  "license": "Pixabay"
+ },
+ "aggressive_trailer_intro": {
+  "file": "music/aggressive_trailer_intro.mp3",
+  "tags": [
+   "aggressive",
+   "trailer",
+   "intro",
+   "action"
+  ],
+  "license": "Pixabay"
+ },
+ "horror_intro_dark": {
+  "file": "horror/horror_intro_dark.mp3",
+  "tags": [
+   "horror",
+   "intro",
+   "dark",
+   "tension"
+  ],
+  "license": "Pixabay"
+ },
+ "logo_snap_tech": {
+  "file": "transitions/logo_snap_tech.mp3",
+  "tags": [
+   "sting",
+   "logo",
+   "snap",
+   "tech"
+  ],
+  "license": "Pixabay"
+ },
+ "whoosh_reverse_8": {
+  "file": "transitions/whoosh_reverse_8.mp3",
+  "tags": [
+   "whoosh",
+   "reverse",
+   "transition"
+  ],
+  "license": "Pixabay"
+ },
+ "crystal_swell": {
+  "file": "transitions/crystal_swell.mp3",
+  "tags": [
+   "swell",
+   "ethereal",
+   "magic",
+   "transition"
+  ],
+  "license": "Pixabay"
+ },
+ "tonal_riser_cinematic_7": {
+  "file": "transitions/tonal_riser_cinematic_7.mp3",
+  "tags": [
+   "riser",
+   "cinematic",
+   "transition"
+  ],
+  "license": "Pixabay"
+ },
+ "tonal_riser_cinematic_3": {
+  "file": "transitions/tonal_riser_cinematic_3.mp3",
+  "tags": [
+   "riser",
+   "cinematic",
+   "transition"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -5693,13 +5792,13 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "transition": ["tonal_riser_1", "tonal_riser_3", "tonal_riser_smooth_2", "tonal_riser_smooth_7",
+    "transition": ["whoosh_reverse_8", "crystal_swell", "tonal_riser_cinematic_7", "tonal_riser_cinematic_3", "logo_snap_tech", "tonal_riser_1", "tonal_riser_3", "tonal_riser_smooth_2", "tonal_riser_smooth_7",
                    "tonal_riser_smooth_8", "tonal_riser_cinematic_8", "whoosh_reverse_low",
                    "choir_transition", "cyber_crash"],
     "riser": ["tonal_riser_1", "tonal_riser_3", "tonal_riser_cinematic_8"],
     "whoosh": ["whoosh_reverse_low"],
     "sting": ["logo_sting_synthwave", "cyber_crash"],
-    "epic": ["epic_hybrid_orchestra", "deep_breath_epic", "countdown_action", "trailer_lacrimosa", "trailer_teaser"],
+    "epic": ["final_stand", "aggressive_trailer_intro", "epic_hybrid_orchestra", "deep_breath_epic", "countdown_action", "trailer_lacrimosa", "trailer_teaser"],
     "trailer": ["trailer_teaser", "trailer_lacrimosa", "countdown_action"],
     "comedy": ["fun_banana_slip", "fun_guitar"],
     "chicken": ["chicken_coop"],
