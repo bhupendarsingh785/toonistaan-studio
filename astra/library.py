@@ -11657,6 +11657,106 @@ DEFAULT_INDEX = {
    "clink"
   ],
   "license": "CC0/BVKER"
+ },
+ "glass_bvk_21": {
+  "file": "foley/glass_bvk_21.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "glass_bvk_22": {
+  "file": "foley/glass_bvk_22.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "glass_bvk_23": {
+  "file": "foley/glass_bvk_23.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "glass_bvk_24": {
+  "file": "foley/glass_bvk_24.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "glass_bvk_25": {
+  "file": "foley/glass_bvk_25.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "glass_bvk_26": {
+  "file": "foley/glass_bvk_26.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "glass_bvk_27": {
+  "file": "foley/glass_bvk_27.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "glass_bvk_28": {
+  "file": "foley/glass_bvk_28.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "glass_bvk_29": {
+  "file": "foley/glass_bvk_29.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "glass_bvk_30": {
+  "file": "foley/glass_bvk_30.mp3",
+  "tags": [
+   "glass",
+   "kanch",
+   "काँच",
+   "clink"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -11708,7 +11808,7 @@ VARIANTS = {
     "bathroom": ["bathroom_1", "bathroom_2", "bathroom_3", "shower"],
     "kulla": ["gargling", "rinse"],
     "siyar": ["jackal", "dingo_howl"],
-    "kanch": ["glass_bvk_1", "glass_bvk_2", "glass_bvk_3", "glass_bvk_4", "glass_bvk_5", "glass_bvk_6", "glass_bvk_7", "glass_bvk_8", "glass_bvk_9", "glass_bvk_10", "glass_bvk_11", "glass_bvk_12", "glass_bvk_13", "glass_bvk_14", "glass_bvk_15", "glass_bvk_16", "glass_bvk_17", "glass_bvk_18", "glass_bvk_19", "glass_bvk_20", "glass"],
+    "kanch": ["glass_bvk_1", "glass_bvk_2", "glass_bvk_3", "glass_bvk_4", "glass_bvk_5", "glass_bvk_6", "glass_bvk_7", "glass_bvk_8", "glass_bvk_9", "glass_bvk_10", "glass_bvk_11", "glass_bvk_12", "glass_bvk_13", "glass_bvk_14", "glass_bvk_15", "glass_bvk_16", "glass_bvk_17", "glass_bvk_18", "glass_bvk_19", "glass_bvk_20", "glass_bvk_21", "glass_bvk_22", "glass_bvk_23", "glass_bvk_24", "glass_bvk_25", "glass_bvk_26", "glass_bvk_27", "glass_bvk_28", "glass_bvk_29", "glass_bvk_30", "glass"],
     "ghaas": ["run_tall_grass", "steps_grass"],
     "cicada": ["cicada_1", "cicada_2"],
     "chichdi": ["cicada_1", "cicada_2"],
