@@ -35,6 +35,19 @@ SNAP = os.path.join(HERE, "library-snapshot.json")
 LIMIT_FILES = 2
 LIMIT_PCT = 0.5      # library ka 0.5% se zyada bhi shak
 
+# ye jagah protected hain — yahan ek bhi file delete/move ho to SHAK
+PROTECT = (
+    "astra/library/",
+    "astra/",
+    "studio/",
+    "tools/",
+    ".github/workflows/",
+)
+
+
+def _protected(path):
+    return any(path.startswith(p) for p in PROTECT)
+
 
 def git(*args):
     r = subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True)
@@ -54,6 +67,8 @@ def deleted_in_last_commit(ref="HEAD"):
         status = parts[0]
         if status.startswith("D"):
             gone.append(parts[-1])
+        elif status.startswith("R") and len(parts) >= 3:
+            gone.append(parts[1])      # move: purani jagah se hat gayi
     return gone
 
 
@@ -68,14 +83,16 @@ def check(verbose=True):
     gone = deleted_in_last_commit()
     total = count_files()
     lib_gone = [g for g in gone if g.startswith("astra/library/")]
+    prot_gone = [g for g in gone if _protected(g) and not g.endswith(".md")]
     limit = max(LIMIT_FILES, int(total * LIMIT_PCT / 100))
-    bad = len(gone) > limit or len(lib_gone) > 2
+    bad = bool(prot_gone) or len(gone) > limit or len(lib_gone) > 2
     if verbose:
-        print(f"GUARD files={total} deleted_last_commit={len(gone)} "
+        print(f"GUARD files={total} deleted={len(gone)} protected={len(prot_gone)} "
               f"(library={len(lib_gone)}) limit={limit} -> {'SHAK' if bad else 'OK'}")
         for g in gone[:10]:
             print("   gayab:", g)
-    return {"bad": bad, "deleted": gone, "library_deleted": lib_gone, "files": total}
+    return {"bad": bad, "deleted": gone, "library_deleted": lib_gone,
+            "protected_deleted": prot_gone, "files": total}
 
 
 def missing_vs_snapshot():
@@ -99,6 +116,24 @@ def restore(verbose=True):
         if verbose:
             print("GUARD restore: kuch gayab nahi")
         return 0
+    # move (rename) hua ho to purani jagah wapas
+    try:
+        code, out, _ = git("diff", "--name-status", "HEAD~1", "HEAD")
+        for line in (out or "").splitlines():
+            parts = line.split("\t")
+            if parts and parts[0].startswith("R") and len(parts) >= 3:
+                old, new = parts[1], parts[2]
+                if os.path.exists(os.path.join(ROOT, new)):
+                    try:
+                        os.makedirs(os.path.dirname(os.path.join(ROOT, old)), exist_ok=True)
+                        os.replace(os.path.join(ROOT, new), os.path.join(ROOT, old))
+                        if verbose:
+                            print(f"   wapas move: {new} -> {old}")
+                    except Exception:
+                        pass
+    except Exception:
+        pass
+
     back = 0
     for path in targets:
         ok = False
