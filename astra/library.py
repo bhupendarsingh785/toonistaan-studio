@@ -17216,6 +17216,39 @@ DEFAULT_INDEX = {
    "impact"
   ],
   "license": "CC0/BVKER"
+ },
+ "typing_1": {
+  "file": "office/typing_1.mp3",
+  "tags": [
+   "typing",
+   "keyboard",
+   "type",
+   "laptop",
+   "kaam"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "typing_2": {
+  "file": "office/typing_2.mp3",
+  "tags": [
+   "typing",
+   "keyboard",
+   "type",
+   "laptop",
+   "kaam"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "typing_3": {
+  "file": "office/typing_3.mp3",
+  "tags": [
+   "typing",
+   "keyboard",
+   "type",
+   "laptop",
+   "kaam"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -17232,6 +17265,8 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "typing": ["typing_1", "typing_2", "typing_3"],
+    "keyboard": ["typing_1", "typing_2", "typing_3"],
     "thud": ["thud_1", "thud_2", "thud_3", "thud_4", "thud_5", "thud_6", "thud_7", "thud_8", "thud_9", "thud_10", "thud_11", "thud_12", "thud_13", "thud_14", "thud_15", "thud_16"],
     "dhap": ["thud_1", "thud_2", "thud_3", "thud_4", "thud_5", "thud_6", "thud_7", "thud_8", "thud_9", "thud_10", "thud_11", "thud_12", "thud_13", "thud_14", "thud_15", "thud_16"],
     "scissors": ["scissors_1", "scissors_2", "scissors_3", "scissors_4", "scissors_5", "scissors_6", "scissors_7", "scissors_8", "scissors_9", "scissors_10", "scissors_11", "scissors_12", "scissors_13", "scissors_14"],
