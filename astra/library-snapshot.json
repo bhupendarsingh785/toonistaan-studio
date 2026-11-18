@@ -1,5 +1,5 @@
 {
-"count": 1059,
+"count": 1069,
 "files": {
 "library/.cleaned.json": {
 "size": 36149,
@@ -4081,6 +4081,10 @@
 "size": 78828,
 "md5": "3dd50aacc0c40e4e764efecd423fc354"
 },
+"library/foley/lighter_3_thin.mp3": {
+"size": 3700,
+"md5": "70e38036e2fdda02e957392f8cbb1db4"
+},
 "library/foley/coins_counting.mp3": {
 "size": 46645,
 "md5": "4d92996bf20d471e31f22ce01157a0ef"
@@ -4104,6 +4108,18 @@
 "library/foley/coins_spill_2.mp3": {
 "size": 163674,
 "md5": "c7c7e0ecbb529900f8884e774ac9da65"
+},
+"library/foley/lighter_2.mp3": {
+"size": 3517,
+"md5": "2fe7e22f8d677604bfa5829c61e144c4"
+},
+"library/foley/lighter_1_thin.mp3": {
+"size": 1323,
+"md5": "aacc32850988dd1fe1b4ce8297d87496"
+},
+"library/foley/lighter_4_thin.mp3": {
+"size": 3334,
+"md5": "2002d21762a969a85040d95ae24dfac7"
 },
 "library/foley/coins_in_bowl.mp3": {
 "size": 64826,
@@ -4141,9 +4157,21 @@
 "size": 229293,
 "md5": "88e46c086a86356d96418829dbf83dfa"
 },
+"library/foley/cigarette_3.mp3": {
+"size": 32774,
+"md5": "e3382728f3748f26cb7f09b552bc6b4a"
+},
+"library/foley/lighter_1.mp3": {
+"size": 1323,
+"md5": "3e8231b1f4dd075ee354336a9b8e48a0"
+},
 "library/foley/paper_rip_fast.mp3": {
 "size": 8820,
 "md5": "6caeda6fb80f5ba9e50bfe81c880bda6"
+},
+"library/foley/lighter_3.mp3": {
+"size": 3700,
+"md5": "ee12dc0d68c27051684aacdcb4584e89"
 },
 "library/foley/rope_knot.mp3": {
 "size": 9447,
@@ -4164,6 +4192,10 @@
 "library/foley/paper_flutter.mp3": {
 "size": 437019,
 "md5": "dac1e9c831d22af4cf9261516a465811"
+},
+"library/foley/cigarette_2.mp3": {
+"size": 55083,
+"md5": "7c5ef7808d2954c7b727028cbe0781ea"
 },
 "library/foley/coin_drop_1.mp3": {
 "size": 13208,
@@ -4197,6 +4229,10 @@
 "size": 69842,
 "md5": "3627ea8340477f9c61b7edd587190397"
 },
+"library/foley/cigarette_1.mp3": {
+"size": 38991,
+"md5": "97f736d0adceb5cd3255d0497b7b9ba3"
+},
 "library/foley/coins_on_plate.mp3": {
 "size": 62109,
 "md5": "839b12dd4bb958fbdd2ae07a695df16a"
@@ -4228,6 +4264,10 @@
 "library/foley/paper_rip_2.mp3": {
 "size": 13835,
 "md5": "c7b062b6adf2fa1935ee5226c2b7c17c"
+},
+"library/foley/lighter_2_thin.mp3": {
+"size": 3517,
+"md5": "69e00b85094277a419607c59e6c2f7a1"
 },
 "library/foley/coin_drop_4.mp3": {
 "size": 7357,
