@@ -12543,6 +12543,112 @@ DEFAULT_INDEX = {
    "band"
   ],
   "license": "CC0/BVKER"
+ },
+ "drawer_1": {
+  "file": "foley/drawer_1.mp3",
+  "tags": [
+   "drawer",
+   "daraz",
+   "दराज़",
+   "khulna",
+   "band"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "drawer_2": {
+  "file": "foley/drawer_2.mp3",
+  "tags": [
+   "drawer",
+   "daraz",
+   "दराज़",
+   "khulna",
+   "band"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "drawer_3": {
+  "file": "foley/drawer_3.mp3",
+  "tags": [
+   "drawer",
+   "daraz",
+   "दराज़",
+   "khulna",
+   "band"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "drawer_4": {
+  "file": "foley/drawer_4.mp3",
+  "tags": [
+   "drawer",
+   "daraz",
+   "दराज़",
+   "khulna",
+   "band"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "drawer_5": {
+  "file": "foley/drawer_5.mp3",
+  "tags": [
+   "drawer",
+   "daraz",
+   "दराज़",
+   "khulna",
+   "band"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "drawer_6": {
+  "file": "foley/drawer_6.mp3",
+  "tags": [
+   "drawer",
+   "daraz",
+   "दराज़",
+   "khulna",
+   "band"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "drawer_7": {
+  "file": "foley/drawer_7.mp3",
+  "tags": [
+   "drawer",
+   "daraz",
+   "दराज़",
+   "khulna",
+   "band"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "drawer_8": {
+  "file": "foley/drawer_8.mp3",
+  "tags": [
+   "drawer",
+   "daraz",
+   "दराज़",
+   "khulna",
+   "band"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "bvk_door_39": {
+  "file": "door/bvk_door_39.mp3",
+  "tags": [
+   "door",
+   "darwaza",
+   "khulna"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "bvk_door_40": {
+  "file": "door/bvk_door_40.mp3",
+  "tags": [
+   "door",
+   "darwaza",
+   "khulna"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -12559,7 +12665,9 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "bvk_door": ["bvk_door_1", "bvk_door_2", "bvk_door_3", "bvk_door_4", "bvk_door_5", "bvk_door_6", "bvk_door_7", "bvk_door_8", "bvk_door_9", "bvk_door_10", "bvk_door_11", "bvk_door_12", "bvk_door_13", "bvk_door_14", "bvk_door_15", "bvk_door_16", "bvk_door_17", "bvk_door_18", "bvk_door_19", "bvk_door_20", "bvk_door_21", "bvk_door_22", "bvk_door_23", "bvk_door_24", "bvk_door_25", "bvk_door_26", "bvk_door_27", "bvk_door_28", "bvk_door_29", "bvk_door_30", "bvk_door_31", "bvk_door_32", "bvk_door_33", "bvk_door_34", "bvk_door_35", "bvk_door_36", "bvk_door_37", "bvk_door_38"],
+    "drawer": ["drawer_1", "drawer_2", "drawer_3", "drawer_4", "drawer_5", "drawer_6", "drawer_7", "drawer_8"],
+    "daraz": ["drawer_1", "drawer_2", "drawer_3"],
+    "bvk_door": ["bvk_door_1", "bvk_door_2", "bvk_door_3", "bvk_door_4", "bvk_door_5", "bvk_door_6", "bvk_door_7", "bvk_door_8", "bvk_door_9", "bvk_door_10", "bvk_door_11", "bvk_door_12", "bvk_door_13", "bvk_door_14", "bvk_door_15", "bvk_door_16", "bvk_door_17", "bvk_door_18", "bvk_door_19", "bvk_door_20", "bvk_door_21", "bvk_door_22", "bvk_door_23", "bvk_door_24", "bvk_door_25", "bvk_door_26", "bvk_door_27", "bvk_door_28", "bvk_door_29", "bvk_door_30", "bvk_door_31", "bvk_door_32", "bvk_door_33", "bvk_door_34", "bvk_door_35", "bvk_door_36", "bvk_door_37", "bvk_door_38", "bvk_door_39", "bvk_door_40"],
     "closet": ["closet_1", "closet_2", "closet_3", "closet_4", "closet_5", "closet_6", "closet_7", "closet_8", "closet_9", "closet_10", "closet_11", "closet_12"],
     "almari": ["closet_1", "closet_2", "closet_3"],
     "guitar": ["guitar_riff_1", "guitar_riff_2", "guitar_riff_3", "guitar_riff_4", "guitar_riff_5", "guitar_riff_6", "guitar_riff_7", "guitar_riff_8", "guitar_riff_9", "guitar_riff_10"],
