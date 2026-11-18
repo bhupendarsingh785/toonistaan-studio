@@ -16474,6 +16474,78 @@ DEFAULT_INDEX = {
    "clatter"
   ],
   "license": "CC0/BVKER"
+ },
+ "random_59": {
+  "file": "foley/random_59.mp3",
+  "tags": [
+   "foley",
+   "random",
+   "clatter"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "random_60": {
+  "file": "foley/random_60.mp3",
+  "tags": [
+   "foley",
+   "random",
+   "clatter"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "random_61": {
+  "file": "foley/random_61.mp3",
+  "tags": [
+   "foley",
+   "random",
+   "clatter"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "random_62": {
+  "file": "foley/random_62.mp3",
+  "tags": [
+   "foley",
+   "random",
+   "clatter"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "random_63": {
+  "file": "foley/random_63.mp3",
+  "tags": [
+   "foley",
+   "random",
+   "clatter"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "random_64": {
+  "file": "foley/random_64.mp3",
+  "tags": [
+   "foley",
+   "random",
+   "clatter"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "random_65": {
+  "file": "foley/random_65.mp3",
+  "tags": [
+   "foley",
+   "random",
+   "clatter"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "random_66": {
+  "file": "foley/random_66.mp3",
+  "tags": [
+   "foley",
+   "random",
+   "clatter"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -16490,7 +16562,7 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "random": ["random_1", "random_2", "random_3", "random_4", "random_5", "random_6", "random_7", "random_8", "random_9", "random_10", "random_11", "random_12", "random_13", "random_14", "random_15", "random_16", "random_17", "random_18", "random_19", "random_20", "random_21", "random_22", "random_23", "random_24", "random_25", "random_26", "random_27", "random_28", "random_29", "random_30", "random_31", "random_32", "random_33", "random_34", "random_35", "random_36", "random_37", "random_38", "random_39", "random_40", "random_41", "random_42", "random_43", "random_44", "random_45", "random_46", "random_47", "random_48", "random_49", "random_50", "random_51", "random_52", "random_53", "random_54", "random_55", "random_56", "random_57", "random_58"],
+    "random": ["random_1", "random_2", "random_3", "random_4", "random_5", "random_6", "random_7", "random_8", "random_9", "random_10", "random_11", "random_12", "random_13", "random_14", "random_15", "random_16", "random_17", "random_18", "random_19", "random_20", "random_21", "random_22", "random_23", "random_24", "random_25", "random_26", "random_27", "random_28", "random_29", "random_30", "random_31", "random_32", "random_33", "random_34", "random_35", "random_36", "random_37", "random_38", "random_39", "random_40", "random_41", "random_42", "random_43", "random_44", "random_45", "random_46", "random_47", "random_48", "random_49", "random_50", "random_51", "random_52", "random_53", "random_54", "random_55", "random_56", "random_57", "random_58", "random_59", "random_60", "random_61", "random_62", "random_63", "random_64", "random_65", "random_66"],
     "noise": ["noise_random_1", "noise_random_2"],
     "pot": ["pot_1", "pot_2", "pot_3", "pot_4", "pot_5", "pot_6", "pot_7", "pot_8", "pot_9", "pot_10", "pot_11", "pot_12", "pot_13", "pot_14", "pot_15", "pot_16", "pot_17", "pot_18", "pot_19", "pot_20", "pot_21", "pot_22", "pot_23", "pot_24", "pot_25", "pot_26", "pot_27", "pot_28", "pot_29", "pot_30", "pot_31", "pot_32", "pot_33", "pot_34", "pot_35", "pot_36", "pot_37", "pot_38", "pot_39", "pot_40", "pot_41", "pot_42", "pot_43", "pot_44", "pot_45", "pot_46", "pot_47", "pot_48", "pot_49", "pot_50", "pot_51", "pot_52", "pot_53", "pot_54", "pot_55", "pot_56", "pot_57", "pot_58", "pot_59", "pot_60", "pot_61", "pot_62"],
     "bartan": ["pot_1", "pot_2", "pot_3", "pot_4", "pot_5", "pot_6", "pot_7", "pot_8", "pot_9", "pot_10", "pot_11", "pot_12", "pot_13", "pot_14", "pot_15", "pot_16", "pot_17", "pot_18", "pot_19", "pot_20", "pot_21", "pot_22", "pot_23", "pot_24", "pot_25", "pot_26", "pot_27", "pot_28", "pot_29", "pot_30", "pot_31", "pot_32", "pot_33", "pot_34", "pot_35", "pot_36", "pot_37", "pot_38", "pot_39", "pot_40", "pot_41", "pot_42", "pot_43", "pot_44", "pot_45", "pot_46", "pot_47", "pot_48", "pot_49", "pot_50", "pot_51", "pot_52", "pot_53", "pot_54", "pot_55", "pot_56", "pot_57", "pot_58", "pot_59", "pot_60", "pot_61", "pot_62"],
