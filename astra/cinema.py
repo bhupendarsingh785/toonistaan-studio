@@ -542,6 +542,18 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
     if r.returncode != 0:
         sys.exit("master fail: " + r.stderr[-300:])
 
+    # ---- QA gate (technical jaanch — audio ko badalta nahi) ----
+    try:
+        import qa_gate as _QA
+        _q = _QA.run_qa(out_path)
+        cue["qa"] = _q
+        if verbose:
+            print("QA", _q.get("status"), _q.get("sample_peak_dbfs"), "dBFS",
+                  "| true peak", _q.get("true_peak_dbtp"), "|", _q.get("reason", ""), flush=True)
+    except Exception as _e:
+        if verbose:
+            print("QA_SKIP", str(_e)[:60], flush=True)
+
     if cue.get("world_engine"):
         rendered_status = {}
         for _kind, _payload, _start in plan:
