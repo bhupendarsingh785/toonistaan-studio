@@ -8913,6 +8913,95 @@ DEFAULT_INDEX = {
    "tota"
   ],
   "license": "Wikimedia/XC"
+ },
+ "frog_choir_1": {
+  "file": "animals/frog_choir_1.mp3",
+  "tags": [
+   "frog",
+   "mendhak",
+   "मेंढक",
+   "choir",
+   "raat",
+   "baarish"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "frog_choir_2": {
+  "file": "animals/frog_choir_2.mp3",
+  "tags": [
+   "frog",
+   "choir",
+   "pond",
+   "talab"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "frog_choir_3": {
+  "file": "animals/frog_choir_3.mp3",
+  "tags": [
+   "frog",
+   "choir",
+   "night",
+   "raat"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "frog_single_1": {
+  "file": "animals/frog_single_1.mp3",
+  "tags": [
+   "frog",
+   "single",
+   "call",
+   "mendhak"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "frog_single_2": {
+  "file": "animals/frog_single_2.mp3",
+  "tags": [
+   "frog",
+   "single",
+   "call"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "frog_single_3": {
+  "file": "animals/frog_single_3.mp3",
+  "tags": [
+   "frog",
+   "single",
+   "spadefoot"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "frog_single_4": {
+  "file": "animals/frog_single_4.mp3",
+  "tags": [
+   "frog",
+   "single",
+   "midwife"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "frog_alarm": {
+  "file": "animals/frog_alarm.mp3",
+  "tags": [
+   "frog",
+   "alarm",
+   "distress",
+   "khatra"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "tinamou_andean": {
+  "file": "birds/tinamou_andean.mp3",
+  "tags": [
+   "tinamou",
+   "bird",
+   "andean",
+   "call"
+  ],
+  "license": "Wikimedia/XC"
  }
 }
 
@@ -8929,6 +9018,9 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "mendhak": ["frog_choir_1", "frog_choir_2", "frog_choir_3", "frog_single_1", "frog_single_2", "frog_alarm"],
+    "frog": ["frog_choir_1", "frog_choir_2", "frog_choir_3", "frog_single_1", "frog_single_2", "frog_alarm"],
+    "talab": ["frog_choir_1", "pond", "water"],
     "koyal": ["cuckoo_brush", "cuckoo"],
     "maina": ["myna_3", "myna_4", "myna_5", "myna_2", "myna_bird"],
     "tota": ["cockatoo_galah", "cockatoo_black", "parrot_1"],
