@@ -12649,6 +12649,70 @@ DEFAULT_INDEX = {
    "khulna"
   ],
   "license": "CC0/BVKER"
+ },
+ "noisy_floor_1": {
+  "file": "footsteps/noisy_floor_1.mp3",
+  "tags": [
+   "noisy floor",
+   "farsh",
+   "farash",
+   "चरमराता",
+   "creak"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "noisy_floor_2": {
+  "file": "footsteps/noisy_floor_2.mp3",
+  "tags": [
+   "noisy floor",
+   "farsh",
+   "farash",
+   "चरमराता",
+   "creak"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "noisy_floor_3": {
+  "file": "footsteps/noisy_floor_3.mp3",
+  "tags": [
+   "noisy floor",
+   "farsh",
+   "farash",
+   "चरमराता",
+   "creak"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "noisy_floor_4": {
+  "file": "footsteps/noisy_floor_4.mp3",
+  "tags": [
+   "noisy floor",
+   "farsh",
+   "farash",
+   "चरमराता",
+   "creak"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "noisy_floor_5": {
+  "file": "footsteps/noisy_floor_5.mp3",
+  "tags": [
+   "noisy floor",
+   "farsh",
+   "farash",
+   "चरमराता",
+   "creak"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "drawer_9": {
+  "file": "foley/drawer_9.mp3",
+  "tags": [
+   "drawer",
+   "daraz",
+   "दराज़"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -12665,7 +12729,9 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "drawer": ["drawer_1", "drawer_2", "drawer_3", "drawer_4", "drawer_5", "drawer_6", "drawer_7", "drawer_8"],
+    "noisy_floor": ["noisy_floor_1", "noisy_floor_2", "noisy_floor_3", "noisy_floor_4", "noisy_floor_5"],
+    "farash": ["noisy_floor_1", "noisy_floor_2", "noisy_floor_3"],
+    "drawer": ["drawer_1", "drawer_2", "drawer_3", "drawer_4", "drawer_5", "drawer_6", "drawer_7", "drawer_8", "drawer_9"],
     "daraz": ["drawer_1", "drawer_2", "drawer_3"],
     "bvk_door": ["bvk_door_1", "bvk_door_2", "bvk_door_3", "bvk_door_4", "bvk_door_5", "bvk_door_6", "bvk_door_7", "bvk_door_8", "bvk_door_9", "bvk_door_10", "bvk_door_11", "bvk_door_12", "bvk_door_13", "bvk_door_14", "bvk_door_15", "bvk_door_16", "bvk_door_17", "bvk_door_18", "bvk_door_19", "bvk_door_20", "bvk_door_21", "bvk_door_22", "bvk_door_23", "bvk_door_24", "bvk_door_25", "bvk_door_26", "bvk_door_27", "bvk_door_28", "bvk_door_29", "bvk_door_30", "bvk_door_31", "bvk_door_32", "bvk_door_33", "bvk_door_34", "bvk_door_35", "bvk_door_36", "bvk_door_37", "bvk_door_38", "bvk_door_39", "bvk_door_40"],
     "closet": ["closet_1", "closet_2", "closet_3", "closet_4", "closet_5", "closet_6", "closet_7", "closet_8", "closet_9", "closet_10", "closet_11", "closet_12"],
