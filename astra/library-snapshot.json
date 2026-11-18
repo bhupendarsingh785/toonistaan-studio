@@ -1,9 +1,9 @@
 {
-"count": 1632,
+"count": 1642,
 "files": {
 "library/.cleaned.json": {
-"size": 50591,
-"md5": "d784db2710a2e26322a41fc9d3566efd"
+"size": 51401,
+"md5": "1b44b8d6b047ed347174800c929be5f8"
 },
 "library/README.md": {
 "size": 1760,
@@ -5526,12 +5526,12 @@
 "md5": "60971f554bb11d7fa4d61fe825ffcf64"
 },
 "library/foley/random_32.mp3": {
-"size": 2237,
-"md5": "5be8e02ab0aeeb531e1efee8022c914e"
+"size": 2550,
+"md5": "af43286974d012872835ed552d0f3905"
 },
 "library/foley/random_50.mp3": {
-"size": 1871,
-"md5": "7d40e82cf8f3808fc10b3968580f9940"
+"size": 2132,
+"md5": "aee4c9712400502d4792b74bc8fa970a"
 },
 "library/foley/lighter_30.mp3": {
 "size": 12163,
@@ -5573,6 +5573,10 @@
 "size": 1506,
 "md5": "66866dcd83472727e932c08ec57df66e"
 },
+"library/foley/scissors_6.mp3": {
+"size": 1871,
+"md5": "65e1075d60fe6c1ecc52a4c71a801244"
+},
 "library/foley/lighter_25.mp3": {
 "size": 1688,
 "md5": "f4563575dcbdca40fcd6813c2458922a"
@@ -5582,8 +5586,8 @@
 "md5": "c03ee6e3b5545cb5bf648d195f689c4f"
 },
 "library/foley/random_48.mp3": {
-"size": 2968,
-"md5": "65b5df3f0306c27829b17b4ab24ad44d"
+"size": 3386,
+"md5": "07479206b6a4a726aa38d37dd73bccdc"
 },
 "library/foley/closet_6.mp3": {
 "size": 8402,
@@ -5617,6 +5621,10 @@
 "size": 3804,
 "md5": "a0e7c82d7676d8c83718269c6cad2c20"
 },
+"library/foley/scissors_3.mp3": {
+"size": 1323,
+"md5": "b4618917db0760e0dbf067dfd5cc0f76"
+},
 "library/foley/glass_bvk_21.mp3": {
 "size": 4013,
 "md5": "528b4717ce3cfe1ecba4bbf256ec61be"
@@ -5641,9 +5649,13 @@
 "size": 2550,
 "md5": "a75cf04ea24db9165a5e009e18e7ec12"
 },
+"library/foley/scissors_4.mp3": {
+"size": 2237,
+"md5": "f30d0658d34899873aabdad8018c3ea3"
+},
 "library/foley/random_56.mp3": {
-"size": 2603,
-"md5": "e74bb218fb1eb80041315ed8297365ad"
+"size": 2968,
+"md5": "eb59a17dc1116fdef9c8a836cba7d162"
 },
 "library/foley/random_20.mp3": {
 "size": 4431,
@@ -5678,8 +5690,8 @@
 "md5": "2baee1d4f7d520feb351efab44c49f6b"
 },
 "library/foley/random_33.mp3": {
-"size": 2237,
-"md5": "fa3e0598ca0481c40ca7731bc95f7634"
+"size": 2550,
+"md5": "f653ab3d480295e4b57063d7b6a00e65"
 },
 "library/foley/lighter_32.mp3": {
 "size": 1323,
@@ -5714,16 +5726,16 @@
 "md5": "8ce8a7cd7220c1180c742c7237b2e1bd"
 },
 "library/foley/random_31.mp3": {
-"size": 5528,
-"md5": "7a8577a527ebd02a2b2f0891cc4075d3"
+"size": 6312,
+"md5": "9b9ba0d28a6d504c20998a8b2f590812"
 },
 "library/foley/woop_1.mp3": {
 "size": 1323,
 "md5": "cf69009acf5f5a3d81bac95f0c477cad"
 },
 "library/foley/random_44.mp3": {
-"size": 4614,
-"md5": "eab5be4dcea5f69786254603e653f8ee"
+"size": 5267,
+"md5": "96221d3fc4ca9ad87d2639b9c28bf9ce"
 },
 "library/foley/glass_bvk_20.mp3": {
 "size": 4013,
@@ -5757,6 +5769,10 @@
 "size": 1323,
 "md5": "bbc66971ec81335dcdf9e9ab87a7178d"
 },
+"library/foley/scissors_1.mp3": {
+"size": 4248,
+"md5": "9d06fb20541601e34394e8a123c062be"
+},
 "library/foley/glass_bvk_15.mp3": {
 "size": 1323,
 "md5": "ff79c8af54fd0ce7d20b1db53e76059f"
@@ -5782,8 +5798,8 @@
 "md5": "53d537cbbd707190af58bd21173b049d"
 },
 "library/foley/random_40.mp3": {
-"size": 3334,
-"md5": "1151d29c8d05da9f9caf7e2770326b0d"
+"size": 3804,
+"md5": "71f4a36a785d699fe9091e961b27ed46"
 },
 "library/foley/glass_bvk_9.mp3": {
 "size": 2132,
@@ -5869,9 +5885,13 @@
 "size": 37450,
 "md5": "80e18a7e235e947d87fe001c0571a5c1"
 },
+"library/foley/haircut_3.mp3": {
+"size": 37346,
+"md5": "a373b6286772d20202919d316d1ef959"
+},
 "library/foley/random_49.mp3": {
-"size": 3151,
-"md5": "cb950e3fa28964e39492aaa18e3c5ddc"
+"size": 3595,
+"md5": "e839e5f831f01ffc57ae9b3ee898ca66"
 },
 "library/foley/pop_6.mp3": {
 "size": 1323,
@@ -5881,9 +5901,13 @@
 "size": 2968,
 "md5": "a32d90a0f89f0748e2cd9dabcc884294"
 },
+"library/foley/scissors_2.mp3": {
+"size": 5346,
+"md5": "d11cd21927440124841327d2e8cf1426"
+},
 "library/foley/random_41.mp3": {
-"size": 6260,
-"md5": "8cc45743b52d3002266f26b3b5065d11"
+"size": 7148,
+"md5": "4330a5881f0d2261090cfeaad1c55042"
 },
 "library/foley/drawer_2.mp3": {
 "size": 14462,
@@ -5906,8 +5930,8 @@
 "md5": "2196317a38ce878842ddbcbf0276252e"
 },
 "library/foley/random_57.mp3": {
-"size": 2237,
-"md5": "d401985d8e63fbce330df1b6ffaba6c4"
+"size": 2550,
+"md5": "de74544292cf0a21af30859476331942"
 },
 "library/foley/pop_1.mp3": {
 "size": 1323,
@@ -5930,8 +5954,8 @@
 "md5": "358ecba7e21b9220d497b57eca74d3ea"
 },
 "library/foley/random_45.mp3": {
-"size": 2603,
-"md5": "1f3fc3374c4147b22ee28197b6448482"
+"size": 2968,
+"md5": "5539d8bd048dd6ad1aaa6c4230527088"
 },
 "library/foley/keys_7.mp3": {
 "size": 4849,
@@ -5966,12 +5990,16 @@
 "md5": "f99144f7855b3a67548006b0d024d3d4"
 },
 "library/foley/random_39.mp3": {
-"size": 1871,
-"md5": "b2046b7aa4bcfa1bac8e7438b60104c7"
+"size": 2132,
+"md5": "dd5a9ef9809a8de66a774f1a4b72f3f5"
 },
 "library/foley/lighter_36.mp3": {
 "size": 1506,
 "md5": "378657e288a99fddb27f4d7e4427969f"
+},
+"library/foley/haircut_2.mp3": {
+"size": 7357,
+"md5": "10871d70740ec0b0e65bbeeba59a6a50"
 },
 "library/foley/drawer_6.mp3": {
 "size": 16552,
@@ -5998,8 +6026,8 @@
 "md5": "718e5b452630093eebf996537b8cbfdb"
 },
 "library/foley/random_34.mp3": {
-"size": 2054,
-"md5": "733a8378e1ab98b39d2eb749115adadf"
+"size": 2341,
+"md5": "0591d105751ed4f710878e24a3baadc2"
 },
 "library/foley/random_51.mp3": {
 "size": 1688,
@@ -6014,12 +6042,12 @@
 "md5": "a4e02dd430b21773067b12ffad229625"
 },
 "library/foley/random_54.mp3": {
-"size": 3151,
-"md5": "b83babc97ef5bee4dd3bc11078012a39"
+"size": 3595,
+"md5": "2fde6d18a1dd10f7ed03b938463d89d9"
 },
 "library/foley/random_55.mp3": {
-"size": 4980,
-"md5": "55dcb01f339a10518536eb9b8075e790"
+"size": 5685,
+"md5": "9ad0a329d849c21ce9a8734e7d648643"
 },
 "library/foley/glass_bvk_32.mp3": {
 "size": 2341,
@@ -6046,8 +6074,8 @@
 "md5": "ff3aac4e4a944aecd05e56fb3c4d226d"
 },
 "library/foley/random_29.mp3": {
-"size": 1871,
-"md5": "14b7b45ac0a8ef506977cad87b8ff2e6"
+"size": 2132,
+"md5": "bdbd813805641c7355ffc51705cea61c"
 },
 "library/foley/pop_9.mp3": {
 "size": 1506,
@@ -6074,8 +6102,8 @@
 "md5": "0d2931dc77412da2c149f1626191a839"
 },
 "library/foley/random_43.mp3": {
-"size": 3151,
-"md5": "a633c044b53f6b529119b4d3c9199792"
+"size": 3595,
+"md5": "a3339acca784b43703852be235a5d10e"
 },
 "library/foley/rope_knot.mp3": {
 "size": 9447,
@@ -6194,8 +6222,8 @@
 "md5": "d7dd3e8dac9b69e825e4d2f70c0f9691"
 },
 "library/foley/random_35.mp3": {
-"size": 2786,
-"md5": "a9e74c483b27c3cb7947800403a81aa8"
+"size": 3177,
+"md5": "1f0318180694161a0d3ca099606c57fb"
 },
 "library/foley/lighter_23.mp3": {
 "size": 9238,
@@ -6274,8 +6302,8 @@
 "md5": "d60cc025c7228b30c0d4d29ae08b4094"
 },
 "library/foley/random_38.mp3": {
-"size": 4248,
-"md5": "9556dfca4344a29fe44e52f65eb3bd18"
+"size": 4849,
+"md5": "e7f535f211be2d16d061fa2a1a0d37fd"
 },
 "library/foley/glass_bvk_37.mp3": {
 "size": 3386,
@@ -6342,8 +6370,8 @@
 "md5": "cc2c1610cb23b18d1e2fb4000424697d"
 },
 "library/foley/random_42.mp3": {
-"size": 2968,
-"md5": "42d4497dd7ffae537bb14cc4ff6174f6"
+"size": 3386,
+"md5": "8dc39a406705ae1d1c4e7552c840dede"
 },
 "library/foley/lighter_27.mp3": {
 "size": 9656,
@@ -6382,8 +6410,8 @@
 "md5": "87d95d15f427714c89014cccd45e836a"
 },
 "library/foley/random_53.mp3": {
-"size": 2237,
-"md5": "391f0ff9630130364ef0c1933ee8e8ab"
+"size": 2550,
+"md5": "9652c3a17b1220f764428a57ae545d32"
 },
 "library/foley/lighter_9.mp3": {
 "size": 10283,
@@ -6398,8 +6426,8 @@
 "md5": "b5f5b1cb72bf4c1545e4a49f1c937684"
 },
 "library/foley/random_52.mp3": {
-"size": 1871,
-"md5": "bb945aebd55da0adf8e2c932f505da6f"
+"size": 2132,
+"md5": "b0eab25ed2f5c23ea001650d1654be73"
 },
 "library/foley/wood_knock_5.mp3": {
 "size": 7984,
@@ -6413,9 +6441,17 @@
 "size": 2341,
 "md5": "81aaa99525bb56331e2fd9b6745501c5"
 },
+"library/foley/scissors_7.mp3": {
+"size": 4797,
+"md5": "7e14bd6835d2f3982c600252f115aa62"
+},
 "library/foley/cloth_rustle.mp3": {
 "size": 11745,
 "md5": "a066a7f76c2a9514280378abb028150f"
+},
+"library/foley/haircut_1.mp3": {
+"size": 13574,
+"md5": "4a6d8f6916a6ef89bcdc25b4a67480f4"
 },
 "library/foley/pop_5.mp3": {
 "size": 1323,
@@ -6426,8 +6462,8 @@
 "md5": "cc3734ea02577eb57486503edc9d545e"
 },
 "library/foley/random_30.mp3": {
-"size": 6991,
-"md5": "9c07193eefc9a509211470f9ed7c20ea"
+"size": 7984,
+"md5": "16ed6ff4df377aa23610b4085502eb61"
 },
 "library/foley/glass_bvk_25.mp3": {
 "size": 2341,
@@ -6478,8 +6514,8 @@
 "md5": "c7b062b6adf2fa1935ee5226c2b7c17c"
 },
 "library/foley/random_46.mp3": {
-"size": 3151,
-"md5": "33e9179acc878cabaf39f321fd384df3"
+"size": 3595,
+"md5": "c80a15f3d97b3f41d2fd8539d8c960c8"
 },
 "library/foley/wood_knock_2.mp3": {
 "size": 7566,
@@ -6494,8 +6530,8 @@
 "md5": "3e5007324769a53c079eb565b0dd24c3"
 },
 "library/foley/random_58.mp3": {
-"size": 3334,
-"md5": "aab085c776b5c56b25dce80c33c6086c"
+"size": 3804,
+"md5": "ab3223b755bcb5ba5bc5e83805658bef"
 },
 "library/foley/random_21.mp3": {
 "size": 2341,
@@ -6525,9 +6561,13 @@
 "size": 17179,
 "md5": "9575aa5205661c5e726157d2eb2fffbe"
 },
+"library/foley/scissors_5.mp3": {
+"size": 1506,
+"md5": "b0eed354e89ac830dfa1feca042371ee"
+},
 "library/foley/random_47.mp3": {
-"size": 2786,
-"md5": "f27928cc2d072ae3173db357eafdd9e9"
+"size": 3177,
+"md5": "1799d00d955ea7a3c9305b861c62050a"
 }
 }
 }
