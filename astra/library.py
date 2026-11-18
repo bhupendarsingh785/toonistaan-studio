@@ -11407,6 +11407,46 @@ DEFAULT_INDEX = {
    "susu"
   ],
   "license": "CC0/BVKER"
+ },
+ "wood_knock_2": {
+  "file": "foley/wood_knock_2.mp3",
+  "tags": [
+   "wood",
+   "knock",
+   "lakdi",
+   "thap"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "wood_knock_3": {
+  "file": "foley/wood_knock_3.mp3",
+  "tags": [
+   "wood",
+   "knock",
+   "lakdi",
+   "thap"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "wood_knock_4": {
+  "file": "foley/wood_knock_4.mp3",
+  "tags": [
+   "wood",
+   "knock",
+   "lakdi",
+   "thap"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "wood_knock_5": {
+  "file": "foley/wood_knock_5.mp3",
+  "tags": [
+   "wood",
+   "knock",
+   "lakdi",
+   "thap"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -11427,7 +11467,7 @@ VARIANTS = {
     "jharna": ["waterfall_1", "waterfall_2", "waterfall_3"],
     "splash": ["splash_1", "splash_2", "splash_3", "splash_4", "splash_5"],
     "chhapak": ["splash_1", "splash_2", "splash_3"],
-    "wood_knock": ["wood_knock"],
+    "wood_knock": ["wood_knock", "wood_knock_2", "wood_knock_3", "wood_knock_4", "wood_knock_5"],
     "leaf_blower": ["leaf_blower_1", "leaf_blower_2", "leaf_blower_3"],
     "branch": ["branch_crack", "wood_creak"],
     "footsteps": ["bvk_footsteps_1", "bvk_footsteps_2", "bvk_footsteps_3", "bvk_footsteps_4", "footsteps"],
