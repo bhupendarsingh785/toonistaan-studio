@@ -11303,6 +11303,110 @@ DEFAULT_INDEX = {
    "tootna"
   ],
   "license": "CC0/BVKER"
+ },
+ "waterfall_1": {
+  "file": "water/waterfall_1.mp3",
+  "tags": [
+   "waterfall",
+   "jharna",
+   "झरना",
+   "paani",
+   "nature"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "waterfall_2": {
+  "file": "water/waterfall_2.mp3",
+  "tags": [
+   "waterfall",
+   "jharna",
+   "झरना",
+   "paani",
+   "nature"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "waterfall_3": {
+  "file": "water/waterfall_3.mp3",
+  "tags": [
+   "waterfall",
+   "jharna",
+   "झरना",
+   "paani",
+   "nature"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "splash_1": {
+  "file": "water/splash_1.mp3",
+  "tags": [
+   "splash",
+   "chhapak",
+   "paani",
+   "girna"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "splash_2": {
+  "file": "water/splash_2.mp3",
+  "tags": [
+   "splash",
+   "chhapak",
+   "paani",
+   "girna"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "splash_3": {
+  "file": "water/splash_3.mp3",
+  "tags": [
+   "splash",
+   "chhapak",
+   "paani",
+   "girna"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "splash_4": {
+  "file": "water/splash_4.mp3",
+  "tags": [
+   "splash",
+   "chhapak",
+   "paani",
+   "girna"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "splash_5": {
+  "file": "water/splash_5.mp3",
+  "tags": [
+   "splash",
+   "chhapak",
+   "paani",
+   "girna"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "wood_knock": {
+  "file": "foley/wood_knock.mp3",
+  "tags": [
+   "wood",
+   "knock",
+   "lakdi",
+   "thap",
+   "darwaza"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "peeing_forest": {
+  "file": "water/peeing_forest.mp3",
+  "tags": [
+   "peeing",
+   "forest",
+   "jungle",
+   "susu"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -11319,6 +11423,11 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "waterfall": ["waterfall_1", "waterfall_2", "waterfall_3"],
+    "jharna": ["waterfall_1", "waterfall_2", "waterfall_3"],
+    "splash": ["splash_1", "splash_2", "splash_3", "splash_4", "splash_5"],
+    "chhapak": ["splash_1", "splash_2", "splash_3"],
+    "wood_knock": ["wood_knock"],
     "leaf_blower": ["leaf_blower_1", "leaf_blower_2", "leaf_blower_3"],
     "branch": ["branch_crack", "wood_creak"],
     "footsteps": ["bvk_footsteps_1", "bvk_footsteps_2", "bvk_footsteps_3", "bvk_footsteps_4", "footsteps"],
