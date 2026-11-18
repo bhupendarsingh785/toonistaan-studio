@@ -5427,6 +5427,59 @@ DEFAULT_INDEX = {
    "tension"
   ],
   "license": "Pixabay"
+ },
+ "chicken_coop": {
+  "file": "animals/chicken_coop.mp3",
+  "tags": [
+   "chicken",
+   "murgi",
+   "मुर्गी",
+   "hen",
+   "coop",
+   "murga",
+   "gaon"
+  ],
+  "license": "Pixabay"
+ },
+ "bird_chirps_4": {
+  "file": "ambience/bird_chirps_4.mp3",
+  "tags": [
+   "birds",
+   "chirps",
+   "chidiyan"
+  ],
+  "license": "Pixabay"
+ },
+ "lullaby_baby": {
+  "file": "music/lullaby_baby.mp3",
+  "tags": [
+   "lullaby",
+   "baby",
+   "lori",
+   "sleep",
+   "bachcha"
+  ],
+  "license": "Pixabay"
+ },
+ "romantic_crazy_love": {
+  "file": "music/romantic_crazy_love.mp3",
+  "tags": [
+   "romantic",
+   "love",
+   "pyaar",
+   "crazy"
+  ],
+  "license": "Pixabay"
+ },
+ "fun_guitar": {
+  "file": "music/fun_guitar.mp3",
+  "tags": [
+   "fun",
+   "guitar",
+   "happy",
+   "comedy"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -5443,6 +5496,11 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "chicken": ["chicken_coop"],
+    "murgi": ["chicken_coop"],
+    "lullaby": ["lullaby_baby"],
+    "romantic": ["romantic_crazy_love", "romantic_guitar"],
+    "fun": ["fun_guitar"],
     "forest": ["forest_celtic_mystic_2", "forest_walk_band", "forest_hiding_place", "forest_relax_2", "forest_folk_song", "forest_celtic_mystic", "forest_dark_ambient", "forest_tales_orchestral", "forest_tales_halloween", "forest_lofi_piano", "forest_enchanted", "forest_reflections", "forest_epic_ballad", "forest_morning_harp", "forest_guitar", "forest_whispers", "forest_morning_mist", "forest_pathway", "forest_spirits_piano", "forest_relax", "forest_scent", "forest_harp", "forest_adventure"],
     "halloween": ["halloween_bgm", "halloween_bgm_2", "halloween_scary", "halloween_spooky", "forest_tales_halloween"],
     "gate_open": ["door_open_a", "door_open_b", "door_open_c"],
@@ -5523,7 +5581,7 @@ VARIANTS = {
     "grass": ["steps_frozen_grass", "steps_grass_to_stairs"],
     "village": ["village_ambience"],
     "thunder": ["thunderstorm"],
-    "birds": ["birds_forest_1", "birds_forest_2", "birds_chirp_1", "birds_chirp_2", "bird_chirp_3", "birds_forest_chirp", "birds_in_rain"],
+    "birds": ["bird_chirps_4", "birds_forest_1", "birds_forest_2", "birds_chirp_1", "birds_chirp_2", "bird_chirp_3", "birds_forest_chirp", "birds_in_rain"],
     "water": ["water_relax", "pour_glass", "kettle_pour", "boiling"],
     "chai": ["chai_1", "stirring_tea", "tea_boil", "kettle_cup", "boiling"],
     "cooker": ["cooker_whistle", "cooker_1", "cooker_2", "cooker_release", "cooker_low"],
