@@ -9995,6 +9995,116 @@ DEFAULT_INDEX = {
    "चटक"
   ],
   "license": "CC0/BVKER"
+ },
+ "click_11": {
+  "file": "ui/click_11.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_12": {
+  "file": "ui/click_12.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_13": {
+  "file": "ui/click_13.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_14": {
+  "file": "ui/click_14.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_15": {
+  "file": "ui/click_15.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_16": {
+  "file": "ui/click_16.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_17": {
+  "file": "ui/click_17.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_18": {
+  "file": "ui/click_18.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_19": {
+  "file": "ui/click_19.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_20": {
+  "file": "ui/click_20.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -10011,7 +10121,7 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "click": ["click_1", "click_2", "click_3", "click_4", "click_5", "click_6", "click_7", "click_8", "click_9", "click_10"],
+    "click": ["click_1", "click_2", "click_3", "click_4", "click_5", "click_6", "click_7", "click_8", "click_9", "click_10", "click_11", "click_12", "click_13", "click_14", "click_15", "click_16", "click_17", "click_18", "click_19", "click_20"],
     "switch": ["click_1", "click_2", "click_3"],
     "car_window": ["car_window_1", "car_window_2"],
     "car_random": ["car_random_1", "car_random_2", "car_random_3", "car_random_4", "car_random_5", "car_random_6", "car_random_7"],
