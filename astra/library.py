@@ -6424,6 +6424,100 @@ DEFAULT_INDEX = {
    "bed"
   ],
   "license": "Pixabay"
+ },
+ "latin_instrumental": {
+  "file": "music/latin_instrumental.mp3",
+  "tags": [
+   "latin",
+   "instrumental",
+   "groove"
+  ],
+  "license": "Pixabay"
+ },
+ "summer_instrumental": {
+  "file": "music/summer_instrumental.mp3",
+  "tags": [
+   "summer",
+   "instrumental",
+   "happy",
+   "light"
+  ],
+  "license": "Pixabay"
+ },
+ "energy_2": {
+  "file": "music/energy_2.mp3",
+  "tags": [
+   "energy",
+   "instrumental",
+   "action"
+  ],
+  "license": "Pixabay"
+ },
+ "travel_instrumental": {
+  "file": "music/travel_instrumental.mp3",
+  "tags": [
+   "travel",
+   "journey",
+   "instrumental"
+  ],
+  "license": "Pixabay"
+ },
+ "upbeat_1": {
+  "file": "music/upbeat_1.mp3",
+  "tags": [
+   "upbeat",
+   "happy",
+   "instrumental"
+  ],
+  "license": "Pixabay"
+ },
+ "upbeat_2": {
+  "file": "music/upbeat_2.mp3",
+  "tags": [
+   "upbeat",
+   "happy",
+   "energy"
+  ],
+  "license": "Pixabay"
+ },
+ "aggressive_bass": {
+  "file": "music/aggressive_bass.mp3",
+  "tags": [
+   "aggressive",
+   "bass",
+   "beat",
+   "fight"
+  ],
+  "license": "Pixabay"
+ },
+ "france_instrumental": {
+  "file": "music/france_instrumental.mp3",
+  "tags": [
+   "france",
+   "instrumental",
+   "chanson"
+  ],
+  "license": "Pixabay"
+ },
+ "gaming_instrumental": {
+  "file": "music/gaming_instrumental.mp3",
+  "tags": [
+   "gaming",
+   "instrumental",
+   "action",
+   "fast"
+  ],
+  "license": "Pixabay"
+ },
+ "trap_instrumental": {
+  "file": "music/trap_instrumental.mp3",
+  "tags": [
+   "trap",
+   "instrumental",
+   "beat",
+   "modern"
+  ],
+  "license": "Pixabay"
  }
 }
 
