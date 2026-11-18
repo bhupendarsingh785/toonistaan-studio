@@ -18571,6 +18571,56 @@ DEFAULT_INDEX = {
    "music"
   ],
   "license": "Freesound/CC0"
+ },
+ "iron_gate_open_close": {
+  "file": "door/iron_gate_open_close.mp3",
+  "tags": [
+   "gate",
+   "iron",
+   "lokha",
+   "khulna",
+   "band"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "heavy_gate": {
+  "file": "door/heavy_gate.mp3",
+  "tags": [
+   "gate",
+   "heavy",
+   "bhaari"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "graveyard_gate": {
+  "file": "door/graveyard_gate.mp3",
+  "tags": [
+   "gate",
+   "graveyard",
+   "kabristan",
+   "horror",
+   "darr"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "squeaky_metal_door": {
+  "file": "door/squeaky_metal_door.mp3",
+  "tags": [
+   "door",
+   "metal",
+   "creak",
+   "chirkut"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "iron_gate_2": {
+  "file": "door/iron_gate_2.mp3",
+  "tags": [
+   "gate",
+   "iron",
+   "lokha"
+  ],
+  "license": "Freesound/CC0"
  }
 }
 
@@ -18587,6 +18637,8 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "iron_gate": ["iron_gate_open_close", "iron_gate_2", "heavy_gate"],
+    "gate": ["iron_gate_open_close", "heavy_gate", "graveyard_gate"],
     "vinyl_crackle_bvk": ["vinyl_crackle_bvk_1", "vinyl_crackle_bvk_2", "vinyl_crackle_bvk_3", "vinyl_crackle_bvk_4", "vinyl_crackle_bvk_5", "vinyl_crackle_bvk_6", "vinyl_crackle_bvk_7", "vinyl_crackle_bvk_8", "vinyl_crackle_bvk_9", "vinyl_crackle_bvk_10"],
     "vinyl": ["vinyl_crackle_bvk_1", "vinyl_crackle_bvk_2", "vinyl_crackle_bvk_3", "vinyl_crackle_bvk_4", "vinyl_crackle_bvk_5", "vinyl_crackle_bvk_6", "vinyl_crackle_bvk_7", "vinyl_crackle_bvk_8", "vinyl_crackle_bvk_9", "vinyl_crackle_bvk_10", "vinyl_crackle"],
     "transition_bvk": ["transition_bvk_1", "transition_bvk_2", "transition_bvk_3", "transition_bvk_4"],
