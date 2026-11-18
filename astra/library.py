@@ -7325,6 +7325,107 @@ DEFAULT_INDEX = {
    "floor"
   ],
   "license": "ASTRA-synth (khud banaya)"
+ },
+ "mosquito_buzz": {
+  "file": "animals/mosquito_buzz.mp3",
+  "tags": [
+   "mosquito",
+   "machhar",
+   "मच्छर",
+   "buzz"
+  ],
+  "license": "Pixabay"
+ },
+ "mosquito_crickets": {
+  "file": "animals/mosquito_crickets.mp3",
+  "tags": [
+   "mosquito",
+   "crickets",
+   "raat",
+   "रात",
+   "insects"
+  ],
+  "license": "Pixabay"
+ },
+ "mosquito_flight": {
+  "file": "animals/mosquito_flight.mp3",
+  "tags": [
+   "mosquito",
+   "flight",
+   "buzz",
+   "machhar"
+  ],
+  "license": "Pixabay"
+ },
+ "chimpanzee": {
+  "file": "animals/chimpanzee.mp3",
+  "tags": [
+   "chimpanzee",
+   "bandar",
+   "बंदर",
+   "ape"
+  ],
+  "license": "Pixabay"
+ },
+ "chimpanzee_2": {
+  "file": "animals/chimpanzee_2.mp3",
+  "tags": [
+   "chimpanzee",
+   "monkey",
+   "jungle"
+  ],
+  "license": "Pixabay"
+ },
+ "chimpanzee_cry": {
+  "file": "animals/chimpanzee_cry.mp3",
+  "tags": [
+   "chimpanzee",
+   "cry",
+   "bandar",
+   "jungle"
+  ],
+  "license": "Pixabay"
+ },
+ "zoo_ambience": {
+  "file": "animals/zoo_ambience.mp3",
+  "tags": [
+   "zoo",
+   "animals",
+   "chidiya-ghar",
+   "elephant",
+   "zebra"
+  ],
+  "license": "Pixabay"
+ },
+ "tortoise_water": {
+  "file": "animals/tortoise_water.mp3",
+  "tags": [
+   "tortoise",
+   "kachhua",
+   "कछुआ",
+   "water"
+  ],
+  "license": "Pixabay"
+ },
+ "crocodile_scream": {
+  "file": "animals/crocodile_scream.mp3",
+  "tags": [
+   "crocodile",
+   "machhli",
+   "मगरमच्छ",
+   "roar"
+  ],
+  "license": "Pixabay"
+ },
+ "crocodile_hiss": {
+  "file": "animals/crocodile_hiss.mp3",
+  "tags": [
+   "crocodile",
+   "alligator",
+   "hiss",
+   "magarmachh"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -7341,6 +7442,11 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "mosquito": ["mosquito_buzz", "mosquito_flight", "mosquito_crickets"],
+    "chimpanzee": ["chimpanzee", "chimpanzee_2", "chimpanzee_cry"],
+    "crocodile": ["crocodile_hiss", "crocodile_scream"],
+    "tortoise": ["tortoise_water"],
+    "zoo": ["zoo_ambience"],
     "rope": ["rope", "rope_knot"],
     "cloth_rustle": ["cloth_rustle"],
     "leaves_dry": ["leaves_dry"],
