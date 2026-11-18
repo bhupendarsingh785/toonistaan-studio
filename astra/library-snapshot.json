@@ -1,9 +1,9 @@
 {
-"count": 1264,
+"count": 1274,
 "files": {
 "library/.cleaned.json": {
-"size": 41398,
-"md5": "d9078715363ae7a40f1012a6ea5701ce"
+"size": 41623,
+"md5": "56621d05ce8369c6e6ec1ebd35b324f1"
 },
 "library/README.md": {
 "size": 1760,
@@ -2498,8 +2498,8 @@
 "md5": "61cfa661ec762aad881bf5815803b825"
 },
 "library/voices/clap_7.mp3": {
-"size": 2237,
-"md5": "428beca5ea653c194da21c82eb394d55"
+"size": 2550,
+"md5": "229eaba5acd610654797bea7a247ced8"
 },
 "library/voices/baby_zombie.mp3": {
 "size": 76111,
@@ -2537,13 +2537,17 @@
 "size": 71096,
 "md5": "1acd4035d9dc4233a949923ee240ade9"
 },
+"library/voices/cough_3.mp3": {
+"size": 3517,
+"md5": "9abd8640aa61538a31028a1c414b738c"
+},
 "library/voices/vampire_line_soul.mp3": {
 "size": 42256,
 "md5": "dd2bd87537ee9afc564ec606cd860e30"
 },
 "library/voices/clap_10.mp3": {
-"size": 3517,
-"md5": "c1bab8793f1d358f8df0900e2525c5b1"
+"size": 4013,
+"md5": "6625d4e403bd0c06899be316644ad20a"
 },
 "library/voices/man_sniffle.mp3": {
 "size": 71723,
@@ -2562,12 +2566,12 @@
 "md5": "f45af6198b5632c9ab285fd1062be6da"
 },
 "library/voices/clap_3.mp3": {
-"size": 2786,
-"md5": "1cdd19eb3614f7e20b12434103f98886"
+"size": 3177,
+"md5": "0f8dc4d77a8f2abe458321c8234d7cb5"
 },
 "library/voices/clap_9.mp3": {
-"size": 2420,
-"md5": "367d3641e3cecbd53488ed2a978652c7"
+"size": 2759,
+"md5": "dad3458119e76df5f176dbebe52975ad"
 },
 "library/voices/vampire_laugh.mp3": {
 "size": 36405,
@@ -2586,8 +2590,8 @@
 "md5": "126bbd6773698f2f962fa5c81393792c"
 },
 "library/voices/clap_4.mp3": {
-"size": 3883,
-"md5": "5a179a132e3ae828214fb8e994a8586e"
+"size": 4431,
+"md5": "4ed1f666ba5fc395b4c54e2855038290"
 },
 "library/voices/talk_crowd_2.mp3": {
 "size": 86978,
@@ -2641,6 +2645,10 @@
 "size": 184572,
 "md5": "10971c08892b9bc44c1628046e962f06"
 },
+"library/voices/cough_1.mp3": {
+"size": 6443,
+"md5": "e13ec0b22ddc53ab70dfad57e0785110"
+},
 "library/voices/man_death_scream.mp3": {
 "size": 27210,
 "md5": "6134242e96544fbc59da156ad9726228"
@@ -2665,13 +2673,17 @@
 "size": 1323,
 "md5": "5bcdacc8fe350f969d6dc005577cc418"
 },
+"library/voices/snap_4.mp3": {
+"size": 2237,
+"md5": "7d110136877dfebecf1b91954855d8cf"
+},
 "library/voices/mouth_click_7.mp3": {
 "size": 1323,
 "md5": "87231cbdac88cf4e3ca2c0c4389d33d2"
 },
 "library/voices/clap_1.mp3": {
-"size": 3883,
-"md5": "e9ee5097ec9dfa4dd589c42188a84103"
+"size": 4431,
+"md5": "1ca496b31c700681ee7d6ef4e48cb47a"
 },
 "library/voices/man_laugh.mp3": {
 "size": 69424,
@@ -2680,6 +2692,10 @@
 "library/voices/vampire_gaze.mp3": {
 "size": 55422,
 "md5": "d202906c68b6531e6cb06cd55cdba5a4"
+},
+"library/voices/cough_5.mp3": {
+"size": 2603,
+"md5": "8d7fa38c1c3314c707c84a07de9c7a36"
 },
 "library/voices/chick_1.mp3": {
 "size": 15089,
@@ -2717,6 +2733,10 @@
 "size": 17597,
 "md5": "e1b8bf8717d654636d33aa82080edcfa"
 },
+"library/voices/cough_4.mp3": {
+"size": 2054,
+"md5": "b5092e5bda9637ac160ce259007674a2"
+},
 "library/voices/girl_cry_1.mp3": {
 "size": 153643,
 "md5": "545553e2ed4901abe04dadcf954cc9a9"
@@ -2748,6 +2768,10 @@
 "library/voices/baby_laugh_1.mp3": {
 "size": 230756,
 "md5": "4b23edef76b0bd0697bd6cc9752f93a1"
+},
+"library/voices/snap_1.mp3": {
+"size": 1323,
+"md5": "7910b3347a45fc7235568b198d902d43"
 },
 "library/voices/man_cry_4.mp3": {
 "size": 185407,
@@ -2782,12 +2806,12 @@
 "md5": "3c484cc4efab82211fbf757ffa7ae958"
 },
 "library/voices/clap_2.mp3": {
-"size": 2054,
-"md5": "6a7dc164b4bbae4de46bda4d73522f2c"
+"size": 2341,
+"md5": "d4a5005740176bb53d0af3d8ffa284a6"
 },
 "library/voices/clap_8.mp3": {
-"size": 2603,
-"md5": "d918919670cc8c3001e18abe9558e815"
+"size": 2968,
+"md5": "17586ef25bc50d45cac5e70a00d89f0c"
 },
 "library/voices/vampire_hiss_2.mp3": {
 "size": 17388,
@@ -2804,6 +2828,10 @@
 "library/voices/man_yell.mp3": {
 "size": 65453,
 "md5": "4d5a1418934ea81e9fca4735434d0110"
+},
+"library/voices/snap_5.mp3": {
+"size": 1323,
+"md5": "b6d811583fdd7235dba248eea67f113c"
 },
 "library/voices/clap_5.mp3": {
 "size": 1506,
@@ -2861,6 +2889,10 @@
 "size": 64826,
 "md5": "81643341e6718bef4956d1280a8ac90c"
 },
+"library/voices/cough_2.mp3": {
+"size": 7540,
+"md5": "00c4c970ecf821bc147168863019d818"
+},
 "library/voices/baby_giggle_1.mp3": {
 "size": 146746,
 "md5": "c3837e54c940782201e48aced01764f6"
@@ -2877,6 +2909,10 @@
 "size": 1323,
 "md5": "b593ea3940b2c742dc41ac405c2a9071"
 },
+"library/voices/snap_2.mp3": {
+"size": 1323,
+"md5": "84fda53b733765de5c6c203a858f0183"
+},
 "library/voices/man_angry.mp3": {
 "size": 65453,
 "md5": "f88c90419ecf4898cce569cd7156de8f"
@@ -2884,6 +2920,10 @@
 "library/voices/baby_cry_1.mp3": {
 "size": 75484,
 "md5": "4c11bfbabd851c96131bae3ee1d806e1"
+},
+"library/voices/snap_3.mp3": {
+"size": 1323,
+"md5": "8a7e00950565f4e26355828a6ecaef07"
 },
 "library/voices/smoke_breath.mp3": {
 "size": 76111,
