@@ -88,7 +88,7 @@ SARVAM_PITCH = {
     "dadi": 0.86, "chacha": 0.94, "pandit": 0.92, "mukhiya": 0.90, "kaka": 0.95,
     "madhur_dada": 0.88, "swara_dadi": 0.87,
     # jawan mard
-    "madhur": 1.0, "arjun": 1.0, "ramesh": 1.0, "salim": 1.03, "driver": 1.02,
+    "madhur": 1.0, "arjun": 1.0, "ramesh": 0.94, "salim": 1.03, "driver": 1.02,
     "constable": 0.97, "doctor": 1.0, "chaiwala": 1.06, "madhur_bachcha": 1.12,
     # jawan aurat
     "meera": 1.04, "sunita": 1.03, "aurat": 1.03, "chachi": 1.02, "bhabhi": 1.05,
@@ -97,12 +97,12 @@ SARVAM_PITCH = {
     "bachcha": 1.34, "swara_bachcha": 1.30,
     # daravani
     "bhoot": 0.80, "chudail": 0.88,
-    "announce": 1.0,
+    "announce": 1.12,
 }
 
 
 SARVAM_PACE = {
-    "ramesh": 0.98, "salim": 1.02, "chaiwala": 1.06, "announce": 1.0,
+    "ramesh": 0.98, "salim": 1.02, "chaiwala": 1.06, "announce": 1.12,
     "aurat": 1.0, "maa": 0.90, "behen": 1.12,
     "madhur": 1.0, "arjun": 1.02, "meera": 1.0, "chacha": 0.92, "chachi": 1.05,
     "dadi": 0.86, "pandit": 0.88, "constable": 0.95, "doctor": 0.98, "bachcha": 1.1,
