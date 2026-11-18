@@ -67,7 +67,7 @@ jobs:
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           FREESOUND_API_KEY: ${{ secrets.FREESOUND_API_KEY }}
           # engine chunne ke liye: repo variable ASTRA_VOICE_ENGINE = auto|sarvam|eleven|piper|edge
-          ASTRA_VOICE_ENGINE: "piper"   # auto | sarvam | eleven | piper | edge
+          ASTRA_VOICE_ENGINE: "auto"   # auto | sarvam | eleven | piper | edge
         run: |
           echo "VOICE_ENGINE_MODE=$ASTRA_VOICE_ENGINE"
           python astra/cinema.py banao studio/series/user/story_demo.json -o cinema-demo.mp3
