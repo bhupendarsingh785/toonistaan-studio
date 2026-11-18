@@ -9400,6 +9400,27 @@ DEFAULT_INDEX = {
    "bathroom"
   ],
   "license": "CC0/BVKER"
+ },
+ "toilet_seat_2": {
+  "file": "bathroom/toilet_seat_2.mp3",
+  "tags": [
+   "toilet",
+   "seat",
+   "bathroom",
+   "clack"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "toothbrush": {
+  "file": "bathroom/toothbrush.mp3",
+  "tags": [
+   "toothbrush",
+   "brush",
+   "datun",
+   "दाँत",
+   "bathroom"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -9419,7 +9440,8 @@ VARIANTS = {
     "nal": ["tap_water_1", "tap_water_2", "tap_water_3", "tap_water_4", "tap_water_5", "tap_water_6"],
     "tap": ["tap_water_1", "tap_water_2", "tap_water_3"],
     "flush": ["flush_1", "flush_2"],
-    "thook": ["spit"],
+    "thook": ["spit"]
+    ,"toothbrush": ["toothbrush"],
     "hairdryer": ["hairdryer_1", "hairdryer_2", "hairdryer_3"],
     "nahana": ["shower", "rinse", "water"],
     "bathroom": ["bathroom_1", "bathroom_2", "bathroom_3", "shower"],
