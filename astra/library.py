@@ -8320,6 +8320,105 @@ DEFAULT_INDEX = {
    "cartoon"
   ],
   "license": "Pixabay"
+ },
+ "lion_real": {
+  "file": "animals/lion_real.mp3",
+  "tags": [
+   "lion",
+   "sher",
+   "शेर",
+   "roar",
+   "real"
+  ],
+  "license": "Pixabay"
+ },
+ "lion_angry": {
+  "file": "animals/lion_angry.mp3",
+  "tags": [
+   "lion",
+   "angry",
+   "gussa",
+   "roar"
+  ],
+  "license": "Pixabay"
+ },
+ "lion_sfx": {
+  "file": "animals/lion_sfx.mp3",
+  "tags": [
+   "lion",
+   "roar",
+   "sfx"
+  ],
+  "license": "Pixabay"
+ },
+ "lion_short": {
+  "file": "animals/lion_short.mp3",
+  "tags": [
+   "lion",
+   "short",
+   "roar"
+  ],
+  "license": "Pixabay"
+ },
+ "lion_majestic": {
+  "file": "animals/lion_majestic.mp3",
+  "tags": [
+   "lion",
+   "majestic",
+   "roar",
+   "royal"
+  ],
+  "license": "Pixabay"
+ },
+ "lion_evil": {
+  "file": "animals/lion_evil.mp3",
+  "tags": [
+   "lion",
+   "evil",
+   "dark",
+   "roar"
+  ],
+  "license": "Pixabay"
+ },
+ "lion_loud": {
+  "file": "animals/lion_loud.mp3",
+  "tags": [
+   "lion",
+   "loud",
+   "roar",
+   "attack"
+  ],
+  "license": "Pixabay"
+ },
+ "lion_cub_purr": {
+  "file": "animals/lion_cub_purr.mp3",
+  "tags": [
+   "lion",
+   "cub",
+   "purr",
+   "bachcha"
+  ],
+  "license": "Pixabay"
+ },
+ "elephant_mighty": {
+  "file": "animals/elephant_mighty.mp3",
+  "tags": [
+   "elephant",
+   "hathi",
+   "हाथी",
+   "trumpet"
+  ],
+  "license": "Pixabay"
+ },
+ "elephant_trunk": {
+  "file": "animals/elephant_trunk.mp3",
+  "tags": [
+   "elephant",
+   "trunk",
+   "sound",
+   "hathi"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -8336,7 +8435,9 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "lion": ["lion_roar", "lion_father"],
+    "elephant": ["elephant_mighty", "elephant_trunk"],
+    "hathi": ["elephant_mighty", "elephant_trunk"],
+    "lion": ["lion_real", "lion_loud", "lion_angry", "lion_majestic", "lion_evil", "lion_roar", "lion_father", "lion_sfx", "lion_short", "lion_cub_purr"],
     "buffalo": ["buffalo", "buffalo_mud", "buffalo_rest"],
     "bhains": ["buffalo", "buffalo_rest"],
     "camel": ["camel", "camel_moan", "camel_mideast", "camel_angry"],
