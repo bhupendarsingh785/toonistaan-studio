@@ -9289,6 +9289,117 @@ DEFAULT_INDEX = {
    "ambience"
   ],
   "license": "CC0/BVKER"
+ },
+ "tap_water_1": {
+  "file": "bathroom/tap_water_1.mp3",
+  "tags": [
+   "tap",
+   "nal",
+   "नल",
+   "water",
+   "paani",
+   "bahti"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "tap_water_2": {
+  "file": "bathroom/tap_water_2.mp3",
+  "tags": [
+   "tap",
+   "nal",
+   "नल",
+   "water",
+   "paani",
+   "bahti"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "tap_water_3": {
+  "file": "bathroom/tap_water_3.mp3",
+  "tags": [
+   "tap",
+   "nal",
+   "नल",
+   "water",
+   "paani",
+   "bahti"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "tap_water_4": {
+  "file": "bathroom/tap_water_4.mp3",
+  "tags": [
+   "tap",
+   "nal",
+   "नल",
+   "water",
+   "paani",
+   "bahti"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "tap_water_5": {
+  "file": "bathroom/tap_water_5.mp3",
+  "tags": [
+   "tap",
+   "nal",
+   "नल",
+   "water",
+   "paani",
+   "bahti"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "tap_water_6": {
+  "file": "bathroom/tap_water_6.mp3",
+  "tags": [
+   "tap",
+   "nal",
+   "नल",
+   "water",
+   "paani",
+   "bahti"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "flush_1": {
+  "file": "bathroom/flush_1.mp3",
+  "tags": [
+   "flush",
+   "toilet",
+   "chain",
+   "paani"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "flush_2": {
+  "file": "bathroom/flush_2.mp3",
+  "tags": [
+   "flush",
+   "toilet",
+   "paani"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "toilet_seat": {
+  "file": "bathroom/toilet_seat.mp3",
+  "tags": [
+   "toilet",
+   "seat",
+   "clack",
+   "bathroom"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "spit": {
+  "file": "bathroom/spit.mp3",
+  "tags": [
+   "spit",
+   "thook",
+   "थूक",
+   "bathroom"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -9305,6 +9416,10 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "nal": ["tap_water_1", "tap_water_2", "tap_water_3", "tap_water_4", "tap_water_5", "tap_water_6"],
+    "tap": ["tap_water_1", "tap_water_2", "tap_water_3"],
+    "flush": ["flush_1", "flush_2"],
+    "thook": ["spit"],
     "hairdryer": ["hairdryer_1", "hairdryer_2", "hairdryer_3"],
     "nahana": ["shower", "rinse", "water"],
     "bathroom": ["bathroom_1", "bathroom_2", "bathroom_3", "shower"],
