@@ -6997,6 +6997,86 @@ DEFAULT_INDEX = {
    "fun"
   ],
   "license": "Pixabay"
+ },
+ "pirate_bay_loop": {
+  "file": "music/pirate_bay_loop.mp3",
+  "tags": [
+   "pirate",
+   "adventure",
+   "loop",
+   "sea"
+  ],
+  "license": "Pixabay"
+ },
+ "hypnotic_hiphop": {
+  "file": "music/hypnotic_hiphop.mp3",
+  "tags": [
+   "hiphop",
+   "hypnotic",
+   "beat",
+   "urban"
+  ],
+  "license": "Pixabay"
+ },
+ "jazzy_loop": {
+  "file": "music/jazzy_loop.mp3",
+  "tags": [
+   "jazz",
+   "laid back",
+   "loop",
+   "classy"
+  ],
+  "license": "Pixabay"
+ },
+ "caribbean_happy": {
+  "file": "music/caribbean_happy.mp3",
+  "tags": [
+   "caribbean",
+   "happy",
+   "summer",
+   "loop"
+  ],
+  "license": "Pixabay"
+ },
+ "fiddle_ballad": {
+  "file": "music/fiddle_ballad.mp3",
+  "tags": [
+   "fiddle",
+   "ballad",
+   "folk",
+   "village"
+  ],
+  "license": "Pixabay"
+ },
+ "afro_bongo_fast": {
+  "file": "music/afro_bongo_fast.mp3",
+  "tags": [
+   "afro",
+   "bongo",
+   "fast",
+   "tribal"
+  ],
+  "license": "Pixabay"
+ },
+ "lamento_ninfa": {
+  "file": "music/lamento_ninfa.mp3",
+  "tags": [
+   "lamento",
+   "sad",
+   "remix",
+   "classical"
+  ],
+  "license": "Pixabay"
+ },
+ "happy_joy_loop": {
+  "file": "music/happy_joy_loop.mp3",
+  "tags": [
+   "happy",
+   "joy",
+   "loop",
+   "fun"
+  ],
+  "license": "Pixabay"
  }
 }
 
