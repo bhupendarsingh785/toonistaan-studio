@@ -18435,6 +18435,102 @@ DEFAULT_INDEX = {
    "loop"
   ],
   "license": "Freesound/CC0"
+ },
+ "documentary_loop": {
+  "file": "music/documentary_loop.mp3",
+  "tags": [
+   "documentary",
+   "loop",
+   "calm",
+   "music"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "midnight_dhol_swagger": {
+  "file": "music/midnight_dhol_swagger.mp3",
+  "tags": [
+   "dhol",
+   "swagger",
+   "desi",
+   "beat"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "motivational_loop": {
+  "file": "music/motivational_loop.mp3",
+  "tags": [
+   "motivational",
+   "inspire",
+   "loop"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "background_piano_loop": {
+  "file": "music/background_piano_loop.mp3",
+  "tags": [
+   "piano",
+   "background",
+   "loop",
+   "sad"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "presentation_loop": {
+  "file": "music/presentation_loop.mp3",
+  "tags": [
+   "presentation",
+   "corporate",
+   "loop"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "horror_loop": {
+  "file": "music/horror_loop.mp3",
+  "tags": [
+   "horror",
+   "darr",
+   "loop"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "pune_dhol_tasha": {
+  "file": "music/pune_dhol_tasha.mp3",
+  "tags": [
+   "dhol",
+   "tasha",
+   "pune",
+   "desi",
+   "festival"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "indian_dhol_music": {
+  "file": "music/indian_dhol_music.mp3",
+  "tags": [
+   "dhol",
+   "indian",
+   "desi",
+   "music"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "positive_loop": {
+  "file": "music/positive_loop.mp3",
+  "tags": [
+   "positive",
+   "loop",
+   "happy"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "hitech_loop": {
+  "file": "music/hitech_loop.mp3",
+  "tags": [
+   "hitech",
+   "tech",
+   "loop"
+  ],
+  "license": "Freesound/CC0"
  }
 }
 
