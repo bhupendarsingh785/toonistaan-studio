@@ -10877,6 +10877,106 @@ DEFAULT_INDEX = {
    "spark"
   ],
   "license": "CC0/BVKER"
+ },
+ "lighter_13": {
+  "file": "foley/lighter_13.mp3",
+  "tags": [
+   "lighter",
+   "spark",
+   "aag",
+   "जलाना"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "lighter_14": {
+  "file": "foley/lighter_14.mp3",
+  "tags": [
+   "lighter",
+   "spark",
+   "aag",
+   "जलाना"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "lighter_15": {
+  "file": "foley/lighter_15.mp3",
+  "tags": [
+   "lighter",
+   "spark",
+   "aag",
+   "जलाना"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "lighter_16": {
+  "file": "foley/lighter_16.mp3",
+  "tags": [
+   "lighter",
+   "spark",
+   "aag",
+   "जलाना"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "lighter_17": {
+  "file": "foley/lighter_17.mp3",
+  "tags": [
+   "lighter",
+   "spark",
+   "aag",
+   "जलाना"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "lighter_18": {
+  "file": "foley/lighter_18.mp3",
+  "tags": [
+   "lighter",
+   "spark",
+   "aag",
+   "जलाना"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "lighter_19": {
+  "file": "foley/lighter_19.mp3",
+  "tags": [
+   "lighter",
+   "spark",
+   "aag",
+   "जलाना"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "lighter_20": {
+  "file": "foley/lighter_20.mp3",
+  "tags": [
+   "lighter",
+   "spark",
+   "aag",
+   "जलाना"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "lighter_21": {
+  "file": "foley/lighter_21.mp3",
+  "tags": [
+   "lighter",
+   "spark",
+   "aag",
+   "जलाना"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "lighter_22": {
+  "file": "foley/lighter_22.mp3",
+  "tags": [
+   "lighter",
+   "spark",
+   "aag",
+   "जलाना"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -10893,7 +10993,7 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "lighter": ["lighter_1", "lighter_2", "lighter_3", "lighter_4", "lighter_5", "lighter_6", "lighter_7", "lighter_8", "lighter_9", "lighter_10", "lighter_11", "lighter_12", "lighter_1_thin", "lighter_2_thin", "lighter_3_thin", "lighter_4_thin", "lighter_5_thin"],
+    "lighter": ["lighter_1", "lighter_2", "lighter_3", "lighter_4", "lighter_5", "lighter_6", "lighter_7", "lighter_8", "lighter_9", "lighter_10", "lighter_11", "lighter_12", "lighter_13", "lighter_14", "lighter_15", "lighter_16", "lighter_17", "lighter_18", "lighter_19", "lighter_20", "lighter_21", "lighter_22", "lighter_1_thin", "lighter_2_thin", "lighter_3_thin", "lighter_4_thin", "lighter_5_thin"],
     "sigret": ["cigarette_1", "cigarette_2", "cigarette_3", "lighter_1"],
     "sikka": ["coin_bvker_1", "coin_bvker_2", "coin_bvker_3", "coin_bvker_4", "coin_bvker_5", "coin_bvker_6", "coin_bvker_7", "coin_bvker_8", "coin_bvker_9", "coin_bvker_10", "coin_bvker_11", "coin_bvker_12", "coin_bvker_13", "coin_bvker_14", "coin_bvker_15", "coin_bvker_16", "coin_bvker_17", "coin_bvker_18", "coin_bvker_19", "coin_bvker_20", "coin_bvker_21", "coin_bvker_22", "coin_bvker_23", "coin_bvker_24", "coin_bvker_25", "coin_bvker_26", "coin_bvker_27", "coin_bvker_28", "coin_bvker_29"],
     "paisa": ["coin_bvker_1", "coin_bvker_2", "coins"],
