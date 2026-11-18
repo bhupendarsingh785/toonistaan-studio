@@ -9766,6 +9766,115 @@ DEFAULT_INDEX = {
    "gaadi"
   ],
   "license": "CC0/BVKER"
+ },
+ "car_random_1": {
+  "file": "car/car_random_1.mp3",
+  "tags": [
+   "car",
+   "gaadi",
+   "random",
+   "foley",
+   "interior"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "car_random_2": {
+  "file": "car/car_random_2.mp3",
+  "tags": [
+   "car",
+   "gaadi",
+   "random",
+   "foley",
+   "interior"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "car_random_3": {
+  "file": "car/car_random_3.mp3",
+  "tags": [
+   "car",
+   "gaadi",
+   "random",
+   "foley",
+   "interior"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "car_random_4": {
+  "file": "car/car_random_4.mp3",
+  "tags": [
+   "car",
+   "gaadi",
+   "random",
+   "foley",
+   "interior"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "car_random_5": {
+  "file": "car/car_random_5.mp3",
+  "tags": [
+   "car",
+   "gaadi",
+   "random",
+   "foley",
+   "interior"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "car_random_6": {
+  "file": "car/car_random_6.mp3",
+  "tags": [
+   "car",
+   "gaadi",
+   "random",
+   "foley",
+   "interior"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "car_random_7": {
+  "file": "car/car_random_7.mp3",
+  "tags": [
+   "car",
+   "gaadi",
+   "random",
+   "foley",
+   "interior"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "car_window_1": {
+  "file": "car/car_window_1.mp3",
+  "tags": [
+   "car",
+   "window",
+   "khidki",
+   "gaadi",
+   "slide"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "car_window_2": {
+  "file": "car/car_window_2.mp3",
+  "tags": [
+   "car",
+   "window",
+   "khidki",
+   "gaadi",
+   "slide"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "car_lock_7": {
+  "file": "car/car_lock_7.mp3",
+  "tags": [
+   "lock",
+   "car",
+   "taala",
+   "beep"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -9782,8 +9891,10 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "car_window": ["car_window_1", "car_window_2"],
+    "car_random": ["car_random_1", "car_random_2", "car_random_3", "car_random_4", "car_random_5", "car_random_6", "car_random_7"],
     "car_keys": ["car_keys_1", "car_keys_2", "car_keys_3"],
-    "car_lock": ["car_lock_1", "car_lock_2", "car_lock_3", "car_lock_4", "car_lock_5", "car_lock_6"],
+    "car_lock": ["car_lock_1", "car_lock_2", "car_lock_3", "car_lock_4", "car_lock_5", "car_lock_6", "car_lock_7"],
     "engine": ["car_engine_1", "car_engine_2", "car_engine_3", "car_engine_4", "car_engine_5", "car_engine_6", "car_engine_7"],
     "gaadi_chalu": ["car_engine_1", "car_engine_2"],
     "car_door": ["car_door_1", "car_door_2", "car_door_3", "car_door_4", "car_door_5", "car_door_6", "car_door_7", "car_door_8", "car_door_9", "car_door_10", "car_door_11"],
