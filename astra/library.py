@@ -5480,6 +5480,203 @@ DEFAULT_INDEX = {
    "comedy"
   ],
   "license": "Pixabay"
+ },
+ "epic_hybrid_orchestra": {
+  "file": "music/epic_hybrid_orchestra.mp3",
+  "tags": [
+   "epic",
+   "orchestra",
+   "hybrid",
+   "trailer",
+   "hero"
+  ],
+  "license": "Pixabay"
+ },
+ "trailer_lacrimosa": {
+  "file": "music/trailer_lacrimosa.mp3",
+  "tags": [
+   "trailer",
+   "lacrimosa",
+   "epic",
+   "sad",
+   "cinematic"
+  ],
+  "license": "Pixabay"
+ },
+ "cinematic_redline": {
+  "file": "music/cinematic_redline.mp3",
+  "tags": [
+   "cinematic",
+   "cue",
+   "action",
+   "tension"
+  ],
+  "license": "Pixabay"
+ },
+ "countdown_action": {
+  "file": "music/countdown_action.mp3",
+  "tags": [
+   "countdown",
+   "action",
+   "trailer",
+   "blockbuster"
+  ],
+  "license": "Pixabay"
+ },
+ "deep_breath_epic": {
+  "file": "music/deep_breath_epic.mp3",
+  "tags": [
+   "epic",
+   "breath",
+   "trailer",
+   "hero"
+  ],
+  "license": "Pixabay"
+ },
+ "trailer_teaser": {
+  "file": "music/trailer_teaser.mp3",
+  "tags": [
+   "trailer",
+   "teaser",
+   "cinematic",
+   "build"
+  ],
+  "license": "Pixabay"
+ },
+ "fun_banana_slip": {
+  "file": "music/fun_banana_slip.mp3",
+  "tags": [
+   "fun",
+   "comedy",
+   "slip",
+   "cartoon"
+  ],
+  "license": "Pixabay"
+ },
+ "tense_horror_1": {
+  "file": "horror/tense_horror_1.mp3",
+  "tags": [
+   "tense",
+   "horror",
+   "tension",
+   "dar"
+  ],
+  "license": "Pixabay"
+ },
+ "cyber_crash": {
+  "file": "transitions/cyber_crash.mp3",
+  "tags": [
+   "transition",
+   "crash",
+   "cyber",
+   "impact"
+  ],
+  "license": "Pixabay"
+ },
+ "system_failure": {
+  "file": "transitions/system_failure.mp3",
+  "tags": [
+   "transition",
+   "failure",
+   "glitch",
+   "machine"
+  ],
+  "license": "Pixabay"
+ },
+ "choir_transition": {
+  "file": "transitions/choir_transition.mp3",
+  "tags": [
+   "transition",
+   "choir",
+   "swell",
+   "epic"
+  ],
+  "license": "Pixabay"
+ },
+ "tonal_riser_1": {
+  "file": "transitions/tonal_riser_1.mp3",
+  "tags": [
+   "riser",
+   "build",
+   "transition",
+   "tension"
+  ],
+  "license": "Pixabay"
+ },
+ "tonal_riser_3": {
+  "file": "transitions/tonal_riser_3.mp3",
+  "tags": [
+   "riser",
+   "build",
+   "transition"
+  ],
+  "license": "Pixabay"
+ },
+ "tonal_riser_smooth_2": {
+  "file": "transitions/tonal_riser_smooth_2.mp3",
+  "tags": [
+   "riser",
+   "smooth",
+   "transition"
+  ],
+  "license": "Pixabay"
+ },
+ "tonal_riser_smooth_7": {
+  "file": "transitions/tonal_riser_smooth_7.mp3",
+  "tags": [
+   "riser",
+   "smooth",
+   "transition"
+  ],
+  "license": "Pixabay"
+ },
+ "tonal_riser_smooth_8": {
+  "file": "transitions/tonal_riser_smooth_8.mp3",
+  "tags": [
+   "riser",
+   "smooth",
+   "transition"
+  ],
+  "license": "Pixabay"
+ },
+ "tonal_riser_cinematic_8": {
+  "file": "transitions/tonal_riser_cinematic_8.mp3",
+  "tags": [
+   "riser",
+   "cinematic",
+   "transition"
+  ],
+  "license": "Pixabay"
+ },
+ "whoosh_reverse_low": {
+  "file": "transitions/whoosh_reverse_low.mp3",
+  "tags": [
+   "whoosh",
+   "reverse",
+   "transition",
+   "deep"
+  ],
+  "license": "Pixabay"
+ },
+ "logo_sting_synthwave": {
+  "file": "transitions/logo_sting_synthwave.mp3",
+  "tags": [
+   "sting",
+   "logo",
+   "synthwave",
+   "reveal"
+  ],
+  "license": "Pixabay"
+ },
+ "ui_click_cyber": {
+  "file": "transitions/ui_click_cyber.mp3",
+  "tags": [
+   "click",
+   "ui",
+   "cyber",
+   "interface"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -5496,6 +5693,15 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "transition": ["tonal_riser_1", "tonal_riser_3", "tonal_riser_smooth_2", "tonal_riser_smooth_7",
+                   "tonal_riser_smooth_8", "tonal_riser_cinematic_8", "whoosh_reverse_low",
+                   "choir_transition", "cyber_crash"],
+    "riser": ["tonal_riser_1", "tonal_riser_3", "tonal_riser_cinematic_8"],
+    "whoosh": ["whoosh_reverse_low"],
+    "sting": ["logo_sting_synthwave", "cyber_crash"],
+    "epic": ["epic_hybrid_orchestra", "deep_breath_epic", "countdown_action", "trailer_lacrimosa", "trailer_teaser"],
+    "trailer": ["trailer_teaser", "trailer_lacrimosa", "countdown_action"],
+    "comedy": ["fun_banana_slip", "fun_guitar"],
     "chicken": ["chicken_coop"],
     "murgi": ["chicken_coop"],
     "lullaby": ["lullaby_baby"],
