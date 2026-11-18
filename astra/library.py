@@ -18338,6 +18338,103 @@ DEFAULT_INDEX = {
    "music"
   ],
   "license": "Freesound/CC0"
+ },
+ "punjabi_dhol_fusion": {
+  "file": "music/punjabi_dhol_fusion.mp3",
+  "tags": [
+   "punjabi",
+   "dhol",
+   "dance",
+   "desi"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "dhol_neon": {
+  "file": "music/dhol_neon.mp3",
+  "tags": [
+   "dhol",
+   "neon",
+   "desi",
+   "beat"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "mountain_loop_beat": {
+  "file": "music/mountain_loop_beat.mp3",
+  "tags": [
+   "loop",
+   "beat",
+   "music"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "mountain_soft_loop": {
+  "file": "music/mountain_soft_loop.mp3",
+  "tags": [
+   "soft",
+   "loop",
+   "calm"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "positive_company_loop": {
+  "file": "music/positive_company_loop.mp3",
+  "tags": [
+   "positive",
+   "corporate",
+   "loop"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "shaadi_band_baaja": {
+  "file": "music/shaadi_band_baaja.mp3",
+  "tags": [
+   "shaadi",
+   "band",
+   "baaja",
+   "wedding",
+   "desi"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "suspense_scifi_loop": {
+  "file": "music/suspense_scifi_loop.mp3",
+  "tags": [
+   "suspense",
+   "sci-fi",
+   "tension",
+   "loop"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "ethereal_night_loop": {
+  "file": "music/ethereal_night_loop.mp3",
+  "tags": [
+   "ethereal",
+   "night",
+   "dreamy",
+   "loop"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "bhangra_energy": {
+  "file": "music/bhangra_energy.mp3",
+  "tags": [
+   "bhangra",
+   "punjabi",
+   "energy",
+   "dance"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "upbeat_corporate_loop": {
+  "file": "music/upbeat_corporate_loop.mp3",
+  "tags": [
+   "upbeat",
+   "corporate",
+   "loop"
+  ],
+  "license": "Freesound/CC0"
  }
 }
 
