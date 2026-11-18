@@ -44,3 +44,17 @@ import sys; sys.path.insert(0, "tools")
 import voice_provider as vp
 print(vp.voice_cast())
 ```
+
+## Umar ka rang (AGE_STYLE)
+Awaaz sirf pitch se nahi badalti — kism ke hisaab se filter bhi lagta hai (`AGE_STYLE`):
+
+| Kism | Pitch guna | Raftaar | Kampan (tremolo) | Lowpass | Highpass |
+|---|---|---|---|---|---|
+| female_old (dadi) | 0.94 | 0.93 | 3.2 Hz / 0.16 | 7200 | — |
+| male_old (chacha, kaka, pandit) | 0.95 | 0.94 | 3.0 Hz / 0.14 | 7600 | — |
+| child (bachcha) | 1.00 | 1.02 | — | — | 180 |
+| creature (bhoot, chudail) | 0.96 | 0.92 | 5.0 Hz / 0.35 | 6000 | — |
+| announce | 1.00 | 1.00 | — | — | 260 |
+
+Isliye **dadi ki awaaz ladki jaisi nahi lagti** — dheemi, bhaari, thodi kampan wali.
+Test (200 Hz tone): dadi chain ke baad **188 Hz**, behen chain ke baad **200 Hz** — farq saaf.

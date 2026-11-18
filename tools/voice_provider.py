@@ -144,6 +144,69 @@ for _k, _v in VOICES.items():
         SARVAM_TARGET_HZ[_k] = int(_v["hz"])
 
 
+# ---------------------------------------------------------------- umar / kism ke hisaab se awaaz ka rang
+# dadi ki awaaz ladki jaisi nahi lagni chahiye — isliye kism ke hisaab se
+# pitch, raftaar aur kampan (tremolo) alag. Ye filter har engine ke baad lagta hai.
+AGE_STYLE = {
+    # kism                pitch-guna, atempo, tremolo (freq, depth) ya None, lowpass, highpass
+    "female_old":   (0.94, 0.93, (3.2, 0.16), 7200, None),
+    "male_old":     (0.95, 0.94, (3.0, 0.14), 7600, None),
+    "child":        (1.00, 1.02, None, None, 180),
+    "creature":     (0.96, 0.92, (5.0, 0.35), 6000, None),
+    "announce":     (1.00, 1.00, None, None, 260),
+}
+
+
+def _kism(kirdaar):
+    v = VOICES.get(kirdaar) or {}
+    return v.get("kism") or ""
+
+
+def age_filters(kirdaar):
+    """Us kirdaar ke umar/kism ke ffmpeg filters (list)."""
+    st = AGE_STYLE.get(_kism(kirdaar))
+    if not st:
+        return []
+    pitch, tempo, trem, lp, hp = st
+    out = []
+    if abs(pitch - 1.0) > 0.01:
+        out.append(f"asetrate=44100*{pitch:.3f}")
+        out.append("aresample=44100")
+        out.append(f"atempo={1/pitch:.4f}")
+    if abs(tempo - 1.0) > 0.01:
+        out.append(f"atempo={tempo:.3f}")
+    if trem:
+        out.append(f"tremolo=f={trem[0]}:d={trem[1]}")
+    if lp:
+        out.append(f"lowpass=f={lp}")
+    if hp:
+        out.append(f"highpass=f={hp}")
+    return out
+
+
+def shape_age(path, kirdaar):
+    """File par umar ke filters laga do (jagah par hi badal deta hai)."""
+    flt = age_filters(kirdaar)
+    if not flt or not os.path.exists(path):
+        return False
+    try:
+        import shutil, subprocess, tempfile
+        ff = shutil.which("ffmpeg")
+        if not ff:
+            import imageio_ffmpeg
+            ff = imageio_ffmpeg.get_ffmpeg_exe()
+        tmp = tempfile.mktemp(suffix=".mp3")
+        r = subprocess.run([ff, "-loglevel", "error", "-y", "-i", path,
+                            "-filter:a", ",".join(flt), "-ac", "1", "-ar", "44100",
+                            "-b:a", "128k", tmp], capture_output=True)
+        if r.returncode == 0 and os.path.exists(tmp) and os.path.getsize(tmp) > 2000:
+            os.replace(tmp, path)
+            return True
+    except Exception as e:
+        print("AGE_SHAPE_FAIL", str(e)[:60], flush=True)
+    return False
+
+
 def voice_cast():
     """Poori list — naam, kism, speaker, pitch, hz."""
     out = {}
@@ -269,6 +332,7 @@ def piper_tts(text, kirdaar="madhur", out="out.wav"):
     if abs(pitch - 1.0) > 0.02:
         af.append(f"asetrate=22050*{pitch:.4f},aresample=44100,atempo={1 / pitch:.4f}")
     af.append("highpass=f=60")
+    af += age_filters(kirdaar)
     r2 = subprocess.run([ff, "-loglevel", "error", "-y", "-i", tmp, "-filter:a", ",".join(af),
                          "-ac", "1", "-ar", "44100", "-b:a", "128k", out], capture_output=True)
     try:
@@ -390,7 +454,9 @@ def sarvam_tts(text, kirdaar="madhur", out="out.wav", bhaav=None):
                 import imageio_ffmpeg
                 ff = imageio_ffmpeg.get_ffmpeg_exe()
             tmp = tempfile.mktemp(suffix=".wav")
-            af = f"asetrate=24000*{pitch:.3f},aresample=44100,atempo={1/pitch:.4f}"
+            _af = [f"asetrate=24000*{pitch:.3f}", "aresample=44100", f"atempo={1/pitch:.4f}"]
+            _af += age_filters(kirdaar)
+            af = ",".join(_af)
             r = subprocess.run([ff, "-loglevel", "error", "-y", "-i", out, "-filter:a", af,
                                 "-ac", "1", "-ar", "44100", tmp], capture_output=True)
             if r.returncode == 0 and os.path.exists(tmp) and os.path.getsize(tmp) > 2000:
@@ -667,7 +733,7 @@ def eleven_tts(text, kirdaar="madhur", out="out.mp3"):
         print("ELEVEN_FAIL chhota audio", len(audio), flush=True)
         return False
     open(out, "wb").write(audio)
-    if abs(speed - 1.0) > 0.02 or abs(pitch - 1.0) > 0.02:
+    if abs(speed - 1.0) > 0.02 or abs(pitch - 1.0) > 0.02 or age_filters(kirdaar):
         tmp = out.replace(".mp3", "_s.mp3")
         chain = []
         if abs(pitch - 1.0) > 0.02:
@@ -676,6 +742,7 @@ def eleven_tts(text, kirdaar="madhur", out="out.mp3"):
             chain.append(f"atempo={1/pitch:.4f}")
         if abs(speed - 1.0) > 0.02:
             chain.append(f"atempo={speed:.3f}")
+        chain += age_filters(kirdaar)
         r = subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", out,
                             "-filter:a", ",".join(chain), tmp], capture_output=True)
         if r.returncode == 0 and os.path.exists(tmp):
