@@ -8824,6 +8824,95 @@ DEFAULT_INDEX = {
    "rainforest"
   ],
   "license": "Wikimedia/XC"
+ },
+ "whipbird": {
+  "file": "birds/whipbird.mp3",
+  "tags": [
+   "whipbird",
+   "bird",
+   "jungle",
+   "whip"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "thornbill": {
+  "file": "birds/thornbill.mp3",
+  "tags": [
+   "thornbill",
+   "bird",
+   "small",
+   "chidiya"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "currawong": {
+  "file": "birds/currawong.mp3",
+  "tags": [
+   "currawong",
+   "bird",
+   "australia"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "myna_3": {
+  "file": "birds/myna_3.mp3",
+  "tags": [
+   "myna",
+   "maina",
+   "मैना",
+   "bird"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "myna_4": {
+  "file": "birds/myna_4.mp3",
+  "tags": [
+   "myna",
+   "maina",
+   "bird",
+   "call"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "myna_5": {
+  "file": "birds/myna_5.mp3",
+  "tags": [
+   "myna",
+   "maina",
+   "long",
+   "bird"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "cuckoo_brush": {
+  "file": "birds/cuckoo_brush.mp3",
+  "tags": [
+   "cuckoo",
+   "koyal",
+   "कोयल",
+   "song"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "robin_yellow": {
+  "file": "birds/robin_yellow.mp3",
+  "tags": [
+   "robin",
+   "bird",
+   "yellow",
+   "song"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "cockatoo_galah": {
+  "file": "birds/cockatoo_galah.mp3",
+  "tags": [
+   "cockatoo",
+   "galah",
+   "parrot",
+   "tota"
+  ],
+  "license": "Wikimedia/XC"
  }
 }
 
@@ -8840,7 +8929,9 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "tota": ["cockatoo_black", "parrot_1"],
+    "koyal": ["cuckoo_brush", "cuckoo"],
+    "maina": ["myna_3", "myna_4", "myna_5", "myna_2", "myna_bird"],
+    "tota": ["cockatoo_galah", "cockatoo_black", "parrot_1"],
     "kabootar": ["dove_spotted"],
     "jungle": ["forest_deciduous", "forest", "marsh_provancher"],
     "seagull": ["gulls_sandbar", "shorebirds_close"],
