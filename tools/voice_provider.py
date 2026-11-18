@@ -14,6 +14,8 @@ env ELEVEN_VOICE_MADHUR / ELEVEN_VOICE_SWARA me).
 """
 import json
 import os
+
+import numpy as np
 import re
 import subprocess
 import sys
@@ -83,6 +85,21 @@ SARVAM_SPEAKER = {
     "swara_dadi": "kavya", "madhur_dada": "dev",
 }
 # umar (age) ke hisaab se awaaz ki unchaai — dadi, ladki, bacchi, jawan, budha sab alag
+# har kirdaar ki awaaz kis pitch par baithe (Hz me) — isse takraav nahi hota
+SARVAM_TARGET_HZ = {
+    "madhur": 104, "ramesh": 118, "salim": 132, "chaiwala": 148, "announce": 168,
+    "constable": 126, "driver": 122, "doctor": 112,
+    "maa": 232, "behen": 252, "aurat": 200, "meera": 210, "sunita": 205,
+    "chachi": 225, "bhabhi": 215, "swara": 240, "swara_dadi": 190, "dadi": 186,
+    "bachcha": 285, "swara_bachcha": 275,
+    "bhoot": 88, "chudail": 172, "arjun": 110, "rahul": 115, "dev": 98,
+    "kaka": 92, "pandit": 100, "mukhiya": 96, "madhur_dada": 90, "kavya": 220,
+    "ritu": 235, "tanya": 258, "priya": 270, "kavitha": 228, "neha": 212,
+    "rohan": 128, "aditya": 116, "shubh": 106, "mani": 120, "sunny": 140,
+    "roopa": 196, "soham": 280, "aayan": 86,
+}
+
+
 SARVAM_PITCH = {
     # budhe / dadi
     "dadi": 0.86, "chacha": 0.94, "pandit": 0.92, "mukhiya": 0.90, "kaka": 0.95,
@@ -196,8 +213,76 @@ def sarvam_tts(text, kirdaar="madhur", out="out.wav"):
         except Exception as e:
             print("SARVAM_PITCH_FAIL", str(e)[:50], flush=True)
 
+    # ---- closed loop: naap kar target pitch par le jao (awaazein na milen) ----
+    try:
+        _tune_to_target(out, kirdaar)
+    except Exception as e:
+        print("SARVAM_TUNE_SKIP", str(e)[:50], flush=True)
+
     print("SARVAM_OK", kirdaar, speaker, payload["pace"], f"pitch={pitch}", len(audio), flush=True)
     return True
+
+
+def _measure_pitch(path):
+    """Awaaz ki median pitch (Hz) — autocorrelation se."""
+    import wave
+    try:
+        with wave.open(path) as w:
+            sr = w.getframerate()
+            raw = w.readframes(min(w.getnframes(), sr * 8))
+            x = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0
+    except Exception:
+        return None
+    if len(x) < sr // 2:
+        return None
+    win, hop = int(sr * 0.04), int(sr * 0.02)
+    vals = []
+    for i in range(0, len(x) - win, hop):
+        f = x[i:i + win] - x[i:i + win].mean()
+        if np.sqrt((f ** 2).mean()) < 1e-3:
+            continue
+        ac = np.correlate(f, f, "full")[len(f) - 1:]
+        lo, hi = int(sr / 400), min(int(sr / 70), len(ac) - 1)
+        if hi <= lo + 2:
+            continue
+        lag = lo + int(np.argmax(ac[lo:hi]))
+        if lag:
+            vals.append(sr / lag)
+    if len(vals) < 5:
+        return None
+    return float(np.median(vals))
+
+
+def _tune_to_target(path, kirdaar):
+    """Awaaz ko target Hz ke kareeb le jao (sur nahi bigadta)."""
+    target = SARVAM_TARGET_HZ.get(kirdaar)
+    if not target:
+        return False
+    cur = _measure_pitch(path)
+    if not cur or cur <= 0:
+        return False
+    factor = target / cur
+    factor = max(0.72, min(1.42, factor))
+    if abs(factor - 1.0) < 0.03:
+        return False
+    import subprocess, tempfile
+    ff = None
+    try:
+        import shutil
+        ff = shutil.which("ffmpeg")
+        if not ff:
+            import imageio_ffmpeg
+            ff = imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:
+        return False
+    tmp = tempfile.mktemp(suffix=".wav")
+    af = f"asetrate=44100*{factor:.4f},aresample=44100,atempo={1/factor:.4f}"
+    r = subprocess.run([ff, "-loglevel", "error", "-y", "-i", path, "-filter:a", af,
+                        "-ac", "1", "-ar", "44100", tmp], capture_output=True)
+    if r.returncode == 0 and os.path.exists(tmp) and os.path.getsize(tmp) > 2000:
+        os.replace(tmp, path)
+        return True
+    return False
 
 
 def list_voices():
