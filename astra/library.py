@@ -13083,6 +13083,56 @@ DEFAULT_INDEX = {
    "taala"
   ],
   "license": "CC0/BVKER"
+ },
+ "keys_11": {
+  "file": "foley/keys_11.mp3",
+  "tags": [
+   "keys",
+   "chaabi",
+   "चाबी",
+   "jingle"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "keys_12": {
+  "file": "foley/keys_12.mp3",
+  "tags": [
+   "keys",
+   "chaabi",
+   "चाबी",
+   "jingle"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "keys_13": {
+  "file": "foley/keys_13.mp3",
+  "tags": [
+   "keys",
+   "chaabi",
+   "चाबी",
+   "jingle"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "keys_14": {
+  "file": "foley/keys_14.mp3",
+  "tags": [
+   "keys",
+   "chaabi",
+   "चाबी",
+   "jingle"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "keys_15": {
+  "file": "foley/keys_15.mp3",
+  "tags": [
+   "keys",
+   "chaabi",
+   "चाबी",
+   "jingle"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -13099,8 +13149,8 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "chaabi": ["keys_1", "keys_2", "keys_3", "keys_4", "keys_5", "car_keys_1", "door_lock_open"],
-    "keys": ["keys_1", "keys_2", "keys_3", "keys_4", "keys_5", "keys_6", "keys_7", "keys_8", "keys_9", "keys_10"],
+    "chaabi": ["keys_1", "keys_2", "keys_3", "keys_4", "keys_5", "keys_6", "keys_7", "keys_8", "keys_9", "keys_10", "keys_11", "keys_12", "keys_13", "keys_14", "keys_15", "car_keys_1"],
+    "keys": ["keys_1", "keys_2", "keys_3", "keys_4", "keys_5", "keys_6", "keys_7", "keys_8", "keys_9", "keys_10", "keys_11", "keys_12", "keys_13", "keys_14", "keys_15"],
     "snap": ["snap_1", "snap_2", "snap_3", "snap_4", "snap_5", "snap_6", "snap_7", "snap_8", "snap_9", "snap_10"],
     "chutki": ["snap_1", "snap_2", "snap_3", "snap_4", "snap_5", "snap_6", "snap_7", "snap_8", "snap_9", "snap_10"],
     "khansi": ["cough_1", "cough_2", "cough_3", "cough_4", "cough_5"],
