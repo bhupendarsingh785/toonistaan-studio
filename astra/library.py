@@ -17716,6 +17716,126 @@ DEFAULT_INDEX = {
    "public"
   ],
   "license": "CC0/BVKER"
+ },
+ "drone_01_e": {
+  "file": "music/drone_01_e.mp3",
+  "tags": [
+   "drone",
+   "ambient",
+   "tension",
+   "note",
+   "music",
+   "note_E"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "drone_02_g": {
+  "file": "music/drone_02_g.mp3",
+  "tags": [
+   "drone",
+   "ambient",
+   "tension",
+   "note",
+   "music",
+   "note_G"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "drone_03_g": {
+  "file": "music/drone_03_g.mp3",
+  "tags": [
+   "drone",
+   "ambient",
+   "tension",
+   "note",
+   "music",
+   "note_G"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "drone_04_a": {
+  "file": "music/drone_04_a.mp3",
+  "tags": [
+   "drone",
+   "ambient",
+   "tension",
+   "note",
+   "music",
+   "note_A"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "drone_05_f": {
+  "file": "music/drone_05_f.mp3",
+  "tags": [
+   "drone",
+   "ambient",
+   "tension",
+   "note",
+   "music",
+   "note_F"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "drone_06_d": {
+  "file": "music/drone_06_d.mp3",
+  "tags": [
+   "drone",
+   "ambient",
+   "tension",
+   "note",
+   "music",
+   "note_D"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "drone_07_e": {
+  "file": "music/drone_07_e.mp3",
+  "tags": [
+   "drone",
+   "ambient",
+   "tension",
+   "note",
+   "music",
+   "note_E"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "drone_08_c": {
+  "file": "music/drone_08_c.mp3",
+  "tags": [
+   "drone",
+   "ambient",
+   "tension",
+   "note",
+   "music",
+   "note_C"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "drone_09_d": {
+  "file": "music/drone_09_d.mp3",
+  "tags": [
+   "drone",
+   "ambient",
+   "tension",
+   "note",
+   "music",
+   "note_D"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "drone_10_d": {
+  "file": "music/drone_10_d.mp3",
+  "tags": [
+   "drone",
+   "ambient",
+   "tension",
+   "note",
+   "music",
+   "note_D"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
