@@ -7826,6 +7826,106 @@ DEFAULT_INDEX = {
    "bear"
   ],
   "license": "Pixabay"
+ },
+ "kangaroo": {
+  "file": "animals/kangaroo.mp3",
+  "tags": [
+   "kangaroo",
+   "kangaroo",
+   "australia",
+   "animal"
+  ],
+  "license": "Pixabay"
+ },
+ "kangaroo_talk": {
+  "file": "animals/kangaroo_talk.mp3",
+  "tags": [
+   "kangaroo",
+   "talk",
+   "sunset",
+   "call"
+  ],
+  "license": "Pixabay"
+ },
+ "kangaroo_herd": {
+  "file": "animals/kangaroo_herd.mp3",
+  "tags": [
+   "kangaroo",
+   "herd",
+   "jungle",
+   "many"
+  ],
+  "license": "Pixabay"
+ },
+ "kangaroo_herd_2": {
+  "file": "animals/kangaroo_herd_2.mp3",
+  "tags": [
+   "kangaroo",
+   "herd",
+   "nature"
+  ],
+  "license": "Pixabay"
+ },
+ "zebra": {
+  "file": "animals/zebra.mp3",
+  "tags": [
+   "zebra",
+   "zebra",
+   "animal",
+   "call"
+  ],
+  "license": "Pixabay"
+ },
+ "zebra_hungry": {
+  "file": "animals/zebra_hungry.mp3",
+  "tags": [
+   "zebra",
+   "hungry",
+   "cry",
+   "bhookha"
+  ],
+  "license": "Pixabay"
+ },
+ "zebra_herd": {
+  "file": "animals/zebra_herd.mp3",
+  "tags": [
+   "zebra",
+   "herd",
+   "plains",
+   "many"
+  ],
+  "license": "Pixabay"
+ },
+ "african_bark": {
+  "file": "animals/african_bark.mp3",
+  "tags": [
+   "african",
+   "bark",
+   "wild",
+   "plain"
+  ],
+  "license": "Pixabay"
+ },
+ "male_growl": {
+  "file": "voices/male_growl.mp3",
+  "tags": [
+   "male",
+   "growl",
+   "gussa",
+   "aadmi",
+   "dark"
+  ],
+  "license": "Pixabay"
+ },
+ "cough_sharp": {
+  "file": "voices/cough_sharp.mp3",
+  "tags": [
+   "cough",
+   "khansi",
+   "खांसी",
+   "sharp"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -7842,6 +7942,10 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "kangaroo": ["kangaroo", "kangaroo_talk", "kangaroo_herd", "kangaroo_herd_2"],
+    "zebra": ["zebra", "zebra_herd", "zebra_hungry"],
+    "growl": ["male_growl", "wombat_growl", "rhino_growl"],
+    "cough": ["cough_sharp", "cough"],
     "rhino": ["rhino_growl", "rhino_snort", "rhino_clash", "rhino_young"],
     "panda": ["panda", "panda_bleat", "panda_grumbling", "panda_purr", "panda_zoo"],
     "monkey": ["monkey_calls", "monkey_laugh", "monkey_giggle", "monkey_cry", "monkey_attention", "monkey_nature", "monkey_fight", "monkey_imitate", "chimpanzee"],
