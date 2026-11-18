@@ -1,9 +1,9 @@
 {
-"count": 1175,
+"count": 1178,
 "files": {
 "library/.cleaned.json": {
-"size": 38197,
-"md5": "7f333251e3fcff7c7b7383a164de1c70"
+"size": 38626,
+"md5": "803461d8ec79f0611b35f8b235fc2e22"
 },
 "library/README.md": {
 "size": 1760,
@@ -4178,8 +4178,8 @@
 "md5": "df70a54bcf1991988ab89a8fb80c25cd"
 },
 "library/foley/glass_bvk_18.mp3": {
-"size": 6808,
-"md5": "77a82fc4a4ce4956aef0e40c44aff3b9"
+"size": 7775,
+"md5": "d37cb0b319bd80f0274c7802ac7c6719"
 },
 "library/foley/paper_riser.mp3": {
 "size": 43510,
@@ -4213,6 +4213,10 @@
 "size": 4013,
 "md5": "c03ee6e3b5545cb5bf648d195f689c4f"
 },
+"library/foley/glass_bvk_42.mp3": {
+"size": 2786,
+"md5": "4bbac5e28fc612836495d69e26e8dc34"
+},
 "library/foley/lighter_1_thin.mp3": {
 "size": 1323,
 "md5": "aacc32850988dd1fe1b4ce8297d87496"
@@ -4226,16 +4230,20 @@
 "md5": "a0e7c82d7676d8c83718269c6cad2c20"
 },
 "library/foley/glass_bvk_21.mp3": {
-"size": 3517,
-"md5": "195a569199509d5b87da12208487ed78"
+"size": 4013,
+"md5": "528b4717ce3cfe1ecba4bbf256ec61be"
 },
 "library/foley/coins_in_bowl.mp3": {
 "size": 64826,
 "md5": "006bdcfbf1520a06fa833e91c345805b"
 },
 "library/foley/glass_bvk_12.mp3": {
-"size": 2237,
-"md5": "82fc99f278cac1e43bf787160ab4572a"
+"size": 2550,
+"md5": "a75cf04ea24db9165a5e009e18e7ec12"
+},
+"library/foley/glass_bvk_43.mp3": {
+"size": 2420,
+"md5": "c5dc05608fc1c93c0addd409dbd0cce2"
 },
 "library/foley/rope_climb_demo.mp3": {
 "size": 72558,
@@ -4254,8 +4262,8 @@
 "md5": "411081d1df285d4cf25d633eebdc4483"
 },
 "library/foley/glass_bvk_20.mp3": {
-"size": 3517,
-"md5": "b08739a347513d722f9bb6e4647996af"
+"size": 4013,
+"md5": "06a7e4ea6afe7d4c8dc0ada2dc276be1"
 },
 "library/foley/lighter_5.mp3": {
 "size": 1323,
@@ -4281,9 +4289,13 @@
 "size": 1323,
 "md5": "ff79c8af54fd0ce7d20b1db53e76059f"
 },
+"library/foley/glass_bvk_41.mp3": {
+"size": 2420,
+"md5": "82574a211b26cb2afa275bbd9e97b39f"
+},
 "library/foley/glass_bvk_17.mp3": {
-"size": 1871,
-"md5": "f30c8779bf2fb863cf022efb33d292c5"
+"size": 2132,
+"md5": "53d537cbbd707190af58bd21173b049d"
 },
 "library/foley/glass_bvk_9.mp3": {
 "size": 2132,
@@ -4346,8 +4358,8 @@
 "md5": "a32d90a0f89f0748e2cd9dabcc884294"
 },
 "library/foley/glass_bvk_19.mp3": {
-"size": 11197,
-"md5": "8cce2290d0c18933c64d6999b87c1686"
+"size": 12790,
+"md5": "23c06d364cad6eb3db3d9bf372143695"
 },
 "library/foley/lighter_42.mp3": {
 "size": 1506,
@@ -4430,8 +4442,8 @@
 "md5": "8ddfef9efafb41136be64e4612b8153c"
 },
 "library/foley/glass_bvk_13.mp3": {
-"size": 2786,
-"md5": "7307b5cd2eab5029ccb58566324933da"
+"size": 3177,
+"md5": "9faba75d46175137f369b21b8109a641"
 },
 "library/foley/paper_handling.mp3": {
 "size": 57721,
@@ -4506,8 +4518,8 @@
 "md5": "97699c23e5f4052a398f92e91ed24be6"
 },
 "library/foley/glass_bvk_26.mp3": {
-"size": 2420,
-"md5": "4c471ccb9e086161ac382ecdb5943650"
+"size": 2759,
+"md5": "e418cefc3e46c015435a04b5ed3705e1"
 },
 "library/foley/glass_bvk_2.mp3": {
 "size": 2132,
@@ -4554,8 +4566,8 @@
 "md5": "56733277ed452cfa4959e9aaac4d9e38"
 },
 "library/foley/glass_bvk_28.mp3": {
-"size": 2786,
-"md5": "03ba6c4d6b4982e4fafa68aeaa027b3a"
+"size": 3177,
+"md5": "6be4a5ab6d80245b7840a2f3fa9a3cae"
 },
 "library/foley/coins_bag.mp3": {
 "size": 69842,
@@ -4582,16 +4594,16 @@
 "md5": "eeb6204c92da54f04309797cfc256c0c"
 },
 "library/foley/glass_bvk_29.mp3": {
-"size": 2054,
-"md5": "2082f891e29724846a62d3c61e21a5b6"
+"size": 2341,
+"md5": "5b99d69bce63fda2835a0f157572cd88"
 },
 "library/foley/rope.mp3": {
 "size": 18224,
 "md5": "5123472de7924bc80a2d0a78a3bdd1da"
 },
 "library/foley/glass_bvk_30.mp3": {
-"size": 3700,
-"md5": "f17476333420561ee634279bd2af7cd8"
+"size": 4222,
+"md5": "cc2c1610cb23b18d1e2fb4000424697d"
 },
 "library/foley/lighter_27.mp3": {
 "size": 9656,
@@ -4610,8 +4622,8 @@
 "md5": "a88ae133a6a09dba2dbe02214b68d574"
 },
 "library/foley/glass_bvk_24.mp3": {
-"size": 3883,
-"md5": "ef56459fea7c0115b8205dad0f984c5d"
+"size": 4431,
+"md5": "6d96fbcdb508b642efe753e13c8cebaa"
 },
 "library/foley/lighter_14.mp3": {
 "size": 5058,
@@ -4638,8 +4650,8 @@
 "md5": "a066a7f76c2a9514280378abb028150f"
 },
 "library/foley/glass_bvk_25.mp3": {
-"size": 2054,
-"md5": "fc2dbc477102aca23eee5ca356982be6"
+"size": 2341,
+"md5": "83ff6c0e0df13667cf33678492c85a67"
 },
 "library/foley/paper_cut.mp3": {
 "size": 480487,
