@@ -76,7 +76,12 @@ def _speak_natural(text, voice, out, gap=0.16):
         asyncio.run(_say(ch["text"], voice, tmp))
         # kinare ki khamoshi hatao + awaaz barabar
         clean = tempfile.mktemp(suffix=".mp3")
-        af = ("silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.02,"
+        # halka sur ka ghumav (intonation) — har chunk par ±2%, taaki awaaz flat na lage
+        i = len(parts)
+        pf = 1.0 + 0.022 * (1 if i % 3 == 0 else (-1 if i % 3 == 1 else 0))
+        tf = 1.0 + 0.02 * (1 if i % 2 == 0 else -1)
+        af = (f"asetrate=44100*{pf:.4f},aresample=44100,atempo={1/pf:.4f},atempo={tf:.4f},"
+              "silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.02,"
               "areverse,silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.05,areverse,"
               "loudnorm=I=-16:TP=-1.5:LRA=11")
         r = subprocess.run([_ff(), "-loglevel", "error", "-y", "-i", tmp, "-filter:a", af,
