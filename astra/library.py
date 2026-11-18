@@ -7915,6 +7915,108 @@ DEFAULT_INDEX = {
    "sharp"
   ],
   "license": "Pixabay"
+ },
+ "cobra_hiss": {
+  "file": "animals/cobra_hiss.mp3",
+  "tags": [
+   "cobra",
+   "hiss",
+   "saap",
+   "सांप",
+   "naag"
+  ],
+  "license": "Pixabay"
+ },
+ "snake_swing": {
+  "file": "animals/snake_swing.mp3",
+  "tags": [
+   "snake",
+   "swing",
+   "attack",
+   "bite",
+   "hamla"
+  ],
+  "license": "Pixabay"
+ },
+ "python_strike": {
+  "file": "animals/python_strike.mp3",
+  "tags": [
+   "python",
+   "strike",
+   "snake",
+   "attack"
+  ],
+  "license": "Pixabay"
+ },
+ "python_hiss": {
+  "file": "animals/python_hiss.mp3",
+  "tags": [
+   "python",
+   "hiss",
+   "snake",
+   "ajgar"
+  ],
+  "license": "Pixabay"
+ },
+ "python_exhale": {
+  "file": "animals/python_exhale.mp3",
+  "tags": [
+   "python",
+   "exhale",
+   "breath",
+   "snake"
+  ],
+  "license": "Pixabay"
+ },
+ "snake_hiss_low": {
+  "file": "animals/snake_hiss_low.mp3",
+  "tags": [
+   "snake",
+   "hiss",
+   "low",
+   "bassy",
+   "dark"
+  ],
+  "license": "Pixabay"
+ },
+ "boa_swallow": {
+  "file": "animals/boa_swallow.mp3",
+  "tags": [
+   "boa",
+   "swallow",
+   "snake",
+   "water"
+  ],
+  "license": "Pixabay"
+ },
+ "hoarse_breath": {
+  "file": "animals/hoarse_breath.mp3",
+  "tags": [
+   "breath",
+   "hoarse",
+   "sans",
+   "saans",
+   "kharaash"
+  ],
+  "license": "Pixabay"
+ },
+ "zebra_2": {
+  "file": "animals/zebra_2.mp3",
+  "tags": [
+   "zebra",
+   "call",
+   "animal"
+  ],
+  "license": "Pixabay"
+ },
+ "zebra_mating": {
+  "file": "animals/zebra_mating.mp3",
+  "tags": [
+   "zebra",
+   "mating",
+   "communication"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -7932,7 +8034,7 @@ ALIAS = {
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
     "kangaroo": ["kangaroo", "kangaroo_talk", "kangaroo_herd", "kangaroo_herd_2"],
-    "zebra": ["zebra", "zebra_herd", "zebra_hungry"],
+    "zebra": ["zebra", "zebra_2", "zebra_herd", "zebra_hungry", "zebra_mating"],
     "growl": ["male_growl", "wombat_growl", "rhino_growl"],
     "cough": ["cough_sharp", "cough"],
     "rhino": ["rhino_growl", "rhino_snort", "rhino_clash", "rhino_young"],
@@ -7942,7 +8044,7 @@ VARIANTS = {
     "rat": ["rat_wounded", "mouse_squeaks"],
     "dingo": ["dingo_howl", "dingo_call", "dingo_bark", "dingo_field", "dingo_throat"],
     "mouse": ["mouse_squeaks", "mouse_scratches", "mouse_alarm", "mouse_gnaw", "mouse_call"],
-    "reptile": ["reptile_hiss", "snake_hiss"],
+    "reptile": ["cobra_hiss", "snake_hiss_low", "python_hiss", "snake_swing", "python_strike", "reptile_hiss", "snake_hiss", "boa_swallow"],
     "padlock": ["padlock_chain", "lock_unlock_2", "key_lock_2"],
     "mosquito": ["mosquito_buzz", "mosquito_flight", "mosquito_crickets"],
     "chimpanzee": ["chimpanzee", "chimpanzee_2", "chimpanzee_cry"],
