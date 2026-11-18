@@ -87,7 +87,7 @@ SARVAM_SPEAKER = {
 # umar (age) ke hisaab se awaaz ki unchaai — dadi, ladki, bacchi, jawan, budha sab alag
 # har kirdaar ki awaaz kis pitch par baithe (Hz me) — isse takraav nahi hota
 SARVAM_TARGET_HZ = {
-    "madhur": 104, "ramesh": 118, "salim": 132, "chaiwala": 148, "announce": 168,
+    "madhur": 112, "ramesh": 124, "salim": 138, "chaiwala": 150, "announce": 166,
     "constable": 126, "driver": 122, "doctor": 112,
     "maa": 232, "behen": 252, "aurat": 200, "meera": 210, "sunita": 205,
     "chachi": 225, "bhabhi": 215, "swara": 240, "swara_dadi": 190, "dadi": 186,
@@ -224,15 +224,22 @@ def sarvam_tts(text, kirdaar="madhur", out="out.wav"):
 
 
 def _measure_pitch(path):
-    """Awaaz ki median pitch (Hz) — autocorrelation se."""
-    import wave
+    """Awaaz ki median pitch (Hz) — ffmpeg se decode (mp3/wav dono)."""
+    sr = 16000
+    ff = None
     try:
-        with wave.open(path) as w:
-            sr = w.getframerate()
-            raw = w.readframes(min(w.getnframes(), sr * 8))
-            x = np.frombuffer(raw, dtype=np.int16).astype(np.float32) / 32768.0
+        import shutil
+        ff = shutil.which("ffmpeg")
+        if not ff:
+            import imageio_ffmpeg
+            ff = imageio_ffmpeg.get_ffmpeg_exe()
     except Exception:
         return None
+    r = subprocess.run([ff, "-loglevel", "error", "-i", path, "-t", "8",
+                        "-ac", "1", "-ar", str(sr), "-f", "f32le", "-"], capture_output=True)
+    if r.returncode != 0 or len(r.stdout) < sr:
+        return None
+    x = np.frombuffer(r.stdout, dtype=np.float32)
     if len(x) < sr // 2:
         return None
     win, hop = int(sr * 0.04), int(sr * 0.02)
@@ -263,7 +270,7 @@ def _tune_to_target(path, kirdaar):
         return False
     factor = target / cur
     factor = max(0.72, min(1.42, factor))
-    if abs(factor - 1.0) < 0.03:
+    if abs(factor - 1.0) < 0.04:
         return False
     import subprocess, tempfile
     ff = None
@@ -281,6 +288,17 @@ def _tune_to_target(path, kirdaar):
                         "-ac", "1", "-ar", "44100", tmp], capture_output=True)
     if r.returncode == 0 and os.path.exists(tmp) and os.path.getsize(tmp) > 2000:
         os.replace(tmp, path)
+        # doosra pass: ab naap kar bacha hua farak theek karo
+        cur2 = _measure_pitch(path)
+        if cur2 and cur2 > 0:
+            f2 = max(0.8, min(1.25, target / cur2))
+            if abs(f2 - 1.0) > 0.04:
+                tmp2 = tempfile.mktemp(suffix=".wav")
+                af2 = f"asetrate=44100*{f2:.4f},aresample=44100,atempo={1/f2:.4f}"
+                r2 = subprocess.run([ff, "-loglevel", "error", "-y", "-i", path, "-filter:a", af2,
+                                     "-ac", "1", "-ar", "44100", tmp2], capture_output=True)
+                if r2.returncode == 0 and os.path.exists(tmp2) and os.path.getsize(tmp2) > 2000:
+                    os.replace(tmp2, path)
         return True
     return False
 
