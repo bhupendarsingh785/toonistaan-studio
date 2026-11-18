@@ -8119,6 +8119,106 @@ DEFAULT_INDEX = {
    "funny"
   ],
   "license": "Pixabay"
+ },
+ "camel_moan": {
+  "file": "animals/camel_moan.mp3",
+  "tags": [
+   "camel",
+   "oont",
+   "ऊँट",
+   "moan"
+  ],
+  "license": "Pixabay"
+ },
+ "camel_mideast": {
+  "file": "animals/camel_mideast.mp3",
+  "tags": [
+   "camel",
+   "desert",
+   "middle east",
+   "oont"
+  ],
+  "license": "Pixabay"
+ },
+ "camel": {
+  "file": "animals/camel.mp3",
+  "tags": [
+   "camel",
+   "oont",
+   "call"
+  ],
+  "license": "Pixabay"
+ },
+ "camel_angry": {
+  "file": "animals/camel_angry.mp3",
+  "tags": [
+   "camel",
+   "angry",
+   "snap",
+   "gussa"
+  ],
+  "license": "Pixabay"
+ },
+ "wolf_howl": {
+  "file": "animals/wolf_howl.mp3",
+  "tags": [
+   "wolf",
+   "bhediya",
+   "भेड़िया",
+   "howl",
+   "raat"
+  ],
+  "license": "Pixabay"
+ },
+ "toy_wolf": {
+  "file": "animals/toy_wolf.mp3",
+  "tags": [
+   "wolf",
+   "toy",
+   "sharp",
+   "squeak"
+  ],
+  "license": "Pixabay"
+ },
+ "dragon_breath": {
+  "file": "dragon/dragon_breath.mp3",
+  "tags": [
+   "dragon",
+   "breath",
+   "fire",
+   "saans"
+  ],
+  "license": "Pixabay"
+ },
+ "dragon_slow": {
+  "file": "dragon/dragon_slow.mp3",
+  "tags": [
+   "dragon",
+   "slow",
+   "growl",
+   "monster"
+  ],
+  "license": "Pixabay"
+ },
+ "dragon_flame": {
+  "file": "dragon/dragon_flame.mp3",
+  "tags": [
+   "dragon",
+   "flame",
+   "fire",
+   "aag"
+  ],
+  "license": "Pixabay"
+ },
+ "dragon_sigh": {
+  "file": "dragon/dragon_sigh.mp3",
+  "tags": [
+   "dragon",
+   "sigh",
+   "pain",
+   "ghayal"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -8135,6 +8235,9 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "camel": ["camel", "camel_moan", "camel_mideast", "camel_angry"],
+    "wolf": ["wolf_howl", "dingo_howl", "toy_wolf"],
+    "dragon": ["dragon_flame", "dragon_breath", "dragon_slow", "dragon_sigh"],
     "boar": ["boar_threat", "boar_grunts", "boar_squeal", "boar_mixed", "boar_eating"],
     "suan": ["boar_threat", "boar_grunts"],
     "kangaroo": ["kangaroo", "kangaroo_talk", "kangaroo_herd", "kangaroo_herd_2"],
