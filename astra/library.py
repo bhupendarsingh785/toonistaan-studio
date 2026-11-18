@@ -7529,6 +7529,105 @@ DEFAULT_INDEX = {
    "taala"
   ],
   "license": "Pixabay"
+ },
+ "mouse_squeaks": {
+  "file": "animals/mouse_squeaks.mp3",
+  "tags": [
+   "mouse",
+   "chuha",
+   "चूहा",
+   "squeak",
+   "cheenk"
+  ],
+  "license": "Pixabay"
+ },
+ "mouse_alarm": {
+  "file": "animals/mouse_alarm.mp3",
+  "tags": [
+   "mouse",
+   "alarm",
+   "squeak",
+   "pareshan"
+  ],
+  "license": "Pixabay"
+ },
+ "mouse_scratches": {
+  "file": "animals/mouse_scratches.mp3",
+  "tags": [
+   "mouse",
+   "scratch",
+   "khurachna",
+   "chuha"
+  ],
+  "license": "Pixabay"
+ },
+ "rodent_eating": {
+  "file": "animals/rodent_eating.mp3",
+  "tags": [
+   "rodent",
+   "eating",
+   "kutar",
+   "chuha"
+  ],
+  "license": "Pixabay"
+ },
+ "mouse_call": {
+  "file": "animals/mouse_call.mp3",
+  "tags": [
+   "mouse",
+   "call",
+   "jungle",
+   "thin"
+  ],
+  "license": "Pixabay"
+ },
+ "rat_wounded": {
+  "file": "animals/rat_wounded.mp3",
+  "tags": [
+   "rat",
+   "wounded",
+   "ghayal",
+   "chuha"
+  ],
+  "license": "Pixabay"
+ },
+ "wombat_chewing": {
+  "file": "animals/wombat_chewing.mp3",
+  "tags": [
+   "wombat",
+   "chewing",
+   "eating"
+  ],
+  "license": "Pixabay"
+ },
+ "wombat_call": {
+  "file": "animals/wombat_call.mp3",
+  "tags": [
+   "wombat",
+   "call",
+   "jungle"
+  ],
+  "license": "Pixabay"
+ },
+ "wombat_growl": {
+  "file": "animals/wombat_growl.mp3",
+  "tags": [
+   "wombat",
+   "growl",
+   "angry",
+   "gussa"
+  ],
+  "license": "Pixabay"
+ },
+ "wombat_roar": {
+  "file": "animals/wombat_roar.mp3",
+  "tags": [
+   "wombat",
+   "roar",
+   "attack",
+   "snort"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -7545,8 +7644,10 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "wombat": ["wombat_growl", "wombat_roar", "wombat_call", "wombat_chewing"],
+    "rat": ["rat_wounded", "mouse_squeaks"],
     "dingo": ["dingo_howl", "dingo_call", "dingo_bark", "dingo_field", "dingo_throat"],
-    "mouse": ["mouse_gnaw"],
+    "mouse": ["mouse_squeaks", "mouse_scratches", "mouse_alarm", "mouse_gnaw", "mouse_call"],
     "reptile": ["reptile_hiss", "snake_hiss"],
     "padlock": ["padlock_chain", "lock_unlock_2", "key_lock_2"],
     "mosquito": ["mosquito_buzz", "mosquito_flight", "mosquito_crickets"],
