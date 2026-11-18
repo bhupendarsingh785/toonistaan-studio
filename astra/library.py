@@ -17046,6 +17046,116 @@ DEFAULT_INDEX = {
    "bijli"
   ],
   "license": "CC0/BVKER"
+ },
+ "thud_1": {
+  "file": "foley/thud_1.mp3",
+  "tags": [
+   "thud",
+   "dhap",
+   "girna",
+   "impact",
+   "bhaari"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "thud_10": {
+  "file": "foley/thud_10.mp3",
+  "tags": [
+   "thud",
+   "dhap",
+   "girna",
+   "impact",
+   "bhaari"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "thud_2": {
+  "file": "foley/thud_2.mp3",
+  "tags": [
+   "thud",
+   "dhap",
+   "girna",
+   "impact",
+   "bhaari"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "thud_3": {
+  "file": "foley/thud_3.mp3",
+  "tags": [
+   "thud",
+   "dhap",
+   "girna",
+   "impact",
+   "bhaari"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "thud_4": {
+  "file": "foley/thud_4.mp3",
+  "tags": [
+   "thud",
+   "dhap",
+   "girna",
+   "impact",
+   "bhaari"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "thud_5": {
+  "file": "foley/thud_5.mp3",
+  "tags": [
+   "thud",
+   "dhap",
+   "girna",
+   "impact",
+   "bhaari"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "thud_6": {
+  "file": "foley/thud_6.mp3",
+  "tags": [
+   "thud",
+   "dhap",
+   "girna",
+   "impact",
+   "bhaari"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "thud_7": {
+  "file": "foley/thud_7.mp3",
+  "tags": [
+   "thud",
+   "dhap",
+   "girna",
+   "impact",
+   "bhaari"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "thud_8": {
+  "file": "foley/thud_8.mp3",
+  "tags": [
+   "thud",
+   "dhap",
+   "girna",
+   "impact",
+   "bhaari"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "thud_9": {
+  "file": "foley/thud_9.mp3",
+  "tags": [
+   "thud",
+   "dhap",
+   "girna",
+   "impact",
+   "bhaari"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -17062,6 +17172,8 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "thud": ["thud_1", "thud_2", "thud_3", "thud_4", "thud_5", "thud_6", "thud_7", "thud_8", "thud_9", "thud_10"],
+    "dhap": ["thud_1", "thud_2", "thud_3", "thud_4", "thud_5", "thud_6", "thud_7", "thud_8", "thud_9", "thud_10"],
     "scissors": ["scissors_1", "scissors_2", "scissors_3", "scissors_4", "scissors_5", "scissors_6", "scissors_7", "scissors_8", "scissors_9", "scissors_10", "scissors_11", "scissors_12", "scissors_13", "scissors_14"],
     "kainchi": ["scissors_1", "scissors_2", "scissors_3", "scissors_4", "scissors_5", "scissors_6", "scissors_7", "scissors_8", "scissors_9", "scissors_10", "scissors_11", "scissors_12", "scissors_13", "scissors_14"],
     "haircut": ["haircut_1", "haircut_2", "haircut_3"],
