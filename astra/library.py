@@ -18245,6 +18245,99 @@ DEFAULT_INDEX = {
    "music"
   ],
   "license": "Freesound/CC0"
+ },
+ "drumming_happy": {
+  "file": "music/drumming_happy.mp3",
+  "tags": [
+   "drums",
+   "happy",
+   "music"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "hiphop_oldschool": {
+  "file": "music/hiphop_oldschool.mp3",
+  "tags": [
+   "hiphop",
+   "oldschool",
+   "beat"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "corporate_loop": {
+  "file": "music/corporate_loop.mp3",
+  "tags": [
+   "corporate",
+   "business",
+   "loop",
+   "music"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "chillwave_loop": {
+  "file": "music/chillwave_loop.mp3",
+  "tags": [
+   "chillwave",
+   "dreamy",
+   "synth",
+   "loop"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "hiphop_beat_pump": {
+  "file": "music/hiphop_beat_pump.mp3",
+  "tags": [
+   "hiphop",
+   "beat",
+   "music"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "hiphop_kiravale": {
+  "file": "music/hiphop_kiravale.mp3",
+  "tags": [
+   "hiphop",
+   "music"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "bollywood_punjabi": {
+  "file": "music/bollywood_punjabi.mp3",
+  "tags": [
+   "bollywood",
+   "punjabi",
+   "music",
+   "desi"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "hiphop_subclair": {
+  "file": "music/hiphop_subclair.mp3",
+  "tags": [
+   "hiphop",
+   "beat"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "string_cello_loop": {
+  "file": "music/string_cello_loop.mp3",
+  "tags": [
+   "strings",
+   "violin",
+   "cello",
+   "loop",
+   "sad"
+  ],
+  "license": "Freesound/CC0"
+ },
+ "hiphop_vaitsez": {
+  "file": "music/hiphop_vaitsez.mp3",
+  "tags": [
+   "hiphop",
+   "beat",
+   "music"
+  ],
+  "license": "Freesound/CC0"
  }
 }
 
