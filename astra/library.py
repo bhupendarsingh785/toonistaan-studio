@@ -11887,6 +11887,116 @@ DEFAULT_INDEX = {
    "clink"
   ],
   "license": "CC0/BVKER"
+ },
+ "guitar_riff_1": {
+  "file": "music/guitar_riff_1.mp3",
+  "tags": [
+   "guitar",
+   "riff",
+   "music",
+   "rock",
+   "acoustic"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "guitar_riff_2": {
+  "file": "music/guitar_riff_2.mp3",
+  "tags": [
+   "guitar",
+   "riff",
+   "music",
+   "rock",
+   "acoustic"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "guitar_riff_3": {
+  "file": "music/guitar_riff_3.mp3",
+  "tags": [
+   "guitar",
+   "riff",
+   "music",
+   "rock",
+   "acoustic"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "guitar_riff_4": {
+  "file": "music/guitar_riff_4.mp3",
+  "tags": [
+   "guitar",
+   "riff",
+   "music",
+   "rock",
+   "acoustic"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "guitar_riff_5": {
+  "file": "music/guitar_riff_5.mp3",
+  "tags": [
+   "guitar",
+   "riff",
+   "music",
+   "rock",
+   "acoustic"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "guitar_riff_6": {
+  "file": "music/guitar_riff_6.mp3",
+  "tags": [
+   "guitar",
+   "riff",
+   "music",
+   "rock",
+   "acoustic"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "guitar_riff_7": {
+  "file": "music/guitar_riff_7.mp3",
+  "tags": [
+   "guitar",
+   "riff",
+   "music",
+   "rock",
+   "acoustic"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "guitar_riff_8": {
+  "file": "music/guitar_riff_8.mp3",
+  "tags": [
+   "guitar",
+   "riff",
+   "music",
+   "rock",
+   "acoustic"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "guitar_riff_9": {
+  "file": "music/guitar_riff_9.mp3",
+  "tags": [
+   "guitar",
+   "riff",
+   "music",
+   "rock",
+   "acoustic"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "guitar_riff_10": {
+  "file": "music/guitar_riff_10.mp3",
+  "tags": [
+   "guitar",
+   "riff",
+   "music",
+   "rock",
+   "acoustic"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -11903,6 +12013,7 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "guitar": ["guitar_riff_1", "guitar_riff_2", "guitar_riff_3", "guitar_riff_4", "guitar_riff_5", "guitar_riff_6", "guitar_riff_7", "guitar_riff_8", "guitar_riff_9", "guitar_riff_10"],
     "waterfall": ["waterfall_1", "waterfall_2", "waterfall_3"],
     "jharna": ["waterfall_1", "waterfall_2", "waterfall_3"],
     "splash": ["splash_1", "splash_2", "splash_3", "splash_4", "splash_5"],
