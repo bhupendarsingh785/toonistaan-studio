@@ -9875,6 +9875,126 @@ DEFAULT_INDEX = {
    "beep"
   ],
   "license": "CC0/BVKER"
+ },
+ "click_1": {
+  "file": "ui/click_1.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik",
+   "चटक"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_2": {
+  "file": "ui/click_2.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik",
+   "चटक"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_3": {
+  "file": "ui/click_3.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik",
+   "चटक"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_4": {
+  "file": "ui/click_4.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik",
+   "चटक"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_5": {
+  "file": "ui/click_5.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik",
+   "चटक"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_6": {
+  "file": "ui/click_6.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik",
+   "चटक"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_7": {
+  "file": "ui/click_7.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik",
+   "चटक"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_8": {
+  "file": "ui/click_8.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik",
+   "चटक"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_9": {
+  "file": "ui/click_9.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik",
+   "चटक"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "click_10": {
+  "file": "ui/click_10.mp3",
+  "tags": [
+   "click",
+   "tap",
+   "switch",
+   "button",
+   "tik",
+   "चटक"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -9891,6 +10011,8 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "click": ["click_1", "click_2", "click_3", "click_4", "click_5", "click_6", "click_7", "click_8", "click_9", "click_10"],
+    "switch": ["click_1", "click_2", "click_3"],
     "car_window": ["car_window_1", "car_window_2"],
     "car_random": ["car_random_1", "car_random_2", "car_random_3", "car_random_4", "car_random_5", "car_random_6", "car_random_7"],
     "car_keys": ["car_keys_1", "car_keys_2", "car_keys_3"],
