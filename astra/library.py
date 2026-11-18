@@ -6716,6 +6716,87 @@ DEFAULT_INDEX = {
    "elegant"
   ],
   "license": "Pixabay"
+ },
+ "adult_chill": {
+  "file": "music/adult_chill.mp3",
+  "tags": [
+   "chill",
+   "lounge",
+   "calm",
+   "evening"
+  ],
+  "license": "Pixabay"
+ },
+ "dreams": {
+  "file": "music/dreams.mp3",
+  "tags": [
+   "dreams",
+   "soft",
+   "dreamy",
+   "calm"
+  ],
+  "license": "Pixabay"
+ },
+ "smoothy_evening": {
+  "file": "music/smoothy_evening.mp3",
+  "tags": [
+   "evening",
+   "smooth",
+   "lounge",
+   "shaam"
+  ],
+  "license": "Pixabay"
+ },
+ "submerged_focus": {
+  "file": "music/submerged_focus.mp3",
+  "tags": [
+   "focus",
+   "drift",
+   "ambient",
+   "underwater"
+  ],
+  "license": "Pixabay"
+ },
+ "oriental_techno": {
+  "file": "music/oriental_techno.mp3",
+  "tags": [
+   "oriental",
+   "techno",
+   "indian",
+   "modern"
+  ],
+  "license": "Pixabay"
+ },
+ "gymnopedie": {
+  "file": "music/gymnopedie.mp3",
+  "tags": [
+   "satie",
+   "classical",
+   "piano",
+   "sad",
+   "elegant"
+  ],
+  "license": "Pixabay"
+ },
+ "alpha_state_drift": {
+  "file": "music/alpha_state_drift.mp3",
+  "tags": [
+   "alpha",
+   "drift",
+   "ambient",
+   "focus"
+  ],
+  "license": "Pixabay"
+ },
+ "action_trap": {
+  "file": "music/action_trap.mp3",
+  "tags": [
+   "action",
+   "trap",
+   "dynamic",
+   "fight"
+  ],
+  "license": "Pixabay"
  }
 }
 
