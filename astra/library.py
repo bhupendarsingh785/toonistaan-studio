@@ -17665,6 +17665,57 @@ DEFAULT_INDEX = {
    "beat"
   ],
   "license": "CC0/BVKER"
+ },
+ "beep_2": {
+  "file": "ui/beep_2.mp3",
+  "tags": [
+   "beep",
+   "machine",
+   "alarm",
+   "signal"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "beep_5": {
+  "file": "ui/beep_5.mp3",
+  "tags": [
+   "beep",
+   "machine",
+   "alarm",
+   "signal"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "beep_7": {
+  "file": "ui/beep_7.mp3",
+  "tags": [
+   "beep",
+   "machine",
+   "alarm",
+   "signal"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "beep_8": {
+  "file": "ui/beep_8.mp3",
+  "tags": [
+   "beep",
+   "machine",
+   "alarm",
+   "signal"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "emergency_broadcast": {
+  "file": "voices/emergency_broadcast.mp3",
+  "tags": [
+   "emergency",
+   "announcement",
+   "alarm",
+   "khatra",
+   "public"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -17681,6 +17732,8 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "beep": ["beep_2", "beep_5", "beep_7", "beep_8"],
+    "emergency": ["emergency_broadcast"],
     "bass_drop": ["bass_drop_1", "bass_drop_2", "bass_drop_3", "bass_drop_4", "bass_drop_5", "bass_drop_6", "bass_drop_7", "bass_drop_8", "bass_drop_9", "bass_drop_10"],
     "bass": ["bass_drop_1", "bass_drop_2", "bass_drop_3", "bass_drop_4", "bass_drop_5", "bass_drop_6", "bass_drop_7", "bass_drop_8", "bass_drop_9", "bass_drop_10"],
     "urban_footsteps": ["urban_footsteps_1", "urban_footsteps_2"],
