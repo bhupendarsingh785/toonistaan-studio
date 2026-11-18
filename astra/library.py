@@ -8706,6 +8706,104 @@ DEFAULT_INDEX = {
    "dal-dal"
   ],
   "license": "Wikimedia/XC"
+ },
+ "myna_2": {
+  "file": "birds/myna_2.mp3",
+  "tags": [
+   "myna",
+   "maina",
+   "मैना",
+   "bird"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "drongo_ashy": {
+  "file": "birds/drongo_ashy.mp3",
+  "tags": [
+   "drongo",
+   "bird",
+   "india",
+   "call"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "gerygone_island": {
+  "file": "birds/gerygone_island.mp3",
+  "tags": [
+   "gerygone",
+   "bird",
+   "island"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "gerygone_song": {
+  "file": "birds/gerygone_song.mp3",
+  "tags": [
+   "gerygone",
+   "song",
+   "bird"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "dove_spotted": {
+  "file": "birds/dove_spotted.mp3",
+  "tags": [
+   "dove",
+   "kabootar",
+   "कबूतर",
+   "bird"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "miner_noisy": {
+  "file": "birds/miner.mp3",
+  "tags": [
+   "miner",
+   "bird",
+   "noisy",
+   "australia"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "warbler_greenish": {
+  "file": "birds/warbler.mp3",
+  "tags": [
+   "warbler",
+   "bird",
+   "song",
+   "chidiya"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "hawk_cooper_2": {
+  "file": "birds/hawk_cooper_2.mp3",
+  "tags": [
+   "hawk",
+   "cheel",
+   "bird"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "gulls_sandbar": {
+  "file": "birds/gulls_sandbar.mp3",
+  "tags": [
+   "gulls",
+   "seagull",
+   "samundar",
+   "beach"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "forest_deciduous": {
+  "file": "ambience/forest_deciduous.mp3",
+  "tags": [
+   "forest",
+   "jungle",
+   "ambience",
+   "birds",
+   "jangal"
+  ],
+  "license": "Wikimedia/XC"
  }
 }
 
@@ -8722,13 +8820,16 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "kabootar": ["dove_spotted"],
+    "jungle": ["forest_deciduous", "forest", "marsh_provancher"],
+    "seagull": ["gulls_sandbar", "shorebirds_close"],
     "gauraiya": ["sparrow_henslow", "chick_1"],
     "samundar": ["shorebirds_close", "shorebirds_distant", "tern_black", "waves"],
     "marsh": ["marsh_provancher"],
     "cheel": ["hawk_cooper"],
     "bater": ["quail_montezuma"],
     "myna": ["myna_bird", "bird_france"],
-    "chidiya": ["birds_france_2", "bird_france", "tit_great", "wren_carolina", "sparrow_henslow", "tinamou_variegated", "quail_montezuma", "myna_bird", "birds"],
+    "chidiya": ["warbler", "gerygone_song", "drongo_ashy", "myna_2", "dove_spotted", "birds_france_2", "bird_france", "tit_great", "wren_carolina", "sparrow_henslow", "tinamou_variegated", "quail_montezuma", "myna_bird", "birds"],
     "sher": ["lion_real", "lion_loud", "lion_angry", "lion_majestic", "lion_evil", "lion_roar"],
     "बाघ": ["tiger_roar_1"],
     "elephant": ["elephant_african", "elephant_asian", "elephant_roar", "elephant_growl", "elephant_short", "elephant_mighty", "elephant_trunk"],
