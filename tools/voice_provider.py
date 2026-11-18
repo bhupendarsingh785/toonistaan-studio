@@ -76,7 +76,7 @@ SARVAM_SPEAKER = {
     # 16 kirdaar — har ek ki alag awaaz
     "arjun": "rahul", "meera": "ritu", "chacha": "dev", "chachi": "kavya",
     "dadi": "roopa", "pandit": "ashutosh", "constable": "ratan", "doctor": "varun",
-    "bachcha": "soham", "sunita": "shreya", "driver": "manan", "bhoot": "aayan",
+    "bachcha": "priya", "sunita": "shreya", "driver": "manan", "bhoot": "aayan",
     "chudail": "ishita", "mukhiya": "sumit", "kaka": "kabir", "bhabhi": "pooja",
     "ramesh": "aditya", "salim": "rohan", "chaiwala": "sunny", "announce": "mani",
     "aurat": "neha", "maa": "kavitha", "behen": "tanya",
@@ -111,7 +111,7 @@ SARVAM_PITCH = {
     "meera": 1.04, "sunita": 1.03, "aurat": 1.03, "chachi": 1.02, "bhabhi": 1.05,
     "swara": 1.02, "behen": 1.16, "maa": 0.94,
     # bacche / bacchi
-    "bachcha": 1.34, "swara_bachcha": 1.30,
+    "bachcha": 1.30, "swara_bachcha": 1.30,
     # daravani
     "bhoot": 0.80, "chudail": 0.88,
     "announce": 1.35,
@@ -217,6 +217,18 @@ def sarvam_tts(text, kirdaar="madhur", out="out.wav"):
 
     try:
         _naturalize(out, text)
+    except Exception:
+        pass
+
+    # pitch jaanch: target se bahut door ho to batao (chupaya nahi jaata)
+    try:
+        _t = SARVAM_TARGET_HZ.get(kirdaar)
+        _p = _measure_pitch(out)
+        if _t and _p:
+            if abs(_p - _t) / _t > 0.30:
+                print("SARVAM_PITCH_MISS", kirdaar, f"chaha {_t}Hz mila {round(_p)}Hz", flush=True)
+            elif os.environ.get("ASTRA_VERBOSE_PITCH"):
+                print("SARVAM_PITCH_OK", kirdaar, f"{round(_p)}Hz", flush=True)
     except Exception:
         pass
 
