@@ -16646,6 +16646,76 @@ DEFAULT_INDEX = {
    "katna"
   ],
   "license": "CC0/BVKER"
+ },
+ "scissors_10": {
+  "file": "foley/scissors_10.mp3",
+  "tags": [
+   "scissors",
+   "kainchi",
+   "कैंची",
+   "snip"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "scissors_11": {
+  "file": "foley/scissors_11.mp3",
+  "tags": [
+   "scissors",
+   "kainchi",
+   "कैंची",
+   "snip"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "scissors_12": {
+  "file": "foley/scissors_12.mp3",
+  "tags": [
+   "scissors",
+   "kainchi",
+   "कैंची",
+   "snip"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "scissors_13": {
+  "file": "foley/scissors_13.mp3",
+  "tags": [
+   "scissors",
+   "kainchi",
+   "कैंची",
+   "snip"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "scissors_14": {
+  "file": "foley/scissors_14.mp3",
+  "tags": [
+   "scissors",
+   "kainchi",
+   "कैंची",
+   "snip"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "scissors_8": {
+  "file": "foley/scissors_8.mp3",
+  "tags": [
+   "scissors",
+   "kainchi",
+   "कैंची",
+   "snip"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "scissors_9": {
+  "file": "foley/scissors_9.mp3",
+  "tags": [
+   "scissors",
+   "kainchi",
+   "कैंची",
+   "snip"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -16662,8 +16732,8 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "scissors": ["scissors_1", "scissors_2", "scissors_3", "scissors_4", "scissors_5", "scissors_6", "scissors_7"],
-    "kainchi": ["scissors_1", "scissors_2", "scissors_3", "scissors_4", "scissors_5", "scissors_6", "scissors_7"],
+    "scissors": ["scissors_1", "scissors_2", "scissors_3", "scissors_4", "scissors_5", "scissors_6", "scissors_7", "scissors_8", "scissors_9", "scissors_10", "scissors_11", "scissors_12", "scissors_13", "scissors_14"],
+    "kainchi": ["scissors_1", "scissors_2", "scissors_3", "scissors_4", "scissors_5", "scissors_6", "scissors_7", "scissors_8", "scissors_9", "scissors_10", "scissors_11", "scissors_12", "scissors_13", "scissors_14"],
     "haircut": ["haircut_1", "haircut_2", "haircut_3"],
     "random": ["random_1", "random_2", "random_3", "random_4", "random_5", "random_6", "random_7", "random_8", "random_9", "random_10", "random_11", "random_12", "random_13", "random_14", "random_15", "random_16", "random_17", "random_18", "random_19", "random_20", "random_21", "random_22", "random_23", "random_24", "random_25", "random_26", "random_27", "random_28", "random_29", "random_30", "random_31", "random_32", "random_33", "random_34", "random_35", "random_36", "random_37", "random_38", "random_39", "random_40", "random_41", "random_42", "random_43", "random_44", "random_45", "random_46", "random_47", "random_48", "random_49", "random_50", "random_51", "random_52", "random_53", "random_54", "random_55", "random_56", "random_57", "random_58", "random_59", "random_60", "random_61", "random_62", "random_63", "random_64", "random_65", "random_66"],
     "noise": ["noise_random_1", "noise_random_2"],
