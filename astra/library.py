@@ -14712,6 +14712,106 @@ DEFAULT_INDEX = {
    "foley"
   ],
   "license": "CC0/BVKER"
+ },
+ "office_foley_81": {
+  "file": "office/office_foley_81.mp3",
+  "tags": [
+   "office",
+   "daftar",
+   "दफ्तर",
+   "foley"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "office_foley_82": {
+  "file": "office/office_foley_82.mp3",
+  "tags": [
+   "office",
+   "daftar",
+   "दफ्तर",
+   "foley"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "office_foley_83": {
+  "file": "office/office_foley_83.mp3",
+  "tags": [
+   "office",
+   "daftar",
+   "दफ्तर",
+   "foley"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "office_foley_84": {
+  "file": "office/office_foley_84.mp3",
+  "tags": [
+   "office",
+   "daftar",
+   "दफ्तर",
+   "foley"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "office_foley_85": {
+  "file": "office/office_foley_85.mp3",
+  "tags": [
+   "office",
+   "daftar",
+   "दफ्तर",
+   "foley"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "office_foley_86": {
+  "file": "office/office_foley_86.mp3",
+  "tags": [
+   "office",
+   "daftar",
+   "दफ्तर",
+   "foley"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "office_foley_87": {
+  "file": "office/office_foley_87.mp3",
+  "tags": [
+   "office",
+   "daftar",
+   "दफ्तर",
+   "foley"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "office_foley_88": {
+  "file": "office/office_foley_88.mp3",
+  "tags": [
+   "office",
+   "daftar",
+   "दफ्तर",
+   "foley"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "office_foley_89": {
+  "file": "office/office_foley_89.mp3",
+  "tags": [
+   "office",
+   "daftar",
+   "दफ्तर",
+   "foley"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "office_foley_90": {
+  "file": "office/office_foley_90.mp3",
+  "tags": [
+   "office",
+   "daftar",
+   "दफ्तर",
+   "foley"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -14728,8 +14828,8 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "office_foley": ["office_foley_1", "office_foley_2", "office_foley_3", "office_foley_4", "office_foley_5", "office_foley_6", "office_foley_7", "office_foley_8", "office_foley_9", "office_foley_10", "office_foley_11", "office_foley_12", "office_foley_13", "office_foley_14", "office_foley_15", "office_foley_16", "office_foley_17", "office_foley_18", "office_foley_19", "office_foley_20", "office_foley_21", "office_foley_22", "office_foley_23", "office_foley_24", "office_foley_25", "office_foley_26", "office_foley_27", "office_foley_28", "office_foley_29", "office_foley_30", "office_foley_31", "office_foley_32", "office_foley_33", "office_foley_34", "office_foley_35", "office_foley_36", "office_foley_37", "office_foley_38", "office_foley_39", "office_foley_40", "office_foley_42", "office_foley_43", "office_foley_44", "office_foley_45", "office_foley_46", "office_foley_47", "office_foley_48", "office_foley_49", "office_foley_50", "office_foley_51", "office_foley_52", "office_foley_53", "office_foley_54", "office_foley_55", "office_foley_56", "office_foley_57", "office_foley_58", "office_foley_59", "office_foley_60", "office_foley_61", "office_foley_62", "office_foley_63", "office_foley_64", "office_foley_65", "office_foley_66", "office_foley_67", "office_foley_68", "office_foley_69", "office_foley_70", "office_foley_71", "office_foley_72", "office_foley_73", "office_foley_74", "office_foley_75", "office_foley_76", "office_foley_77", "office_foley_78", "office_foley_79", "office_foley_80"],
-    "daftar": ["office_foley_1", "office_foley_2", "office_foley_3", "office_foley_4", "office_foley_5", "office_foley_6", "office_foley_7", "office_foley_8", "office_foley_9", "office_foley_10", "office_foley_11", "office_foley_12", "office_foley_13", "office_foley_14", "office_foley_15", "office_foley_16", "office_foley_17", "office_foley_18", "office_foley_19", "office_foley_20", "office_foley_21", "office_foley_22", "office_foley_23", "office_foley_24", "office_foley_25", "office_foley_26", "office_foley_27", "office_foley_28", "office_foley_29", "office_foley_30", "office_foley_31", "office_foley_32", "office_foley_33", "office_foley_34", "office_foley_35", "office_foley_36", "office_foley_37", "office_foley_38", "office_foley_39", "office_foley_40", "office_foley_42", "office_foley_43", "office_foley_44", "office_foley_45", "office_foley_46", "office_foley_47", "office_foley_48", "office_foley_49", "office_foley_50", "office_foley_51", "office_foley_52", "office_foley_53", "office_foley_54", "office_foley_55", "office_foley_56", "office_foley_57", "office_foley_58", "office_foley_59", "office_foley_60", "office_foley_61", "office_foley_62", "office_foley_63", "office_foley_64", "office_foley_65", "office_foley_66", "office_foley_67", "office_foley_68", "office_foley_69", "office_foley_70", "office_foley_71", "office_foley_72", "office_foley_73", "office_foley_74", "office_foley_75", "office_foley_76", "office_foley_77", "office_foley_78", "office_foley_79", "office_foley_80"],
+    "office_foley": ["office_foley_1", "office_foley_2", "office_foley_3", "office_foley_4", "office_foley_5", "office_foley_6", "office_foley_7", "office_foley_8", "office_foley_9", "office_foley_10", "office_foley_11", "office_foley_12", "office_foley_13", "office_foley_14", "office_foley_15", "office_foley_16", "office_foley_17", "office_foley_18", "office_foley_19", "office_foley_20", "office_foley_21", "office_foley_22", "office_foley_23", "office_foley_24", "office_foley_25", "office_foley_26", "office_foley_27", "office_foley_28", "office_foley_29", "office_foley_30", "office_foley_31", "office_foley_32", "office_foley_33", "office_foley_34", "office_foley_35", "office_foley_36", "office_foley_37", "office_foley_38", "office_foley_39", "office_foley_40", "office_foley_42", "office_foley_43", "office_foley_44", "office_foley_45", "office_foley_46", "office_foley_47", "office_foley_48", "office_foley_49", "office_foley_50", "office_foley_51", "office_foley_52", "office_foley_53", "office_foley_54", "office_foley_55", "office_foley_56", "office_foley_57", "office_foley_58", "office_foley_59", "office_foley_60", "office_foley_61", "office_foley_62", "office_foley_63", "office_foley_64", "office_foley_65", "office_foley_66", "office_foley_67", "office_foley_68", "office_foley_69", "office_foley_70", "office_foley_71", "office_foley_72", "office_foley_73", "office_foley_74", "office_foley_75", "office_foley_76", "office_foley_77", "office_foley_78", "office_foley_79", "office_foley_80", "office_foley_81", "office_foley_82", "office_foley_83", "office_foley_84", "office_foley_85", "office_foley_86", "office_foley_87", "office_foley_88", "office_foley_89", "office_foley_90"],
+    "daftar": ["office_foley_1", "office_foley_2", "office_foley_3", "office_foley_4", "office_foley_5", "office_foley_6", "office_foley_7", "office_foley_8", "office_foley_9", "office_foley_10", "office_foley_11", "office_foley_12", "office_foley_13", "office_foley_14", "office_foley_15", "office_foley_16", "office_foley_17", "office_foley_18", "office_foley_19", "office_foley_20", "office_foley_21", "office_foley_22", "office_foley_23", "office_foley_24", "office_foley_25", "office_foley_26", "office_foley_27", "office_foley_28", "office_foley_29", "office_foley_30", "office_foley_31", "office_foley_32", "office_foley_33", "office_foley_34", "office_foley_35", "office_foley_36", "office_foley_37", "office_foley_38", "office_foley_39", "office_foley_40", "office_foley_42", "office_foley_43", "office_foley_44", "office_foley_45", "office_foley_46", "office_foley_47", "office_foley_48", "office_foley_49", "office_foley_50", "office_foley_51", "office_foley_52", "office_foley_53", "office_foley_54", "office_foley_55", "office_foley_56", "office_foley_57", "office_foley_58", "office_foley_59", "office_foley_60", "office_foley_61", "office_foley_62", "office_foley_63", "office_foley_64", "office_foley_65", "office_foley_66", "office_foley_67", "office_foley_68", "office_foley_69", "office_foley_70", "office_foley_71", "office_foley_72", "office_foley_73", "office_foley_74", "office_foley_75", "office_foley_76", "office_foley_77", "office_foley_78", "office_foley_79", "office_foley_80", "office_foley_81", "office_foley_82", "office_foley_83", "office_foley_84", "office_foley_85", "office_foley_86", "office_foley_87", "office_foley_88", "office_foley_89", "office_foley_90"],
     "egg": ["egg_1", "egg_2", "egg_3"],
     "anda": ["egg_1", "egg_2", "egg_3"],
     "rasoi": ["kitchen_1", "kitchen_2", "kitchen_3", "kitchen_4", "kitchen_5", "kitchen_6", "kitchen_7", "kitchen_8", "kitchen_9", "kitchen_10", "kitchen_11", "kitchen_12", "kitchen_13", "kitchen_14", "kitchen_15", "kitchen_16", "kitchen_17", "kitchen_18", "kitchen_19", "kitchen_20", "kitchen_21", "kitchen_22", "kitchen_23", "kitchen_24", "kitchen_25", "kitchen_26", "kitchen_27", "kitchen_28", "kitchen_29", "kitchen_30", "kitchen_31", "kitchen_32", "kitchen_33", "kitchen_34", "kitchen_35", "kitchen_36", "kitchen_37", "kitchen_38", "kitchen_39", "kitchen_40", "kitchen_41", "kitchen_42", "kitchen_43", "kitchen_44", "kitchen_45", "kitchen_46", "kitchen_48", "kitchen_49", "kitchen_50", "kitchen_51", "kitchen_52", "kitchen_53", "kitchen_54", "kitchen_55", "kitchen_56", "kitchen_57", "kitchen_58", "kitchen_59", "kitchen_60"],
