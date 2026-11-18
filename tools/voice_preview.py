@@ -17,6 +17,8 @@ import shutil
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import voice_provider as vp  # noqa: E402
+sys.path.insert(0, os.path.dirname(HERE))
+from astra.hindi_natural import naturalize  # noqa: E402
 
 # edge-tts ki Hindi awaazein (free)
 EDGE_BY_KISM = {
@@ -63,12 +65,38 @@ async def _say(text, voice, out):
     await c.save(out)
 
 
+def _speak_natural(text, voice, out, gap=0.25):
+    """Normalise + prosody chunks, phir jod kar ek file."""
+    import tempfile
+    parts = []
+    for i, ch in enumerate(naturalize(text)):
+        tmp = tempfile.mktemp(suffix=".mp3")
+        asyncio.run(_say(ch["text"], voice, tmp))
+        parts.append((tmp, ch.get("pause_after", 0.25)))
+    if not parts:
+        asyncio.run(_say(text, voice, out))
+        return out
+    g = tempfile.mktemp(suffix=".mp3")
+    subprocess.run([_ff(), "-loglevel", "error", "-y", "-f", "lavfi",
+                    "-i", "anullsrc=r=44100:cl=mono", "-t", str(gap), "-b:a", "128k", g],
+                   capture_output=True)
+    lst = tempfile.mktemp(suffix=".txt")
+    with open(lst, "w") as f:
+        for i, (tmp, pause) in enumerate(parts):
+            f.write(f"file '{tmp}'\n")
+            if i < len(parts) - 1:
+                f.write(f"file '{g}'\n")
+    subprocess.run([_ff(), "-loglevel", "error", "-y", "-f", "concat", "-safe", "0",
+                    "-i", lst, "-c:a", "libmp3lame", "-b:a", "128k", out], check=False)
+    return out
+
+
 def make(kirdaar, text, outdir):
     kism = vp._kism(kirdaar) or "narrator"
     voice = EDGE_BY_KISM.get(kism, "hi-IN-MadhurNeural")
     raw = os.path.join(outdir, f"{kirdaar}_raw.mp3")
     out = os.path.join(outdir, f"{kirdaar}.mp3")
-    asyncio.run(_say(text, voice, raw))
+    _speak_natural(text, voice, raw)
 
     pitch = vp.SARVAM_PITCH.get(kirdaar, 1.0)
     flt = []
