@@ -7426,6 +7426,109 @@ DEFAULT_INDEX = {
    "magarmachh"
   ],
   "license": "Pixabay"
+ },
+ "dingo_field": {
+  "file": "animals/dingo_field.mp3",
+  "tags": [
+   "dingo",
+   "wild dog",
+   "jungle",
+   "howl"
+  ],
+  "license": "Pixabay"
+ },
+ "dingo_call": {
+  "file": "animals/dingo_call.mp3",
+  "tags": [
+   "dingo",
+   "call",
+   "howl",
+   "wild"
+  ],
+  "license": "Pixabay"
+ },
+ "dingo_throat": {
+  "file": "animals/dingo_throat.mp3",
+  "tags": [
+   "dingo",
+   "throat",
+   "growl"
+  ],
+  "license": "Pixabay"
+ },
+ "dingo_howl": {
+  "file": "animals/dingo_howl.mp3",
+  "tags": [
+   "dingo",
+   "howl",
+   "raat",
+   "wolf"
+  ],
+  "license": "Pixabay"
+ },
+ "dingo_bark": {
+  "file": "animals/dingo_bark.mp3",
+  "tags": [
+   "dingo",
+   "bark",
+   "kutta",
+   "wild"
+  ],
+  "license": "Pixabay"
+ },
+ "mouse_gnaw": {
+  "file": "animals/mouse_gnaw.mp3",
+  "tags": [
+   "mouse",
+   "chuha",
+   "चूहा",
+   "gnaw",
+   "kutar"
+  ],
+  "license": "Pixabay"
+ },
+ "reptile_hiss": {
+  "file": "animals/reptile_hiss.mp3",
+  "tags": [
+   "reptile",
+   "hiss",
+   "snake",
+   "saap",
+   "सांप"
+  ],
+  "license": "Pixabay"
+ },
+ "padlock_chain": {
+  "file": "door/padlock_chain.mp3",
+  "tags": [
+   "padlock",
+   "chain",
+   "lock",
+   "taala",
+   "zanjir"
+  ],
+  "license": "Pixabay"
+ },
+ "lock_unlock_2": {
+  "file": "door/lock_unlock_2.mp3",
+  "tags": [
+   "lock",
+   "unlock",
+   "door",
+   "taala"
+  ],
+  "license": "Pixabay"
+ },
+ "key_lock_2": {
+  "file": "door/key_lock_2.mp3",
+  "tags": [
+   "key",
+   "lock",
+   "chaabi",
+   "चाबी",
+   "taala"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -7442,6 +7545,10 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "dingo": ["dingo_howl", "dingo_call", "dingo_bark", "dingo_field", "dingo_throat"],
+    "mouse": ["mouse_gnaw"],
+    "reptile": ["reptile_hiss", "snake_hiss"],
+    "padlock": ["padlock_chain", "lock_unlock_2", "key_lock_2"],
     "mosquito": ["mosquito_buzz", "mosquito_flight", "mosquito_crickets"],
     "chimpanzee": ["chimpanzee", "chimpanzee_2", "chimpanzee_cry"],
     "crocodile": ["crocodile_hiss", "crocodile_scream"],
