@@ -8219,6 +8219,107 @@ DEFAULT_INDEX = {
    "ghayal"
   ],
   "license": "Pixabay"
+ },
+ "lion_roar": {
+  "file": "animals/lion_roar.mp3",
+  "tags": [
+   "lion",
+   "sher",
+   "शेर",
+   "roar",
+   "dahaad"
+  ],
+  "license": "Pixabay"
+ },
+ "lion_father": {
+  "file": "animals/lion_father.mp3",
+  "tags": [
+   "lion",
+   "father",
+   "roar",
+   "sher"
+  ],
+  "license": "Pixabay"
+ },
+ "buffalo": {
+  "file": "animals/buffalo.mp3",
+  "tags": [
+   "buffalo",
+   "bhains",
+   "भैंस",
+   "call"
+  ],
+  "license": "Pixabay"
+ },
+ "buffalo_mud": {
+  "file": "animals/buffalo_mud.mp3",
+  "tags": [
+   "buffalo",
+   "mud",
+   "wallow",
+   "keechad"
+  ],
+  "license": "Pixabay"
+ },
+ "buffalo_rest": {
+  "file": "animals/buffalo_rest.mp3",
+  "tags": [
+   "buffalo",
+   "rest",
+   "snuffle",
+   "soft"
+  ],
+  "license": "Pixabay"
+ },
+ "dragon_wings": {
+  "file": "dragon/dragon_wings.mp3",
+  "tags": [
+   "dragon",
+   "wings",
+   "flight",
+   "udna"
+  ],
+  "license": "Pixabay"
+ },
+ "water_attack": {
+  "file": "animals/water_attack.mp3",
+  "tags": [
+   "water",
+   "attack",
+   "splash",
+   "lagoon"
+  ],
+  "license": "Pixabay"
+ },
+ "low_rustle": {
+  "file": "animals/low_rustle.mp3",
+  "tags": [
+   "rustle",
+   "low",
+   "dark",
+   "texture"
+  ],
+  "license": "Pixabay"
+ },
+ "throw_whoosh": {
+  "file": "animals/throw_whoosh.mp3",
+  "tags": [
+   "throw",
+   "whoosh",
+   "fenkna",
+   "action"
+  ],
+  "license": "Pixabay"
+ },
+ "toy_shark": {
+  "file": "animals/toy_shark.mp3",
+  "tags": [
+   "toy",
+   "shark",
+   "funny",
+   "cartoon"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -8235,9 +8336,12 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "lion": ["lion_roar", "lion_father"],
+    "buffalo": ["buffalo", "buffalo_mud", "buffalo_rest"],
+    "bhains": ["buffalo", "buffalo_rest"],
     "camel": ["camel", "camel_moan", "camel_mideast", "camel_angry"],
     "wolf": ["wolf_howl", "dingo_howl", "toy_wolf"],
-    "dragon": ["dragon_flame", "dragon_breath", "dragon_slow", "dragon_sigh"],
+    "dragon": ["dragon_wings", "dragon_flame", "dragon_breath", "dragon_slow", "dragon_sigh"],
     "boar": ["boar_threat", "boar_grunts", "boar_squeal", "boar_mixed", "boar_eating"],
     "suan": ["boar_threat", "boar_grunts"],
     "kangaroo": ["kangaroo", "kangaroo_talk", "kangaroo_herd", "kangaroo_herd_2"],
