@@ -1,5 +1,5 @@
 {
-"count": 1069,
+"count": 1079,
 "files": {
 "library/.cleaned.json": {
 "size": 36149,
@@ -4133,6 +4133,10 @@
 "size": 14880,
 "md5": "411081d1df285d4cf25d633eebdc4483"
 },
+"library/foley/lighter_5.mp3": {
+"size": 1323,
+"md5": "4616a0db82a7054249f45ec32171efd1"
+},
 "library/foley/glass.mp3": {
 "size": 24284,
 "md5": "62812f73f4a7a5942a14760cf4bb3eed"
@@ -4141,9 +4145,17 @@
 "size": 24702,
 "md5": "e06ae82a5b5164da058d0e42c404b6f0"
 },
+"library/foley/lighter_10.mp3": {
+"size": 1506,
+"md5": "0d979ba82d8e2a47ff00e2ae9deee675"
+},
 "library/foley/coin_drop_2.mp3": {
 "size": 7357,
 "md5": "452a181689f88ebde600f64ae45c083f"
+},
+"library/foley/lighter_8.mp3": {
+"size": 1506,
+"md5": "8cce45fb5405838d9e73ef1040b184e3"
 },
 "library/foley/coins_spilled.mp3": {
 "size": 15925,
@@ -4169,9 +4181,17 @@
 "size": 8820,
 "md5": "6caeda6fb80f5ba9e50bfe81c880bda6"
 },
+"library/foley/lighter_7.mp3": {
+"size": 1506,
+"md5": "b70d78700853494354aadd5586178c61"
+},
 "library/foley/lighter_3.mp3": {
 "size": 3700,
 "md5": "ee12dc0d68c27051684aacdcb4584e89"
+},
+"library/foley/lighter_5_thin.mp3": {
+"size": 1323,
+"md5": "525948a10be9a96170926083566fbc91"
 },
 "library/foley/rope_knot.mp3": {
 "size": 9447,
@@ -4201,6 +4221,10 @@
 "size": 13208,
 "md5": "8cb32f3f74dbf1635ae24c81cb0085dd"
 },
+"library/foley/lighter_12.mp3": {
+"size": 1688,
+"md5": "af6f0eb5e4db6488a7a9875c4ee4dafb"
+},
 "library/foley/coins_rattle.mp3": {
 "size": 49362,
 "md5": "4fbbed4be4f0e22f2f057d7bd743ee24"
@@ -4208,6 +4232,10 @@
 "library/foley/coin_drop_3.mp3": {
 "size": 18224,
 "md5": "ce150ed762f07da018761d3498925308"
+},
+"library/foley/lighter_4.mp3": {
+"size": 3334,
+"md5": "66cff1cc2e48f6e85188cb8ce3691c71"
 },
 "library/foley/paper_turn.mp3": {
 "size": 86560,
@@ -4221,6 +4249,10 @@
 "size": 112892,
 "md5": "5920685d9a002a1304460560be52961d"
 },
+"library/foley/lighter_11.mp3": {
+"size": 5711,
+"md5": "07330bcfd837e52b2eb55581f4580a1e"
+},
 "library/foley/coins_dropping.mp3": {
 "size": 38495,
 "md5": "d60cc025c7228b30c0d4d29ae08b4094"
@@ -4233,6 +4265,10 @@
 "size": 38991,
 "md5": "97f736d0adceb5cd3255d0497b7b9ba3"
 },
+"library/foley/lighter_6.mp3": {
+"size": 1688,
+"md5": "f3d1301a6ea5e3f742a395213fa70822"
+},
 "library/foley/coins_on_plate.mp3": {
 "size": 62109,
 "md5": "839b12dd4bb958fbdd2ae07a695df16a"
@@ -4240,6 +4276,10 @@
 "library/foley/rope.mp3": {
 "size": 18224,
 "md5": "5123472de7924bc80a2d0a78a3bdd1da"
+},
+"library/foley/lighter_9.mp3": {
+"size": 9003,
+"md5": "9593a198b7c462e3d3284c397487eea4"
 },
 "library/foley/cloth_rustle.mp3": {
 "size": 11745,
