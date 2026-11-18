@@ -1,9 +1,9 @@
 {
-"count": 1254,
+"count": 1264,
 "files": {
 "library/.cleaned.json": {
-"size": 40885,
-"md5": "9dbfdc3c72f381805e3553a627260b69"
+"size": 41398,
+"md5": "d9078715363ae7a40f1012a6ea5701ce"
 },
 "library/README.md": {
 "size": 1760,
@@ -2497,6 +2497,10 @@
 "size": 37241,
 "md5": "61cfa661ec762aad881bf5815803b825"
 },
+"library/voices/clap_7.mp3": {
+"size": 2237,
+"md5": "428beca5ea653c194da21c82eb394d55"
+},
 "library/voices/baby_zombie.mp3": {
 "size": 76111,
 "md5": "85d2186514a9d6343889ec88f0e6e21c"
@@ -2537,6 +2541,10 @@
 "size": 42256,
 "md5": "dd2bd87537ee9afc564ec606cd860e30"
 },
+"library/voices/clap_10.mp3": {
+"size": 3517,
+"md5": "c1bab8793f1d358f8df0900e2525c5b1"
+},
 "library/voices/man_sniffle.mp3": {
 "size": 71723,
 "md5": "78d171f989dfbe827292303a8aa08fbf"
@@ -2553,6 +2561,14 @@
 "size": 105995,
 "md5": "f45af6198b5632c9ab285fd1062be6da"
 },
+"library/voices/clap_3.mp3": {
+"size": 2786,
+"md5": "1cdd19eb3614f7e20b12434103f98886"
+},
+"library/voices/clap_9.mp3": {
+"size": 2420,
+"md5": "367d3641e3cecbd53488ed2a978652c7"
+},
 "library/voices/vampire_laugh.mp3": {
 "size": 36405,
 "md5": "87b1d711198598860e90428f3543ee16"
@@ -2568,6 +2584,10 @@
 "library/voices/female_attack_vocal.mp3": {
 "size": 5894,
 "md5": "126bbd6773698f2f962fa5c81393792c"
+},
+"library/voices/clap_4.mp3": {
+"size": 3883,
+"md5": "5a179a132e3ae828214fb8e994a8586e"
 },
 "library/voices/talk_crowd_2.mp3": {
 "size": 86978,
@@ -2649,6 +2669,10 @@
 "size": 1323,
 "md5": "87231cbdac88cf4e3ca2c0c4389d33d2"
 },
+"library/voices/clap_1.mp3": {
+"size": 3883,
+"md5": "e9ee5097ec9dfa4dd589c42188a84103"
+},
 "library/voices/man_laugh.mp3": {
 "size": 69424,
 "md5": "e815bbcea3836255e9d183a5794679d5"
@@ -2664,6 +2688,10 @@
 "library/voices/mouth_click_5.mp3": {
 "size": 1323,
 "md5": "376526e7e88abfdfa97183d5d7636e5b"
+},
+"library/voices/clap_6.mp3": {
+"size": 1688,
+"md5": "5c35b0eebf069e400cd48ba16c61b7be"
 },
 "library/voices/vampire_laugh_3.mp3": {
 "size": 33479,
@@ -2753,6 +2781,14 @@
 "size": 77156,
 "md5": "3c484cc4efab82211fbf757ffa7ae958"
 },
+"library/voices/clap_2.mp3": {
+"size": 2054,
+"md5": "6a7dc164b4bbae4de46bda4d73522f2c"
+},
+"library/voices/clap_8.mp3": {
+"size": 2603,
+"md5": "d918919670cc8c3001e18abe9558e815"
+},
 "library/voices/vampire_hiss_2.mp3": {
 "size": 17388,
 "md5": "8628ed648009aa64492ec6ddb6f1401a"
@@ -2768,6 +2804,10 @@
 "library/voices/man_yell.mp3": {
 "size": 65453,
 "md5": "4d5a1418934ea81e9fca4735434d0110"
+},
+"library/voices/clap_5.mp3": {
+"size": 1506,
+"md5": "5e5df01393ab4119be3e97e2681e8bfc"
 },
 "library/voices/vampire_bite.mp3": {
 "size": 39749,
@@ -3130,8 +3170,8 @@
 "md5": "a815165a41a2d6ef08a0326e377661fc"
 },
 "library/footsteps/noisy_floor_1.mp3": {
-"size": 6808,
-"md5": "05dda2f5d87edcaec640b85a4bf04e60"
+"size": 7775,
+"md5": "5ec26c09a4fc6aaa90d41cd81f8c2710"
 },
 "library/footsteps/steps_grass_to_stairs.mp3": {
 "size": 209649,
@@ -3178,8 +3218,8 @@
 "md5": "a283c47ffc10c5f0328b2e96ac18390a"
 },
 "library/footsteps/noisy_floor_5.mp3": {
-"size": 12111,
-"md5": "a281af565b61f72e07e7a2c01a21423c"
+"size": 13835,
+"md5": "f0dcd975c02e4fadcb2fc933a5abc20f"
 },
 "library/footsteps/branch_crack.mp3": {
 "size": 5685,
@@ -3230,20 +3270,20 @@
 "md5": "ff8fa46cc86b7c6162c1f785590dee86"
 },
 "library/footsteps/noisy_floor_3.mp3": {
-"size": 8088,
-"md5": "49a5fe69e932143c08d2813b20729c8a"
+"size": 9238,
+"md5": "23849a80459475bffeacc46cf83d780b"
 },
 "library/footsteps/footsteps_hallway.mp3": {
 "size": 87605,
 "md5": "420856fff9f318e3b752ab403e67001a"
 },
 "library/footsteps/noisy_floor_4.mp3": {
-"size": 13026,
-"md5": "019be13cd7949ad2c3b48cbb77b839a6"
+"size": 14880,
+"md5": "5d5d048b2927b89e3d51e35f2c39222f"
 },
 "library/footsteps/noisy_floor_2.mp3": {
-"size": 2054,
-"md5": "1ff4b4982a39667e9575eff1beea9c28"
+"size": 2341,
+"md5": "5c6ec5f5c041b1a58c3f8d1fba798e9b"
 },
 "library/footsteps/bvk_footsteps_1.mp3": {
 "size": 25538,
@@ -3586,8 +3626,8 @@
 "md5": "6255fffddce4071d5b2c842af447ef69"
 },
 "library/door/bvk_door_39.mp3": {
-"size": 3334,
-"md5": "2de60ce1a42432492eb2d2b2a20c05da"
+"size": 3804,
+"md5": "bcdd2f7daf2c854cbabb565b1716f3f4"
 },
 "library/door/knock_fast.mp3": {
 "size": 18433,
@@ -3682,8 +3722,8 @@
 "md5": "c76231e181ba61410b1586a83f835ef9"
 },
 "library/door/bvk_door_40.mp3": {
-"size": 15951,
-"md5": "6c892a8fe260da9012f7eaaf4b5efcf5"
+"size": 18224,
+"md5": "93a546c15bb3002581131bd7f70f730e"
 },
 "library/door/bvk_door_30.mp3": {
 "size": 8820,
@@ -4426,8 +4466,8 @@
 "md5": "c7c7e0ecbb529900f8884e774ac9da65"
 },
 "library/foley/drawer_9.mp3": {
-"size": 12111,
-"md5": "77c9aaf89dfa705f8586144e906458dd"
+"size": 13835,
+"md5": "a2a56ba4405120a17e2ceb75e54d377f"
 },
 "library/foley/lighter_17.mp3": {
 "size": 1506,
@@ -4486,8 +4526,8 @@
 "md5": "ac85519b7ef45ddfb6d175ede7af19ad"
 },
 "library/foley/drawer_4.mp3": {
-"size": 16317,
-"md5": "acef9a25bb8e4b7b0ca8fe8a771ff787"
+"size": 18642,
+"md5": "e02f6fa07d6be99ecec2c5545bc2eed8"
 },
 "library/foley/glass_bvk_36.mp3": {
 "size": 2968,
@@ -4570,8 +4610,8 @@
 "md5": "9c67d9ad1fac25f660777e8fda2cd0e5"
 },
 "library/foley/drawer_3.mp3": {
-"size": 9186,
-"md5": "e8971994492926d0c40989cec73da387"
+"size": 10492,
+"md5": "9362b790ed467836bc4fd1f21371bd10"
 },
 "library/foley/closet_4.mp3": {
 "size": 8611,
@@ -4610,8 +4650,8 @@
 "md5": "a32d90a0f89f0748e2cd9dabcc884294"
 },
 "library/foley/drawer_2.mp3": {
-"size": 12660,
-"md5": "51436a7c3856dd60e2aab9ef3e67e473"
+"size": 14462,
+"md5": "be62de6e0bbd4d6596d893af879daf5c"
 },
 "library/foley/glass_bvk_19.mp3": {
 "size": 12790,
@@ -4630,8 +4670,8 @@
 "md5": "3e8231b1f4dd075ee354336a9b8e48a0"
 },
 "library/foley/drawer_5.mp3": {
-"size": 9186,
-"md5": "5900be5bfefdce21af36908ecc1bd749"
+"size": 10492,
+"md5": "56bd11251e8d1b9fa34c4512909be743"
 },
 "library/foley/glass_bvk_35.mp3": {
 "size": 3386,
@@ -4666,8 +4706,8 @@
 "md5": "378657e288a99fddb27f4d7e4427969f"
 },
 "library/foley/drawer_6.mp3": {
-"size": 14488,
-"md5": "fe92bf22e9836c1666dcd07ca9a4b983"
+"size": 16552,
+"md5": "c615faee498bf2ff416749b25e0c070b"
 },
 "library/foley/wood_knock_4.mp3": {
 "size": 5685,
@@ -4698,12 +4738,12 @@
 "md5": "09b5e497aa3831a3119804cbec939953"
 },
 "library/foley/drawer_8.mp3": {
-"size": 12660,
-"md5": "8c4e88466ced32ff6ec1a6f3322c8a3d"
+"size": 14462,
+"md5": "6443b817294cdf500ce712636c75a13b"
 },
 "library/foley/drawer_7.mp3": {
-"size": 12660,
-"md5": "71c85a8c6b5bd0625437502b0ae56778"
+"size": 14462,
+"md5": "08943b88f595a2c21ffe788a470033ef"
 },
 "library/foley/lighter_7.mp3": {
 "size": 1506,
@@ -4766,8 +4806,8 @@
 "md5": "2296574bad3700dacd1c8209816c6681"
 },
 "library/foley/drawer_1.mp3": {
-"size": 19791,
-"md5": "56d66ee48b30baf721fd6d71e76edf90"
+"size": 22612,
+"md5": "3bef9a21665b3eebeb0de4742c424b03"
 },
 "library/foley/cigarette_2.mp3": {
 "size": 62945,
