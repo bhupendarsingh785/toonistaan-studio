@@ -40,3 +40,16 @@ in niyamon par khara utarna hai.
 ## 6. Provider kram
 1. Local library (347+) → 2. Freesound → 3. Mixkit → 4. Procedural
 Awaaz: Sarvam → ElevenLabs → edge-tts.
+
+## DELETE RULE (kabhi na todna)
+
+Swag kabhi kabhi bol kar likhta hai — usme shabd badal jaate hain ("delete" ki jagah
+kuch aur, ya kuch aur ki jagah "delete"). Isliye:
+
+1. Delete ki baat aaye to **turant mat karo**. Pehle **naam le kar** poochho:
+   "kya ye file(s) delete karun?" — list ke saath.
+2. Sirf **haan** milne par delete. "Haan" na mile to **kuch mat chhedo**.
+3. Ek se zyada file ho to **ek-ek karke** batao, poora folder kabhi na udaao.
+4. Duplicate hataana (ek recording do baar) **chhoot** hai — wo guard/dedupe khud karta hai,
+   par naya batch aane par bhi pehle **check** karo, phir hataao.
+5. Guard (`astra/guard.py`) hi aakhri deewar hai — galti se kuch gaya to wapas laata hai.
