@@ -13133,6 +13133,116 @@ DEFAULT_INDEX = {
    "jingle"
   ],
   "license": "CC0/BVKER"
+ },
+ "egg_1": {
+  "file": "kitchen/egg_1.mp3",
+  "tags": [
+   "egg",
+   "anda",
+   "अंडा",
+   "kitchen",
+   "tootna"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "egg_2": {
+  "file": "kitchen/egg_2.mp3",
+  "tags": [
+   "egg",
+   "anda",
+   "अंडा",
+   "kitchen",
+   "tootna"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "egg_3": {
+  "file": "kitchen/egg_3.mp3",
+  "tags": [
+   "egg",
+   "anda",
+   "अंडा",
+   "kitchen",
+   "tootna"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "kitchen_1": {
+  "file": "kitchen/kitchen_1.mp3",
+  "tags": [
+   "kitchen",
+   "rasoi",
+   "रसोई",
+   "bartan",
+   "ambience"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "kitchen_2": {
+  "file": "kitchen/kitchen_2.mp3",
+  "tags": [
+   "kitchen",
+   "rasoi",
+   "रसोई",
+   "bartan",
+   "ambience"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "kitchen_3": {
+  "file": "kitchen/kitchen_3.mp3",
+  "tags": [
+   "kitchen",
+   "rasoi",
+   "रसोई",
+   "bartan",
+   "ambience"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "kitchen_4": {
+  "file": "kitchen/kitchen_4.mp3",
+  "tags": [
+   "kitchen",
+   "rasoi",
+   "रसोई",
+   "bartan",
+   "ambience"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "kitchen_5": {
+  "file": "kitchen/kitchen_5.mp3",
+  "tags": [
+   "kitchen",
+   "rasoi",
+   "रसोई",
+   "bartan",
+   "ambience"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "kitchen_6": {
+  "file": "kitchen/kitchen_6.mp3",
+  "tags": [
+   "kitchen",
+   "rasoi",
+   "रसोई",
+   "bartan",
+   "ambience"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "kitchen_7": {
+  "file": "kitchen/kitchen_7.mp3",
+  "tags": [
+   "kitchen",
+   "rasoi",
+   "रसोई",
+   "bartan",
+   "ambience"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -13149,6 +13259,9 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "egg": ["egg_1", "egg_2", "egg_3"],
+    "anda": ["egg_1", "egg_2", "egg_3"],
+    "rasoi": ["kitchen_1", "kitchen_2", "kitchen_3", "kitchen_4", "kitchen_5", "kitchen_6", "kitchen_7"],
     "chaabi": ["keys_1", "keys_2", "keys_3", "keys_4", "keys_5", "keys_6", "keys_7", "keys_8", "keys_9", "keys_10", "keys_11", "keys_12", "keys_13", "keys_14", "keys_15", "car_keys_1"],
     "keys": ["keys_1", "keys_2", "keys_3", "keys_4", "keys_5", "keys_6", "keys_7", "keys_8", "keys_9", "keys_10", "keys_11", "keys_12", "keys_13", "keys_14", "keys_15"],
     "snap": ["snap_1", "snap_2", "snap_3", "snap_4", "snap_5", "snap_6", "snap_7", "snap_8", "snap_9", "snap_10"],
