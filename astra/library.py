@@ -8795,6 +8795,35 @@ DEFAULT_INDEX = {
    "jangal"
   ],
   "license": "Wikimedia/XC"
+ },
+ "cockatoo_black": {
+  "file": "birds/cockatoo_black.mp3",
+  "tags": [
+   "cockatoo",
+   "parrot",
+   "tota",
+   "तोता",
+   "black"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "shearwater": {
+  "file": "birds/shearwater.mp3",
+  "tags": [
+   "shearwater",
+   "sea bird",
+   "samundar"
+  ],
+  "license": "Wikimedia/XC"
+ },
+ "catbird_toothbilled": {
+  "file": "birds/catbird_toothbilled.mp3",
+  "tags": [
+   "catbird",
+   "bird",
+   "rainforest"
+  ],
+  "license": "Wikimedia/XC"
  }
 }
 
@@ -8811,6 +8840,7 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "tota": ["cockatoo_black", "parrot_1"],
     "kabootar": ["dove_spotted"],
     "jungle": ["forest_deciduous", "forest", "marsh_provancher"],
     "seagull": ["gulls_sandbar", "shorebirds_close"],
