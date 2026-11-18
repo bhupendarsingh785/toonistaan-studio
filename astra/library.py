@@ -8419,6 +8419,106 @@ DEFAULT_INDEX = {
    "hathi"
   ],
   "license": "Pixabay"
+ },
+ "elephant_growl": {
+  "file": "animals/elephant_growl.mp3",
+  "tags": [
+   "elephant",
+   "growl",
+   "hathi",
+   "hathai"
+  ],
+  "license": "Pixabay"
+ },
+ "elephant_african": {
+  "file": "animals/elephant_african.mp3",
+  "tags": [
+   "elephant",
+   "african",
+   "savanna",
+   "hathi"
+  ],
+  "license": "Pixabay"
+ },
+ "elephant_asian": {
+  "file": "animals/elephant_asian.mp3",
+  "tags": [
+   "elephant",
+   "asian",
+   "hathi",
+   "हाथी"
+  ],
+  "license": "Pixabay"
+ },
+ "elephant_short": {
+  "file": "animals/elephant_short.mp3",
+  "tags": [
+   "elephant",
+   "short",
+   "call"
+  ],
+  "license": "Pixabay"
+ },
+ "elephant_roar": {
+  "file": "animals/elephant_roar.mp3",
+  "tags": [
+   "elephant",
+   "roar",
+   "loud",
+   "hathi"
+  ],
+  "license": "Pixabay"
+ },
+ "wolf_cry": {
+  "file": "animals/wolf_cry.mp3",
+  "tags": [
+   "wolf",
+   "bhediya",
+   "cry",
+   "lone"
+  ],
+  "license": "Pixabay"
+ },
+ "wolf_cry_howl": {
+  "file": "animals/wolf_cry_howl.mp3",
+  "tags": [
+   "wolf",
+   "crying",
+   "howl",
+   "raat"
+  ],
+  "license": "Pixabay"
+ },
+ "wolf_ogg": {
+  "file": "animals/wolf_ogg.mp3",
+  "tags": [
+   "wolf",
+   "howl",
+   "bhediya"
+  ],
+  "license": "Pixabay"
+ },
+ "myna_bird": {
+  "file": "animals/myna_bird.mp3",
+  "tags": [
+   "myna",
+   "bird",
+   "chidiya",
+   "maina",
+   "चिड़िया"
+  ],
+  "license": "Pixabay"
+ },
+ "sandbar_sunset": {
+  "file": "ambience/sandbar_sunset.mp3",
+  "tags": [
+   "ambience",
+   "sunset",
+   "river",
+   "sandbar",
+   "shaam"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -8435,15 +8535,17 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "myna": ["myna_bird"],
+    "chidiya": ["myna_bird", "birds"],
     "sher": ["lion_real", "lion_loud", "lion_angry", "lion_majestic", "lion_evil", "lion_roar"],
     "बाघ": ["tiger_roar_1"],
-    "elephant": ["elephant_mighty", "elephant_trunk"],
-    "hathi": ["elephant_mighty", "elephant_trunk"],
+    "elephant": ["elephant_african", "elephant_asian", "elephant_roar", "elephant_growl", "elephant_short", "elephant_mighty", "elephant_trunk"],
+    "hathi": ["elephant_asian", "elephant_african", "elephant_roar", "elephant_mighty"],
     "lion": ["lion_real", "lion_loud", "lion_angry", "lion_majestic", "lion_evil", "lion_roar", "lion_father", "lion_sfx", "lion_short", "lion_cub_purr"],
     "buffalo": ["buffalo", "buffalo_mud", "buffalo_rest"],
     "bhains": ["buffalo", "buffalo_rest"],
     "camel": ["camel", "camel_moan", "camel_mideast", "camel_angry"],
-    "wolf": ["wolf_howl", "dingo_howl", "toy_wolf"],
+    "wolf": ["wolf_cry_howl", "wolf_cry", "wolf_ogg", "wolf_howl", "dingo_howl", "toy_wolf"],
     "dragon": ["dragon_wings", "dragon_flame", "dragon_breath", "dragon_slow", "dragon_sigh"],
     "boar": ["boar_threat", "boar_grunts", "boar_squeal", "boar_mixed", "boar_eating"],
     "suan": ["boar_threat", "boar_grunts"],
