@@ -184,6 +184,48 @@ def age_filters(kirdaar):
     return out
 
 
+def fit_to_target(path, kirdaar, verbose=True, rounds=3):
+    """Awaaz ko us kirdaar ke target Hz par le jao — 2-3 chhote kadam me.
+
+    Pehle sabko ek hi Hz par kheencha gaya tha (wo galat tha).
+    Yahan HAR kirdaar ka apna target hai (voices.json me `hz`).
+    """
+    target = SARVAM_TARGET_HZ.get(kirdaar)
+    if not target or not os.path.exists(path):
+        return None
+    try:
+        import shutil, subprocess, tempfile
+        ff = shutil.which("ffmpeg")
+        if not ff:
+            import imageio_ffmpeg
+            ff = imageio_ffmpeg.get_ffmpeg_exe()
+        cur = _measure_pitch(path)
+        if not cur:
+            return None
+        for _ in range(int(rounds)):
+            if abs(cur - target) / float(target) <= 0.08:
+                break
+            factor = max(0.55, min(1.60, float(target) / float(cur)))
+            tmp = tempfile.mktemp(suffix=".mp3")
+            af = (f"aresample=44100,asetrate=44100*{factor:.4f},aresample=44100,"
+                  f"atempo={1/factor:.4f}")
+            r = subprocess.run([ff, "-loglevel", "error", "-y", "-i", path, "-filter:a", af,
+                                "-ac", "1", "-ar", "44100", "-b:a", "128k", tmp], capture_output=True)
+            if r.returncode != 0 or not os.path.exists(tmp) or os.path.getsize(tmp) < 2000:
+                break
+            os.replace(tmp, path)
+            nxt = _measure_pitch(path)
+            if not nxt or abs(nxt - cur) < 2:
+                break
+            cur = nxt
+        if verbose:
+            print("FIT", kirdaar, f"-> {round(cur)}Hz (chaha {target})", flush=True)
+        return round(cur)
+    except Exception as e:
+        print("FIT_FAIL", str(e)[:60], flush=True)
+    return None
+
+
 def shape_age(path, kirdaar):
     """File par umar ke filters laga do (jagah par hi badal deta hai)."""
     flt = age_filters(kirdaar)
@@ -339,7 +381,13 @@ def piper_tts(text, kirdaar="madhur", out="out.wav"):
         os.remove(tmp)
     except Exception:
         pass
-    return r2.returncode == 0 and os.path.exists(out) and os.path.getsize(out) > 3000
+    ok2 = r2.returncode == 0 and os.path.exists(out) and os.path.getsize(out) > 3000
+    if ok2:
+        try:
+            fit_to_target(out, kirdaar)
+        except Exception:
+            pass
+    return ok2
 
 
 def have_sarvam():

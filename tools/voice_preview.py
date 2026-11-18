@@ -81,6 +81,11 @@ def make(kirdaar, text, outdir):
     if r.returncode != 0:
         shutil.copy(raw, out)
     try:
+        vp.shape_age(out, kirdaar)          # kampan / lowpass / dheema
+        vp.fit_to_target(out, kirdaar)      # target Hz par le jao
+    except Exception as e:
+        print("SHAPE_FAIL", kirdaar, str(e)[:60], flush=True)
+    try:
         os.remove(raw)
     except Exception:
         pass
