@@ -6245,6 +6245,91 @@ DEFAULT_INDEX = {
    "tension"
   ],
   "license": "Pixabay"
+ },
+ "drone_mirostar": {
+  "file": "music/drone_mirostar.mp3",
+  "tags": [
+   "drone",
+   "ambient",
+   "bed"
+  ],
+  "license": "Pixabay"
+ },
+ "tanpura_deep_space": {
+  "file": "music/tanpura_deep_space.mp3",
+  "tags": [
+   "tanpura",
+   "raga",
+   "ethereal",
+   "space"
+  ],
+  "license": "Pixabay"
+ },
+ "ambient_calm_dreamscape": {
+  "file": "music/ambient_calm_dreamscape.mp3",
+  "tags": [
+   "ambient",
+   "calm",
+   "dreamscape"
+  ],
+  "license": "Pixabay"
+ },
+ "drone_horror_cinematic": {
+  "file": "music/drone_horror_cinematic.mp3",
+  "tags": [
+   "drone",
+   "horror",
+   "cinematic",
+   "dark"
+  ],
+  "license": "Pixabay"
+ },
+ "drone_atlas": {
+  "file": "music/drone_atlas.mp3",
+  "tags": [
+   "drone",
+   "ambient",
+   "bed"
+  ],
+  "license": "Pixabay"
+ },
+ "phonk_instrumental": {
+  "file": "music/phonk_instrumental.mp3",
+  "tags": [
+   "phonk",
+   "instrumental",
+   "beat",
+   "modern"
+  ],
+  "license": "Pixabay"
+ },
+ "dynamic_instrumental": {
+  "file": "music/dynamic_instrumental.mp3",
+  "tags": [
+   "dynamic",
+   "instrumental",
+   "action"
+  ],
+  "license": "Pixabay"
+ },
+ "drone_subclair": {
+  "file": "music/drone_subclair.mp3",
+  "tags": [
+   "drone",
+   "deep",
+   "bed"
+  ],
+  "license": "Pixabay"
+ },
+ "motivation": {
+  "file": "music/motivation.mp3",
+  "tags": [
+   "motivation",
+   "uplift",
+   "hope",
+   "sports"
+  ],
+  "license": "Pixabay"
  }
 }
 
@@ -6261,9 +6346,9 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "ambient": ["ambient_soft_2", "ambient_leberch", "ambient_landscape", "ambient_inspiration", "ambient_dystopian", "ambient_horror_creepy", "timelapse_bg", "ambient_soft", "ambient_clean", "ambient_dreamy", "ambient_piano",
+    "ambient": ["ambient_calm_dreamscape", "ambient_soft_2", "ambient_leberch", "ambient_landscape", "ambient_inspiration", "ambient_dystopian", "ambient_horror_creepy", "timelapse_bg", "ambient_soft", "ambient_clean", "ambient_dreamy", "ambient_piano",
                 "ambient_dark_2", "ambient_dark_dreamscape", "ambient_business"],
-    "drone": ["drone_tanpura_divine", "drone_tanpura_432", "drone_ambient", "drone_deep", "drone_cyberpunk", "ambient_dark_dreamscape"],
+    "drone": ["drone_horror_cinematic", "drone_mirostar", "drone_atlas", "drone_subclair", "drone_tanpura_divine", "drone_tanpura_432", "drone_ambient", "drone_deep", "drone_cyberpunk", "ambient_dark_dreamscape"],
     "meditation": ["tibetan_dreams", "meditation_indian", "mauna_meditation"],
     "transition": ["whoosh_1", "whoosh_2", "trailer_slam_hit", "trailer_hit_marker", "epic_transition", "time_transition", "quartz_drift", "tension_riser_atlas", "tension_riser_2", "sub_bass_drop", "whoosh_reverse_8", "crystal_swell", "tonal_riser_cinematic_7", "tonal_riser_cinematic_3", "logo_snap_tech", "tonal_riser_1", "tonal_riser_3", "tonal_riser_smooth_2", "tonal_riser_smooth_7",
                    "tonal_riser_smooth_8", "tonal_riser_cinematic_8", "whoosh_reverse_low",
