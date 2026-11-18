@@ -12713,6 +12713,116 @@ DEFAULT_INDEX = {
    "दराज़"
   ],
   "license": "CC0/BVKER"
+ },
+ "clap_1": {
+  "file": "voices/clap_1.mp3",
+  "tags": [
+   "clap",
+   "tali",
+   "ताली",
+   "applause",
+   "khushi"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "clap_2": {
+  "file": "voices/clap_2.mp3",
+  "tags": [
+   "clap",
+   "tali",
+   "ताली",
+   "applause",
+   "khushi"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "clap_3": {
+  "file": "voices/clap_3.mp3",
+  "tags": [
+   "clap",
+   "tali",
+   "ताली",
+   "applause",
+   "khushi"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "clap_4": {
+  "file": "voices/clap_4.mp3",
+  "tags": [
+   "clap",
+   "tali",
+   "ताली",
+   "applause",
+   "khushi"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "clap_5": {
+  "file": "voices/clap_5.mp3",
+  "tags": [
+   "clap",
+   "tali",
+   "ताली",
+   "applause",
+   "khushi"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "clap_6": {
+  "file": "voices/clap_6.mp3",
+  "tags": [
+   "clap",
+   "tali",
+   "ताली",
+   "applause",
+   "khushi"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "clap_7": {
+  "file": "voices/clap_7.mp3",
+  "tags": [
+   "clap",
+   "tali",
+   "ताली",
+   "applause",
+   "khushi"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "clap_8": {
+  "file": "voices/clap_8.mp3",
+  "tags": [
+   "clap",
+   "tali",
+   "ताली",
+   "applause",
+   "khushi"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "clap_9": {
+  "file": "voices/clap_9.mp3",
+  "tags": [
+   "clap",
+   "tali",
+   "ताली",
+   "applause",
+   "khushi"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "clap_10": {
+  "file": "voices/clap_10.mp3",
+  "tags": [
+   "clap",
+   "tali",
+   "ताली",
+   "applause",
+   "khushi"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -12729,6 +12839,8 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "tali": ["clap_1", "clap_2", "clap_3", "clap_4", "clap_5", "clap_6", "clap_7", "clap_8", "clap_9", "clap_10"],
+    "clap": ["clap_1", "clap_2", "clap_3"],
     "noisy_floor": ["noisy_floor_1", "noisy_floor_2", "noisy_floor_3", "noisy_floor_4", "noisy_floor_5"],
     "farash": ["noisy_floor_1", "noisy_floor_2", "noisy_floor_3"],
     "drawer": ["drawer_1", "drawer_2", "drawer_3", "drawer_4", "drawer_5", "drawer_6", "drawer_7", "drawer_8", "drawer_9"],
