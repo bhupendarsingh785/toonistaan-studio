@@ -9538,6 +9538,122 @@ DEFAULT_INDEX = {
    "gaadi"
   ],
   "license": "CC0/BVKER"
+ },
+ "car_door_8": {
+  "file": "car/car_door_8.mp3",
+  "tags": [
+   "car",
+   "door",
+   "gaadi",
+   "गाड़ी",
+   "band"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "car_door_9": {
+  "file": "car/car_door_9.mp3",
+  "tags": [
+   "car",
+   "door",
+   "gaadi",
+   "गाड़ी",
+   "band"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "car_door_10": {
+  "file": "car/car_door_10.mp3",
+  "tags": [
+   "car",
+   "door",
+   "gaadi",
+   "गाड़ी",
+   "band"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "car_door_11": {
+  "file": "car/car_door_11.mp3",
+  "tags": [
+   "car",
+   "door",
+   "gaadi",
+   "गाड़ी",
+   "band"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "car_engine_1": {
+  "file": "car/car_engine_1.mp3",
+  "tags": [
+   "engine",
+   "car",
+   "gaadi",
+   "इंजन",
+   "start",
+   "chalu"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "car_engine_2": {
+  "file": "car/car_engine_2.mp3",
+  "tags": [
+   "engine",
+   "car",
+   "gaadi",
+   "इंजन",
+   "start",
+   "chalu"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "car_engine_3": {
+  "file": "car/car_engine_3.mp3",
+  "tags": [
+   "engine",
+   "car",
+   "gaadi",
+   "इंजन",
+   "start",
+   "chalu"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "car_engine_4": {
+  "file": "car/car_engine_4.mp3",
+  "tags": [
+   "engine",
+   "car",
+   "gaadi",
+   "इंजन",
+   "start",
+   "chalu"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "car_engine_5": {
+  "file": "car/car_engine_5.mp3",
+  "tags": [
+   "engine",
+   "car",
+   "gaadi",
+   "इंजन",
+   "start",
+   "chalu"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "car_engine_6": {
+  "file": "car/car_engine_6.mp3",
+  "tags": [
+   "engine",
+   "car",
+   "gaadi",
+   "इंजन",
+   "start",
+   "chalu"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -9554,7 +9670,9 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "car_door": ["car_door_1", "car_door_2", "car_door_3", "car_door_4", "car_door_5", "car_door_6", "car_door_7"],
+    "engine": ["car_engine_1", "car_engine_2", "car_engine_3", "car_engine_4", "car_engine_5", "car_engine_6"],
+    "gaadi_chalu": ["car_engine_1", "car_engine_2"],
+    "car_door": ["car_door_1", "car_door_2", "car_door_3", "car_door_4", "car_door_5", "car_door_6", "car_door_7", "car_door_8", "car_door_9", "car_door_10", "car_door_11"],
     "gaadi": ["car_door_1", "car_blinker_1", "car_horn"],
     "blinker": ["car_blinker_1", "car_blinker_2", "car_blinker_3"],
     "nal": ["tap_water_1", "tap_water_2", "tap_water_3", "tap_water_4", "tap_water_5", "tap_water_6"],
