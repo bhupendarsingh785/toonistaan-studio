@@ -20,6 +20,22 @@ jobs:
           sudo apt-get install -y -qq ffmpeg
           pip install -q --upgrade pip
           pip install -q numpy edge-tts scipy soundfile
+          pip install -q piper-tts || echo "piper install fail (edge chalega)"
+
+      - name: Piper model (offline engine, free)
+        run: |
+          python - <<'PY'
+          import os, urllib.request
+          d = os.path.expanduser("~/.cache/astra_piper"); os.makedirs(d, exist_ok=True)
+          base = "https://huggingface.co/rhasspy/piper-voices/resolve/main/hi/hi_IN/pratham/medium"
+          for f in ["hi_IN-pratham-medium.onnx", "hi_IN-pratham-medium.onnx.json"]:
+              p = os.path.join(d, f)
+              if not os.path.exists(p):
+                  try:
+                      urllib.request.urlretrieve(f"{base}/{f}", p); print("PIPER_MODEL", f, "ok")
+                  except Exception as e:
+                      print("PIPER_MODEL_FAIL", f, str(e)[:40])
+          PY
 
       - name: Keys + voice probe
         env:
