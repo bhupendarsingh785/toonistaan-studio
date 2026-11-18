@@ -553,10 +553,8 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
     # ---- vocal check (awaaz ki jaanch — pitch takraav) ----
     try:
         import vocal_check as _VC
-        _cues_path = out_path + ".cues.json"
-        if os.path.exists(_cues_path):
-            _vc = _VC.check(out_path, _cues_path, verbose=verbose)
-            cue["vocal_check"] = _vc
+        _vc = _VC.check(out_path, cues=cue, verbose=verbose)
+        cue["vocal_check"] = _vc
     except Exception as _e:
         if verbose:
             print("VOCAL_CHECK_SKIP", str(_e)[:60], flush=True)
