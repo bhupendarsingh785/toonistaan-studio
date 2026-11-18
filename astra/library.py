@@ -17460,6 +17460,91 @@ DEFAULT_INDEX = {
    "traffic"
   ],
   "license": "CC0/BVKER"
+ },
+ "urban_ambience_3": {
+  "file": "ambience/urban_ambience_3.mp3",
+  "tags": [
+   "urban",
+   "shehar",
+   "city",
+   "ambience",
+   "traffic"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "urban_ambience_4": {
+  "file": "ambience/urban_ambience_4.mp3",
+  "tags": [
+   "urban",
+   "shehar",
+   "city",
+   "ambience",
+   "traffic"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "urban_ambience_5": {
+  "file": "ambience/urban_ambience_5.mp3",
+  "tags": [
+   "urban",
+   "shehar",
+   "city",
+   "ambience",
+   "traffic"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "urban_ambience_6": {
+  "file": "ambience/urban_ambience_6.mp3",
+  "tags": [
+   "urban",
+   "shehar",
+   "city",
+   "ambience",
+   "traffic"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "urban_ambience_7": {
+  "file": "ambience/urban_ambience_7.mp3",
+  "tags": [
+   "urban",
+   "shehar",
+   "city",
+   "ambience",
+   "traffic"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "urban_static_1": {
+  "file": "ambience/urban_static_1.mp3",
+  "tags": [
+   "static",
+   "noise",
+   "urban",
+   "radio"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "urban_footsteps_1": {
+  "file": "footsteps/urban_footsteps_1.mp3",
+  "tags": [
+   "footsteps",
+   "kadam",
+   "urban",
+   "shehar"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "urban_footsteps_2": {
+  "file": "footsteps/urban_footsteps_2.mp3",
+  "tags": [
+   "footsteps",
+   "kadam",
+   "urban",
+   "shehar"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -17476,7 +17561,9 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
-    "urban_ambience": ["urban_ambience_1", "urban_ambience_2"],
+    "urban_footsteps": ["urban_footsteps_1", "urban_footsteps_2"],
+    "urban_static": ["urban_static_1"],
+    "urban_ambience": ["urban_ambience_1", "urban_ambience_2", "urban_ambience_3", "urban_ambience_4", "urban_ambience_5", "urban_ambience_6", "urban_ambience_7"],
     "metro_click": ["metro_click_1", "metro_click_2"],
     "metro_door": ["metro_door_1", "metro_door_2", "metro_door_3"],
     "escalator": ["escalator_1", "escalator_2", "escalator_3", "escalator_4"],
