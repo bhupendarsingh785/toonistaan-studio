@@ -17249,6 +17249,112 @@ DEFAULT_INDEX = {
    "kaam"
   ],
   "license": "CC0/BVKER"
+ },
+ "escalator_1": {
+  "file": "transport/escalator_1.mp3",
+  "tags": [
+   "escalator",
+   "station",
+   "metro",
+   "chalna"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "escalator_2": {
+  "file": "transport/escalator_2.mp3",
+  "tags": [
+   "escalator",
+   "station",
+   "metro",
+   "chalna"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "escalator_3": {
+  "file": "transport/escalator_3.mp3",
+  "tags": [
+   "escalator",
+   "station",
+   "metro",
+   "chalna"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "escalator_4": {
+  "file": "transport/escalator_4.mp3",
+  "tags": [
+   "escalator",
+   "station",
+   "metro",
+   "chalna"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "metro_1": {
+  "file": "transport/metro_1.mp3",
+  "tags": [
+   "metro",
+   "train",
+   "station",
+   "ambience",
+   "rail"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "metro_2": {
+  "file": "transport/metro_2.mp3",
+  "tags": [
+   "metro",
+   "train",
+   "station",
+   "ambience",
+   "rail"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "metro_3": {
+  "file": "transport/metro_3.mp3",
+  "tags": [
+   "metro",
+   "train",
+   "station",
+   "ambience",
+   "rail"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "metro_4": {
+  "file": "transport/metro_4.mp3",
+  "tags": [
+   "metro",
+   "train",
+   "station",
+   "ambience",
+   "rail"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "announcement_corona_de": {
+  "file": "voices/announcement_corona_de.mp3",
+  "tags": [
+   "announcement",
+   "airport",
+   "station",
+   "corona",
+   "public"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "announcement_corona_en": {
+  "file": "voices/announcement_corona_en.mp3",
+  "tags": [
+   "announcement",
+   "airport",
+   "station",
+   "corona",
+   "public"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -17265,6 +17371,9 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "escalator": ["escalator_1", "escalator_2", "escalator_3", "escalator_4"],
+    "metro": ["metro_1", "metro_2", "metro_3", "metro_4"],
+    "announcement": ["announcement_corona_en", "announcement_corona_de"],
     "typing": ["typing_1", "typing_2", "typing_3"],
     "keyboard": ["typing_1", "typing_2", "typing_3"],
     "thud": ["thud_1", "thud_2", "thud_3", "thud_4", "thud_5", "thud_6", "thud_7", "thud_8", "thud_9", "thud_10", "thud_11", "thud_12", "thud_13", "thud_14", "thud_15", "thud_16"],
