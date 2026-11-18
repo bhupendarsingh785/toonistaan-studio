@@ -11997,6 +11997,116 @@ DEFAULT_INDEX = {
    "acoustic"
   ],
   "license": "CC0/BVKER"
+ },
+ "closet_1": {
+  "file": "foley/closet_1.mp3",
+  "tags": [
+   "closet",
+   "almari",
+   "अलमारी",
+   "khulna",
+   "darwaza"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "closet_2": {
+  "file": "foley/closet_2.mp3",
+  "tags": [
+   "closet",
+   "almari",
+   "अलमारी",
+   "khulna",
+   "darwaza"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "closet_3": {
+  "file": "foley/closet_3.mp3",
+  "tags": [
+   "closet",
+   "almari",
+   "अलमारी",
+   "khulna",
+   "darwaza"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "closet_4": {
+  "file": "foley/closet_4.mp3",
+  "tags": [
+   "closet",
+   "almari",
+   "अलमारी",
+   "khulna",
+   "darwaza"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "closet_5": {
+  "file": "foley/closet_5.mp3",
+  "tags": [
+   "closet",
+   "almari",
+   "अलमारी",
+   "khulna",
+   "darwaza"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "closet_6": {
+  "file": "foley/closet_6.mp3",
+  "tags": [
+   "closet",
+   "almari",
+   "अलमारी",
+   "khulna",
+   "darwaza"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "closet_7": {
+  "file": "foley/closet_7.mp3",
+  "tags": [
+   "closet",
+   "almari",
+   "अलमारी",
+   "khulna",
+   "darwaza"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "closet_8": {
+  "file": "foley/closet_8.mp3",
+  "tags": [
+   "closet",
+   "almari",
+   "अलमारी",
+   "khulna",
+   "darwaza"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "closet_9": {
+  "file": "foley/closet_9.mp3",
+  "tags": [
+   "closet",
+   "almari",
+   "अलमारी",
+   "khulna",
+   "darwaza"
+  ],
+  "license": "CC0/BVKER"
+ },
+ "closet_10": {
+  "file": "foley/closet_10.mp3",
+  "tags": [
+   "closet",
+   "almari",
+   "अलमारी",
+   "khulna",
+   "darwaza"
+  ],
+  "license": "CC0/BVKER"
  }
 }
 
@@ -12013,6 +12123,8 @@ ALIAS = {
 
 # ek hi tarah ki kai awaazein — baari-baari
 VARIANTS = {
+    "closet": ["closet_1", "closet_2", "closet_3", "closet_4", "closet_5", "closet_6", "closet_7", "closet_8", "closet_9", "closet_10"],
+    "almari": ["closet_1", "closet_2", "closet_3"],
     "guitar": ["guitar_riff_1", "guitar_riff_2", "guitar_riff_3", "guitar_riff_4", "guitar_riff_5", "guitar_riff_6", "guitar_riff_7", "guitar_riff_8", "guitar_riff_9", "guitar_riff_10"],
     "waterfall": ["waterfall_1", "waterfall_2", "waterfall_3"],
     "jharna": ["waterfall_1", "waterfall_2", "waterfall_3"],
