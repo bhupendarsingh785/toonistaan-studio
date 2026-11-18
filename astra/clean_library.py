@@ -46,12 +46,28 @@ def ff():
         return "ffmpeg"
 
 
+def _key(path):
+    """Marker me HAMESHA relative path (sandbox badle to bhi na dohraye)."""
+    try:
+        return os.path.relpath(path, LIB)
+    except Exception:
+        return path
+
+
 def load_mark():
     if os.path.exists(MARK):
         try:
-            return json.load(open(MARK))
+            raw = json.load(open(MARK))
         except Exception:
             return {}
+        # purane absolute paths ko relative bana do (ek hi baar)
+        out = {}
+        for k, v in raw.items():
+            if os.path.isabs(k):
+                out[os.path.relpath(k, LIB) if k.startswith(LIB) else os.path.basename(k)] = v
+            else:
+                out[k] = v
+        return out
     return {}
 
 
@@ -89,7 +105,11 @@ def main():
             if x.lower().endswith(".mp3"):
                 files.append(os.path.join(r, x))
     files.sort()
-    todo = [f for f in files if a.force or f not in mark]
+    def _done(f):
+        k = _key(f)
+        return k in mark or os.path.basename(k) in mark
+
+    todo = [f for f in files if a.force or not _done(f)]
     print(f"total {len(files)} | saaf karna hai {len(todo)}", flush=True)
 
     done = fail = 0
@@ -98,7 +118,7 @@ def main():
             print("limit reached — agli baar baaki", flush=True)
             break
         if clean_one(p):
-            mark[p] = True
+            mark[_key(p)] = True
             done += 1
             if done % 20 == 0:
                 save_mark(mark)
