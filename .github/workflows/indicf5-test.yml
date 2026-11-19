@@ -25,7 +25,9 @@ jobs:
           pip install -q "numpy==1.26.4" accelerate vocos soundfile cached_path ema_pytorch \
             hydra-core jieba librosa matplotlib pydub pypinyin safetensors tomli \
             torchdiffeq tqdm x_transformers transformers_stream_generator click wandb "datasets==2.14.0" "pyarrow==15.0.2" 2>&1 | tail -2
-          python -c "import numpy, torch, vocos; print('numpy', numpy.__version__, 'torch', torch.__version__, 'vocos ok')"
+          # torchaudio 2.11+ audio load ke liye torchcodec chahiye
+          pip install -q torchcodec 2>&1 | tail -2
+          python -c "import numpy, torch, vocos, torchcodec; print('numpy', numpy.__version__, 'torch', torch.__version__, 'torchcodec ok')"
       - name: check-only (v1.7 script)
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
