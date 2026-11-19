@@ -19,13 +19,9 @@ jobs:
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
           pip install -q --index-url https://download.pytorch.org/whl/cpu torch torchaudio
-          pip install -q "numpy==1.26.4" "pyarrow==15.0.2"
           pip install -q "git+https://github.com/ai4bharat/IndicF5.git" 2>&1 | tail -3
-          # naya transformers + hub (model ka remote code inhi ke saath likha gaya hai)
-          pip install -q -U transformers huggingface_hub 2>&1 | tail -3
-          pip install -q accelerate 2>&1 | tail -2
-          pip install -q --no-deps "pyarrow==15.0.2" "numpy==1.26.4"
-          python -c "import transformers, huggingface_hub; print('tf', transformers.__version__, 'hub', huggingface_hub.__version__)"
+          pip install -q accelerate soundfile vocos 2>&1 | tail -2
+          python -c "import numpy, pyarrow, torch; print('numpy', numpy.__version__, 'pyarrow', pyarrow.__version__, 'torch', torch.__version__)"
       - name: render (f5_tts api, transformers ke bina)
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
