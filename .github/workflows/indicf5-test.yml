@@ -47,9 +47,27 @@ jobs:
           ref_text = open("engines/PIPER/tests/fixtures/ref_hi.txt", encoding="utf-8").read().strip()
           line = "दादी ने कहा, बेटा, आ जा पास। आज बहुत देर कर दी तूने।"
           try:
+              import torch
               from transformers import AutoModel
-              model = AutoModel.from_pretrained("ai4bharat/IndicF5", trust_remote_code=True, token=tok)
-              print("MODEL_LOADED", flush=True)
+              # "Tensor on device cpu is not on the expected device meta" — load ke
+              # alag-alag tareeke try karo, jo chale wahi rakho
+              variants = [
+                  dict(trust_remote_code=True, token=tok),
+                  dict(trust_remote_code=True, token=tok, low_cpu_mem_usage=False),
+                  dict(trust_remote_code=True, token=tok, low_cpu_mem_usage=False, device_map="cpu"),
+                  dict(trust_remote_code=True, token=tok, low_cpu_mem_usage=False, torch_dtype=torch.float32),
+                  dict(trust_remote_code=True, token=tok, device_map=None, low_cpu_mem_usage=False, torch_dtype=torch.float32),
+              ]
+              model = None
+              for i, kw in enumerate(variants, 1):
+                  try:
+                      model = AutoModel.from_pretrained("ai4bharat/IndicF5", **kw)
+                      print("MODEL_LOADED variant", i, list(kw), flush=True)
+                      break
+                  except Exception as e:
+                      print("LOAD_VARIANT_FAIL", i, type(e).__name__, str(e)[:160], flush=True)
+              if model is None:
+                  raise RuntimeError("saare load variants fail")
               try:
                   audio = model(line, ref_audio_path=ref, ref_text=ref_text)
               except TypeError:
