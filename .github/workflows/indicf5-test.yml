@@ -49,9 +49,16 @@ jobs:
               cfg = dict(dim=1024, depth=22, heads=16, ff_mult=2, text_dim=512, conv_layers=4)
               print("building model...", flush=True)
               model = load_model(DiT, cfg, mel_spec_type="vocos", vocab_file=vocab, device="cpu")
-              # repo me checkpoint load line comment hai — isliye khud load karo
-              model = load_checkpoint(model, ckpt, "cpu", use_ema=True)
-              print("MODEL_LOADED", flush=True)
+              # repo me checkpoint load line comment hai — khud load karo.
+              # Checkpoint me keys "_orig_mod." prefix ke saath hain (torch.compile ka nishan),
+              # isliye prefix hata kar load karte hain.
+              import torch
+              ck = torch.load(ckpt, map_location="cpu", weights_only=False)
+              sd = ck.get("model_state_dict", ck)
+              sd = { (k[len("_orig_mod."):] if k.startswith("_orig_mod.") else k): v for k, v in sd.items() }
+              sd = { k: v for k, v in sd.items() if not k.startswith("vocoder.") }
+              missing, unexpected = model.load_state_dict(sd, strict=False)
+              print("MODEL_LOADED | missing:", len(missing), "| unexpected:", len(unexpected), flush=True)
               vocoder = load_vocoder("vocos", is_local=False, device="cpu")
               ref_audio, ref_txt = preprocess_ref_audio_text(ref, ref_text, show_info=print)
               print("ref ready:", ref_txt[:60], flush=True)
