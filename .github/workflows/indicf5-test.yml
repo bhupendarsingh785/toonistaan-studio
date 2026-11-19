@@ -22,7 +22,7 @@ jobs:
           # IndicF5 ke apne requirements: numpy<=1.26.4, transformers unpinned
           pip install -q "numpy==1.26.4" "pyarrow==14.0.2"
           pip install -q "git+https://github.com/ai4bharat/IndicF5.git" 2>&1 | tail -3
-          pip install -q "transformers==4.49.0" "huggingface_hub==0.26.2" accelerate soundfile 2>&1 | tail -3
+          pip install -q "transformers==4.49.0" "huggingface_hub==0.35.0" accelerate soundfile 2>&1 | tail -3
           # datasets naya pyarrow khinch laata hai jo numpy2 maangta hai — use force karo
           pip install -q --no-deps "pyarrow==15.0.2" "numpy==1.26.4" 2>&1 | tail -2
       - name: model card + render
