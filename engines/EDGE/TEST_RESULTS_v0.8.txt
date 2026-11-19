@@ -1,0 +1,65 @@
+test_empty_query_score (test_browser_agent.BrowserAgentTests.test_empty_query_score) ... ok
+test_relevance_score (test_browser_agent.BrowserAgentTests.test_relevance_score) ... ok
+test_status_before_first_run (test_browser_agent.BrowserAgentTests.test_status_before_first_run) ... ok
+test_browser_removes_script_and_collapses_whitespace (test_core.CoreTests.test_browser_removes_script_and_collapses_whitespace) ... ok
+test_dialogue_and_narration (test_core.CoreTests.test_dialogue_and_narration) ... ok
+test_error_reopen (test_core.CoreTests.test_error_reopen) ... ok
+test_model_unknown_until_verified (test_core.CoreTests.test_model_unknown_until_verified) ... ok
+test_profile_not_claim_verified (test_core.CoreTests.test_profile_not_claim_verified) ... ok
+test_quality_never_auto_pass (test_core.CoreTests.test_quality_never_auto_pass) ... ok
+test_roman_hindi_warning (test_core.CoreTests.test_roman_hindi_warning) ... ok
+test_unicode_nfc (test_core.CoreTests.test_unicode_nfc) ... ok
+test_ambiguous_relationship_not_guessed (test_deep_intelligence.DeepIntelligenceTests.test_ambiguous_relationship_not_guessed) ... ok
+test_character_and_emotion (test_deep_intelligence.DeepIntelligenceTests.test_character_and_emotion) ... ok
+test_explicit_age_tag_only (test_deep_intelligence.DeepIntelligenceTests.test_explicit_age_tag_only) ... ok
+test_federated_search_collects_provider_results (test_deep_intelligence.DeepIntelligenceTests.test_federated_search_collects_provider_results) ... ok
+test_incidental_age_word_not_assigned (test_deep_intelligence.DeepIntelligenceTests.test_incidental_age_word_not_assigned) ... ok
+test_memory_is_persistent (test_deep_intelligence.DeepIntelligenceTests.test_memory_is_persistent) ... ok
+test_search_provider_failures_are_isolated (test_deep_intelligence.DeepIntelligenceTests.test_search_provider_failures_are_isolated) ... ok
+test_blank_line (test_performance.PerformanceTests.test_blank_line) ... ok
+test_capabilities_are_not_fabricated (test_performance.PerformanceTests.test_capabilities_are_not_fabricated) ... ok
+test_explicit_pause_bounded (test_performance.PerformanceTests.test_explicit_pause_bounded) ... ok
+test_only_marked_word_stretched (test_performance.PerformanceTests.test_only_marked_word_stretched) ... ok
+test_optional_warning_does_not_block_audio_assembly (test_performance.PerformanceTests.test_optional_warning_does_not_block_audio_assembly) ... ok
+test_pause_capped (test_performance.PerformanceTests.test_pause_capped) ... ok
+test_plan_preserves_line_numbers (test_performance.PerformanceTests.test_plan_preserves_line_numbers) ... ok
+test_profiles_name_map (test_performance.PerformanceTests.test_profiles_name_map) ... ok
+test_real_render_failure_blocks_assembly (test_performance.PerformanceTests.test_real_render_failure_blocks_assembly) ... ok
+test_silence_wav (test_performance.PerformanceTests.test_silence_wav) ... ok
+test_speaker_and_emotion (test_performance.PerformanceTests.test_speaker_and_emotion) ... ok
+test_unmarked_words_not_stretched (test_performance.PerformanceTests.test_unmarked_words_not_stretched) ... ok
+test_character_continuity (test_prosody_v07.TestHindiProsodyV07.test_character_continuity) ... ok
+test_conjunct (test_prosody_v07.TestHindiProsodyV07.test_conjunct) ... ok
+test_contextual_question (test_prosody_v07.TestHindiProsodyV07.test_contextual_question) ... ok
+test_explicit_emotion (test_prosody_v07.TestHindiProsodyV07.test_explicit_emotion) ... ok
+test_nasalization (test_prosody_v07.TestHindiProsodyV07.test_nasalization) ... ok
+test_review_ambiguous (test_prosody_v07.TestHindiProsodyV07.test_review_ambiguous) ... ok
+test_separate_characters (test_prosody_v07.TestHindiProsodyV07.test_separate_characters) ... ok
+test_vowel_and_matra (test_prosody_v07.TestHindiProsodyV07.test_vowel_and_matra) ... ok
+test_delivery_targets_exist (test_prosody_v07.TestProsodyAdapterIntegration.test_delivery_targets_exist) ... ok
+test_deep_prosody_reaches_tts_adapter (test_prosody_v07.TestRenderPipelineIntegration.test_deep_prosody_reaches_tts_adapter) ... ok
+test_character_profiles_stay_separate (test_v08_audio_browser.V08Tests.test_character_profiles_stay_separate) ... ok
+test_explicit_angry (test_v08_audio_browser.V08Tests.test_explicit_angry) ... ok
+test_hindi_text_has_words (test_v08_audio_browser.V08Tests.test_hindi_text_has_words) ... ok
+test_primary_source_quality (test_v08_audio_browser.V08Tests.test_primary_source_quality) ... ok
+test_query_tokenization_hindi (test_v08_audio_browser.V08Tests.test_query_tokenization_hindi) ... ok
+test_question_punctuation (test_v08_audio_browser.V08Tests.test_question_punctuation) ... ok
+test_research_handoff_is_engine_local (test_v08_audio_browser.V08Tests.test_research_handoff_is_engine_local) ... /usr/lib/python3.13/unittest/mock.py:2247: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f5840d9cc70>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib/python3.13/unittest/mock.py:2247: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f5840d9cd60>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib/python3.13/unittest/mock.py:2247: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f5840d9ce50>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_scene_analyzer_extracts_tagged_characters (test_v08_audio_browser.V08Tests.test_scene_analyzer_extracts_tagged_characters) ... ok
+test_score_relevance (test_v08_audio_browser.V08Tests.test_score_relevance) ... ok
+test_svara_bridge_emotion_tag_and_character_voice (test_v08_audio_browser.V08Tests.test_svara_bridge_emotion_tag_and_character_voice) ... ok
+test_health_report_is_engine_scoped_and_saved (test_watchdog.WatchdogTests.test_health_report_is_engine_scoped_and_saved) ... ok
+
+----------------------------------------------------------------------
+Ran 51 tests in 0.059s
+
+OK

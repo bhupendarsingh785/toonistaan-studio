@@ -1,0 +1,12 @@
+[
+  {
+    "title": "Research connector must remain non-blocking and optional",
+    "category": "architecture_guard",
+    "severity": "high",
+    "cause": "A third-party TTS model or network source could accidentally become a blocking runtime dependency.",
+    "fix": "Queue documentation-only fetches in an isolated daemon worker; preserve independent sources and no automatic production promotion.",
+    "affected_module": "open_source_learning.py; browser_agent_v08.py",
+    "regression_test": "tests/test_open_source_learning.py",
+    "state": "OPEN_UNTIL_RUNTIME_VERIFICATION"
+  }
+]

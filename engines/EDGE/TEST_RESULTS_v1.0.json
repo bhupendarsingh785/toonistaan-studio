@@ -1,0 +1,15 @@
+{
+  "release": "1.0.0",
+  "engine": "EDGE",
+  "compileall": "PASS",
+  "unit_tests": 65,
+  "unit_test_status": "PASS",
+  "cli_agent_backend": "PASS",
+  "live_browser_network_test": "NOT_RUN_IN_BUILD_CONTAINER",
+  "local_reasoning_model": "NOT_INSTALLED_IN_BUILD_CONTAINER",
+  "notes": [
+    "Offline fallback is explicitly extractive, not deep reasoning.",
+    "Four-role model debate requires an installed/configured compatible model.",
+    "TTS audio naturalness is not certified by these software tests."
+  ]
+}

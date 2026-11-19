@@ -1,0 +1,131 @@
+{
+  "schema_version": "0.7",
+  "engine": "PIPER Independent Hindi Voice Intelligence",
+  "generated_at": "2026-11-19T05:13:21Z",
+  "chunks": [
+    {
+      "line": 1,
+      "speaker": "वाचक",
+      "kind": "speech",
+      "text": "एक छोटे से गाँव में सुबह हो रही थी।",
+      "emotion": "neutral",
+      "emotion_confidence": 0.3,
+      "emotion_evidence": "context_lexicon_and_punctuation",
+      "delivery_plan": {
+        "rate": "conversational",
+        "pitch": "natural",
+        "energy": "medium",
+        "articulation": "clear",
+        "pause_after_ms": 300,
+        "contour": "level"
+      },
+      "explicit_stretch": false,
+      "audio": "/scratch/work/engines/PIPER/output/story/chunk_0001_01.wav"
+    },
+    {
+      "line": 1,
+      "speaker": "वाचक",
+      "kind": "pause",
+      "duration_ms": 340
+    },
+    {
+      "line": 2,
+      "speaker": "आरव",
+      "kind": "speech",
+      "text": "माँ, क्या आज हम नदी पर जाएँगे?",
+      "emotion": "curious",
+      "emotion_confidence": 0.4,
+      "emotion_evidence": "context_lexicon_and_punctuation",
+      "delivery_plan": {
+        "rate": "measured",
+        "pitch": "rising_question",
+        "energy": "medium",
+        "articulation": "clear",
+        "pause_after_ms": 280,
+        "contour": "question_rise"
+      },
+      "explicit_stretch": false,
+      "audio": "/scratch/work/engines/PIPER/output/story/chunk_0002_01.wav"
+    },
+    {
+      "line": 2,
+      "speaker": "आरव",
+      "kind": "pause",
+      "duration_ms": 300
+    },
+    {
+      "line": 3,
+      "speaker": "माँ",
+      "kind": "speech",
+      "text": "हाँ बेटा, लेकिन पहले नाश्ता कर लो।",
+      "emotion": "neutral",
+      "emotion_confidence": 0.3,
+      "emotion_evidence": "context_lexicon_and_punctuation",
+      "delivery_plan": {
+        "rate": "conversational",
+        "pitch": "natural",
+        "energy": "medium",
+        "articulation": "clear",
+        "pause_after_ms": 300,
+        "contour": "level"
+      },
+      "explicit_stretch": false,
+      "audio": "/scratch/work/engines/PIPER/output/story/chunk_0003_01.wav"
+    },
+    {
+      "line": 3,
+      "speaker": "माँ",
+      "kind": "pause",
+      "duration_ms": 340
+    },
+    {
+      "line": 4,
+      "speaker": "दादी",
+      "kind": "speech",
+      "text": "धीरे बोलो बच्चों, तुम्हारे दादाजी अभी सो रहे हैं।",
+      "emotion": "neutral",
+      "emotion_confidence": 0.3,
+      "emotion_evidence": "context_lexicon_and_punctuation",
+      "delivery_plan": {
+        "rate": "conversational",
+        "pitch": "natural",
+        "energy": "medium",
+        "articulation": "clear",
+        "pause_after_ms": 300,
+        "contour": "level"
+      },
+      "explicit_stretch": false,
+      "audio": "/scratch/work/engines/PIPER/output/story/chunk_0004_01.wav"
+    },
+    {
+      "line": 4,
+      "speaker": "दादी",
+      "kind": "pause",
+      "duration_ms": 340
+    }
+  ],
+  "warnings": [],
+  "audio_assembly": "success",
+  "prosody_analysis": {
+    "speech_segments": 4,
+    "emotion_counts": {
+      "neutral": 3,
+      "happy": 0,
+      "sad": 0,
+      "angry": 0,
+      "fearful": 0,
+      "surprised": 0,
+      "curious": 1,
+      "serious": 0,
+      "whisper": 0,
+      "shout": 0,
+      "laughing": 0,
+      "crying": 0
+    },
+    "needs_review": 4
+  },
+  "backend_capabilities_note": "Prosody plan is passed to each adapter; actual audible emotion depends on backend/model support.",
+  "final_audio": "/scratch/work/engines/PIPER/output/story/story_final.wav",
+  "render_failures": [],
+  "note": "A planner is not a neural acting model. Unsupported emotion controls remain unsupported; no realistic quality claim is made without listening evaluation."
+}

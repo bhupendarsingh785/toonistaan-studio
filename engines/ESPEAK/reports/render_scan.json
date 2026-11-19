@@ -1,0 +1,127 @@
+{
+  "schema_version": "0.3",
+  "language": {
+    "characters": 138,
+    "devanagari_letters": 130,
+    "latin_letters": 0,
+    "devanagari_ratio": 0.942,
+    "likely_hindi_or_devanagari": true,
+    "warning": null
+  },
+  "characters": [
+    {
+      "character_id": "f3b5dbab8925",
+      "name": "वाचक",
+      "age_group": "unspecified",
+      "voice_presentation": "unspecified",
+      "evidence": [
+        {
+          "line": 1,
+          "source": "explicit_speaker_label"
+        }
+      ],
+      "dialogue_count": 1,
+      "voice_profile_status": "NEEDS_REVIEW"
+    },
+    {
+      "character_id": "7acb5c492e72",
+      "name": "आरव",
+      "age_group": "adult",
+      "voice_presentation": "female",
+      "evidence": [
+        {
+          "line": 2,
+          "source": "explicit_speaker_label"
+        },
+        {
+          "line": 2,
+          "source": "role_keyword",
+          "matched": "माँ"
+        }
+      ],
+      "dialogue_count": 1,
+      "voice_profile_status": "NEEDS_REVIEW"
+    },
+    {
+      "character_id": "abab33f2ca6d",
+      "name": "माँ",
+      "age_group": "adult",
+      "voice_presentation": "female",
+      "evidence": [
+        {
+          "line": 3,
+          "source": "explicit_speaker_label"
+        },
+        {
+          "line": 3,
+          "source": "role_keyword",
+          "matched": "माँ"
+        }
+      ],
+      "dialogue_count": 1,
+      "voice_profile_status": "NEEDS_REVIEW"
+    },
+    {
+      "character_id": "d7e31e76023b",
+      "name": "दादी",
+      "age_group": "elderly",
+      "voice_presentation": "male",
+      "evidence": [
+        {
+          "line": 4,
+          "source": "explicit_speaker_label"
+        },
+        {
+          "line": 4,
+          "source": "role_keyword",
+          "matched": "दादी"
+        },
+        {
+          "line": 4,
+          "source": "role_keyword",
+          "matched": "दादा"
+        }
+      ],
+      "dialogue_count": 1,
+      "voice_profile_status": "NEEDS_REVIEW"
+    }
+  ],
+  "segments": [
+    {
+      "line": 1,
+      "speaker": "वाचक",
+      "character_id": "f3b5dbab8925",
+      "text": "एक छोटे से गाँव में सुबह हो रही थी।",
+      "emotion_hint": "neutral",
+      "delivery": "dialogue"
+    },
+    {
+      "line": 2,
+      "speaker": "आरव",
+      "character_id": "7acb5c492e72",
+      "text": "माँ, क्या आज हम नदी पर जाएँगे?",
+      "emotion_hint": "neutral",
+      "delivery": "dialogue"
+    },
+    {
+      "line": 3,
+      "speaker": "माँ",
+      "character_id": "abab33f2ca6d",
+      "text": "हाँ बेटा, लेकिन पहले नाश्ता कर लो।",
+      "emotion_hint": "neutral",
+      "delivery": "dialogue"
+    },
+    {
+      "line": 4,
+      "speaker": "दादी",
+      "character_id": "d7e31e76023b",
+      "text": "धीरे बोलो बच्चों, तुम्हारे दादाजी अभी सो रहे हैं।",
+      "emotion_hint": "soft",
+      "delivery": "dialogue"
+    }
+  ],
+  "warnings": [
+    "आयु/लिंग के अनुमान केवल लिखित संकेतों पर आधारित हैं; अस्पष्ट मामलों में manual confirmation जरूरी है।",
+    "स्क्रिप्ट स्कैनर वास्तविक उम्र या आवाज़ को प्रमाणित नहीं कर सकता।"
+  ]
+}

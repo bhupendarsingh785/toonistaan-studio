@@ -1,0 +1,1336 @@
+{
+  "version": "0.7",
+  "segments": [
+    {
+      "speaker": "वाचक",
+      "text": "एक छोटे से गाँव में सुबह हो रही थी।",
+      "emotion": "neutral",
+      "emotion_confidence": 0.3,
+      "emotion_evidence": "context_lexicon_and_punctuation",
+      "emotion_scores": {
+        "happy": 0,
+        "sad": 0,
+        "angry": 0,
+        "fearful": 0,
+        "surprised": 0,
+        "curious": 0,
+        "serious": 0
+      },
+      "delivery": {
+        "rate": "conversational",
+        "pitch": "natural",
+        "energy": "medium",
+        "articulation": "clear",
+        "pause_after_ms": 300,
+        "contour": "level"
+      },
+      "phonology": {
+        "script": "Devanagari or other",
+        "words": [
+          {
+            "word": "एक",
+            "aksharas": [
+              "ए",
+              "क"
+            ],
+            "syllable_nuclei_estimate": 2,
+            "vowel_symbols": [
+              {
+                "symbol": "ए",
+                "type": "independent_vowel"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              }
+            ],
+            "consonants": [
+              "क"
+            ],
+            "matras": [],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "छोटे",
+            "aksharas": [
+              "छ",
+              "ो",
+              "ट",
+              "े"
+            ],
+            "syllable_nuclei_estimate": 4,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ो",
+                "type": "matra"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "े",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "छ",
+              "ट"
+            ],
+            "matras": [
+              "ो",
+              "े"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [
+              "छ"
+            ],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "से",
+            "aksharas": [
+              "स",
+              "े"
+            ],
+            "syllable_nuclei_estimate": 2,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "े",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "स"
+            ],
+            "matras": [
+              "े"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "गाँव",
+            "aksharas": [
+              "ग",
+              "ाँ",
+              "व"
+            ],
+            "syllable_nuclei_estimate": 3,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ा",
+                "type": "matra"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              }
+            ],
+            "consonants": [
+              "ग",
+              "व"
+            ],
+            "matras": [
+              "ा"
+            ],
+            "nasal_features": [
+              "chandrabindu"
+            ],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "में",
+            "aksharas": [
+              "म",
+              "ें"
+            ],
+            "syllable_nuclei_estimate": 2,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "े",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "म"
+            ],
+            "matras": [
+              "े"
+            ],
+            "nasal_features": [
+              "anusvara"
+            ],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "सुबह",
+            "aksharas": [
+              "स",
+              "ु",
+              "ब",
+              "ह"
+            ],
+            "syllable_nuclei_estimate": 4,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ु",
+                "type": "matra"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              }
+            ],
+            "consonants": [
+              "स",
+              "ब",
+              "ह"
+            ],
+            "matras": [
+              "ु"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "हो",
+            "aksharas": [
+              "ह",
+              "ो"
+            ],
+            "syllable_nuclei_estimate": 2,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ो",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "ह"
+            ],
+            "matras": [
+              "ो"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "रही",
+            "aksharas": [
+              "र",
+              "ह",
+              "ी"
+            ],
+            "syllable_nuclei_estimate": 3,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ी",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "र",
+              "ह"
+            ],
+            "matras": [
+              "ी"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "थी।",
+            "aksharas": [
+              "थ",
+              "ी",
+              "।"
+            ],
+            "syllable_nuclei_estimate": 2,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ी",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "थ"
+            ],
+            "matras": [
+              "ी"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [
+              "थ"
+            ],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          }
+        ],
+        "counts": {
+          "words": 9,
+          "aksharas": 25
+        },
+        "limitations": [
+          "Orthographic scanner is not a trained G2P model.",
+          "Schwa deletion, dialect, loanword pronunciation and prosodic phrasing require context and native-speaker validation."
+        ]
+      },
+      "speaker_persona": {},
+      "needs_review": true,
+      "line": 1,
+      "kind": "speech"
+    },
+    {
+      "speaker": "आरव",
+      "text": "माँ, क्या आज हम नदी पर जाएँगे?",
+      "emotion": "curious",
+      "emotion_confidence": 0.4,
+      "emotion_evidence": "context_lexicon_and_punctuation",
+      "emotion_scores": {
+        "happy": 0,
+        "sad": 0,
+        "angry": 0,
+        "fearful": 0,
+        "surprised": 0,
+        "curious": 1,
+        "serious": 0
+      },
+      "delivery": {
+        "rate": "measured",
+        "pitch": "rising_question",
+        "energy": "medium",
+        "articulation": "clear",
+        "pause_after_ms": 280,
+        "contour": "question_rise"
+      },
+      "phonology": {
+        "script": "Devanagari or other",
+        "words": [
+          {
+            "word": "माँ",
+            "aksharas": [
+              "म",
+              "ाँ"
+            ],
+            "syllable_nuclei_estimate": 2,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ा",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "म"
+            ],
+            "matras": [
+              "ा"
+            ],
+            "nasal_features": [
+              "chandrabindu"
+            ],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "क्या",
+            "aksharas": [
+              "क्य",
+              "ा"
+            ],
+            "syllable_nuclei_estimate": 1,
+            "vowel_symbols": [
+              {
+                "symbol": "ा",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "क",
+              "य"
+            ],
+            "matras": [
+              "ा"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [
+              "क्य"
+            ],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "आज",
+            "aksharas": [
+              "आ",
+              "ज"
+            ],
+            "syllable_nuclei_estimate": 2,
+            "vowel_symbols": [
+              {
+                "symbol": "आ",
+                "type": "independent_vowel"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              }
+            ],
+            "consonants": [
+              "ज"
+            ],
+            "matras": [],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "हम",
+            "aksharas": [
+              "ह",
+              "म"
+            ],
+            "syllable_nuclei_estimate": 2,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              }
+            ],
+            "consonants": [
+              "ह",
+              "म"
+            ],
+            "matras": [],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "नदी",
+            "aksharas": [
+              "न",
+              "द",
+              "ी"
+            ],
+            "syllable_nuclei_estimate": 3,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ी",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "न",
+              "द"
+            ],
+            "matras": [
+              "ी"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "पर",
+            "aksharas": [
+              "प",
+              "र"
+            ],
+            "syllable_nuclei_estimate": 2,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              }
+            ],
+            "consonants": [
+              "प",
+              "र"
+            ],
+            "matras": [],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "जाएँगे",
+            "aksharas": [
+              "ज",
+              "ा",
+              "एँ",
+              "ग",
+              "े"
+            ],
+            "syllable_nuclei_estimate": 5,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ा",
+                "type": "matra"
+              },
+              {
+                "symbol": "ए",
+                "type": "independent_vowel"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "े",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "ज",
+              "ग"
+            ],
+            "matras": [
+              "ा",
+              "े"
+            ],
+            "nasal_features": [
+              "chandrabindu"
+            ],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          }
+        ],
+        "counts": {
+          "words": 7,
+          "aksharas": 18
+        },
+        "limitations": [
+          "Orthographic scanner is not a trained G2P model.",
+          "Schwa deletion, dialect, loanword pronunciation and prosodic phrasing require context and native-speaker validation."
+        ]
+      },
+      "speaker_persona": {},
+      "needs_review": true,
+      "line": 2,
+      "kind": "speech"
+    },
+    {
+      "speaker": "माँ",
+      "text": "हाँ बेटा, लेकिन पहले नाश्ता कर लो।",
+      "emotion": "neutral",
+      "emotion_confidence": 0.3,
+      "emotion_evidence": "context_lexicon_and_punctuation",
+      "emotion_scores": {
+        "happy": 0,
+        "sad": 0,
+        "angry": 0,
+        "fearful": 0,
+        "surprised": 0,
+        "curious": 0,
+        "serious": 0
+      },
+      "delivery": {
+        "rate": "conversational",
+        "pitch": "natural",
+        "energy": "medium",
+        "articulation": "clear",
+        "pause_after_ms": 300,
+        "contour": "level"
+      },
+      "phonology": {
+        "script": "Devanagari or other",
+        "words": [
+          {
+            "word": "हाँ",
+            "aksharas": [
+              "ह",
+              "ाँ"
+            ],
+            "syllable_nuclei_estimate": 2,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ा",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "ह"
+            ],
+            "matras": [
+              "ा"
+            ],
+            "nasal_features": [
+              "chandrabindu"
+            ],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "बेटा",
+            "aksharas": [
+              "ब",
+              "े",
+              "ट",
+              "ा"
+            ],
+            "syllable_nuclei_estimate": 4,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "े",
+                "type": "matra"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ा",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "ब",
+              "ट"
+            ],
+            "matras": [
+              "े",
+              "ा"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "लेकिन",
+            "aksharas": [
+              "ल",
+              "े",
+              "क",
+              "ि",
+              "न"
+            ],
+            "syllable_nuclei_estimate": 5,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "े",
+                "type": "matra"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ि",
+                "type": "matra"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              }
+            ],
+            "consonants": [
+              "ल",
+              "क",
+              "न"
+            ],
+            "matras": [
+              "े",
+              "ि"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "पहले",
+            "aksharas": [
+              "प",
+              "ह",
+              "ल",
+              "े"
+            ],
+            "syllable_nuclei_estimate": 4,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "े",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "प",
+              "ह",
+              "ल"
+            ],
+            "matras": [
+              "े"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "नाश्ता",
+            "aksharas": [
+              "न",
+              "ा",
+              "श्त",
+              "ा"
+            ],
+            "syllable_nuclei_estimate": 3,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ा",
+                "type": "matra"
+              },
+              {
+                "symbol": "ा",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "न",
+              "श",
+              "त"
+            ],
+            "matras": [
+              "ा",
+              "ा"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [
+              "श्त"
+            ],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "कर",
+            "aksharas": [
+              "क",
+              "र"
+            ],
+            "syllable_nuclei_estimate": 2,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              }
+            ],
+            "consonants": [
+              "क",
+              "र"
+            ],
+            "matras": [],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "लो।",
+            "aksharas": [
+              "ल",
+              "ो",
+              "।"
+            ],
+            "syllable_nuclei_estimate": 2,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ो",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "ल"
+            ],
+            "matras": [
+              "ो"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          }
+        ],
+        "counts": {
+          "words": 7,
+          "aksharas": 24
+        },
+        "limitations": [
+          "Orthographic scanner is not a trained G2P model.",
+          "Schwa deletion, dialect, loanword pronunciation and prosodic phrasing require context and native-speaker validation."
+        ]
+      },
+      "speaker_persona": {},
+      "needs_review": true,
+      "line": 3,
+      "kind": "speech"
+    },
+    {
+      "speaker": "दादी",
+      "text": "धीरे बोलो बच्चों, तुम्हारे दादाजी अभी सो रहे हैं।",
+      "emotion": "neutral",
+      "emotion_confidence": 0.3,
+      "emotion_evidence": "context_lexicon_and_punctuation",
+      "emotion_scores": {
+        "happy": 0,
+        "sad": 0,
+        "angry": 0,
+        "fearful": 0,
+        "surprised": 0,
+        "curious": 0,
+        "serious": 0
+      },
+      "delivery": {
+        "rate": "conversational",
+        "pitch": "natural",
+        "energy": "medium",
+        "articulation": "clear",
+        "pause_after_ms": 300,
+        "contour": "level"
+      },
+      "phonology": {
+        "script": "Devanagari or other",
+        "words": [
+          {
+            "word": "धीरे",
+            "aksharas": [
+              "ध",
+              "ी",
+              "र",
+              "े"
+            ],
+            "syllable_nuclei_estimate": 4,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ी",
+                "type": "matra"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "े",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "ध",
+              "र"
+            ],
+            "matras": [
+              "ी",
+              "े"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [
+              "ध"
+            ],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "बोलो",
+            "aksharas": [
+              "ब",
+              "ो",
+              "ल",
+              "ो"
+            ],
+            "syllable_nuclei_estimate": 4,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ो",
+                "type": "matra"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ो",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "ब",
+              "ल"
+            ],
+            "matras": [
+              "ो",
+              "ो"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "बच्चों",
+            "aksharas": [
+              "ब",
+              "च्च",
+              "ों"
+            ],
+            "syllable_nuclei_estimate": 2,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ो",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "ब",
+              "च",
+              "च"
+            ],
+            "matras": [
+              "ो"
+            ],
+            "nasal_features": [
+              "anusvara"
+            ],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [
+              "च्च"
+            ],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "तुम्हारे",
+            "aksharas": [
+              "त",
+              "ु",
+              "म्ह",
+              "ा",
+              "र",
+              "े"
+            ],
+            "syllable_nuclei_estimate": 5,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ु",
+                "type": "matra"
+              },
+              {
+                "symbol": "ा",
+                "type": "matra"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "े",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "त",
+              "म",
+              "ह",
+              "र"
+            ],
+            "matras": [
+              "ु",
+              "ा",
+              "े"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [
+              "म्ह"
+            ],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "दादाजी",
+            "aksharas": [
+              "द",
+              "ा",
+              "द",
+              "ा",
+              "ज",
+              "ी"
+            ],
+            "syllable_nuclei_estimate": 6,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ा",
+                "type": "matra"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ा",
+                "type": "matra"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ी",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "द",
+              "द",
+              "ज"
+            ],
+            "matras": [
+              "ा",
+              "ा",
+              "ी"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "अभी",
+            "aksharas": [
+              "अ",
+              "भ",
+              "ी"
+            ],
+            "syllable_nuclei_estimate": 3,
+            "vowel_symbols": [
+              {
+                "symbol": "अ",
+                "type": "independent_vowel"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ी",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "भ"
+            ],
+            "matras": [
+              "ी"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [
+              "भ"
+            ],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "सो",
+            "aksharas": [
+              "स",
+              "ो"
+            ],
+            "syllable_nuclei_estimate": 2,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ो",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "स"
+            ],
+            "matras": [
+              "ो"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "रहे",
+            "aksharas": [
+              "र",
+              "ह",
+              "े"
+            ],
+            "syllable_nuclei_estimate": 3,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "े",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "र",
+              "ह"
+            ],
+            "matras": [
+              "े"
+            ],
+            "nasal_features": [],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          },
+          {
+            "word": "हैं।",
+            "aksharas": [
+              "ह",
+              "ैं",
+              "।"
+            ],
+            "syllable_nuclei_estimate": 2,
+            "vowel_symbols": [
+              {
+                "symbol": "अ (inherent)",
+                "type": "inherent_schwa_estimate"
+              },
+              {
+                "symbol": "ै",
+                "type": "matra"
+              }
+            ],
+            "consonants": [
+              "ह"
+            ],
+            "matras": [
+              "ै"
+            ],
+            "nasal_features": [
+              "anusvara"
+            ],
+            "aspirated_consonants": [],
+            "conjunct_clusters": [],
+            "unknown_symbols": [],
+            "schwa_note": "Hindi schwa deletion is context-sensitive; this scanner does not guess the spoken form."
+          }
+        ],
+        "counts": {
+          "words": 9,
+          "aksharas": 34
+        },
+        "limitations": [
+          "Orthographic scanner is not a trained G2P model.",
+          "Schwa deletion, dialect, loanword pronunciation and prosodic phrasing require context and native-speaker validation."
+        ]
+      },
+      "speaker_persona": {},
+      "needs_review": true,
+      "line": 4,
+      "kind": "speech"
+    }
+  ],
+  "summary": {
+    "speech_segments": 4,
+    "emotion_counts": {
+      "neutral": 3,
+      "happy": 0,
+      "sad": 0,
+      "angry": 0,
+      "fearful": 0,
+      "surprised": 0,
+      "curious": 1,
+      "serious": 0,
+      "whisper": 0,
+      "shout": 0,
+      "laughing": 0,
+      "crying": 0
+    },
+    "needs_review": 4
+  },
+  "limits": [
+    "Emotion is inferred heuristically unless explicitly annotated.",
+    "Prosody directives are not guaranteed to be rendered by every TTS backend.",
+    "Natural acting requires a neural voice model that supports expressive conditioning."
+  ]
+}

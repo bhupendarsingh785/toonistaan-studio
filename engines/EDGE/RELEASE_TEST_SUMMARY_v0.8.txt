@@ -1,0 +1,12 @@
+EDGE
+Python compile: PASS
+Base test cases discovered and passed: 51
+Cinematic audio regression tests passed: 61
+Total test cases: 112
+Browser agent search/ranking and mocked engine-local handoff: PASS
+Tagged character extraction in scene planner: PASS
+Svara bridge request/tag/voice routing mock test: PASS
+Live external browser crawl: NOT RUN in build environment
+Real Svara inference: NOT RUN (server/model/hardware not available)
+Human listening naturalness certification: NOT RUN
+CLI help and story-audio-plan smoke test: PASS

@@ -1,0 +1,32 @@
+{
+  "title": "PIPER Independent Hindi Voice Intelligence",
+  "adapter": "piper",
+  "voice": "",
+  "model_paths": [
+    "./models"
+  ],
+  "allowed_domains": [],
+  "piper_executable": "/scratch/.local/bin/piper",
+  "piper_model": "/scratch/work/models/hi_IN-pratham-medium.onnx",
+  "espeak_executable": "",
+  "rate": "+0%",
+  "volume": "+0%",
+  "model_id": "eleven_v4",
+  "notes": "Offline neural voice adapter. Requires a real compatible Hindi ONNX voice model and config; none is falsely bundled.",
+  "stability": 0.55,
+  "similarity_boost": 0.75,
+  "use_speaker_boost": true,
+  "style": 0.15,
+  "speed": 1.0,
+  "stretch_speed": 0.82,
+  "espeak_rate": 155,
+  "expressive_backend": "native",
+  "svara_base_url": "http://127.0.0.1:8080/v1",
+  "svara_model": "svara-tts-v1",
+  "svara_voice": "hi_female",
+  "piper_models_by_presentation": {
+    "female": "/scratch/work/models/hi_IN-priyamvada-medium.onnx",
+    "male": "/scratch/work/models/hi_IN-pratham-medium.onnx",
+    "unspecified": "/scratch/work/models/hi_IN-pratham-medium.onnx"
+  }
+}

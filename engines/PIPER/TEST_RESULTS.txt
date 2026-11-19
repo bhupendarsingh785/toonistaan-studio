@@ -1,0 +1,14 @@
+v0.6 automated verification
+===========================
+Python syntax compilation: PASS
+Unit tests: 31/31 PASS per engine (Edge, Piper, ElevenLabs, eSpeak)
+CLI smoke tests: deep-analyze and intelligence-status PASS per engine
+ZIP integrity: verified at packaging time
+
+Not verified in this build environment:
+- Live Internet search provider availability and website crawling
+- Playwright browser installation and JavaScript-rendered page collection
+- Real TTS voice naturalness, emotion acting, diarization accuracy, or per-character identity
+- Neural model training or weight updates (intentionally deferred)
+
+Passing software tests do not establish audio quality. Run live research on the target device and listen to rendered audio before accepting quality claims.

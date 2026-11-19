@@ -1,0 +1,19 @@
+{
+  "आरव": {
+    "age_group": "child_7_12",
+    "voice_presentation": "male",
+    "emotions": [
+      "neutral",
+      "happy",
+      "fearful"
+    ]
+  },
+  "माँ": {
+    "age_group": "adult",
+    "voice_presentation": "female"
+  },
+  "दादी": {
+    "age_group": "elderly",
+    "voice_presentation": "female"
+  }
+}

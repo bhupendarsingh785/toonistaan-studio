@@ -1,0 +1,27 @@
+{
+  "title": "EDGE Independent Hindi Voice Intelligence",
+  "adapter": "edge",
+  "voice": "hi-IN-SwaraNeural",
+  "model_paths": [
+    "./models"
+  ],
+  "allowed_domains": [],
+  "piper_executable": "",
+  "piper_model": "",
+  "espeak_executable": "",
+  "rate": "+0%",
+  "volume": "+0%",
+  "model_id": "eleven_v4",
+  "notes": "Online voice adapter. Requires edge-tts; service availability is external and not guaranteed.",
+  "stability": 0.55,
+  "similarity_boost": 0.75,
+  "use_speaker_boost": true,
+  "style": 0.15,
+  "speed": 1.0,
+  "stretch_speed": 0.82,
+  "espeak_rate": 155,
+  "expressive_backend": "native",
+  "svara_base_url": "http://127.0.0.1:8080/v1",
+  "svara_model": "svara-tts-v1",
+  "svara_voice": "hi_female"
+}

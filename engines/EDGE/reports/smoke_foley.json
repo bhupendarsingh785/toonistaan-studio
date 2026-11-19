@@ -1,0 +1,27 @@
+{
+  "schema": "astra-action-foley-chain/v1",
+  "source_name": "story_scene_demo.txt",
+  "action_chain_count": 0,
+  "event_count": 0,
+  "action_chains": [],
+  "safety_and_realism": {
+    "no_unmentioned_actions": true,
+    "no_auto_asset_insertion": true,
+    "no_auto_render": true,
+    "source_audio_untouched": true,
+    "uncertain_or_missing_steps": "do not invent; request editorial review",
+    "mix_priority": [
+      "dialogue",
+      "foreground_action",
+      "nearby_foley",
+      "environment_bed",
+      "music"
+    ]
+  },
+  "limitations": [
+    "Evidence-based Hindi/English pattern recognition, not full semantic comprehension.",
+    "Does not infer exact timing, force, material, rope type, anchor type or landing surface unless stated.",
+    "Asset retrieval, audition, approval and final rendering are separate stages."
+  ],
+  "human_review_required": true
+}
