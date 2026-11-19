@@ -26,7 +26,7 @@ jobs:
             hydra-core jieba librosa matplotlib pydub pypinyin safetensors tomli \
             torchdiffeq tqdm x_transformers transformers_stream_generator click wandb "datasets==2.14.0" "pyarrow==15.0.2" 2>&1 | tail -2
           python -c "import numpy, torch, vocos; print('numpy', numpy.__version__, 'torch', torch.__version__, 'vocos ok')"
-      - name: render (f5_tts api, transformers ke bina)
+      - name: render (khud ka load, repo ka api.py toota hua hai)
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
@@ -43,16 +43,22 @@ jobs:
           ref_text = open("engines/PIPER/tests/fixtures/ref_hi.txt", encoding="utf-8").read().strip()
           line = "दादी ने कहा, बेटा, आ जा पास। आज बहुत देर कर दी तूने।"
           try:
-              from f5_tts.api import F5TTS
-              print("loading model (cpu)...", flush=True)
-              f5 = F5TTS(model_type="F5-TTS", ckpt_file=ckpt, vocab_file=vocab,
-                         vocoder_name="vocos", device="cpu")
+              from f5_tts.infer.utils_infer import (load_model, load_vocoder, load_checkpoint,
+                                                    preprocess_ref_audio_text, infer_process)
+              from f5_tts.model import DiT
+              cfg = dict(dim=1024, depth=22, heads=16, ff_mult=2, text_dim=512, conv_layers=4)
+              print("building model...", flush=True)
+              model = load_model(DiT, cfg, mel_spec_type="vocos", vocab_file=vocab, device="cpu")
+              # repo me checkpoint load line comment hai — isliye khud load karo
+              model = load_checkpoint(model, ckpt, "cpu", use_ema=True)
               print("MODEL_LOADED", flush=True)
-              wav, sr, _ = f5.infer(ref_file=ref, ref_text=ref_text, gen_text=line,
-                                    show_info=print)
+              vocoder = load_vocoder("vocos", is_local=False, device="cpu")
+              ref_audio, ref_txt = preprocess_ref_audio_text(ref, ref_text, show_info=print)
+              print("ref ready:", ref_txt[:60], flush=True)
+              wav, sr, _ = infer_process(ref_audio, ref_txt, line, model, vocoder, show_info=print)
               import soundfile as sf
               sf.write("indicf5_out.wav", wav, sr)
-              print("RENDER_OK", len(wav), "samples @", sr, "=", round(len(wav)/sr, 2), "s", flush=True)
+              print("RENDER_OK", len(wav), "@", sr, "=", round(len(wav)/sr, 2), "s", flush=True)
           except Exception as e:
               print("RENDER_FAIL", type(e).__name__, str(e)[:400], flush=True)
               traceback.print_exc()
