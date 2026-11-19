@@ -109,8 +109,16 @@ def _normalise_state_dict(raw: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(original_key, str):
             continue
         key = original_key
-        while key.startswith("_orig_mod."):
-            key = key[len("_orig_mod."):]
+        # IndicF5 ka checkpoint "ema_model._orig_mod." prefix ke saath aata hai.
+        # Pehle sirf "_orig_mod." hata rahe the, isliye 364 keys match nahi hoti thi.
+        _prefixes = ("ema_model.", "model.", "_orig_mod.")
+        changed = True
+        while changed:
+            changed = False
+            for _p in _prefixes:
+                if key.startswith(_p):
+                    key = key[len(_p):]
+                    changed = True
         if key.startswith("vocoder."):
             continue
         if key in cleaned:
