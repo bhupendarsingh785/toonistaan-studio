@@ -1,0 +1,25 @@
+# IndicF5 dependency set. Use a fresh virtual environment.
+# Install PyTorch first with the command in INSTALL_HI.md (CPU or CUDA build).
+numpy==1.26.4
+datasets==2.14.0
+pyarrow==15.0.2
+accelerate
+vocos
+soundfile
+cached_path
+ema_pytorch
+hydra-core
+jieba
+librosa
+matplotlib
+pydub
+pypinyin
+safetensors>=0.4.3
+tomli
+torchdiffeq
+tqdm
+x_transformers
+transformers_stream_generator
+click
+wandb
+huggingface_hub
