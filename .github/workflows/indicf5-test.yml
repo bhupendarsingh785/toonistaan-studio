@@ -27,60 +27,35 @@ jobs:
           pip uninstall -y -q accelerate 2>&1 | tail -2
           pip install -q --no-deps "pyarrow==15.0.2" "numpy==1.26.4"
           python -c "import transformers, huggingface_hub; print('tf', transformers.__version__, 'hub', huggingface_hub.__version__)"
-      - name: model card + render
+      - name: render (f5_tts api, transformers ke bina)
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           python - <<'PY' 2>&1 | tee indicf5_log.txt
-          import os, traceback, json
+          import os, traceback
           from huggingface_hub import hf_hub_download
           tok = os.environ.get("HF_TOKEN")
           print("token present:", bool(tok), flush=True)
-          # 1) model card padho (usage samajhne ke liye)
-          try:
-              p = hf_hub_download("ai4bharat/IndicF5", "README.md", token=tok)
-              txt = open(p, encoding="utf-8").read()
-              print("=== MODEL CARD (usage part) ===", flush=True)
-              i = txt.find("usage")
-              print(txt[i-200:i+2500] if i > 0 else txt[:2500], flush=True)
-          except Exception as e:
-              print("CARD_FAIL", type(e).__name__, str(e)[:300], flush=True)
-          # 2) asli render ki koshish
+          repo = "ai4bharat/IndicF5"
+          ckpt  = hf_hub_download(repo, "model.safetensors", token=tok)
+          vocab = hf_hub_download(repo, "checkpoints/vocab.txt", token=tok)
+          print("ckpt:", ckpt, "| vocab:", vocab, flush=True)
           ref = "engines/PIPER/tests/fixtures/ref_hi.wav"
           ref_text = open("engines/PIPER/tests/fixtures/ref_hi.txt", encoding="utf-8").read().strip()
           line = "दादी ने कहा, बेटा, आ जा पास। आज बहुत देर कर दी तूने।"
           try:
-              import torch
-              from transformers import AutoModel
-              # "Tensor on device cpu is not on the expected device meta" — load ke
-              # alag-alag tareeke try karo, jo chale wahi rakho
-              variants = [
-                  dict(trust_remote_code=True, token=tok),
-                  dict(trust_remote_code=True, token=tok, low_cpu_mem_usage=False),
-                  dict(trust_remote_code=True, token=tok, low_cpu_mem_usage=False, device_map="cpu"),
-                  dict(trust_remote_code=True, token=tok, low_cpu_mem_usage=False, torch_dtype=torch.float32),
-                  dict(trust_remote_code=True, token=tok, device_map=None, low_cpu_mem_usage=False, torch_dtype=torch.float32),
-              ]
-              model = None
-              for i, kw in enumerate(variants, 1):
-                  try:
-                      model = AutoModel.from_pretrained("ai4bharat/IndicF5", **kw)
-                      print("MODEL_LOADED variant", i, list(kw), flush=True)
-                      break
-                  except Exception as e:
-                      print("LOAD_VARIANT_FAIL", i, type(e).__name__, str(e)[:160], flush=True)
-              if model is None:
-                  raise RuntimeError("saare load variants fail")
-              try:
-                  audio = model(line, ref_audio_path=ref, ref_text=ref_text)
-              except TypeError:
-                  audio = model(text=line, ref_audio_path=ref, ref_text=ref_text)
-              import numpy as np, soundfile as sf
-              a = np.asarray(audio, dtype="float32").squeeze()
-              sf.write("indicf5_out.wav", a, 24000)
-              print("RENDER_OK samples:", a.shape, "dur:", round(len(a)/24000, 2), flush=True)
+              from f5_tts.api import F5TTS
+              print("loading model (cpu)...", flush=True)
+              f5 = F5TTS(model_type="F5-TTS", ckpt_file=ckpt, vocab_file=vocab,
+                         vocoder_name="vocos", device="cpu")
+              print("MODEL_LOADED", flush=True)
+              wav, sr, _ = f5.infer(ref_file=ref, ref_text=ref_text, gen_text=line,
+                                    show_info=print)
+              import soundfile as sf
+              sf.write("indicf5_out.wav", wav, sr)
+              print("RENDER_OK", len(wav), "samples @", sr, "=", round(len(wav)/sr, 2), "s", flush=True)
           except Exception as e:
-              print("RENDER_FAIL", type(e).__name__, str(e)[:500], flush=True)
+              print("RENDER_FAIL", type(e).__name__, str(e)[:400], flush=True)
               traceback.print_exc()
           PY
       - uses: actions/upload-artifact@v4
