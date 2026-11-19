@@ -1,0 +1,7 @@
+# Install in a separate virtual environment; do not overwrite Piper's dependencies blindly.
+torch
+transformers
+soundfile
+numpy
+# Model repository: ai4bharat/IndicF5 (gated; accept model terms on Hugging Face first)
+# Official install instructions: https://huggingface.co/ai4bharat/IndicF5

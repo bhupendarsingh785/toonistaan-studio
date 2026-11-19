@@ -170,6 +170,31 @@ def run_agent_benchmark(research_file, cognition_file=None):
     result=benchmark_evaluate(research_file, cognition_file)
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
+
+def indicf5_cmd(text, profile, character, emotion, out):
+    """IndicF5 (optional neural) se ek line banao.
+
+    Model gated hai aur torch chahiye — na ho to saaf message, crash nahi.
+    """
+    try:
+        from piper_indicf5_backend import IndicF5Backend, VoiceProfileError
+    except Exception as exc:
+        print(json.dumps({"ok": False, "reason": f"adapter load nahi hua: {exc}"}, ensure_ascii=False))
+        return
+    try:
+        backend = IndicF5Backend()
+        result = backend.render(text=text, profile_path=profile, character=character,
+                                emotion=emotion, output_path=out)
+        print(json.dumps({"ok": True, "result": str(result), "out": out}, ensure_ascii=False))
+    except VoiceProfileError as exc:
+        print(json.dumps({"ok": False, "stage": "profile", "reason": str(exc)}, ensure_ascii=False))
+    except RuntimeError as exc:
+        print(json.dumps({"ok": False, "stage": "model", "reason": str(exc),
+                          "next": "pip install -r requirements-indicf5.txt; HF par ai4bharat/IndicF5 ki terms accept karo"}, ensure_ascii=False))
+    except Exception as exc:
+        print(json.dumps({"ok": False, "stage": "unknown", "reason": str(exc)}, ensure_ascii=False))
+
+
 def main():
     p=argparse.ArgumentParser(description=CFG["title"])
     s=p.add_subparsers(dest="cmd",required=True)
@@ -208,6 +233,8 @@ def main():
     x=s.add_parser("index-audio-library"); x.add_argument("folder"); x.add_argument("--report",default="reports/audio_library_index.json")
     x=s.add_parser("produce-story"); x.add_argument("script"); x.add_argument("library"); x.add_argument("approvals"); x.add_argument("--narration",required=True); x.add_argument("--out-dir",required=True); x.add_argument("--music",default=None); x.add_argument("--private-preview",action="store_true")
 
+    x=s.add_parser("indicf5-render"); x.add_argument("text"); x.add_argument("--profile",default="profiles/indicf5_characters.json"); x.add_argument("--character",required=True); x.add_argument("--emotion",default="neutral"); x.add_argument("--out",default="output/indicf5_out.wav")
+
     a=p.parse_args()
     {"scan":lambda:scan(a.file),"models":lambda:models(a.paths),"collect":lambda:collect(a.url),
      "research":lambda:run_deep_research(a.query,a.max_pages,a.counter_rounds),
@@ -225,5 +252,6 @@ def main():
      "autopilot":lambda:run_intelligence(None if a.continuous else a.cycles,a.interval,a.max_pages,a.topics),
      "feedback":lambda:report_feedback(a.category,a.issue,a.severity),
      "intelligence-status":intelligence_status,"phonology":lambda:phonology_command(a.file),"prosody-analyze":lambda:prosody_command(a.file),
-     "story-audio-plan":lambda:cinematic_plan_cmd(a.file,a.report,a.catalog),"soundscape-plan":lambda:soundscape_cmd(a.file,a.report),"action-foley-plan":lambda:actions_cmd(a.file,a.report),"audio-qa":lambda:audio_qa_cmd(a.file,a.report),"vocal-backends":vocal_backends_cmd,"vocal-audit":lambda:vocal_audit_cmd(a.file,a.report,a.asr_model,a.diarization,a.hf_token,a.emotion_model),"mix-story":lambda:mix_story_cmd(a.spec,a.out,a.report,a.overwrite),"index-audio-library":lambda:index_library_cmd(a.folder,a.report),"produce-story":lambda:produce_story_cmd(a.script,a.library,a.approvals,a.narration,a.out_dir,a.music,a.private_preview),}[a.cmd]()
+     "story-audio-plan":lambda:cinematic_plan_cmd(a.file,a.report,a.catalog),"soundscape-plan":lambda:soundscape_cmd(a.file,a.report),"action-foley-plan":lambda:actions_cmd(a.file,a.report),"audio-qa":lambda:audio_qa_cmd(a.file,a.report),"vocal-backends":vocal_backends_cmd,"vocal-audit":lambda:vocal_audit_cmd(a.file,a.report,a.asr_model,a.diarization,a.hf_token,a.emotion_model),"mix-story":lambda:mix_story_cmd(a.spec,a.out,a.report,a.overwrite),"index-audio-library":lambda:index_library_cmd(a.folder,a.report),"produce-story":lambda:produce_story_cmd(a.script,a.library,a.approvals,a.narration,a.out_dir,a.music,a.private_preview),
+     "indicf5-render":lambda:indicf5_cmd(a.text,a.profile,a.character,a.emotion,a.out),}[a.cmd]()
 if __name__=="__main__": main()
