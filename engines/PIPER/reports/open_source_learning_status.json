@@ -1,0 +1,11 @@
+{
+  "schema": "open-source-learning-status/v1",
+  "engine": "piper",
+  "state": "completed",
+  "sources_collected": 11,
+  "sources_failed": 9,
+  "last_run": "2026-11-19T05:32:40+00:00",
+  "latest_record": "knowledge_inbox/open_source/open_source_learning_20261119-053240.json",
+  "review_state": "PENDING_REVIEW",
+  "runtime_dependency": false
+}

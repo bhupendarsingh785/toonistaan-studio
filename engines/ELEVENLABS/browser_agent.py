@@ -65,6 +65,23 @@ def _score(q, title, text):
     hits=sum(1 for x in terms if x in t)
     return round(hits/len(set(terms)),3)
 
+def _search_retry(query, session, limit=12, tries=3):
+    """Search flaky hota hai — ek baar fail hone par poora research khaali na jaye."""
+    import time as _t
+    last=None
+    for i in range(tries):
+        try:
+            out = _search(query, session, limit=limit)
+            if out:
+                return out
+        except Exception as e:
+            last = e
+        _t.sleep(1.2 * (i + 1))
+    if last:
+        raise last
+    return []
+
+
 def _search(query, session, limit=12):
     """Federated public discovery: DDG HTML + Hugging Face + GitHub + Wikipedia.
     Provider failure is isolated; a blocked provider does not erase other results.

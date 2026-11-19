@@ -7,14 +7,35 @@ import requests, hashlib, time, re, json
 
 UA = "IndependentHindiVoiceResearch/0.3"
 MAX_BYTES = 2_000_000
-def _robots_allowed(url):
-    u = urlparse(url); robots = f"{u.scheme}://{u.netloc}/robots.txt"
-    rp = RobotFileParser()
-    try:
-        rp.set_url(robots); rp.read()
-        return rp.can_fetch(UA, url), robots
-    except Exception:
-        return False, robots
+def _robots_allowed(url, timeout=12):
+    """robots.txt khud padho (urllib ki jagah requests se).
+
+    Pehle urllib use hota tha, jo "Python-urllib" UA bhejta hai. Kai sites
+    us par 403 deti hain — aur urllib 403 ko "sab band" maan leta hai.
+    Isliye sarvam.ai (jahan Allow: / hai) aur wikipedia block dikh rahe the.
+    Ab: 401/403 = sach me band, 404 = sab allowed, network fail = fail-closed.
+    """
+    u = urlparse(url)
+    robots = f"{u.scheme}://{u.netloc}/robots.txt"
+    rp = RobotFileParser(); rp.set_url(robots)
+    last = None
+    for _ in range(2):
+        try:
+            r = requests.get(robots, headers={"User-Agent": UA}, timeout=(6, timeout))
+            if r.status_code in (401, 403):
+                rp.disallow_all = True
+                return False, robots
+            if r.status_code >= 400:          # 404/410 = koi rok nahi
+                rp.allow_all = True
+                return True, robots
+            rp.parse(r.text.splitlines())
+            return rp.can_fetch(UA, url), robots
+        except Exception as e:
+            last = e
+            time.sleep(0.8)
+    # robots tak pahunch hi nahi paye — surakshit taraf: mana
+    return False, robots
+
 
 def clean_html_text(txt):
     txt=re.sub(r"(?is)<(script|style|noscript).*?>.*?</\1>"," ",txt)

@@ -1,0 +1,470 @@
+{
+  "schema": "agent-cognition-report/v1.1",
+  "engine": "PIPER",
+  "query": "hindi tts sarvam",
+  "mode": "web_first_structured_adversarial_review",
+  "model_used": false,
+  "warning": "No model selected. This is deterministic evidence organization and adversarial triage, not human-level semantic reasoning or deep learning.",
+  "evidence_inventory": [
+    {
+      "source_id": "S1",
+      "title": "GitHub - astromanish/spoken-english-tutor: Voice tutor that helps Hindi speakers learn spoken English — Sarvam STT + LLM + TTS, Gradio UI · GitHub",
+      "url": "https://github.com/astromanish/spoken-english-tutor",
+      "domain": "github.com",
+      "quality": "primary_or_project_source",
+      "sha256": "7cbb3f7cba7ee71b20edf39e4b2985d229b3019c6f679866da42810dabf922b7",
+      "candidate_sentences": [
+        "GitHub - astromanish/spoken-english-tutor: Voice tutor that helps Hindi speakers learn spoken English — Sarvam STT + LLM + TTS, Gradio UI · GitHub Skip to content You signed in with another tab or window.",
+        "Dismiss alert {{ message }} main Branches Tags Go to file Code Open more actions menu Latest commit History 30 Commits 30 Commits Folders and files Name Name Last commit message Last commit date eval eval scripts scripts static static tests tests .gitignore .gitignore Dockerfile Dockerfile README.md README.md eval_run.py eval_run.py realtime.py realtime.py render.yaml render.yaml requirements.txt requirements.txt run.sh run.sh sarvam.py sarvam.py server.py server.py tutor.py tutor.py View all files Repository files navigation Priyanka ( Spoken English Tutor ) A voice tutor that helps Hindi speakers learn spoken English by role-playing a real conversation.",
+        "You pick a topic and the tutor plays the person in it — the interviewer, the waiter, the doctor — holds the whole conversation in English , and asks you questions on that topic.",
+        "The moment you make a grammar or word-choice mistake it corrects you in Hinglish , so you always understand why: \"'He go' ki jagah 'He goes' bolna chahiye, kyunki he ke saath 's' lagta hai.\" Built for the ZenBricks take-home assignment, for Priyanka.",
+        "Only Sarvam AI models are used: Saaras v3 (speech-to-text), sarvam-105b-conversations (LLM), Bulbul v3 (text-to-speech).",
+        "What it does # Requirement Where 1 Voice in, voice out (STT → LLM → TTS) tutor.Tutor.turn() 2 Understands Hindi and Hinglish; helps when the learner is stuck stuck-learner rule in SYSTEM_PROMPT , answered in Hinglish 3 Role-played conversation on a learner-picked topic persona per topic (interviewer, waiter, doctor…) + session loop 4 Corrects grammar/word-choice, explanation in Hinglish English reply on EN: , Hinglish explanation on HI: 5 Adapts difficulty to the learner's level confidence question in the first message sets LEVEL , re-judged every turn 6 Ends with a written summary: mistakes, corrections, 3 practice items End session button 7 Simple UI vanilla JS ( static/ ) on a stdlib server ( server.py ) + A live voice agent, not a chat box ears and mouth always on: static/app.js + static/vad.js + Five voices to choose from, with a preview Voice select + POST /api/preview + Turn ends after 0.25 s of silence; one icon mutes the mic TurnWatcher in static/vad.js , tested in tests/ Run it git clone https://github.com/astromanish/spoken-english-tutor.git cd spoken-english-tutor python3 -m venv .venv && .venv/bin/pip install -r requirements.txt export SARVAM_API_KEY=...",
+        "# https://dashboard.sarvam.ai → API keys .venv/bin/python server.py # → http://127.0.0.1:7860 Press Start and her ear opens while her first line plays out loud: she introduces her character and asks how confident you are speaking English, on a scale of 1 to 5 — that answer sets how much she corrects you.",
+        "She answers out loud, asks the next thing, and keeps going; End writes the summary.",
+        "The Voice picker offers five of bulbul:v3's 37 speakers, described by character rather than by name — Warm female · Calm female · Young female · Professional male · Mature male — because the tutor is Priyanka either way; the choice is how she sounds, not who she is.",
+        "Preview speaks a two-line sample in that voice (one English line, one Hinglish line, so you hear both before committing) — and the sample introduces itself as Priyanka for the female voices and Priyank for the male ones.",
+        "The pick is remembered in localStorage and travels with the session as a speaker field; an unknown or retired one falls back to the default rather than failing the start.",
+        "The ear stays open the whole session, including while she is speaking — if you talk over her she stops mid-sentence and takes what you said instead."
+      ],
+      "source_length": 18357,
+      "status": "EXTRACTED_NOT_VERIFIED"
+    },
+    {
+      "source_id": "S2",
+      "title": "spoken-english-tutor/README.md at main · astromanish/spoken-english-tutor · GitHub",
+      "url": "https://github.com/astromanish/spoken-english-tutor/blob/main/README.md",
+      "domain": "github.com",
+      "quality": "primary_or_project_source",
+      "sha256": "7cdc84ee69e8056ba5fb8a42a0647e21c2003b4e214ff99121576b4699bd6726",
+      "candidate_sentences": [
+        "spoken-english-tutor/README.md at main · astromanish/spoken-english-tutor · GitHub Skip to content You signed in with another tab or window.",
+        "Dismiss alert {{ message }} Files Expand file tree main / README.md Copy path Blame More file actions Blame More file actions Latest commit History History History 335 lines (278 loc) · 18 KB main / README.md Copy path Top File metadata and controls Preview Code Blame 335 lines (278 loc) · 18 KB Raw Copy raw file Download raw file Outline Edit and raw actions Priyanka ( Spoken English Tutor ) A voice tutor that helps Hindi speakers learn spoken English by role-playing a real conversation.",
+        "You pick a topic and the tutor plays the person in it — the interviewer, the waiter, the doctor — holds the whole conversation in English , and asks you questions on that topic.",
+        "The moment you make a grammar or word-choice mistake it corrects you in Hinglish , so you always understand why: \"'He go' ki jagah 'He goes' bolna chahiye, kyunki he ke saath 's' lagta hai.\" Built for the ZenBricks take-home assignment, for Priyanka.",
+        "Only Sarvam AI models are used: Saaras v3 (speech-to-text), sarvam-105b-conversations (LLM), Bulbul v3 (text-to-speech).",
+        "What it does # Requirement Where 1 Voice in, voice out (STT → LLM → TTS) tutor.Tutor.turn() 2 Understands Hindi and Hinglish; helps when the learner is stuck stuck-learner rule in SYSTEM_PROMPT , answered in Hinglish 3 Role-played conversation on a learner-picked topic persona per topic (interviewer, waiter, doctor…) + session loop 4 Corrects grammar/word-choice, explanation in Hinglish English reply on EN: , Hinglish explanation on HI: 5 Adapts difficulty to the learner's level confidence question in the first message sets LEVEL , re-judged every turn 6 Ends with a written summary: mistakes, corrections, 3 practice items End session button 7 Simple UI vanilla JS ( static/ ) on a stdlib server ( server.py ) + A live voice agent, not a chat box ears and mouth always on: static/app.js + static/vad.js + Five voices to choose from, with a preview Voice select + POST /api/preview + Turn ends after 0.25 s of silence; one icon mutes the mic TurnWatcher in static/vad.js , tested in tests/ Run it git clone https://github.com/astromanish/spoken-english-tutor.git cd spoken-english-tutor python3 -m venv .venv && .venv/bin/pip install -r requirements.txt export SARVAM_API_KEY=...",
+        "# https://dashboard.sarvam.ai → API keys .venv/bin/python server.py # → http://127.0.0.1:7860 Press Start and her ear opens while her first line plays out loud: she introduces her character and asks how confident you are speaking English, on a scale of 1 to 5 — that answer sets how much she corrects you.",
+        "She answers out loud, asks the next thing, and keeps going; End writes the summary.",
+        "The Voice picker offers five of bulbul:v3's 37 speakers, described by character rather than by name — Warm female · Calm female · Young female · Professional male · Mature male — because the tutor is Priyanka either way; the choice is how she sounds, not who she is.",
+        "Preview speaks a two-line sample in that voice (one English line, one Hinglish line, so you hear both before committing) — and the sample introduces itself as Priyanka for the female voices and Priyank for the male ones.",
+        "The pick is remembered in localStorage and travels with the session as a speaker field; an unknown or retired one falls back to the default rather than failing the start.",
+        "The ear stays open the whole session, including while she is speaking — if you talk over her she stops mid-sentence and takes what you said instead."
+      ],
+      "source_length": 17889,
+      "status": "EXTRACTED_NOT_VERIFIED"
+    },
+    {
+      "source_id": "S3",
+      "title": "GitHub - NobodySS07/bharatiya-shorts-engine: Automated pipeline that writes, fact-checks, illustrates, narrates and renders Hindi YouTube Shorts on Indian history, Itihasa and Purana. It uses Claude, Gemini, Imagen, Sarvam TTS, Whisper and FFmpeg. Topics: youtube-shorts, ai-video, hindi, text-to-speech, ffmpeg, llm, python, indian-history · GitHub",
+      "url": "https://github.com/NobodySS07/bharatiya-shorts-engine",
+      "domain": "github.com",
+      "quality": "primary_or_project_source",
+      "sha256": "5432f755f18268f0f931a582d2a5fb832374188e44f2679e79d4e280193d65f0",
+      "candidate_sentences": [
+        "GitHub - NobodySS07/bharatiya-shorts-engine: Automated pipeline that writes, fact-checks, illustrates, narrates and renders Hindi YouTube Shorts on Indian history, Itihasa and Purana.",
+        "It uses Claude, Gemini, Imagen, Sarvam TTS, Whisper and FFmpeg.",
+        "Topics: youtube-shorts, ai-video, hindi, text-to-speech, ffmpeg, llm, python, indian-history · GitHub Skip to content You signed in with another tab or window.",
+        "Dismiss alert {{ message }} main Branches Tags Go to file Code Open more actions menu Latest commit History 2 Commits 2 Commits Folders and files Name Name Last commit message Last commit date assets/ music assets/ music .env.example .env.example .gitignore .gitignore README.md README.md bakeoff.py bakeoff.py captions.py captions.py config.py config.py config_defaults.py config_defaults.py db_manager.py db_manager.py fuelix_client.py fuelix_client.py hindi_feedback.txt hindi_feedback.txt hindi_style.py hindi_style.py library.json library.json main.py main.py media_generator.py media_generator.py music.py music.py names.py names.py names_hi.json names_hi.json profile.png profile.png regenerate.py regenerate.py requirements.txt requirements.txt sarvam_voice_test.py sarvam_voice_test.py script_engine.py script_engine.py smoke_test.py smoke_test.py upload_kit.py upload_kit.py utils.py utils.py video_renderer.py video_renderer.py voice.py voice.py watermark.png watermark.png View all files Repository files navigation Bharatiya Shorts Engine An automated pipeline that writes, fact-checks, illustrates, narrates and renders 60–90 second vertical YouTube Shorts about Itihasa, Purana and Indian history.",
+        "Its main mode is Hindi, with Devanagari captions and Sarvam AI narration.",
+        "One command takes a story from topic to a finished final_short.mp4 , with a ready-to-paste upload kit (title, description, tags, playlist and captions).",
+        "How it works topic ──► script ──► fact-check ──► Hindi polish ──► character anchors ──► scenes ──► voice ──► captions ──► render (seed or (Claude) (judge from a (editor model) (Imagen, 1 per (Gemini, (Sarvam (Whisper word (FFmpeg: Ken Burns AI-picked, different model main character) conditioned / TTS) timestamps) motion, music, SFX, deduped by family) on anchors, burned-in captions) embeddings) vision QA) Stage Models (in fallback order) Topic and script claude-sonnet-5-5 → claude-sonnet-4-6 Fact-check judge (different model family) gemini-3.1-pro → gpt-5.4 Hindi editor and fluency judge gemini-3.1-pro / gpt-5.4 (never grades its own edit) Duplicate check text-embedding-3-small (cosine similarity ≥ 0.82 counts as a duplicate) Character anchors (up to 4 per video) imagen-4-ultra → imagen-4 12–14 scenes, conditioned on the anchors gemini-3.1-flash-image → gemini-2.5-flash-image → imagen-4 (text only) Visual QA (text, watermarks, character drift, anatomy) gemini-3.5-flash → gpt-5.4-mini Voice Sarvam Bulbul (Hindi) / tts-1-hd (English) Word timestamps whisper-1, with a pause-anchored fallback Music pick gemini-3.5-flash All text, image and audio calls except Sarvam go through the Fuel iX OpenAI-compatible API.",
+        "Model chains, thresholds, visual style and seed topics are all set in config.py .",
+        "Reliability Checkpointed: every output file is a checkpoint.",
+        "If you rerun after a crash or Ctrl-C, the pipeline skips everything that is already valid on disk.",
+        "Fallbacks and retries: each stage tries a chain of models.",
+        "Transient errors (429, 5xx and timeouts) back off and retry."
+      ],
+      "source_length": 8341,
+      "status": "EXTRACTED_NOT_VERIFIED"
+    },
+    {
+      "source_id": "S4",
+      "title": "GitHub - yashsarkar1806-creator/bolo-commerce: Voice-first kirana ordering prototype: Hindi/Bengali/Tamil/Hinglish → Sarvam STT/translate → cart → TTS, with demo mode and marketer funnel · GitHub",
+      "url": "https://github.com/yashsarkar1806-creator/bolo-commerce",
+      "domain": "github.com",
+      "quality": "primary_or_project_source",
+      "sha256": "291fa514c8983849d3d1fbcd512f20880ffaec15430908e37f60f15d78430309",
+      "candidate_sentences": [
+        "GitHub - yashsarkar1806-creator/bolo-commerce: Voice-first kirana ordering prototype: Hindi/Bengali/Tamil/Hinglish → Sarvam STT/translate → cart → TTS, with demo mode and marketer funnel · GitHub Skip to content You signed in with another tab or window.",
+        "Dismiss alert {{ message }} main Branches Tags Go to file Code Open more actions menu Latest commit History 1 Commit 1 Commit Folders and files Name Name Last commit message Last commit date css css docs docs js js tests tests .gitignore .gitignore LICENSE LICENSE README.md README.md favicon.svg favicon.svg index.html index.html package.json package.json View all files Repository files navigation Bolo Bazaar · voice-first kirana ordering Live demo · Product brief A browser prototype where a shopper speaks or types a grocery list in Hindi, Bengali, Tamil or Hinglish.",
+        "Sarvam AI speech-to-text and translation turn that into a structured cart (items, quantities, pincode), and text-to-speech reads the confirmation back.",
+        "A marketer dashboard logs the funnel: spoken → parsed → cart → checkout intent.",
+        "The catalogue, prices and demo transcripts are synthetic portfolio data.",
+        "No orders are placed and no key is ever committed to the repo.",
+        "Why it matters to a marketer Skill Where it shows up Vernacular / Bharat GTM Hindi, Bengali, Tamil and Hinglish aliases on every SKU Voice as a conversion surface Mic → Sarvam saaras:v4 → cart → Bulbul TTS reply Funnel instrumentation In-browser events + CSV export for stakeholder readouts Safe demos Labelled samples work with no API key Modes Demo (default): click a labelled sample.",
+        "Live: paste your own Sarvam API key (stored only in localStorage on your machine).",
+        "The page calls: POST https://api.sarvam.ai/speech-to-text · model saaras:v4 POST https://api.sarvam.ai/translate POST https://api.sarvam.ai/text-to-speech · model bulbul:v4-flash Auth header: api-subscription-key (see Sarvam quickstart ) Wispr Flow note Wispr Flow is a voice dictation product.",
+        "Its developer API is not publicly available (partnership / approval only — Wispr’s own note ).",
+        "This prototype therefore uses the browser microphone + Sarvam, and does not pretend to call Wispr.",
+        "Click a demo sample (Hindi / Hinglish / Bengali / Tamil / English)."
+      ],
+      "source_length": 3715,
+      "status": "EXTRACTED_NOT_VERIFIED"
+    },
+    {
+      "source_id": "S5",
+      "title": "bolo-commerce/LICENSE at main · yashsarkar1806-creator/bolo-commerce · GitHub",
+      "url": "https://github.com/yashsarkar1806-creator/bolo-commerce/blob/main/LICENSE",
+      "domain": "github.com",
+      "quality": "primary_or_project_source",
+      "sha256": "1fb7aae17f79c903159efe1633e399774a701ccc7140421a3025109ebc8ca39d",
+      "candidate_sentences": [
+        "bolo-commerce/LICENSE at main · yashsarkar1806-creator/bolo-commerce · GitHub Skip to content You signed in with another tab or window.",
+        "Dismiss alert {{ message }} Files Expand file tree main / LICENSE Copy path Blame More file actions Blame More file actions Latest commit History History History 21 lines (17 loc) · 1.04 KB main / LICENSE Copy path Top File metadata and controls Code Blame 21 lines (17 loc) · 1.04 KB Raw Copy raw file Download raw file Open symbols panel Edit and raw actions 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 MIT License Copyright (c) 2026 Yash Sarkar Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
+        "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.",
+        "IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+      ],
+      "source_length": 1843,
+      "status": "EXTRACTED_NOT_VERIFIED"
+    },
+    {
+      "source_id": "S6",
+      "title": "svara_model_card",
+      "url": "https://huggingface.co/kenpath/svara-tts-v1/raw/main/README.md",
+      "domain": "huggingface.co",
+      "quality": "primary",
+      "sha256": "1d3d74a1dfd86f96f048fc186d1c3846bc6dc52847cbc0ae93dbfc443806bbc3",
+      "candidate_sentences": [
+        "--- base_model: canopylabs/3b-hi-ft-research_release license: apache-2.0 language: - hi # Hindi - bn # Bengali - mr # Marathi - te # Telugu - kn # Kannada - bho # Bhojpuri - mag # Magahi - hne # Chhattisgarhi - mai # Maithili - as # Assamese - brx # Bodo - doi # Dogri - gu # Gujarati - ml # Malayalam - pa # Punjabi - ta # Tamil - ne # Nepali - sa # Sanskrit - en # English (Indian) tags: - text-to-speech - speech-synthesis - transformers - multilingual - indic - orpheus - lora - low-latency - gguf - zero-shot - emotions - discrete-audio-tokens task_categories: - text-to-speech pipeline_tag: text-to-speech pretty_name: Svara-TTS v1 datasets: - SYSPIN - RASA - IndicTTS - SPICOR --- # svara-TTS v1 — Open Multilingual TTS for India’s Voices [![🤗 Hugging Face - svara-tts-v1 Model](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-black)](https://huggingface.co/kenpath/svara-tts-v1) [![🤗 Hugging Face - Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-green)](https://huggingface.co/spaces/kenpath/svara-tts) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/15YxFo1DzdQNbFUIZ1HJA4AN4oHqKxGtg) [![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=flat&logo=github&logoColor=white)](https://github.com/Kenpath/svara-tts-inference) **svara-TTS** is a developer-first multilingual TTS model for **19 languages** (18 Indic + Indian English).",
+        "Built on an Orpheus-style discrete audio token approach, it targets **clarity, expressiveness, and low-latency** on commodity GPUs/CPUs.",
+        "It supports light-weight **emotion/style control** (e.g., `<happy>`, `<sad>`, `<anger>`, `<fear>`) and simple **speaker identities** (`Language (Gender)`), with **zero-shot** adaptation paths.",
+        "--- ## At a Glance - **Languages (19):** Hindi, Bengali, Marathi, Telugu, Kannada, Bhojpuri, Magahi, Chhattisgarhi, Maithili, Assamese, Bodo, Dogri, Gujarati, Malayalam, Punjabi, Tamil, Nepali, Sanskrit, Indian English.",
+        "- **Expressivity:** End-of-utterance style tags; natural prosody; code-switch aware.",
+        "- **Latency & Deployment:** Works well with **GGUF** exports; suitable for edge/CPU scenarios.",
+        "- **Adaptability:** **LoRA-friendly** for quick speaker/domain specialization.",
+        "Try it live on the [**Demo Space**](https://huggingface.co/spaces/kenpath/svara-tts), or on **[Colab](https://colab.research.google.com/drive/15YxFo1DzdQNbFUIZ1HJA4AN4oHqKxGtg)** Deployment scripts and **inference repo** will be available soon.",
+        "Watch our [Github](https://github.com/Kenpath/svara-tts-inference) for updates --- ## Prompting (Orpheus-style) - Place style/emotion tags **at the end** of the sentence: `आज...",
+        "<happy>` - Use punctuation to hint prosody (ellipses, commas, exclamation).",
+        "- For technical or dense text, end with `<clear>` to prioritize intelligibility.",
+        "> Speaker IDs follow a simple convention: **`Language (Gender)`** (e.g., `Marathi (Male)`)."
+      ],
+      "source_length": 5460,
+      "status": "EXTRACTED_NOT_VERIFIED"
+    },
+    {
+      "source_id": "S7",
+      "title": "svara_inference_docs",
+      "url": "https://raw.githubusercontent.com/Kenpath/svara-tts-inference/main/README.md",
+      "domain": "raw.githubusercontent.com",
+      "quality": "primary",
+      "sha256": "f77a6bf1677e7681aa8c5a2761f74ac795cdfa4a55f6270cb90ff96712ddbdee",
+      "candidate_sentences": [
+        "# svara-tts-inference Inference and deployment toolkit for Svara-TTS, an open-source multilingual text-to-speech model for Indic languages — includes examples for local GGUF inference, Gradio demo, and production-ready API deployment.",
+        "[![🤗 Hugging Face - svara-tts-v1 Model](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-black)](https://huggingface.co/kenpath/svara-tts-v1) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/15YxFo1DzdQNbFUIZ1HJA4AN4oHqKxGtg) [![🤗 Hugging Face - Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-green)](https://huggingface.co/spaces/kenpath/svara-tts) ## Features - **38 Voice Profiles**: Support for 19 Indian languages with male and female voices - **Streaming Audio**: Real-time audio generation with low-latency streaming - **OpenAI-Compatible API**: Drop-in replacement for OpenAI's `/v1/audio/speech` endpoint - **Production Ready**: Docker deployment with embedded vLLM engine - **GPU Accelerated**: CUDA-optimized inference with configurable SNAC decoder device - **Multiple Audio Formats**: Output in MP3, Opus, AAC, WAV, or raw PCM via ffmpeg - **Zero-Shot Voice Cloning**: Clone any voice with a short audio reference - **Long-Text Chunking**: Automatic sentence-boundary splitting with crossfade stitching ## Supported Languages Hindi, Bengali, Marathi, Telugu, Kannada, Bhojpuri, Magahi, Chhattisgarhi, Maithili, Assamese, Bodo, Dogri, Gujarati, Malayalam, Punjabi, Tamil, English (Indian), Nepali, Sanskrit ## Quick Start - API Deployment Deploy Svara TTS as a production API service with Docker: ```bash # Clone repository git clone <repository-url> cd svara-tts-inference # Configure (optional) cp .env.example .env # Build and start docker-compose up -d # Test the API curl http://localhost:8080/health curl http://localhost:8080/v1/voices ``` ### API Usage **Get Available Voices:** ```bash curl http://localhost:8080/v1/voices ``` **OpenAI-Compatible Endpoint:** ```bash curl -X POST http://localhost:8080/v1/audio/speech \\ -H \"Content-Type: application/json\" \\ -d '{ \"input\": \"Hello from Svara TTS!\", \"voice\": \"en_male\", \"response_format\": \"mp3\" }' \\ --output speech.mp3 ``` **Streaming:** ```bash curl -N -X POST http://localhost:8080/v1/audio/speech \\ -H \"Content-Type: application/json\" \\ -d '{ \"input\": \"नमस्ते, मैं स्वरा टीटीएस हूं\", \"voice\": \"hi_male\", \"response_format\": \"wav\", \"stream\": true }' \\ --output audio.wav ``` **Python Example (OpenAI SDK):** ```python from openai import OpenAI client = OpenAI(base_url=\"http://localhost:8080/v1\", api_key=\"unused\") response = client.audio.speech.create( model=\"svara-tts-v1\", voice=\"hi_female\", input=\"नमस्ते, मैं स्वरा हूं।\", response_format=\"mp3\", ) response.stream_to_file(\"output.mp3\") ``` See [examples/api_client.py](examples/api_client.py) for more examples.",
+        "## API Documentation ### Endpoints | Endpoint | Method | Description | |----------|--------|-------------| | `/health` | GET | Health check | | `/v1/voices` | GET | List available voices | | `/v1/audio/speech` | POST | OpenAI-compatible TTS (supports streaming, zero-shot cloning) | ### Voice IDs For `svara-tts-v1`, voice IDs follow the format `{language_code}_{gender}`: - Hindi: `hi_male`, `hi_female` - English: `en_male`, `en_female` - Bengali: `bn_male`, `bn_female` - [See full list in DEPLOYMENT.md](DEPLOYMENT.md) The `/v1/audio/speech` endpoint also accepts display names like `Hindi (Male)`, `English (Female)`.",
+        "### Audio Formats All endpoints support multiple output formats via the `response_format` parameter: | Format | MIME Type | Notes | |--------|-----------|-------| | `mp3` | `audio/mpeg` | Default | | `opus` | `audio/ogg` | Great for streaming | | `aac` | `audio/aac` | ADTS container | | `wav` | `audio/wav` | Uncompressed, larger files | | `pcm` | `audio/pcm` | Raw signed 16-bit LE, 24kHz mono | ## Deployment Guide For detailed deployment instructions, configuration options, and troubleshooting: **[Read the Full Deployment Guide](DEPLOYMENT.md)** Topics covered: - Prerequisites and hardware requirements - Docker configuration - Environment variables - Production deployment with nginx - Troubleshooting and monitoring - Multi-GPU setup ## Architecture The server runs as a **single process** with the vLLM engine embedded directly in the FastAPI application.",
+        "This eliminates the HTTP hop between API server and LLM engine, reducing latency and operational complexity.",
+        "``` ┌──────────────────────────────────┐ │ FastAPI Server │ Port 8080 │ │ │ ┌────────────────────────────┐ │ │ │ Embedded vLLM Engine │ │ │ │ (AsyncLLMEngine) │ │ │ └──────────┬─────────────────┘ │ │ │ │ │ ┌──────────▼─────────────────┐ │ │ │ SNAC Decoder │ │ │ │ Token → PCM Audio │ │ │ │ (SNAC_DEVICE: cpu/cuda) │ │ │ └──────────┬─────────────────┘ │ │ │ │ │ ┌──────────▼─────────────────┐ │ │ │ ffmpeg (format convert) │ │ │ │ PCM → MP3/Opus/WAV/AAC │ │ │ └────────────────────────────┘ │ └──────────────────────────────────┘ ``` For detailed architecture documentation, see [ARCHITECTURE.md](ARCHITECTURE.md).",
+        "## Development ### Project Structure ``` svara-tts-inference/ ├── api/ # FastAPI server │ ├── server.py # Main API endpoints + engine init │ └── models.py # Pydantic request/response models ├── tts_engine/ # Core TTS engine │ ├── orchestrator.py # TTS pipeline orchestration │ ├── transports.py # Embedded vLLM transport │ ├── buffers.py # Audio prebuffering + crossfade │ ├── mapper.py # Token-to-SNAC mapping │ ├── codec.py # SNAC encoder/decoder │ ├── voice_config.py # Voice profiles │ ├── encoder.py # Text-to-token encoding │ ├── constants.py # Token IDs and special tokens │ └── utils.py # Utilities (chunking, audio processing) ├── assets/ # Voice config YAML files ├── examples/ # Example scripts │ └── api_client.py # API client examples ├── Dockerfile # Docker image ├── docker-compose.yml # Docker Compose config ├── supervisord.conf # Process manager config ├── requirements.txt # Python dependencies └── .env.example # Environment variable template ``` ### Local Development ```bash # Install dependencies pip install -r requirements.txt # Configure environment (optional) cp .env.example .env # Start the server (vLLM engine starts embedded) cd api && python server.py ``` The vLLM engine initializes in-process during FastAPI startup — no separate vLLM server needed.",
+        "## Requirements ### Hardware - GPU: NVIDIA GPU with 16GB+ VRAM (recommended: 24GB+) - RAM: 16GB+ system RAM - Storage: 50GB+ free space ### Software - Docker 20.10+ - Docker Compose 2.0+ - NVIDIA GPU Drivers - NVIDIA Container Toolkit ## License See [LICENSE](LICENSE) file for details.",
+        "## Citation If you use Svara TTS in your research, please cite: ```bibtex @misc{svara-tts-v1, title={Svara TTS: Multilingual Text-to-Speech for Indic Languages}, author={Kenpath}, year={2024}, url={https://huggingface.co/kenpath/svara-tts-v1} } ``` ## Links - [Model on Hugging Face](https://huggingface.co/kenpath/svara-tts-v1) - [Try Demo on Hugging Face Spaces](https://huggingface.co/spaces/kenpath/svara-tts) - [Colab Notebook](https://colab.research.google.com/drive/15YxFo1DzdQNbFUIZ1HJA4AN4oHqKxGtg)"
+      ],
+      "source_length": 7173,
+      "status": "EXTRACTED_NOT_VERIFIED"
+    },
+    {
+      "source_id": "S8",
+      "title": "browsergym_project",
+      "url": "https://github.com/ServiceNow/BrowserGym",
+      "domain": "github.com",
+      "quality": "independent",
+      "sha256": "d7a9e4036796a8ad03e2f8335c6158f86ca12e4d186ae45f125fb5ee81d3ad44",
+      "candidate_sentences": [
+        "GitHub - ServiceNow/BrowserGym: BrowserGym, a Gym environment for web task automation · GitHub Skip to content Navigation Menu Sign in Search / Sign in Sign up Appearance settings You signed in with another tab or window.",
+        "Dismiss alert {{ message }} Repository navigation BrowserGym Public Notifications You must be signed in to change notification settings Fork 217 ( 217 ) Star 1.4k ( 1.4k ) You must be signed in to star a repository About BrowserGym, a Gym environment for web task automation Topics ai llm webagent Resources Readme License Activity Custom properties Stars 1.4k stars Watchers 10 watching Forks 217 forks Report repository main Branches Tags Go to file Code Open more actions menu Latest commit History 392 Commits 392 Commits Folders and files Name Name Last commit message Last commit date .github .github browsergym browsergym demo_agent demo_agent dev dev docs docs tests tests .gitignore .gitignore .pre-commit-config.yaml .pre-commit-config.yaml .readthedocs.yaml .readthedocs.yaml LICENSE LICENSE Makefile Makefile README.md README.md pyproject.toml pyproject.toml View all files Repository files navigation 🛠️ Setup - 🏋 Usage - 💻 Demo - 🌐 Ecosystem - 🚀 AgentLab - 🌟 Contributors - 📄 Paper - 📝 Citation pip install browsergym Warning BrowserGym is meant to provide an open, easy-to-use and extensible framework to accelerate the field of web agent research.",
+        "A seamless framework to implement, test, and evaluate your web agents on all BrowserGym benchmarks.",
+        "4x4.grid.mp4 Example of a GPT4-V agent executing openended tasks (top row, chat interactive), as well as WebArena and WorkArena tasks (bottom row).",
+        "BrowserGym includes the following benchmarks by default: MiniWoB WebArena WebArenaVerified VisualWebArena WorkArena AssistantBench WebLINX (static benchmark) OpenApps TimeWarp Knows Designing new web benchmarks with BrowserGym is easy, and simply requires to inherit the AbstractBrowserTask class.",
+        "🛠️ Setup To use browsergym, install one of the following packages: pip install browsergym # (recommended) everything below pip install browsergym-experiments # experiment utilities (agent, loop, benchmarks) + everything below pip install browsergym-core # core functionalities only (no benchmark, just the openended task) pip install browsergym-miniwob # core + miniwob pip install browsergym-webarena # core + webarena pip install browsergym-webarena-verified # core + webarena_verified pip install browsergym-visualwebarena # core + visualwebarena pip install browsergym-workarena # core + workarena pip install browsergym-assistantbench # core + assistantbench pip install weblinx-browsergym # core + weblinx pip install browsergym-timewarp # core + timewarp pip install browsergym-knows # core + knows Then setup playwright by running playwright install chromium Finally, each benchmark comes with its own specific setup that requires to follow additional steps.",
+        "for MiniWoB++, see miniwob/README.md for WebArena, see webarena/README.md for WebArenaVerified, see webarena_verified/README.md for VisualWebArena, see visualwebarena/README.md for WorkArena, see WorkArena for AssistantBench, see assistantbench/README.md for OpenApps, see OpenApps docs for TimeWarp, see timewarp/README.md for Knows, see knows/README.md (requires a Google account and a Google Cloud service account) 🏗️ Development setup To install browsergym locally for development, use the following commands: git clone git@github.com:ServiceNow/BrowserGym.git cd BrowserGym make install Contributions are welcome!",
+        "😊 🏋 Usage Boilerplate code to run an agent on an interactive, open-ended task: import gymnasium as gym import browsergym .",
+        "core # register the openended task as a gym environment # start an openended environment env = gym .",
+        "make ( \"browsergym/openended\" , task_kwargs = { \"start_url\" : \"https://www.google.com/\" }, # starting URL wait_for_user_message = True , # wait for a user message after each agent message sent to the chat ) # run the environment <> agent loop until termination obs , info = env .",
+        "# implement your agent here obs , reward , terminated , truncated , info = env .",
+        "step ( action ) if terminated or truncated : break # release the environment env ."
+      ],
+      "source_length": 11232,
+      "status": "EXTRACTED_NOT_VERIFIED"
+    },
+    {
+      "source_id": "S9",
+      "title": "webarena_project",
+      "url": "https://github.com/web-arena-x/webarena",
+      "domain": "github.com",
+      "quality": "independent",
+      "sha256": "cb425aa67b7ce79915acead192e89817b50de89e2a91f74c8704575d4f6813ee",
+      "candidate_sentences": [
+        "GitHub - web-arena-x/webarena: Code repo for \"WebArena: A Realistic Web Environment for Building Autonomous Agents\" · GitHub Skip to content Navigation Menu Sign in Search / Sign in Sign up Appearance settings You signed in with another tab or window.",
+        "Dismiss alert {{ message }} Repository navigation webarena Public Notifications You must be signed in to change notification settings Fork 250 ( 250 ) Star 1.6k ( 1.6k ) You must be signed in to star a repository About Code repo for \"WebArena: A Realistic Web Environment for Building Autonomous Agents\" webarena.dev Topics agent nlp Resources Readme Apache-2.0 license Cite this repository Activity Custom properties Stars 1.6k stars Watchers 17 watching Forks 250 forks Report repository main Branches Tags Go to file Code Open more actions menu Latest commit History 203 Commits 203 Commits Folders and files Name Name Last commit message Last commit date .github/ workflows .github/ workflows agent agent browser_env browser_env config_files config_files environment_docker environment_docker evaluation_harness evaluation_harness llms llms media media resources resources scripts scripts tests tests .gitignore .gitignore .pre-commit-config.yaml .pre-commit-config.yaml CITATION.cff CITATION.cff LICENSE LICENSE README.md README.md check_errors.sh check_errors.sh minimal_example.py minimal_example.py parallel_run.sh parallel_run.sh prepare.sh prepare.sh requirements.txt requirements.txt run.py run.py setup.cfg setup.cfg setup.py setup.py setup_env.sh setup_env.sh webarena-map-backend-boot-init.yaml webarena-map-backend-boot-init.yaml View all files Repository files navigation WebArena: A Realistic Web Environment for Building Autonomous Agents WebArena is a standalone, self-hostable web environment for building autonomous agents Website • Paper • Leaderboard • TheAgentCompany Update on 12/5/2024 Important This repository hosts the canonical implementation of WebArena to reproduce the results reported in the paper.",
+        "The web navigation infrastructure has been significantly enhanced by AgentLab , introducing several key features: (1) support for parallel experiments using BrowserGym , (2) integration of popular web navigation benchmarks (e.g., VisualWebArena) within a unified framework, (3) unified leaderboard reporting, and (4) improved handling of environment edge cases.",
+        "We strongly recommend using this framework for your experiments.",
+        "News [12/20/2024] Check out our new benchmark on even more consequential tasks, including terminal use and coding, TheAgentCompany .",
+        "[12/21/2023] We release the recording of trajectories performed by human annotators on ~170 tasks.",
+        "Uploaded newest execution trajectories Added Amazon Machine Image that pre-installed all websites so that you don't have to!",
+        "Zeno x WebArena which allows you to analyze your agents on WebArena without pain.",
+        "Check out this notebook to upload your own data to Zeno, and this page for browsing our existing results!",
+        "[10/24/2023] We re-examined the whole dataset and fixed the spotted annotation bugs.",
+        "The current version ( v0.2.0 ) is relatively stable and we don't expect major updates on the annotation in the future.",
+        "The new results with better prompts and the comparison with human performance can be found in our paper [8/4/2023] Added the instructions and the docker resources to host your own WebArena Environment."
+      ],
+      "source_length": 9195,
+      "status": "EXTRACTED_NOT_VERIFIED"
+    },
+    {
+      "source_id": "S10",
+      "title": "websearch_skill",
+      "url": "https://github.com/hec-ovi/websearch-skill",
+      "domain": "github.com",
+      "quality": "independent",
+      "sha256": "1f2ee205748ce2c4430b11a5173797ecaa1aed9d8f8cb382251151221b8582c3",
+      "candidate_sentences": [
+        "GitHub - hec-ovi/websearch-skill: Keyless, uv-native web search + read for AI agents: ddgs multi-engine search with de-correlated rank fusion, Trafilatura extraction to paginated Markdown, keyless arxiv and github search.",
+        "Self-hosted SearXNG without Docker, an optional Tor layer for .onion search and fetch, NordVPN/SOCKS5 egress, one-call init, and a doctor.",
+        "· GitHub Skip to content Navigation Menu Sign in Search / Sign in Sign up Appearance settings You signed in with another tab or window.",
+        "Dismiss alert {{ message }} Repository navigation websearch-skill Public Notifications You must be signed in to change notification settings Fork 1 ( 1 ) Star 11 ( 11 ) You must be signed in to star a repository About Keyless, uv-native web search + read for AI agents: ddgs multi-engine search with de-correlated rank fusion, Trafilatura extraction to paginated Markdown, keyless arxiv and github search.",
+        "Self-hosted SearXNG without Docker, an optional Tor layer for .onion search and fetch, NordVPN/SOCKS5 egress, one-call init, and a doctor.",
+        "Topics agent-skills ai-agents content-extraction ddgs nordvpn prompt-injection python rank-fusion searxng self-hosted socks5-proxy tor trafilatura uv web-search Resources Readme MIT license Activity Stars 11 stars Watchers 0 watching Forks 1 fork Report repository main Branches Tags Go to file Code Open more actions menu Latest commit History 102 Commits 102 Commits Folders and files Name Name Last commit message Last commit date .claude-plugin .claude-plugin .github/ workflows .github/ workflows contracts contracts docker/ searxng docker/ searxng docs docs skills skills src/ websearch src/ websearch tests tests .env.example .env.example .gitignore .gitignore CHANGELOG.md CHANGELOG.md LICENSE LICENSE README.md README.md pyproject.toml pyproject.toml uv.lock uv.lock View all files Repository files navigation websearch-skill Open-source multi-engine web search and content extraction for AI agents.",
+        "Internal layers communicate through versioned JSON Schema contracts.",
+        "First public release 2026-06-22; current version in CHANGELOG.md .",
+        "Available now: keyless search, Markdown extraction, five agent commands, self-hosted SearXNG, and a NordVPN egress proxy that two env vars enable and lock.",
+        "There is no MCP server ; use the CLI directly or install the skill (see No MCP below).",
+        "Hard anti-bot tiers and local reranking remain on the roadmap.",
+        "Pin a version and test it in a sandbox before using it with sensitive data."
+      ],
+      "source_length": 52311,
+      "status": "EXTRACTED_NOT_VERIFIED"
+    },
+    {
+      "source_id": "S11",
+      "title": "dspy_optimizers",
+      "url": "https://github.com/stanfordnlp/dspy/blob/main/docs/docs/learn/optimization/optimizers.md",
+      "domain": "github.com",
+      "quality": "independent",
+      "sha256": "f6bd60837faebe1da6af1e98b00829734df975181bb8f963b7c1866866709833",
+      "candidate_sentences": [
+        "dspy/docs/docs/learn/optimization/optimizers.md at main · stanfordnlp/dspy · GitHub Skip to content Navigation Menu Sign in Search / Sign in Sign up Appearance settings You signed in with another tab or window.",
+        "Dismiss alert {{ message }} Repository navigation Files Expand file tree main / optimizers.md Copy path Blame More file actions Blame More file actions Latest commit History History History 230 lines (142 loc) · 15.8 KB main / optimizers.md Copy path Top File metadata and controls Preview Code Blame 230 lines (142 loc) · 15.8 KB Raw Copy raw file Download raw file Outline Edit and raw actions sidebar_position 1 DSPy Optimizers (formerly Teleprompters) A DSPy optimizer is an algorithm that can tune the parameters of a DSPy program (i.e., the prompts and/or the LM weights) to maximize the metrics you specify, like accuracy.",
+        "A typical DSPy optimizer takes three things: Your DSPy program .",
+        "This may be a single module (e.g., dspy.Predict ) or a complex multi-module program.",
+        "This is a function that evaluates the output of your program, and assigns it a score (higher is better).",
+        "This may be very small (i.e., only 5 or 10 examples) and incomplete (only inputs to your program, without any labels).",
+        "If you happen to have a lot of data, DSPy can leverage that.",
+        "We are making an official name update, which will be reflected throughout the library and documentation.",
+        "Different optimizers in DSPy will tune your program's quality by synthesizing good few-shot examples for every module, like dspy.BootstrapRS , 1 proposing and intelligently exploring better natural-language instructions for every prompt, like dspy.MIPROv2 , 2 and dspy.GEPA , 3 and building datasets for your modules and using them to finetune the LM weights in your system, like dspy.BootstrapFinetune .",
+        "How do different optimizers work?\" Take the `dspy.MIPROv2` optimizer as an example.",
+        "It takes your program, which may be unoptimized at this point, and runs it many times across different inputs to collect traces of input/output behavior for each one of your modules.",
+        "It filters these traces to keep only those that appear in trajectories scored highly by your metric."
+      ],
+      "source_length": 15145,
+      "status": "EXTRACTED_NOT_VERIFIED"
+    },
+    {
+      "source_id": "S12",
+      "title": "pyannote_audio",
+      "url": "https://github.com/pyannote/pyannote-audio",
+      "domain": "github.com",
+      "quality": "independent",
+      "sha256": "597562ba8ac692536dba83d3bba973b3af4e3a61ea10b27b42799eb628786966",
+      "candidate_sentences": [
+        "GitHub - pyannote/pyannote-audio: Neural building blocks for speaker diarization: speech activity detection, speaker change detection, overlapped speech detection, speaker embedding · GitHub Skip to content Navigation Menu Sign in Search / Sign in Sign up Appearance settings You signed in with another tab or window.",
+        "Dismiss alert {{ message }} Repository navigation pyannote-audio Public Notifications You must be signed in to change notification settings Fork 1.1k ( 1.1k ) Star 10.8k ( 10.8k ) You must be signed in to star a repository About Neural building blocks for speaker diarization: speech activity detection, speaker change detection, overlapped speech detection, speaker embedding www.pyannote.ai Topics overlapped-speech-detection pretrained-models pytorch speaker-change-detection speaker-diarization speaker-embedding speaker-recognition speaker-verification speech-activity-detection speech-processing voice-activity-detection Resources Readme MIT license Code of conduct Code of conduct Activity Custom properties Stars 10.8k stars Watchers 82 watching Forks 1.1k forks Report repository main Branches Tags Go to file Code Open more actions menu Latest commit History 2,569 Commits 2,569 Commits Folders and files Name Name Last commit message Last commit date .faq .faq .github .github doc doc notebook notebook questions questions src/ pyannote/ audio src/ pyannote/ audio tests tests tutorials tutorials .gitattributes .gitattributes .gitignore .gitignore .gitmodules .gitmodules .pre-commit-config.yaml .pre-commit-config.yaml .python-version .python-version CHANGELOG.md CHANGELOG.md CODE_OF_CONDUCT.md CODE_OF_CONDUCT.md FAQ.md FAQ.md LICENSE LICENSE README.md README.md faq.yml faq.yml pyproject.toml pyproject.toml View all files Repository files navigation pyannote speaker diarization toolkit pyannote.audio is an open-source toolkit written in Python for speaker diarization.",
+        "Based on PyTorch machine learning framework, it comes with state-of-the-art pretrained models and pipelines , that can be further finetuned to your own data for even better performance.",
+        "Highlights 🤯 state-of-the-art performance (see Benchmark ) 🤗 pretrained pipelines (and models ) on 🤗 model hub 🚀 built-in support for pyannoteAI premium speaker diarization 🐍 Python-first API ⚡ multi-GPU training with pytorch-lightning community-1 open-source speaker diarization Make sure ffmpeg is installed on your machine (needed by torchcodec audio decoding library) Install with uv add pyannote.audio (recommended) or pip install pyannote.audio Accept pyannote/speaker-diarization-community-1 user conditions Create Huggingface access token at hf.co/settings/tokens import torch from pyannote .",
+        "hook import ProgressHook # Community-1 open-source speaker diarization pipeline pipeline = Pipeline .",
+        "from_pretrained ( \"pyannote/speaker-diarization-community-1\" , token = \"HUGGINGFACE_ACCESS_TOKEN\" ) # send pipeline to GPU (when available) pipeline .",
+        "device ( \"cuda\" )) # apply pretrained pipeline (with optional progress hook) with ProgressHook () as hook : output = pipeline ( \"audio.wav\" , hook = hook ) # runs locally # print the result for turn , speaker in output .",
+        "end :.1f } s speaker_ { speaker } \" ) # start=0.2s stop=1.5s speaker_0 # start=1.8s stop=3.9s speaker_1 # start=4.2s stop=5.7s speaker_0 # ...",
+        "precision-2 premium speaker diarization Create pyannoteAI API key at dashboard.pyannote.ai Enjoy free credits!",
+        "audio import Pipeline # Precision-2 premium speaker diarization service pipeline = Pipeline .",
+        "from_pretrained ( \"pyannote/speaker-diarization-precision-2\" , token = \"PYANNOTEAI_API_KEY\" ) output = pipeline ( \"audio.wav\" ) # runs on pyannoteAI servers # print the result for turn , speaker in output .",
+        "end :.1f } s { speaker } \" ) # start=0.2s stop=1.6s SPEAKER_00 # start=1.8s stop=4.0s SPEAKER_01 # start=4.2s stop=5.6s SPEAKER_00 # ..."
+      ],
+      "source_length": 10735,
+      "status": "EXTRACTED_NOT_VERIFIED"
+    },
+    {
+      "source_id": "S13",
+      "title": "espnet_tts",
+      "url": "https://github.com/espnet/espnet",
+      "domain": "github.com",
+      "quality": "independent",
+      "sha256": "1437064a8e7bce020b188341356da7bb687463c27ca76ee1a8f76a48980f858c",
+      "candidate_sentences": [
+        "GitHub - espnet/espnet: End-to-End Speech Processing Toolkit · GitHub Skip to content Navigation Menu Sign in Search / Sign in Sign up Appearance settings You signed in with another tab or window.",
+        "Dismiss alert {{ message }} Repository navigation espnet Public Notifications You must be signed in to change notification settings Fork 2.5k ( 2.5k ) Star 10k ( 10k ) You must be signed in to star a repository About End-to-End Speech Processing Toolkit espnet.github.io/espnet/ Topics chainer deep-learning end-to-end kaldi machine-translation pytorch singing-voice-synthesis speaker-diarization speech-enhancement speech-recognition speech-separation speech-synthesis speech-translation spoken-language-understanding text-to-speech voice-conversion Resources Readme Apache-2.0 license Contributing Contributing Activity Custom properties Stars 10.0k stars Watchers 164 watching Forks 2.5k forks Report repository master Branches Tags Go to file Code Open more actions menu Latest commit History 28,576 Commits 28,576 Commits Folders and files Name Name Last commit message Last commit date .agents .agents .claude .claude .devcontainer .devcontainer .github .github ci ci doc doc docker docker egs2 egs2 egs3 egs3 espnet espnet espnet2 espnet2 espnet3 espnet3 splet splet test test test_utils test_utils tools tools utils utils .coderabbit.yaml .coderabbit.yaml .continueignore .continueignore .coveragerc .coveragerc .dockerignore .dockerignore .gitignore .gitignore .gitmodules .gitmodules .mergify.yml .mergify.yml .pre-commit-config.yaml .pre-commit-config.yaml AGENTS.md AGENTS.md CONTRIBUTING.md CONTRIBUTING.md LICENSE LICENSE README.md README.md codecov.yml codecov.yml pyproject.toml pyproject.toml setup.cfg setup.cfg version.txt version.txt View all files Repository files navigation End-to-end speech processing toolkit Documentation · Installation · Recipes · Model Zoo · Notebooks · Discord ESPnet is an end-to-end speech processing toolkit built on PyTorch .",
+        "It covers speech recognition, text-to-speech, speech translation, speech enhancement, speaker diarization, spoken language understanding, spoken language identification, singing voice synthesis, speech language models, and more — with Kaldi -style reproducible recipes from data preparation to evaluation, and hundreds of pretrained models on Hugging Face.",
+        "What's new ESPnet 202611 — audio quality assessment ( espnet2.bin.aqa_inference , the ARECHO metric model and the URGENT24 recipe), so VERSA can install its supporting models from PyPI; Bagpiper on the command line ( espnet describe , espnet render ) and in the MCP server; scaled dot-product attention through every ASR encoder, relative-position attention included; F5-TTS; hydra-core and omegaconf are now core dependencies, and ctc-segmentation comes from upstream 1.7.5.",
+        "Earlier releases ESPnet 202610.post2 — the command line has one name a task and two more of them: espnet phonemize reads the phones with POWSM, espnet align lines text up with the audio it was said in, and asr and tts became transcribe and synthesize (the old names still work); models published before June 2025 load again, after init: chainer was removed from the toolkit.",
+        "ESPnet 202610.post1 — the command line grows espnet demo (the OWSM browser demo) and --live (the microphone, transcribed as you speak); one Speech2Text now loads either kind of OWSM checkpoint, with best_path() for CTC decoding without a search; espnet/espnet:inference-cpu-latest and -gpu-latest run a published model with nothing installed; three more demo Spaces (TTS, enhancement, speaker verification).",
+        "ESPnet 202610 — one-line inference from the command line ( pip install espnet && espnet asr audio.wav ), two OWSM v4 demos as Hugging Face Spaces, a core install without the training stack (training is espnet[train] ), batched beam search, PyTorch 2.11-2.14.",
+        "ESPnet 202609 — ESPnet3 complete on egs3/librispeech_100 at ESPnet2 parity, CI rebuilt on a prebuilt image (compute per run halved), OpenBEATs pretraining, ten new recipes (ASR, TTS, SER, ST, audio SSL), Python 3.12-3.13.",
+        "ESPnet 202604 — Docker-based CI, PyTorch 2.9.1 support, FastSpeech2 inference ~1.9x faster at batch 8, new recipes (Kinyarwanda, Emilia, kosp2e).",
+        "ESPnet 202511 — parallel-processing primitives, refactored inference and evaluation pipeline, expanded SpeechLM support.",
+        "ESPnet 202509 — Python 3.9-3.13, Debian 12 CI, the LID subsystem completed, multi-optimizer training ( HybridOptim / HybridLRS ).",
+        "ESPnet 202506 — ESPnet3 groundwork (data organizer, trainer, model), LID training and task setup, codec1 recipes, USES2 speech enhancement, IPAPack++ S2T recipes."
+      ],
+      "source_length": 42768,
+      "status": "EXTRACTED_NOT_VERIFIED"
+    },
+    {
+      "source_id": "S14",
+      "title": "piper_project",
+      "url": "https://github.com/OHF-Voice/piper1-gpl",
+      "domain": "github.com",
+      "quality": "independent",
+      "sha256": "6b40bf1437ce8bec262a60cd80e92f84ea94bd28af04091ae6ae4f71b8f2319b",
+      "candidate_sentences": [
+        "GitHub - OHF-Voice/piper1-gpl: Fast and local neural text-to-speech engine · GitHub Skip to content Navigation Menu Sign in Search / Sign in Sign up Appearance settings You signed in with another tab or window.",
+        "Dismiss alert {{ message }} Repository navigation piper1-gpl Public Notifications You must be signed in to change notification settings Fork 635 ( 635 ) Star 6.3k ( 6.3k ) You must be signed in to star a repository About Fast and local neural text-to-speech engine Resources Readme GPL-3.0 license Activity Custom properties Stars 6.3k stars Watchers 53 watching Forks 635 forks Report repository main Branches Tags Go to file Code Open more actions menu Latest commit History 345 Commits 345 Commits Folders and files Name Name Last commit message Last commit date .github .github docker docker docs docs etc etc libpiper libpiper licenses licenses script script src/ piper src/ piper tests tests .dockerignore .dockerignore .gitignore .gitignore .isort.cfg .isort.cfg .projectile .projectile CHANGELOG.md CHANGELOG.md CMakeLists.txt CMakeLists.txt COPYING COPYING Dockerfile Dockerfile MANIFEST.in MANIFEST.in README.md README.md build_monotonic_align.sh build_monotonic_align.sh mypy.ini mypy.ini pylintrc pylintrc pyproject.toml pyproject.toml pytest.ini pytest.ini setup.cfg setup.cfg setup.py setup.py tox.ini tox.ini View all files Repository files navigation A fast and local neural text-to-speech engine that embeds espeak-ng for phonemization.",
+        "Install with: pip install piper-tts 🎧 Samples 💡 Demo 🗣️ Voices ⚖️ Voice licensing 💼 Commercial use 🖥️ Command-line interface 🌐 Web server 🐍 Python API 🔧 C/C++ API 🏋️ Training new voices 🛠️ Building manually Looking for Maintainers The Open Home Foundation is looking for maintainers for Piper!",
+        "If you're interested, please send a message to voice@openhomefoundation.org People/projects using Piper: Home Assistant NVDA - NonVisual Desktop Access Image Captioning for the Visually Impaired and Blind: A Recipe for Low-Resource Languages Video tutorial by Thorsten Müller Open Voice Operating System JetsonGPT LocalAI Lernstick EDU / EXAM: reading clipboard content aloud with language detection Natural Speech - A plugin for Runelite, an OSRS Client mintPiper Vim-Piper POTaTOS Narration Studio Basic TTS - Simple online text-to-speech converter.",
+        "Bindings to use Piper in programming languages other than Python and C/C++: Java: Piper JNI About Fast and local neural text-to-speech engine Resources Readme GPL-3.0 license Activity Custom properties Stars 6.3k stars Watchers 53 watching Forks 635 forks Report repository Releases Packages Used by Contributors Languages You can’t perform that action at this time."
+      ],
+      "source_length": 2862,
+      "status": "EXTRACTED_NOT_VERIFIED"
+    },
+    {
+      "source_id": "S15",
+      "title": "espeak_ng_project",
+      "url": "https://github.com/espeak-ng/espeak-ng",
+      "domain": "github.com",
+      "quality": "independent",
+      "sha256": "6b217af07d37ef5d25ab95df808bd92882654e1d805b70dfb9872414300da06d",
+      "candidate_sentences": [
+        "GitHub - espeak-ng/espeak-ng: eSpeak NG is an open source speech synthesizer that supports more than hundred languages and accents.",
+        "· GitHub Skip to content Navigation Menu Sign in Search / Sign in Sign up Appearance settings You signed in with another tab or window.",
+        "Dismiss alert {{ message }} Repository navigation espeak-ng Public Notifications You must be signed in to change notification settings Fork 1.3k ( 1.3k ) Star 7k ( 7k ) You must be signed in to star a repository About eSpeak NG is an open source speech synthesizer that supports more than hundred languages and accents.",
+        "Topics android espeak espeak-ng speech-synthesis text-to-speech Resources Readme GPL-3.0 and 3 other licenses found Contributing Contributing Activity Custom properties Stars 7.0k stars Watchers 112 watching Forks 1.3k forks Report repository master Branches Tags Go to file Code Open more actions menu Latest commit History 6,534 Commits 6,534 Commits Folders and files Name Name Last commit message Last commit date .github .github .tx .tx _layouts _layouts android android cmake cmake data/ annotationsEspeak data/ annotationsEspeak dictsource dictsource docs docs emscripten emscripten espeak-ng-data espeak-ng-data fastlane/ metadata/ android fastlane/ metadata/ android nano nano phsource phsource src src tests tests tools tools vim vim .clang-tidy .clang-tidy .gitignore .gitignore AGENTS.md AGENTS.md CMakeLists.txt CMakeLists.txt COPYING COPYING COPYING.APACHE COPYING.APACHE COPYING.BSD2 COPYING.BSD2 COPYING.UCD COPYING.UCD ChangeLog.md ChangeLog.md README.md README.md espeak-ng.pc.in espeak-ng.pc.in View all files Repository files navigation eSpeak NG Text-to-Speech Features Supported languages Documentation eSpeak Compatibility History License Information The eSpeak NG is a compact open source software text-to-speech synthesizer for Linux, Windows, Android and other operating systems.",
+        "It is based on the eSpeak engine created by Jonathan Duddington.",
+        "This allows many languages to be provided in a small size.",
+        "The speech is clear, and can be used at high speeds, but is not as natural or smooth as larger synthesizers which are based on human speech recordings.",
+        "It also supports Klatt formant synthesis, and the ability to use MBROLA as backend speech synthesizer.",
+        "eSpeak NG is available as: A command line program (Linux and Windows) to speak text from a file or from stdin.",
+        "A SAPI5 version for Windows, so it can be used with screen-readers and other programs that support the Windows SAPI5 interface.",
+        "eSpeak NG has been ported to other platforms, including Solaris and Mac OSX.",
+        "Features Includes different Voices, whose characteristics can be altered."
+      ],
+      "source_length": 8106,
+      "status": "EXTRACTED_NOT_VERIFIED"
+    },
+    {
+      "source_id": "S16",
+      "title": "edge_tts_project",
+      "url": "https://github.com/rany2/edge-tts",
+      "domain": "github.com",
+      "quality": "independent",
+      "sha256": "e88b5a100dca830d22429890f61de7515b746f03f08dbc2d8d171a2fbd25b5d7",
+      "candidate_sentences": [
+        "GitHub - rany2/edge-tts: Use Microsoft Edge's online text-to-speech service from Python WITHOUT needing Microsoft Edge · GitHub Skip to content Navigation Menu Sign in Search / Sign in Sign up Appearance settings You signed in with another tab or window.",
+        "Dismiss alert {{ message }} Repository navigation edge-tts Public Sponsor Notifications You must be signed in to change notification settings Fork 1.2k ( 1.2k ) Star 12.6k ( 12.6k ) You must be signed in to star a repository About Use Microsoft Edge's online text-to-speech service from Python WITHOUT needing Microsoft Edge pypi.org/project/edge-tts/ Topics speech-synthesis text-to-speech tts Resources Readme License Activity Stars 12.6k stars Watchers 82 watching Forks 1.2k forks Report repository master Branches Tags Go to file Code Open more actions menu Latest commit History 321 Commits 321 Commits Folders and files Name Name Last commit message Last commit date .github .github examples examples src src .gitignore .gitignore .isort.cfg .isort.cfg LICENSE LICENSE README.md README.md build_and_publish.sh build_and_publish.sh format.sh format.sh gpl-3.0.txt gpl-3.0.txt lint.sh lint.sh mypy.ini mypy.ini pylintrc pylintrc setup.cfg setup.cfg setup.py setup.py View all files Repository files navigation edge-tts edge-tts is a Python module that allows you to use Microsoft Edge's online text-to-speech service from within your Python code or using the provided edge-tts or edge-playback command.",
+        "Installation To install it, run the following command: $ pip install edge-tts If you only want to use the edge-tts and edge-playback commands, it would be better to use pipx : $ pipx install edge-tts Usage Basic usage If you want to use the edge-tts command, you can simply run it with the following command: $ edge-tts --text \"Hello, world!\" --write-media hello.mp3 --write-subtitles hello.srt If you wish to play it back immediately with subtitles, you could use the edge-playback command: $ edge-playback --text \"Hello, world!\" Note that edge-playback requires the installation of the mpv command line player , except on Windows.",
+        "All edge-tts options work with edge-playback with the exception of the --write-media , --write-subtitles and --list-voices options.",
+        "Changing the voice You can change the voice used by the text-to-speech service by using the --voice option.",
+        "The --list-voices option can be used to list all available voices.",
+        "$ edge-tts --list-voices Name Gender ContentCategories VoicePersonalities --------------------------------- -------- --------------------- -------------------------------------- af-ZA-AdriNeural Female General Friendly, Positive af-ZA-WillemNeural Male General Friendly, Positive am-ET-AmehaNeural Male General Friendly, Positive am-ET-MekdesNeural Female General Friendly, Positive ar-AE-FatimaNeural Female General Friendly, Positive ar-AE-HamdanNeural Male General Friendly, Positive ar-BH-AliNeural Male General Friendly, Positive ar-BH-LailaNeural Female General Friendly, Positive ar-DZ-AminaNeural Female General Friendly, Positive ar-DZ-IsmaelNeural Male General Friendly, Positive ar-EG-SalmaNeural Female General Friendly, Positive ...",
+        "$ edge-tts --voice ar-EG-SalmaNeural --text \"مرحبا كيف حالك؟\" --write-media hello_in_arabic.mp3 --write-subtitles hello_in_arabic.srt Custom SSML Support for custom SSML was removed because Microsoft prevents the use of any SSML that could not be generated by Microsoft Edge itself.",
+        "This means that all the cases where custom SSML would be useful cannot be supported as the service only permits a single <voice> tag with a single <prosody> tag inside it.",
+        "Any available customization options that could be used in the <prosody> tag are already available from the library or the command line itself.",
+        "Changing rate, volume and pitch You can change the rate, volume and pitch of the generated speech by using the --rate , --volume and --pitch options.",
+        "When using a negative value, you will need to use --[option]=-50% instead of --[option] -50% to avoid the option being interpreted as a command line option."
+      ],
+      "source_length": 5922,
+      "status": "EXTRACTED_NOT_VERIFIED"
+    }
+  ],
+  "debate": {
+    "research_analyst": {
+      "task": "Evidence inventory",
+      "source_count": 16,
+      "independent_domains": 3,
+      "candidate_claim_count": 376,
+      "claims": "Candidate sentences only; not verified facts."
+    },
+    "domain_expert": {
+      "task": "Domain implications",
+      "observations": [
+        "Check whether each claim maps to the specific TTS engine and Hindi use case.",
+        "Separate text normalization, phonology, prosody, speaker identity, acoustic quality and runtime performance.",
+        "Require held-out audio tests; repository stars and model-card claims are not quality proof."
+      ],
+      "status": "RULE_BASED_REVIEW_NOT_SEMANTIC_REASONING"
+    },
+    "skeptic": {
+      "task": "Adversarial review",
+      "possible_conflicts": [],
+      "challenges": [
+        "Are the sources independent or repeating the same upstream claim?",
+        "Is the evidence current and reproducible?",
+        "Are limitations and negative results represented?",
+        "Does the license cover both code and model/data assets?",
+        "Does the claim hold for Hindi, not merely English or another language?"
+      ],
+      "status": "LEXICAL_CONFLICT_CANDIDATES_REQUIRE_VERIFICATION"
+    },
+    "decision_judge": {
+      "task": "Conservative decision",
+      "decision": "INSUFFICIENT_FOR_AUTOMATIC_ADOPTION",
+      "reason": "Model-free analysis can organize and challenge evidence but cannot reliably understand nuanced meaning or infer causality.",
+      "proposals": [
+        {
+          "title": "Run independent source triangulation",
+          "source_ids": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8"
+          ],
+          "acceptance_criteria": [
+            "At least two genuinely independent sources for high-impact claims",
+            "Primary documentation or paper checked",
+            "Contradictions resolved or explicitly left unknown"
+          ],
+          "rollback_plan": "Keep the current engine configuration unchanged until tests pass."
+        }
+      ],
+      "promotion_policy": "PROPOSAL_ONLY"
+    }
+  },
+  "possible_cross_source_conflicts": [],
+  "independent_domain_count": 3,
+  "primary_source_count": 7,
+  "follow_up_queries": [
+    "hindi tts sarvam counter evidence criticism failure cases",
+    "hindi tts sarvam independent replication benchmark results",
+    "hindi tts sarvam official license dataset provenance limitations",
+    "hindi tts sarvam issue tracker bugs regression performance",
+    "hindi tts sarvam Hindi real user evaluation pronunciation emotion naturalness"
+  ],
+  "decisions": [
+    {
+      "title": "Run independent source triangulation",
+      "source_ids": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8"
+      ],
+      "acceptance_criteria": [
+        "At least two genuinely independent sources for high-impact claims",
+        "Primary documentation or paper checked",
+        "Contradictions resolved or explicitly left unknown"
+      ],
+      "rollback_plan": "Keep the current engine configuration unchanged until tests pass."
+    }
+  ],
+  "next_actions": [
+    "Fetch counter-evidence and independent sources.",
+    "Verify claims against original papers, official docs and issue trackers.",
+    "Convert accepted claims into engine-specific regression/audio tests.",
+    "Keep all production changes gated behind measured tests and rollback."
+  ]
+}

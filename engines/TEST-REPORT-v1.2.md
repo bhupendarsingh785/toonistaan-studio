@@ -60,7 +60,42 @@ Ab naap (PIPER, asli render):
 - **EDGE**: internet chahiye; offline machine par nahi chalega.
 - **Naturalness**: PIPER abhi bhi robot-jaisa hai (f0 ghumav 7 vs insaan 10). Asli natural ke liye neural model chahiye — Sarvam ya bada open model.
 
-## 4. Aage kya (poochh kar)
+
+## 5. Browser / agent test (skip nahi kiya)
+
+Har engine ka apna browser + research agent hai — usko bhi chalaya:
+
+| Test | Nateeja |
+|---|---|
+| `app.py agent-benchmark` (self test) | **12/12 pass, score 100** |
+| `app.py collect https://github.com/...` | source record bana, robots check hua |
+| `app.py research "hindi tts sarvam"` | **15 sources, 3 domains, 6 primary** |
+| `app.py browser-benchmark` (coverage) | **100% (19/19 checks), koi failed check nahi** |
+| browser mode | sandbox me Playwright nahi → HTTP fallback chala (honest banner: "bounded HTTP/PDF fallback") |
+
+### Kami 6 — robots.txt galat padha ja raha tha (sabse bada browser bug)
+`urllib` ka `RobotFileParser.read()` "Python-urllib" UA bhejta hai. Kai sites us par **403** deti hain,
+aur urllib 403 ko "sab band" maan leta hai. Isliye **sarvam.ai (jahan `Allow: /` hai) aur wikipedia
+block dikh rahe the** — browser chal hi nahi raha tha.
+**Fix:** robots.txt khud `requests` + apne UA se padho; 401/403 = sach me band, 404 = allowed,
+network fail = 2 retry ke baad fail-closed. Ab dono sites khulti hain.
+
+### Kami 7 — research ka score galat file se ban raha tha
+Benchmark `combined_deep_research.json` padhta tha, jisme `query_plan` hota hi nahi →
+`query_count: 0` → `query_diversity` **fail**, score 94.7%.
+**Fix:** benchmark ab `primary_research_file` kholkar wahan se query_plan padhta hai.
+Ab: **query_count 10, coverage 100%, failed checks 0**.
+
+### Kami 8 — search ek baar flaky hua to poora run khaali
+Ek run me `candidate_count: 0`, `provider_errors: 33` — bina retry ke sab ud gaya.
+**Fix:** `_search_retry` (3 tries, backoff). Ab sources phir se aa rahe hain.
+
+## 6. Aage browser ke liye
+- **Playwright** install karna hoga (asli browser rendering, JS sites) — `pip install playwright && playwright install chromium`. Abhi HTTP fallback chal raha hai.
+- Rate limit: abhi per-domain delay nahi hai. Bahut pages maange to site block kar sakti hai.
+- Browser ko GitHub runner par chalane se zyada sites khulengi (sandbox ka network seemit hai).
+
+## 7. Aage kya (poochh kar)
 
 Charon engine alag-alag theek se chal rahe hain. Inko jodne ka tareeka main tab bataungi jab tum kaho — kyunki jodne se pehle tay karna hoga:
 1. Kaun **default** hoga, aur kaun **fallback**?

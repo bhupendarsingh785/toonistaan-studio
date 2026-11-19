@@ -30,7 +30,19 @@ def evaluate(research_path, cognition_path=None):
     judge=debate.get("decision_judge") or {}
     proposals=judge.get("proposals") or cognition.get("decisions") or []
     followups=cognition.get("follow_up_queries",[])
-    query_plan=research.get("query_plan") or research.get("search_queries") or []
+    # combined file me query_plan nahi hota — asli research file me hota hai.
+    # Isliye pehle combined ke andar wali primary file padho.
+    _src = research
+    _pf = research.get("primary_research_file")
+    if _pf:
+        try:
+            import os as _os, json as _json
+            _cand = _pf if _os.path.isabs(_pf) else _os.path.join(str(root), _pf)
+            if _os.path.exists(_cand):
+                _src = _json.load(open(_cand, encoding="utf-8"))
+        except Exception:
+            _src = research
+    query_plan=_src.get("query_plan") or _src.get("search_queries") or research.get("query_plan") or research.get("search_queries") or []
     blob=json.dumps(research,ensure_ascii=False)+" "+json.dumps(cognition,ensure_ascii=False)
     tests=[]
     def check(name, passed, observed, target, weight=1):
