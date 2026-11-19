@@ -18,8 +18,10 @@ jobs:
       - name: deps
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
-          pip install -q --index-url https://download.pytorch.org/whl/cpu torch
+          pip install -q --index-url https://download.pytorch.org/whl/cpu torch torchaudio
           pip install -q transformers soundfile numpy huggingface_hub
+          # model card ke mutabik: IndicF5 ka apna package (f5_tts, pydub vagairah le aata hai)
+          pip install -q "git+https://github.com/ai4bharat/IndicF5.git" || pip install -q f5-tts pydub vocos
       - name: model card + render
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
