@@ -23,8 +23,7 @@ jobs:
           pip install -q "git+https://github.com/ai4bharat/IndicF5.git" 2>&1 | tail -3
           # naya transformers + hub (model ka remote code inhi ke saath likha gaya hai)
           pip install -q -U transformers huggingface_hub 2>&1 | tail -3
-          # meta-device error aksar accelerate ki wajah se aata hai — hata do
-          pip uninstall -y -q accelerate 2>&1 | tail -2
+          pip install -q accelerate 2>&1 | tail -2
           pip install -q --no-deps "pyarrow==15.0.2" "numpy==1.26.4"
           python -c "import transformers, huggingface_hub; print('tf', transformers.__version__, 'hub', huggingface_hub.__version__)"
       - name: render (f5_tts api, transformers ke bina)
