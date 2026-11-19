@@ -22,6 +22,8 @@ jobs:
           pip install -q transformers soundfile numpy huggingface_hub
           # model card ke mutabik: IndicF5 ka apna package (f5_tts, pydub vagairah le aata hai)
           pip install -q "git+https://github.com/ai4bharat/IndicF5.git" || pip install -q f5-tts pydub vocos
+          # pyarrow numpy 2 maangta hai, par baaki stack 1.26 par aa jata hai
+          pip install -q -U "numpy>=2.0" "pyarrow>=15" 2>&1 | tail -3
       - name: model card + render
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
