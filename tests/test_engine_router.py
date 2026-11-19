@@ -81,3 +81,18 @@ def test_render_story_counts_and_reports(monkeypatch, tmp_path):
     rep = r.render_story("दादी: बेटा आ जा।\nमाँ: खाना खा ले।", tmp_path)
     assert rep["lines"] == 2 and rep["ok"] == 2
     assert [x["character"] for x in rep["results"]] == ["दादी", "माँ"]
+
+
+def test_problems_lists_only_not_ready(monkeypatch):
+    monkeypatch.setattr(r, "engine_status", lambda: [
+        r.EngineState("edge", False, "binary missing: edge-tts"),
+        r.EngineState("piper", True, "tayyar"),
+    ])
+    items = r.problems()
+    assert len(items) == 1 and items[0]["engine"] == "edge"
+    assert "pip install edge-tts" in items[0]["hal"]
+
+
+def test_problems_empty_when_all_ready(monkeypatch):
+    monkeypatch.setattr(r, "engine_status", lambda: [r.EngineState("piper", True, "tayyar")])
+    assert r.problems() == []

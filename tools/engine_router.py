@@ -28,6 +28,14 @@ ENGINES = ROOT / "engines"
 ORDER = ["sarvam", "edge", "piper", "espeak", "elevenlabs"]
 
 # engine -> (kaunsi file chahiye, kaunsa env var chahiye, kaunsa engine folder)
+FIX = {
+    "sarvam":     "GitHub secret SARVAM_API_KEY daalo (dashboard.sarvam.ai se key).",
+    "edge":       "pip install edge-tts  (internet chahiye; GitHub runner par chalta hai).",
+    "piper":      "piper binary + hi_IN model: https://huggingface.co/rhasspy/piper-voices (offline chalega).",
+    "espeak":     "sudo apt-get install espeak-ng  (Linux).",
+    "elevenlabs": "GitHub secret ELEVENLABS_API_KEY daalo (free plan par sirf premade voices).",
+}
+
 SPEC = {
     "sarvam":      {"env": "SARVAM_API_KEY",     "folder": None,      "kind": "api"},
     "edge":        {"env": None,                 "folder": "EDGE",    "kind": "cli", "bin": "edge-tts"},
@@ -212,6 +220,32 @@ def cmd_status() -> int:
     return 0 if ready else 1
 
 
+def problems() -> list[dict]:
+    """Har engine ki dikkat + uska seedha hal."""
+    out = []
+    for st in engine_status():
+        if st.ready:
+            continue
+        out.append({"engine": st.name, "dikkat": st.reason, "hal": FIX.get(st.name, "")})
+    return out
+
+
+def cmd_problems(as_json: bool = False) -> int:
+    items = problems()
+    if as_json:
+        print(json.dumps(items, ensure_ascii=False, indent=2))
+        return 0 if not items else 1
+    if not items:
+        print("Koi dikkat nahi — sab engine tayyar hain.")
+        return 0
+    print(f"{len(items)} dikkat mili:\n")
+    for i, it in enumerate(items, 1):
+        print(f"{i}. {it['engine'].upper()}")
+        print(f"   dikkat: {it['dikkat']}")
+        print(f"   hal   : {it['hal']}\n")
+    return 1
+
+
 def cmd_plan(path: str) -> int:
     text = Path(path).read_text(encoding="utf-8")
     plans = build_plan(text)
@@ -227,11 +261,14 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="ASTRA engine router")
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("status")
+    pr = sub.add_parser("problems"); pr.add_argument("--json", action="store_true")
     p2 = sub.add_parser("plan"); p2.add_argument("story")
     p3 = sub.add_parser("render"); p3.add_argument("story"); p3.add_argument("--out", default="output/router.wav")
     a = ap.parse_args()
     if a.cmd == "status":
         return cmd_status()
+    if a.cmd == "problems":
+        return cmd_problems(a.json)
     if a.cmd == "plan":
         return cmd_plan(a.story)
     text = Path(a.story).read_text(encoding="utf-8")
