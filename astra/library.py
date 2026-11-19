@@ -18621,6 +18621,116 @@ DEFAULT_INDEX = {
    "lokha"
   ],
   "license": "Freesound/CC0"
+ },
+ "train_platform_ambience_1": {
+  "file": "transport/train_platform_ambience_1.mp3",
+  "tags": [
+   "train",
+   "station",
+   "platform",
+   "रेलवे",
+   "स्टेशन",
+   "भीड़"
+  ],
+  "license": "Freesound/Pixabay (free)"
+ },
+ "steam_train_passing_1": {
+  "file": "transport/steam_train_passing_1.mp3",
+  "tags": [
+   "train",
+   "steam",
+   "passing",
+   "रेलगाड़ी",
+   "भाप"
+  ],
+  "license": "Freesound/Pixabay (free)"
+ },
+ "train_announcement_en_1": {
+  "file": "transport/train_announcement_en_1.mp3",
+  "tags": [
+   "train",
+   "announcement",
+   "english",
+   "घोषणा"
+  ],
+  "license": "Freesound/Pixabay (free)"
+ },
+ "train_announcement_spoof_1": {
+  "file": "transport/train_announcement_spoof_1.mp3",
+  "tags": [
+   "train",
+   "announcement",
+   "funny",
+   "मज़ाक"
+  ],
+  "license": "Freesound/Pixabay (free)"
+ },
+ "station_voice_female_en_1": {
+  "file": "transport/station_voice_female_en_1.mp3",
+  "tags": [
+   "station",
+   "female",
+   "voice",
+   "english",
+   "घोषणा"
+  ],
+  "license": "Freesound/Pixabay (free)"
+ },
+ "train_interior_vestibule_2": {
+  "file": "transport/train_interior_vestibule_2.mp3",
+  "tags": [
+   "train",
+   "interior",
+   "coach",
+   "अंदर",
+   "रेलगाड़ी"
+  ],
+  "license": "Freesound/Pixabay (free)"
+ },
+ "kolkata_fish_market_1": {
+  "file": "crowd/kolkata_fish_market_1.mp3",
+  "tags": [
+   "crowd",
+   "market",
+   "bazaar",
+   "बाज़ार",
+   "भीड़",
+   "कोलकाता"
+  ],
+  "license": "Freesound/Pixabay (free)"
+ },
+ "bingbong_1": {
+  "file": "ui/bingbong_1.mp3",
+  "tags": [
+   "ui",
+   "chime",
+   "bell",
+   "notification",
+   "घंटी"
+  ],
+  "license": "Freesound/Pixabay (free)"
+ },
+ "chime_3tone_1": {
+  "file": "ui/chime_3tone_1.mp3",
+  "tags": [
+   "ui",
+   "chime",
+   "three",
+   "tone",
+   "घंटी"
+  ],
+  "license": "Freesound/Pixabay (free)"
+ },
+ "calm_indian_30s_1": {
+  "file": "music/calm_indian_30s_1.mp3",
+  "tags": [
+   "music",
+   "calm",
+   "indian",
+   "शांत",
+   "संगीत"
+  ],
+  "license": "Freesound/Pixabay (free)"
  }
 }
 
