@@ -1,0 +1,73 @@
+name: reference-audio
+
+on:
+  push:
+    paths:
+      - ".ref-trigger"
+  workflow_dispatch:
+
+jobs:
+  make:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: deps
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -q requests
+      - name: sarvam reference clips
+        env:
+          SARVAM_API_KEY: ${{ secrets.SARVAM_API_KEY }}
+        run: |
+          python - <<'PY' 2>&1 | tee ref_log.txt
+          import os, json, base64, requests, subprocess
+          key = os.environ.get("SARVAM_API_KEY")
+          print("key present:", bool(key), flush=True)
+          if not key:
+              raise SystemExit("SARVAM_API_KEY missing")
+          os.makedirs("ref_out", exist_ok=True)
+          URL = "https://api.sarvam.ai/text-to-speech"
+          # kirdaar -> (sarvam speaker, pitch, pace, line)
+          CAST = {
+            "dadi":   ("roopa",  0.86, 0.90, "बेटा, आ जा पास। दादी तेरे को ही ढूँढ रही थी।"),
+            "maa":    ("kavitha",0.94, 0.97, "बेटा, खाना ठंडा हो रहा है। पहले खा ले, फिर जाना।"),
+            "bachcha":("priya",  1.28, 1.03, "दादी, देखो! मुझे कितनी बड़ी तितली मिली है।"),
+            "madhur": ("shubh",  1.00, 1.00, "डरो मत, मैं तुम्हारे साथ हूँ। चलो, घर चलें।"),
+          }
+          report = {}
+          for name, (spk, pitch, pace, line) in CAST.items():
+              payload = {"text": line, "language_code": "hi-IN", "speaker": spk,
+                         "model": "bulbul:v3", "pace": pace, "temperature": 0.72,
+                         "speech_sample_rate": 24000, "output_audio_codec": "wav"}
+              r = requests.post(URL, json=payload, headers={"api-subscription-key": key}, timeout=120)
+              print(name, "status", r.status_code, flush=True)
+              if r.status_code != 200:
+                  print("  err:", r.text[:200], flush=True); continue
+              aud = r.json().get("audios") or []
+              if not aud:
+                  print("  no audio", flush=True); continue
+              raw = base64.b64decode(aud[0])
+              wav = f"ref_out/{name}_raw.wav"
+              open(wav, "wb").write(raw)
+              out = f"ref_out/{name}.wav"
+              # sur neeche/upar + raftaar (dadi budhi lage)
+              af = f"aresample=44100,asetrate=44100*{pitch:.4f},aresample=44100,atempo={1/pitch:.4f},atempo={pace:.3f}"
+              subprocess.run(["ffmpeg","-loglevel","error","-y","-i",wav,"-filter:a",af,
+                              "-ac","1","-ar","24000","-c:a","pcm_s16le",out], check=False)
+              open(f"ref_out/{name}.txt","w",encoding="utf-8").write(line)
+              report[name] = {"speaker": spk, "text": line, "file": f"{name}.wav"}
+              print("  saved", out, os.path.getsize(out), flush=True)
+          json.dump(report, open("ref_out/manifest.json","w",encoding="utf-8"), ensure_ascii=False, indent=2)
+          print("DONE", len(report), "clips", flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reference-clips
+          path: |
+            ref_out/*
+            ref_log.txt
+          retention-days: 7
