@@ -18731,6 +18731,60 @@ DEFAULT_INDEX = {
    "संगीत"
   ],
   "license": "Freesound/Pixabay (free)"
+ },
+ "weather_rain_lightning_thunder": {
+  "file": "ambience/weather_rain_lightning_thunder.mp3",
+  "tags": ["thunder", "rain", "lightning"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "weather_rain_and_thunder_crack": {
+  "file": "ambience/weather_rain_and_thunder_crack.mp3",
+  "tags": ["thunder", "rain", "crack"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "weather_calm_thunderstorm_jungle": {
+  "file": "ambience/weather_calm_thunderstorm_jungle.mp3",
+  "tags": ["thunder", "rain", "jungle"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 49.0
+ },
+ "weather_big_thunder_stereo_rain": {
+  "file": "ambience/weather_big_thunder_stereo_rain.mp3",
+  "tags": ["thunder", "rain", "lightning"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 18.26
+ },
+ "weather_scary_thunder_lightning": {
+  "file": "ambience/weather_scary_thunder_lightning.mp3",
+  "tags": ["thunder", "lightning", "horror"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 13.75
+ },
+ "weather_lightning_strike_short": {
+  "file": "ambience/weather_lightning_strike_short.mp3",
+  "tags": ["lightning", "crack"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 1.1
+ },
+ "weather_thunder_sound_long": {
+  "file": "ambience/weather_thunder_sound_long.mp3",
+  "tags": ["thunder"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "weather_lightning_crack": {
+  "file": "ambience/weather_lightning_crack.mp3",
+  "tags": ["lightning"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 17.45
+ },
+ "weather_thunder_strike": {
+  "file": "ambience/weather_thunder_strike.mp3",
+  "tags": ["thunder"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 11.08
  }
 }
 
