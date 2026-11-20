@@ -19565,6 +19565,12 @@ DEFAULT_INDEX = {
   "tags": ["thunder", "storm", "heavy"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 60.0
+ },
+ "inside_car_sounds": {
+  "file": "car/inside_car_sounds.mp3",
+  "tags": ["car", "interior", "drive"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
  }
 }
 
