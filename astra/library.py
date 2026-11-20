@@ -19241,6 +19241,48 @@ DEFAULT_INDEX = {
   "tags": ["crowd", "cafe", "restaurant"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 60.0
+ },
+ "crowd_school_auditorium": {
+  "file": "crowd/crowd_school_auditorium.mp3",
+  "tags": ["crowd", "school", "cheer"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 17.04
+ },
+ "angry_crowd": {
+  "file": "crowd/angry_crowd.mp3",
+  "tags": ["crowd", "angry", "protest"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 40.42
+ },
+ "cheering_crowd_2": {
+  "file": "crowd/cheering_crowd_2.mp3",
+  "tags": ["crowd", "cheer"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 8.14
+ },
+ "crowd_cheering_310544": {
+  "file": "crowd/crowd_cheering_310544.mp3",
+  "tags": ["crowd", "cheer"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 22.07
+ },
+ "crowd_cheering_small": {
+  "file": "crowd/crowd_cheering_small.mp3",
+  "tags": ["crowd", "cheer", "small"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 5.11
+ },
+ "crowd_noise_390947": {
+  "file": "crowd/crowd_noise_390947.mp3",
+  "tags": ["crowd", "noise"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 13.3
+ },
+ "crowd_cheers_477401": {
+  "file": "crowd/crowd_cheers_477401.mp3",
+  "tags": ["crowd", "cheer"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 8.05
  }
 }
 
