@@ -17,6 +17,8 @@ def test_engine_generates_all():
 
 
 def test_server_endpoints():
+    import pytest
+    pytest.importorskip("fastapi", reason="server ke liye fastapi chahiye (optional)")
     from fastapi.testclient import TestClient
     import server
     c = TestClient(server.app)

@@ -435,6 +435,65 @@ def piper_tts(text, kirdaar="madhur", out="out.wav", bhaav=None):
     return r2.returncode == 0 and os.path.exists(out) and os.path.getsize(out) > 3000
 
 
+def have_espeak() -> bool:
+    """espeak-ng ka library hai? (pip ka espeakng-loader — binary ki zaroorat nahi)."""
+    try:
+        import espeakng_loader  # noqa: F401
+        return True
+    except Exception:
+        import shutil
+        return shutil.which("espeak-ng") is not None
+
+
+def espeak_tts(text: str, kirdaar: str = "madhur", out: str = "out.wav",
+               bhaav=None) -> bool:
+    """espeak-ng se awaaz — offline, bina kisi key ke. Bhaav se raftaar/sur badalta hai."""
+    import ctypes, wave
+    from pathlib import Path
+    style = _bhaav_style(bhaav)
+    out_path = Path(out)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        import espeakng_loader
+        lib = ctypes.CDLL(espeakng_loader.get_library_path())
+        data_path = espeakng_loader.get_data_path().encode()
+    except Exception:
+        import shutil, subprocess
+        binary = shutil.which("espeak-ng") or shutil.which("espeak")
+        if not binary:
+            return False
+        rate = int(150 * style["pace"])
+        r = subprocess.run([binary, "-v", "hi", "-s", str(rate), "-w", str(out_path), text],
+                           capture_output=True)
+        return r.returncode == 0 and out_path.exists() and out_path.stat().st_size > 1000
+    lib.espeak_Initialize(2, 0, data_path, 0)
+    if lib.espeak_SetVoiceByName(b"hi") != 0:
+        lib.espeak_SetVoiceByName(b"en")
+    lib.espeak_SetParameter(1, int(150 * style["pace"]), 0)      # 1 = rate (words/min)
+    lib.espeak_SetParameter(3, int(max(0, min(99, 50 * style["pitch"]))), 0)  # 3 = pitch
+    chunks: list[bytes] = []
+
+    CB = ctypes.CFUNCTYPE(ctypes.c_int, ctypes.POINTER(ctypes.c_short),
+                          ctypes.c_int, ctypes.c_void_p)
+
+    def _cb(wav, n, events):
+        if wav and n > 0:
+            raw = ctypes.cast(wav, ctypes.POINTER(ctypes.c_char * (n * 2))).contents
+            chunks.append(bytes(bytearray(raw)))
+        return 0
+
+    cb = CB(_cb)
+    lib.espeak_SetSynthCallback(cb)
+    lib.espeak_Synth(str(text).encode("utf-8"), 0, 0, 1, 0, 0, None, None)
+    audio = b"".join(chunks)
+    if not audio:
+        return False
+    with wave.open(str(out_path), "wb") as w:
+        w.setnchannels(1); w.setsampwidth(2); w.setframerate(22050)
+        w.writeframes(audio)
+    return out_path.stat().st_size > 1000
+
+
 def have_sarvam():
     return bool(sarvam_key())
 

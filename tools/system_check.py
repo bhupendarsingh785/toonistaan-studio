@@ -19,20 +19,42 @@ def _row(name: str, ok: bool, detail: str = "") -> dict:
 
 
 def check_engines() -> list[dict]:
+    """Har engine ka asli haal — pip ka lib, model, key, internet. Andaza nahi."""
     rows = []
     try:
-        from tools import engine_router as er
-        st = er.status_all() if hasattr(er, "status_all") else None
-        if st is None:
-            out = subprocess.run([sys.executable, str(ROOT / "tools" / "engine_router.py"), "status"],
-                                 capture_output=True, text=True, timeout=60).stdout
-            ready = [ln.split()[1] for ln in out.splitlines() if ln.startswith("[READY]")]
-            for name in ("edge", "elevenlabs", "piper", "espeak"):
-                rows.append(_row(f"engine:{name}", name in ready,
-                                 "tayyar" if name in ready else "binary/key nahi"))
-            return rows
+        from tools import voice_provider as vp
     except Exception as exc:
-        rows.append(_row("engine_router", False, f"{type(exc).__name__}"))
+        return [_row("voice_provider", False, f"{type(exc).__name__}")]
+
+    try:
+        have_piper = vp.have_piper()
+        model = vp._piper_model(vp._piper_gender("dadi")) if have_piper else None
+        rows.append(_row("engine:piper", bool(have_piper and model),
+                         f"model: {Path(model).name}" if model else "model nahi (models/ me daalo)"))
+    except Exception as exc:
+        rows.append(_row("engine:piper", False, f"{type(exc).__name__}"))
+
+    try:
+        rows.append(_row("engine:espeak", vp.have_espeak(),
+                         "espeakng-loader (offline)" if vp.have_espeak() else "espeakng-loader install karo"))
+    except Exception as exc:
+        rows.append(_row("engine:espeak", False, f"{type(exc).__name__}"))
+
+    import shutil
+    edge_bin = shutil.which("edge-tts")
+    rows.append(_row("engine:edge", bool(edge_bin),
+                     "installed — internet chahiye (sandbox me proxy band)" if edge_bin
+                     else "edge-tts install karo"))
+
+    rows.append(_row("engine:elevenlabs", bool(vp.have_eleven()),
+                     "key mili" if vp.have_eleven() else "ELEVENLABS_API_KEY nahi (optional)"))
+
+    try:
+        from tools import engine_router as er
+        ready = er.ready_engines()
+        rows.append(_row("router:taiyar", len(ready) >= 1, ", ".join(ready) or "koi nahi"))
+    except Exception as exc:
+        rows.append(_row("router:taiyar", False, f"{type(exc).__name__}"))
     return rows
 
 

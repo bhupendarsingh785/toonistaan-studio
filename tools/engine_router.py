@@ -172,6 +172,8 @@ def _call_provider(engine: str, text: str, character: str, out: Path, bhaav: str
             vp.eleven_tts(text, character, str(out), bhaav=bhaav or None)
         except TypeError:
             vp.eleven_tts(text, character, str(out))
+    elif engine == "espeak":
+        vp.espeak_tts(text, character, str(out), bhaav=bhaav or None)
     elif engine == "edge":
         bin_ = shutil.which("edge-tts")
         if not bin_:
