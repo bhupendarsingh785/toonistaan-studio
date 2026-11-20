@@ -97,9 +97,14 @@ def search_github(query: str, limit: int = 5) -> list[dict]:
 
 def search_arxiv(query: str, limit: int = 4) -> list[dict]:
     """arXiv — research papers (TTS/voice ke liye)."""
+    phrase = urllib.parse.quote_plus('"' + " ".join(query.split()[:4]) + '"')
     url = ("http://export.arxiv.org/api/query?max_results="
-           f"{limit}&search_query=all:{urllib.parse.quote_plus(query)}")
+           f"{limit * 3}&search_query=all:{phrase}")
     body = _get(url)
+    if not body or "<entry>" not in body:
+        url = ("http://export.arxiv.org/api/query?max_results="
+               f"{limit * 3}&search_query=all:{urllib.parse.quote_plus(query)}")
+        body = _get(url)
     if not body:
         return []
     out = []
@@ -212,6 +217,29 @@ def fetch(url: str, max_chars: int = 20000) -> dict:
             "sha256": hashlib.sha256(text.encode()).hexdigest()}
 
 
+STOP = {"the", "and", "for", "with", "quality", "using", "from", "that", "this",
+        "control", "natural", "better", "best"}
+# project ke asli shabd — title me inme se koi na ho to result bekaar hai
+CORE_WORDS = {"tts", "speech", "voice", "voices", "prosody", "audio", "hindi", "piper",
+              "espeak", "edge", "synthesis", "synthesizer", "clone", "cloning", "emotion",
+              "emotional", "pitch", "mel", "vocoder", "speaker", "phoneme", "prosodic"}
+
+
+def _relevant(hit: dict, query: str) -> bool:
+    """Sirf kaam ka result — query ke shabd title/text me hone chahiye (2+)."""
+    words = {w for w in re.split(r"[^a-z0-9]+", query.lower()) if len(w) > 3 and w not in STOP}
+    if not words:
+        return True
+    blob = (str(hit.get("title", "")) + " " + str(hit.get("text", ""))).lower()
+    in_title = sum(1 for w in words if w in str(hit.get("title", "")).lower())
+    total = sum(1 for w in words if w in blob)
+    title_l = str(hit.get("title", "")).lower()
+    has_core = any(w in title_l for w in CORE_WORDS)
+    if not has_core and total < 3:
+        return False
+    return total >= 2 or in_title >= 1 or (total >= 1 and len(words) <= 3)
+
+
 def research(query: str, max_sources: int = 5, max_chars: int = 20000) -> dict:
     """Ek query par asli sources — schema wahi jo engine agents use karte hain."""
     found = search(query, limit=max_sources * 2)
@@ -219,6 +247,8 @@ def research(query: str, max_sources: int = 5, max_chars: int = 20000) -> dict:
     for hit in found["results"]:
         if used >= max_sources:
             break
+        if not _relevant(hit, query):
+            continue
         if hit.get("text"):
             got = {"status": "collected", "text": hit["text"][:max_chars],
                    "sha256": hashlib.sha256(hit["text"][:max_chars].encode()).hexdigest()}
