@@ -102,3 +102,19 @@ def test_problems_lists_only_not_ready(monkeypatch):
 def test_problems_empty_when_all_ready(monkeypatch):
     monkeypatch.setattr(r, "engine_status", lambda: [r.EngineState("piper", True, "tayyar")])
     assert r.problems() == []
+
+
+def test_parallel_render_keeps_order(monkeypatch, tmp_path):
+    monkeypatch.setattr(r, "ready_engines", lambda: ["piper"])
+    monkeypatch.setattr(r, "_guarded", lambda eng, text, ch, out: (True, {"cached": False, "engine": eng}))
+    rep = r.render_story_parallel("दादी: एक।\nमाँ: दो।\nलड़का: तीन।", tmp_path, workers=3)
+    assert rep["ok"] == 3 and [x["n"] for x in rep["results"]] == [1, 2, 3]
+    assert [x["character"] for x in rep["results"]] == ["दादी", "माँ", "लड़का"]
+
+
+def test_bench_reports_timings(monkeypatch, tmp_path):
+    import tools.engine_bench as eb
+    import tools.engine_router as _er
+    monkeypatch.setattr(_er, "render_line", lambda *a, **k: (True, [{"engine": "piper", "ok": True, "note": "banaya"}]))
+    rows = eb.bench("नमस्ते दादी", ["piper"])
+    assert rows[0]["ok"] is True and rows[0]["first_sec"] >= 0

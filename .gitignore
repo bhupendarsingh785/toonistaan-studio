@@ -13,3 +13,9 @@ studio/audio/library/
 *.pyc
 _check_*.jpg
 _check_report.json
+models/
+storage/
+cache/
+*.onnx
+*.onnx.json
+__pycache__/

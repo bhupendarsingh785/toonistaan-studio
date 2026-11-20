@@ -184,7 +184,7 @@ def age_filters(kirdaar):
     return out
 
 
-def fit_to_target(path, kirdaar, verbose=True, rounds=3):
+def fit_to_target(path, kirdaar, verbose=True, rounds=1):
     """Awaaz ko us kirdaar ke target Hz par le jao — 2-3 chhote kadam me.
 
     Pehle sabko ek hi Hz par kheencha gaya tha (wo galat tha).
@@ -207,13 +207,16 @@ def fit_to_target(path, kirdaar, verbose=True, rounds=3):
                 break
             factor = max(0.55, min(1.60, float(target) / float(cur)))
             tmp = tempfile.mktemp(suffix=".mp3")
-            af = (f"aresample=44100,asetrate=44100*{factor:.4f},aresample=44100,"
-                  f"atempo={1/factor:.4f}")
+            af = f"aresample=44100,rubberband=pitch={factor:.4f}:formant=preserved"
             r = subprocess.run([ff, "-loglevel", "error", "-y", "-i", path, "-filter:a", af,
                                 "-ac", "1", "-ar", "44100", "-b:a", "128k", tmp], capture_output=True)
             if r.returncode != 0 or not os.path.exists(tmp) or os.path.getsize(tmp) < 2000:
                 break
-            os.replace(tmp, path)
+            try:
+                os.replace(tmp, path)
+            except OSError:
+                import shutil as _sh
+                _sh.move(tmp, path)          # alag device par os.replace fail hota hai
             nxt = _measure_pitch(path)
             if not nxt or abs(nxt - cur) < 2:
                 break
@@ -336,6 +339,39 @@ def _piper_gender(kirdaar):
     return "female" if str(kirdaar).lower() in female else "male"
 
 
+
+_PIPER_SESSIONS = {}
+
+def _piper_session(model_path):
+    """Piper model ek hi baar load ho (har line par 2-3 second bachta hai)."""
+    if model_path in _PIPER_SESSIONS:
+        return _PIPER_SESSIONS[model_path]
+    try:
+        from piper import PiperVoice
+        voice = PiperVoice.load(model_path)
+        _PIPER_SESSIONS[model_path] = voice
+        return voice
+    except Exception:
+        _PIPER_SESSIONS[model_path] = None
+        return None
+
+
+def _piper_inprocess(text, model, out_path, length_scale=1.0):
+    """Bina subprocess — seedha python se (tez)."""
+    voice = _piper_session(model)
+    if voice is None:
+        return False
+    try:
+        import wave
+        from piper import SynthesisConfig
+        cfg = SynthesisConfig(length_scale=float(length_scale))
+        with wave.open(out_path, "wb") as wf:
+            voice.synthesize_wav(text, wf, syn_config=cfg)
+        return os.path.exists(out_path) and os.path.getsize(out_path) > 3000
+    except Exception:
+        return False
+
+
 def piper_tts(text, kirdaar="madhur", out="out.wav"):
     """PIPER = poora OFFLINE (internet band ho to bhi chalta hai). 0 kharch."""
     if not have_piper():
@@ -344,20 +380,20 @@ def piper_tts(text, kirdaar="madhur", out="out.wav"):
     if not model:
         return False
     tmp = out + ".piper.wav"
-    cmd = [sys.executable, "-m", "piper", "--model", model, "--output_file", tmp]
-    # lambai = bolne ki raftaar (length_scale: chhota = tez)
     pace = SARVAM_PACE.get(kirdaar, 1.0)
-    try:
-        cmd += ["--length_scale", f"{1.0 / max(0.7, min(1.3, pace)):.3f}"]
-    except Exception:
-        pass
-    try:
-        r = subprocess.run(cmd, input=str(text).encode("utf-8"), capture_output=True, timeout=180)
-    except Exception:
-        return False
-    if r.returncode != 0 or not os.path.exists(tmp) or os.path.getsize(tmp) < 3000:
-        print("PIPER_FAIL", (r.stderr or b"")[-120:].decode("utf-8", "ignore"), flush=True)
-        return False
+    ls = 1.0 / max(0.7, min(1.3, pace))
+    # tez raasta: model ek baar load, phir seedha python se
+    fast_ok = _piper_inprocess(str(text), model, tmp, length_scale=ls)
+    if not fast_ok:                                  # in-process fail to CLI (backup)
+        cmd = [sys.executable, "-m", "piper", "--model", model, "--output_file", tmp,
+               "--length_scale", f"{ls:.3f}"]
+        try:
+            r = subprocess.run(cmd, input=str(text).encode("utf-8"), capture_output=True, timeout=180)
+        except Exception:
+            return False
+        if r.returncode != 0 or not os.path.exists(tmp) or os.path.getsize(tmp) < 3000:
+            print("PIPER_FAIL", (r.stderr or b"")[-120:].decode("utf-8", "ignore"), flush=True)
+            return False
 
     # kirdaar ka pitch (baaki engines jaisa hi)
     pitch = SARVAM_PITCH.get(kirdaar, 1.0)
@@ -370,24 +406,31 @@ def piper_tts(text, kirdaar="madhur", out="out.wav"):
             ff = imageio_ffmpeg.get_ffmpeg_exe()
     except Exception:
         return False
+    # ---- ek hi ffmpeg pass: sur + target Hz + umar + highpass + loudnorm ----
+    target = SARVAM_TARGET_HZ.get(kirdaar)
+    total_pitch = float(pitch)
+    if target:
+        try:
+            cur = _measure_pitch(tmp)
+            if cur and cur > 0:
+                # target tak le jao, par ek hi baar (dobara naapo mat — waqt bachta hai)
+                total_pitch *= max(0.6, min(1.6, float(target) / float(cur)))
+        except Exception:
+            pass
     af = []
-    if abs(pitch - 1.0) > 0.02:
-        af.append(f"asetrate=22050*{pitch:.4f},aresample=44100,atempo={1 / pitch:.4f}")
+    if abs(total_pitch - 1.0) > 0.02:
+        af.append(f"rubberband=pitch={total_pitch:.4f}:formant=preserved")
     af.append("highpass=f=60")
     af += age_filters(kirdaar)
-    r2 = subprocess.run([ff, "-loglevel", "error", "-y", "-i", tmp, "-filter:a", ",".join(af),
-                         "-ac", "1", "-ar", "44100", "-b:a", "128k", out], capture_output=True)
+    af.append("volume=1.1")          # loudnorm se sasta, kaam kaafi hai
+    r2 = subprocess.run([ff, "-loglevel", "error", "-y", "-i", tmp,
+                         "-filter:a", ",".join(af), "-ac", "1", "-ar", "24000",
+                         "-b:a", "128k", out], capture_output=True)
     try:
         os.remove(tmp)
     except Exception:
         pass
-    ok2 = r2.returncode == 0 and os.path.exists(out) and os.path.getsize(out) > 3000
-    if ok2:
-        try:
-            fit_to_target(out, kirdaar)
-        except Exception:
-            pass
-    return ok2
+    return r2.returncode == 0 and os.path.exists(out) and os.path.getsize(out) > 3000
 
 
 def have_sarvam():

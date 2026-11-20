@@ -22,6 +22,7 @@ import subprocess
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
 
 ROOT = Path(__file__).resolve().parent.parent
 ENGINES = ROOT / "engines"
@@ -193,6 +194,24 @@ def render_line(text: str, character: str, out: Path,
         except Exception as exc:
             log.append({"engine": eng, "ok": False, "note": f"{type(exc).__name__}: {str(exc)[:160]}"})
     return False, log
+
+
+def render_story_parallel(text: str, out_dir: Path, workers: int = 4) -> dict:
+    """Kai line ek saath (parallel) — waqt bachta hai, order wahi rehta hai."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    plans = build_plan(text)
+    def job(item):
+        i, p = item
+        out = out_dir / f"{i:03d}_{p.character}.wav"
+        ok, log = render_line(p.line, p.character, out, p.engine, p.fallbacks)
+        return {"n": i, "character": p.character, "line": p.line, "ok": ok,
+                "file": str(out) if ok else None, "tries": log}
+    with ThreadPoolExecutor(max_workers=max(1, int(workers))) as ex:
+        results = list(ex.map(job, list(enumerate(plans, 1))))
+    results.sort(key=lambda r: r["n"])
+    done = [r["file"] for r in results if r["ok"]]
+    return {"lines": len(results), "ok": len(done), "joined": None, "results": results,
+            "workers": workers}
 
 
 def render_story(text: str, out_dir: Path) -> dict:
