@@ -1,9 +1,9 @@
 {
-"count": 1847,
+"count": 1856,
 "files": {
 "library/.cleaned.json": {
-"size": 57753,
-"md5": "1502825a945cc3cc2839da76b5d39756"
+"size": 58224,
+"md5": "f7d428b9a31815418fcd8b5f57609ad6"
 },
 "library/README.md": {
 "size": 1760,
@@ -3897,6 +3897,10 @@
 "size": 720604,
 "md5": "f43b09c9c843721eeec6d901329a865c"
 },
+"library/transitions/laser_thunder.mp3": {
+"size": 39212,
+"md5": "f003f2380b3d5d18c947e1c743eed486"
+},
 "library/transitions/tonal_riser_3.mp3": {
 "size": 64826,
 "md5": "716e85173df9916aa1d8280ada7a5300"
@@ -4809,6 +4813,10 @@
 "size": 122087,
 "md5": "da215f518130e29c809fb54555cf8923"
 },
+"library/footsteps/stone_steps_3.mp3": {
+"size": 16748,
+"md5": "26a070d28c58a96f3e6d1c65b1835cd1"
+},
 "library/footsteps/steps_b.mp3": {
 "size": 33061,
 "md5": "059d7dfad888229187b24845a77ef00c"
@@ -4913,6 +4921,10 @@
 "size": 285509,
 "md5": "d45259a86c33461e4a7316a8a45d1a37"
 },
+"library/footsteps/stone_pebbles_walk.mp3": {
+"size": 255020,
+"md5": "f946a48db035717152902e77d676a772"
+},
 "library/footsteps/leaves_dry.mp3": {
 "size": 16552,
 "md5": "68f4222d8796cbb166cb2dd2ca214058"
@@ -5002,12 +5014,12 @@
 "md5": "8c2addc0c01e712f97cf5c62d3711e95"
 },
 "library/ambience/weather_big_thunder_stereo_rain.mp3": {
-"size": 146732,
-"md5": "5fb85b628d68e687b1fd7b3df79c08f5"
+"size": 146746,
+"md5": "cf6ffa4d1ea9adc181d0eb1d727b8f1d"
 },
 "library/ambience/weather_scary_thunder_lightning.mp3": {
-"size": 110636,
-"md5": "0b6d2524e7fab6a8a9aadb31fb631f0b"
+"size": 110593,
+"md5": "bd26a4ad72d4522e782f9bcf1701ace8"
 },
 "library/ambience/desert_wind.mp3": {
 "size": 230965,
@@ -5114,8 +5126,8 @@
 "md5": "3e694aaa4fc927a6ffe78ef2ccf00d26"
 },
 "library/ambience/weather_thunder_strike.mp3": {
-"size": 89324,
-"md5": "f048ade3c3383d80a9ded2bfff72fdd2"
+"size": 89068,
+"md5": "114efc9ec1c3e8738103cbc1051d7cf7"
 },
 "library/ambience/forest_morning_birds.mp3": {
 "size": 240787,
@@ -5142,8 +5154,8 @@
 "md5": "e429b6d4dbf60a3a0d373844fe88c7ea"
 },
 "library/ambience/weather_rain_and_thunder_crack.mp3": {
-"size": 480620,
-"md5": "8c27f9a7e653282847d03b013f12f168"
+"size": 480487,
+"md5": "e04020b75cac20c758b35d64fd4b42bc"
 },
 "library/ambience/sandbar_sunset.mp3": {
 "size": 240578,
@@ -5206,8 +5218,8 @@
 "md5": "bc1d27456370fc16f3d9d32f43595d50"
 },
 "library/ambience/weather_thunder_sound_long.mp3": {
-"size": 480620,
-"md5": "68527fb7ddceab0097543e06e9e91c3f"
+"size": 480487,
+"md5": "7fb571fc9f1ad650d2c5efd0e663032e"
 },
 "library/ambience/rain_window.mp3": {
 "size": 162420,
@@ -5234,8 +5246,8 @@
 "md5": "ca355343cb7bbc10e39e6071594c1b66"
 },
 "library/ambience/weather_rain_lightning_thunder.mp3": {
-"size": 480620,
-"md5": "16f518da4ef9a054b519041ee89b9ed2"
+"size": 480487,
+"md5": "4abf4ce8de44cf1f53151af46a326eed"
 },
 "library/ambience/holy_magic_short.mp3": {
 "size": 24702,
@@ -5278,8 +5290,8 @@
 "md5": "cb863863c6863c1ab64dd876d74dbd08"
 },
 "library/ambience/weather_lightning_strike_short.mp3": {
-"size": 9452,
-"md5": "c47fd4c03f5aeaa02dd21e991f91fa75"
+"size": 9447,
+"md5": "ea82dc05bad689ae7a1474b7c5914619"
 },
 "library/ambience/sacral_chant.mp3": {
 "size": 192722,
@@ -5318,12 +5330,12 @@
 "md5": "ca532c1e9eeb15093de432ec97344620"
 },
 "library/ambience/weather_lightning_crack.mp3": {
-"size": 140396,
-"md5": "e3c9862da90397e26ab44ff2926cd5ac"
+"size": 140268,
+"md5": "874808722a311dcb256bcb9a21218641"
 },
 "library/ambience/weather_calm_thunderstorm_jungle.mp3": {
-"size": 393013,
-"md5": "61166370f4818efd38b6b55511c795cd"
+"size": 392835,
+"md5": "0484d4097d8c69b5f27334402cae11b7"
 },
 "library/ambience/vinyl_crackle_bvk_2.mp3": {
 "size": 189378,
@@ -5340,6 +5352,10 @@
 "library/ambience/urban_ambience_5.mp3": {
 "size": 654776,
 "md5": "47df1afbcb88039feabf6b62093e7737"
+},
+"library/ambience/weather_rain_thunder_storm.mp3": {
+"size": 233077,
+"md5": "8b7cbb85c633c682e5afda79c2407d0a"
 },
 "library/door/door_close_c.mp3": {
 "size": 5058,
@@ -6241,6 +6257,10 @@
 "size": 6103,
 "md5": "2898315b6ade9d92d0fc17ad00b64c60"
 },
+"library/foley/stones_falling.mp3": {
+"size": 34796,
+"md5": "7392bd9da597073e163355631d1301e4"
+},
 "library/foley/random_18.mp3": {
 "size": 4431,
 "md5": "60971f554bb11d7fa4d61fe825ffcf64"
@@ -6400,6 +6420,10 @@
 "library/foley/rope_climb_demo.mp3": {
 "size": 72558,
 "md5": "ac85519b7ef45ddfb6d175ede7af19ad"
+},
+"library/foley/punch_rock.mp3": {
+"size": 47468,
+"md5": "468b04d2a3ee01dab9ef51e29607a517"
 },
 "library/foley/drawer_4.mp3": {
 "size": 18642,
@@ -7005,6 +7029,10 @@
 "size": 2341,
 "md5": "97699c23e5f4052a398f92e91ed24be6"
 },
+"library/foley/stone_block_drag_wood.mp3": {
+"size": 9836,
+"md5": "315fa1bb9425fab6fcb2c744966f860d"
+},
 "library/foley/glass_bvk_26.mp3": {
 "size": 2759,
 "md5": "e418cefc3e46c015435a04b5ed3705e1"
@@ -7256,6 +7284,14 @@
 "library/foley/pop_7.mp3": {
 "size": 1506,
 "md5": "cc3734ea02577eb57486503edc9d545e"
+},
+"library/foley/impact_hit.mp3": {
+"size": 28268,
+"md5": "1c6e341e4e1b3436389c667e6c7d0392"
+},
+"library/foley/wood_broken.mp3": {
+"size": 13100,
+"md5": "f763b19d3f03448a9aa6c2ccfcb09c2d"
 },
 "library/foley/random_30.mp3": {
 "size": 7984,
