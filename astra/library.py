@@ -19415,6 +19415,66 @@ DEFAULT_INDEX = {
   "tags": ["leaves", "rustle"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 1.72
+ },
+ "kollam_ambience": {
+  "file": "nature/kollam_ambience.mp3",
+  "tags": ["kollam", "kerala", "ambience"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 14.81
+ },
+ "cicada_insects": {
+  "file": "nature/cicada_insects.mp3",
+  "tags": ["cicada", "insects", "night"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 42.29
+ },
+ "crickets_night_stereo": {
+  "file": "nature/crickets_night_stereo.mp3",
+  "tags": ["crickets", "night", "stereo"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "crickets_395138": {
+  "file": "nature/crickets_395138.mp3",
+  "tags": ["crickets", "night"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 9.14
+ },
+ "jungle_maharashtra_night": {
+  "file": "nature/jungle_maharashtra_night.mp3",
+  "tags": ["jungle", "night", "india"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "crickets_bugs_night": {
+  "file": "nature/crickets_bugs_night.mp3",
+  "tags": ["crickets", "bugs", "night"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "night_forest_soundscape": {
+  "file": "nature/night_forest_soundscape.mp3",
+  "tags": ["night", "forest", "ambience"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "frogs_crickets_swamp": {
+  "file": "nature/frogs_crickets_swamp.mp3",
+  "tags": ["frogs", "crickets", "swamp", "night"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 46.06
+ },
+ "jungle_geko_monkey_call": {
+  "file": "nature/jungle_geko_monkey_call.mp3",
+  "tags": ["jungle", "geko", "monkey", "creepy"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 35.62
+ },
+ "city_night_crickets": {
+  "file": "nature/city_night_crickets.mp3",
+  "tags": ["city", "night", "crickets"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
  }
 }
 
