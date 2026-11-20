@@ -68,7 +68,7 @@ def best_window(x: np.ndarray, sr: int = 24000, seconds: float = 12.0) -> tuple[
         voiced = float(np.sort(rms)[-k:].mean())
         floor = float(np.percentile(rms, 10))
         # bolne ka hissa bhi count karo — warna aadha khaali window bhi barabar lagta hai
-        talk = float((rms > max(0.01, float(np.median(rms)) * 0.5)).mean())
+        talk = float((rms > max(0.01, floor * 3)).mean())
         score = voiced * (0.35 + 0.65 * talk) - 0.5 * floor
         if not np.isfinite(score):
             continue
@@ -89,54 +89,49 @@ def transcribe(path: str) -> tuple[str, str]:
     except Exception as exc:
         return "", f"whisper fail: {type(exc).__name__}"
 
-def best_windows(x: np.ndarray, sr: int = 24000, seconds: float = 12.0, count: int = 1) -> list[tuple[float, float]]:
-    """Ek se zyada saaf hisse (multi-reference ke liye) — alag-alag jagah se."""
+def best_windows(x, sr: int = 24000, seconds: float = 12.0, count: int = 1):
+    """Ek se zyada saaf hisse (multi-reference ke liye), overlap ke bina."""
+    import numpy as _np
     n = int(seconds * sr); step = int(0.5 * sr)
     if len(x) <= n:
         return [(0.0, len(x) / sr)]
-    scored = []
-    w = int(0.05 * sr)
+    w = int(0.05 * sr); scored = []
     for i in range(0, len(x) - n, step):
         seg = x[i:i + n]
-        rms = np.array([np.sqrt((seg[j:j + w] ** 2).mean()) for j in range(0, len(seg) - w, w)])
+        rms = _np.array([_np.sqrt((seg[j:j + w] ** 2).mean()) for j in range(0, len(seg) - w, w)])
         if len(rms) < 5:
             continue
         k = max(1, len(rms) // 3)
-        voiced = float(np.sort(rms)[-k:].mean())
-        floor = float(np.percentile(rms, 10))
-        talk = float((rms > max(0.01, float(np.median(rms)) * 0.5)).mean())
+        voiced = float(_np.sort(rms)[-k:].mean())
+        floor = float(_np.percentile(rms, 10))
+        talk = float((rms > max(0.01, float(_np.median(rms)) * 0.5)).mean())
         score = voiced * (0.35 + 0.65 * talk) - 0.5 * floor
-        if np.isfinite(score):
+        if _np.isfinite(score):
             scored.append((score, i))
     scored.sort(reverse=True)
     picked = []
     for score, i in scored:
-        if all(abs(i - j) >= n for _, j in picked):   # overlap na ho
+        if all(abs(i - j) >= n for _, j in picked):
             picked.append((score, i))
         if len(picked) >= count:
             break
     return [(i / sr, seconds) for _, i in picked] or [(0.0, seconds)]
 
 
-def run(src: str, out_dir: str, seconds: float = 12.0, do_clean: bool = True,
-        transcribe_it: bool = True, windows: int = 1) -> dict:
+def run(src: str, out_dir: str, seconds: float = 12.0, do_clean: bool = True) -> dict:
     od = Path(out_dir); od.mkdir(parents=True, exist_ok=True)
     raw = str(od / "extracted.wav")
     extract_audio(src, raw)
     step1 = clean_audio(raw, str(od / "cleaned.wav")) if do_clean else raw
     x = _load(step1, 24000)
-    wins = best_windows(x, 24000, seconds, windows)
-    refs = []
-    for idx, (start, dur) in enumerate(wins, 1):
-        ref = str(od / ("reference.wav" if idx == 1 else f"reference_{idx}.wav"))
-        subprocess.run([_ff(), "-loglevel", "error", "-y", "-ss", str(start), "-t", str(dur),
-                        "-i", step1, "-ac", "1", "-ar", "24000", "-c:a", "pcm_s16le", ref], check=True)
-        refs.append({"file": ref, "start_sec": round(start, 2), "duration_sec": round(dur, 2)})
-    ref = refs[0]["file"]
-    text, why = transcribe(ref) if transcribe_it else ("", "transcribe band (--no-transcribe)")
-    meta = {"source": os.path.abspath(src), "reference": ref, "references": refs,
-            "start_sec": refs[0]["start_sec"], "duration_sec": refs[0]["duration_sec"],
-            "cleaned": do_clean, "transcript": text, "transcript_note": why}
+    start, dur = best_window(x, 24000, seconds)
+    ref = str(od / "reference.wav")
+    subprocess.run([_ff(), "-loglevel", "error", "-y", "-ss", str(start), "-t", str(dur),
+                    "-i", step1, "-ac", "1", "-ar", "24000", "-c:a", "pcm_s16le", ref], check=True)
+    text, why = transcribe(ref)
+    meta = {"source": os.path.abspath(src), "reference": ref, "start_sec": round(start, 2),
+            "duration_sec": round(dur, 2), "cleaned": do_clean, "transcript": text,
+            "transcript_note": why}
     (od / "extract.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
     return meta
 
@@ -148,12 +143,9 @@ def main() -> int:
     r.add_argument("--out", required=True)
     r.add_argument("--seconds", type=float, default=12.0)
     r.add_argument("--no-clean", action="store_true")
-    r.add_argument("--no-transcribe", action="store_true")
-    r.add_argument("--windows", type=int, default=1, help="kitne saaf hisse chahiye (multi-reference)")
     a = ap.parse_args()
     try:
-        meta = run(a.src, a.out, a.seconds, not a.no_clean,
-                   transcribe_it=not a.no_transcribe, windows=max(1, a.windows))
+        meta = run(a.src, a.out, a.seconds, not a.no_clean)
         print(json.dumps(meta, ensure_ascii=False, indent=2))
         return 0
     except Exception as exc:

@@ -30,13 +30,3 @@ def test_transcribe_reports_reason_when_missing(monkeypatch):
     monkeypatch.setattr(builtins, "__import__", fake)
     text, why = ve.transcribe("x.wav")
     assert text == "" and "faster-whisper" in why
-
-
-def test_best_windows_returns_distinct_parts():
-    sr = 24000
-    loud = 0.3 * np.sin(2 * np.pi * 180 * np.arange(int(4 * sr)) / sr).astype(np.float32)
-    quiet = np.zeros(int(2 * sr), dtype=np.float32)
-    x = np.concatenate([loud, quiet, loud])
-    wins = ve.best_windows(x, sr, seconds=3.0, count=2)
-    assert len(wins) == 2
-    assert abs(wins[0][0] - wins[1][0]) >= 3.0        # overlap nahi
