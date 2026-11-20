@@ -54,6 +54,10 @@ def test_render_line_falls_back_on_failure(monkeypatch, tmp_path):
         return True
 
     monkeypatch.setattr(r, "_call_provider", fake)
+    def fake_guarded(eng, text, ch, out):
+        calls.append(eng)
+        return (eng != "sarvam"), {"cached": False, "engine": eng}
+    monkeypatch.setattr(r, "_guarded", fake_guarded)
     ok, log = r.render_line("बेटा आ जा।", "दादी", tmp_path / "a.wav",
                             "sarvam", ["piper", "espeak"])
     assert ok is True
@@ -66,6 +70,7 @@ def test_render_line_reports_all_failures(monkeypatch, tmp_path):
         raise RuntimeError("band")
 
     monkeypatch.setattr(r, "_call_provider", fake)
+    monkeypatch.setattr(r, "_guarded", lambda eng, text, ch, out: (False, {"cached": False, "engine": eng}))
     ok, log = r.render_line("x", "दादी", tmp_path / "a.wav", "piper", ["espeak"])
     assert ok is False
     assert len(log) == 2 and not any(x["ok"] for x in log)
@@ -77,6 +82,7 @@ def test_render_story_counts_and_reports(monkeypatch, tmp_path):
         return True
 
     monkeypatch.setattr(r, "_call_provider", fake)
+    monkeypatch.setattr(r, "_guarded", lambda eng, text, ch, out: (True, {"cached": False, "engine": eng}))
     monkeypatch.setattr(r, "ready_engines", lambda: ["piper"])
     rep = r.render_story("दादी: बेटा आ जा।\nमाँ: खाना खा ले।", tmp_path)
     assert rep["lines"] == 2 and rep["ok"] == 2

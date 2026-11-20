@@ -167,6 +167,15 @@ def _call_provider(engine: str, text: str, character: str, out: Path) -> bool:
     return out.exists() and out.stat().st_size > 1000
 
 
+def _guarded(engine: str, text: str, character: str, out: Path):
+    """Cache + retry + quality check ke saath ek engine call."""
+    from tools import tts_guard as tg
+    def fn(dst):
+        _call_provider(engine, text, character, Path(dst))
+    path, meta = tg.render(engine, character, text, {"out": str(out)}, fn)
+    return path.exists() and path.stat().st_size > 1000, meta
+
+
 def render_line(text: str, character: str, out: Path,
                 engine: str | None = None, fallbacks: list[str] | None = None) -> tuple[bool, list[dict]]:
     """Ek line, chain ke saath. Har koshish ka hisaab wapas milta hai."""
@@ -176,8 +185,9 @@ def render_line(text: str, character: str, out: Path,
     log = []
     for eng in chain:
         try:
-            ok = _call_provider(eng, text, character, out)
-            log.append({"engine": eng, "ok": ok, "note": "banaya" if ok else "khaali file"})
+            ok, meta = _guarded(eng, text, character, out)
+            note = ("cache se" if meta.get("cached") else "banaya")
+            log.append({"engine": eng, "ok": ok, "note": note})
             if ok:
                 return True, log
         except Exception as exc:
