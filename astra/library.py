@@ -18785,6 +18785,60 @@ DEFAULT_INDEX = {
   "tags": ["thunder"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 11.08
+ },
+ "stone_pebbles_walk": {
+  "file": "footsteps/stone_pebbles_walk.mp3",
+  "tags": ["stone", "pebbles", "footsteps"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 31.8
+ },
+ "stone_steps_3": {
+  "file": "footsteps/stone_steps_3.mp3",
+  "tags": ["stone", "footsteps"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 2.01
+ },
+ "stones_falling": {
+  "file": "foley/stones_falling.mp3",
+  "tags": ["stone", "falling", "debris"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 4.27
+ },
+ "punch_rock": {
+  "file": "foley/punch_rock.mp3",
+  "tags": ["punch", "rock", "impact"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 5.85
+ },
+ "stone_block_drag_wood": {
+  "file": "foley/stone_block_drag_wood.mp3",
+  "tags": ["stone", "drag", "wood", "grind"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 1.15
+ },
+ "impact_hit": {
+  "file": "foley/impact_hit.mp3",
+  "tags": ["impact", "hit"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 3.45
+ },
+ "wood_broken": {
+  "file": "foley/wood_broken.mp3",
+  "tags": ["wood", "broken", "crack"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 1.54
+ },
+ "weather_rain_thunder_storm": {
+  "file": "ambience/weather_rain_thunder_storm.mp3",
+  "tags": ["thunder", "rain", "storm"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 29.0
+ },
+ "laser_thunder": {
+  "file": "transitions/laser_thunder.mp3",
+  "tags": ["laser", "thunder", "transition"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 4.81
  }
 }
 

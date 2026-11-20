@@ -64,11 +64,11 @@ ASSETS = {
     "nadi":   "ambience/forest_river_bed.mp3",
     "barish": "ambience/rain_gentle_1.mp3",
     "toofan": "ambience/desert_wind.mp3",
-    "bijli":  "ambience/thunderstorm.mp3",
+    "bijli":  "ambience/weather_rain_thunder_storm.mp3",
     "ground": {
         "ghaas":   "footsteps/steps_frozen_grass.mp3",
         "keechad": "footsteps/steps_muddy_road.mp3",
-        "patthar": "footsteps/steps_gravel.mp3",
+        "patthar": "footsteps/stone_pebbles_walk.mp3",
         "patte":   "footsteps/feet_leaves.mp3",
         "lakdi":   "footsteps/footsteps_parquet.mp3",
         "sadak":   "footsteps/footsteps_walk.mp3",
