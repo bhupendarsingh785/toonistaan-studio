@@ -1,9 +1,9 @@
 {
-"count": 1923,
+"count": 1930,
 "files": {
 "library/.cleaned.json": {
-"size": 60782,
-"md5": "55bebe9233e29f8e12fb7130fffcf9f2"
+"size": 61037,
+"md5": "5a36640018da9ddca55fb9bf500adf2c"
 },
 "library/README.md": {
 "size": 1760,
@@ -6298,44 +6298,72 @@
 "md5": "00b475f2b6d6d75d9b65b681f6c52e74"
 },
 "library/crowd/crowd_noise_big.mp3": {
-"size": 480620,
-"md5": "df3a2ae2b7f6f3b3e7341c1178e79eb6"
+"size": 480487,
+"md5": "be1531eb3a2a2e103fd61fd9cc6d9395"
 },
 "library/crowd/crowd_clap_cheer.mp3": {
-"size": 58412,
-"md5": "04573cc042ab14ad63d7235b38ff061c"
+"size": 58139,
+"md5": "fe6c4a51a11deda4ff950bb34e327a95"
 },
 "library/crowd/crowd_epic_pack.mp3": {
-"size": 480620,
-"md5": "9ecbe8714205c1c053e7223966db10b8"
+"size": 480487,
+"md5": "8ff81044ca43f63bd2052e80d5314d94"
 },
 "library/crowd/kolkata_fish_market_1.mp3": {
 "size": 520611,
 "md5": "25f5c0513d438f713e1ef5a1fb1d68cf"
 },
 "library/crowd/crowd_laughing_2.mp3": {
-"size": 46892,
-"md5": "8b17e5fc91e5db8ed5b9a24c76a206d8"
+"size": 46854,
+"md5": "c4de23ed6b3a7480aaff336ddbaaab1a"
+},
+"library/crowd/crowd_cheering_310544.mp3": {
+"size": 177260,
+"md5": "caaf1bd7c7bb08bbcae1b5870db42df2"
 },
 "library/crowd/crowd_panic.mp3": {
 "size": 177048,
 "md5": "f2b5809c375dd71855ddf1509d5b16fe"
 },
+"library/crowd/crowd_school_auditorium.mp3": {
+"size": 136940,
+"md5": "e025df7ec3bdfc41c52f9cf43df76c61"
+},
+"library/crowd/crowd_cheers_477401.mp3": {
+"size": 65132,
+"md5": "c6257df378f06e961fd11de1a8af3fda"
+},
 "library/crowd/jazz_cafe_crowd.mp3": {
-"size": 480620,
-"md5": "eef32ccd31d3a3b60d487c7018d7bb74"
+"size": 480487,
+"md5": "9972d80ae948a455148612abe97bf902"
+},
+"library/crowd/crowd_cheering_small.mp3": {
+"size": 41516,
+"md5": "7d9f415d718e6e4ecec2b91b9871b555"
+},
+"library/crowd/cheering_crowd_2.mp3": {
+"size": 65708,
+"md5": "2078ad791e37c6b5d9e3282518b59cbb"
+},
+"library/crowd/angry_crowd.mp3": {
+"size": 323948,
+"md5": "6e5dad5e946697c6726b0943bede00e5"
+},
+"library/crowd/crowd_noise_390947.mp3": {
+"size": 107180,
+"md5": "db6a3a3864f3d5f97d681e3ffaf05795"
 },
 "library/crowd/crowd_laughing_07.mp3": {
-"size": 20588,
-"md5": "4e4ca416d1256d827d9d6ca619ebd053"
+"size": 20314,
+"md5": "7b85a14b148f22660988bb8c2b9355ea"
 },
 "library/crowd/crowd_applause.mp3": {
 "size": 84261,
 "md5": "4ab9b83b3164f0064ee405114976cebc"
 },
 "library/crowd/crowd_cheering.mp3": {
-"size": 130988,
-"md5": "9f291ec40e224b8cb96e8d973af5fa8a"
+"size": 130864,
+"md5": "da8f92814402c6ad0884ab3270357a54"
 },
 "library/dragon/dragon_breath.mp3": {
 "size": 88774,
