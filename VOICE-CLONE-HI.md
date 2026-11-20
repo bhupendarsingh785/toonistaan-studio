@@ -1,60 +1,64 @@
-# Voice Clone — kisi ki awaaz copy karke poori script usi awaaz me
+# Voice Clone — video/audio se awaaz nikaalo, phir usi awaaz me poori kahani
 
-Yeh module **`tools/voice_clone.py`** hai. Isse koi bhi awaaz (mahila, ladki, ladka, budhi, bachcha) enroll hoti hai aur phir poori script usi awaaz me bolti hai.
+Teen module milkar kaam karte hain:
 
-## 1. Kaam kaise hota hai
+| File | Kaam |
+|---|---|
+| `tools/voice_extract.py` | video/audio se awaaz nikaalta hai, shor kam karta hai, sabse saaf 5-15 s chunta hai |
+| `tools/voice_clone.py` | us awaaz ko enroll karta hai aur script ki har line usi awaaz me bolta hai (bhaav ke saath) |
+| `tools/voice_match.py` | "kitna match hua" ka imandar naap (F0 + timbre) |
 
-```
-enroll  →  5-15 second recording + exact transcript + ijazat (--consent)
-speak   →  script ki har line us awaaz me banti hai (001.wav, 002.wav, ...)
-mix     →  (baad me) background ke saath jodna
-```
-
-## 2. Backend — cloning kaun karega
-
-| Backend | Kaam | Chahiye |
-|---|---|---|
-| **indicf5** | reference audio + transcript se cloning | `torch` + 8 GB+ RAM/GPU + HF token |
-| **xtts** | Coqui XTTS-v2, 17 language | `pip install TTS` (GPU ho to tez) |
-| piper | **cloning nahi karta** — sirf fallback | piper binary |
-
-Jaanch: `python tools/voice_clone.py backends`
-
-## 3. Ijazat lazmi (guard)
-
-- Bina `--consent` enroll hi nahi hota.
-- Awaaz uski hi honi chahiye, ya likhit permission ho.
-- Kisi ki nakal karke thagi/धोखा karna — mana hai. Guard code me hai, isliye galti se bhi nahi hoga.
-
-## 4. Commands
+## 1. Video se awaaz nikaalo
 
 ```bash
-# 1) enroll (recording + transcript + consent)
-python tools/voice_clone.py enroll --name dadi \
-  --audio dadi.wav \
-  --transcript "नमस्ते, मैं दादी हूँ। तुम आ जाओ, खाना ठंडा हो रहा है।" \
-  --consent
+python tools/voice_extract.py run --in dadi.mp4 --out voices/dadi --seconds 12
+```
+- audio nikalta hai (ffmpeg)
+- shor kam: `highpass=90, afftdn, loudnorm`
+- sabse saaf window chunta hai (bolne ka hissa zyada, shor kam)
+- `reference.wav` + `extract.json` (transcript ke saath, agar faster-whisper mile)
 
-# 2) list
-python tools/voice_clone.py voices
+## 2. Enroll (ijazat ke saath)
 
-# 3) poori script usi awaaz me
-python tools/voice_clone.py speak --name dadi --script story.txt --out output/dadi/
+```bash
+# seedha video se
+python tools/voice_clone.py enroll --name dadi --from-media dadi.mp4 \
+  --transcript "नमस्ते, मैं दादी हूँ। तुम आ जाओ, खाना ठंडा हो रहा है।" --consent
+
+# ya pehle se bani reference se
+python tools/voice_clone.py enroll --name dadi --audio reference.wav --transcript "..." --consent
+```
+**Bina `--consent` enroll nahi hota** — awaaz uski hi ho ya likhit permission ho.
+
+## 3. Poori script usi awaaz me (bhaav ke saath)
+
+Script me bhaav square bracket me likho:
+
+```
+[neutral] शाम ढल रही थी।
+[dukh] बेटा, आ जा पास। दादी तेरे को ही ढूँढ रही थी।
+[gussa] चुप रहो! कुछ मत बोलो।
+[dar] कौन है वहाँ?
+[hasai] देखो ना, कितनी बड़ी तितली!
 ```
 
-## 5. Recording kaise honi chahiye
+```bash
+python tools/voice_clone.py speak --name dadi --script story.txt --out output/dadi/
+```
+Har line ka file banta hai: `001_neutral.wav`, `002_dukh.wav`, …
 
-- 5-15 second, ek hi aadmi, bina shor, bina music.
-- Saaf bolna, normal raftaar (na bahut dheema, na tez).
-- **Transcript bilkul wahi** jo bola gaya — ek shabd ka farq bhi quality gira deta hai.
-- Bhaav chahiye to har bhaav ka alag sample (neutral / dukh / khushi / gussa).
+## 4. Match check (imandar)
 
-## 6. Abhi kya rukā hua hai
+```bash
+python tools/voice_match.py check --ref reference.wav --new output/dadi/002_dukh.wav
+```
+Batata hai: sur ka farq (Hz aur %), timbre cosine, aur verdict — saath me saaf warning ki yeh pehchaan ka saboot nahi.
 
-Is machine par `torch` aur `TTS` nahi hain, isliye cloning backend "ready" nahi dikhata — code taiyar hai, engine nahi.
-Chalane ke liye: `pip install torch` (ya `pip install TTS`), phir `backends` command se check karo.
+## 5. Sach (jhooth nahi)
 
-## 7. Tests
+- **100% copy koi system nahi deta.** Achhe cloning models ~90-95% "suni jaane wali" similarity dete hain, aur woh reference ki quality par nirbhar hai.
+- Cloning backend chahiye: **IndicF5** (free, GPU) ya **XTTS-v2** (`pip install TTS`). Abhi is machine par dono nahi — code taiyar hai, engine nahi.
+- Background shor wali recording se copy kamzor aati hai — `voice_extract` usi ko sudharta hai.
 
-`python -m pytest tests/test_voice_clone.py -q` → 5/5 pass
-(consent guard, enroll, list, speak, aur "backend na ho to jhoothi safalta na dikhe" — sab test hua.)
+## 6. Tests
+`python -m pytest tests -q` → **68 pass** (clone, extract, match — sab ke apne test).

@@ -61,3 +61,38 @@ def test_no_backend_means_failure_not_fake_success(tmp_path, monkeypatch):
     monkeypatch.setattr(vc, "pick_backend", lambda: None)
     rep = vc.speak("dadi", str(script), str(tmp_path / "out"))
     assert rep["ok"] == 0 and rep["failed"] == 1
+
+
+def test_parse_line_emotion_tag_forms():
+    assert vc.parse_line("[dukh] बेटा, आ जा पास।") == ("dukh", "बेटा, आ जा पास।")
+    assert vc.parse_line("दादी [gussa]: चुप रहो!") == ("gussa", "चुप रहो!")
+    assert vc.parse_line("बिना भाव") == ("neutral", "बिना भाव")
+
+
+def test_enroll_from_media_uses_extract(tmp_path, monkeypatch):
+    monkeypatch.setattr(vc, "VOICES", tmp_path / "voices")
+    media = tmp_path / "clip.mp4"; media.write_bytes(b"x" * 100)
+    ref = tmp_path / "voices" / "dadi" / "reference.wav"
+
+    def fake_run(src, out_dir, seconds=12.0, do_clean=True):
+        Path(out_dir).mkdir(parents=True, exist_ok=True)
+        ref.write_bytes(b"r" * 5000)
+        return {"reference": str(ref), "duration_sec": 11.0, "transcript": "नमस्ते मैं दादी हूँ"}
+
+    monkeypatch.setattr("tools.voice_extract.run", fake_run)
+    v = vc.enroll_from_media("dadi", str(media), consent=True, backend="indicf5")
+    assert v.transcript == "नमस्ते मैं दादी हूँ"
+    assert "media se nikaala" in v.note
+    assert ref.exists()
+
+
+def test_enroll_from_media_needs_transcript(tmp_path, monkeypatch):
+    monkeypatch.setattr(vc, "VOICES", tmp_path / "voices")
+    media = tmp_path / "clip.mp4"; media.write_bytes(b"x")
+    monkeypatch.setattr("tools.voice_extract.run",
+                        lambda *a, **k: {"reference": str(tmp_path / "r.wav"), "duration_sec": 5, "transcript": ""})
+    try:
+        vc.enroll_from_media("x", str(media), consent=True)
+        assert False
+    except ValueError as exc:
+        assert "transcript" in str(exc)

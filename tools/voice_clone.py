@@ -87,6 +87,25 @@ def _voice_dir(name: str) -> Path:
     return VOICES / name
 
 
+def enroll_from_media(name: str, media: str, consent: bool, seconds: float = 12.0,
+                      transcript: str = "", backend: str = "") -> Voice:
+    """Video/audio se awaaz nikaal kar enroll — extract + clean + (transcript)."""
+    from tools import voice_extract as ve
+    if not consent:
+        raise ConsentMissing(
+            "Ijazat ke bina enroll nahi hoga. --consent do (awaaz uski hi ho ya likhit permission ho).")
+    d = _voice_dir(name); d.mkdir(parents=True, exist_ok=True)
+    meta = ve.run(media, str(d), seconds=seconds, do_clean=True)
+    text = (transcript or meta.get("transcript") or "").strip()
+    if not text:
+        raise ValueError("transcript nahi mila — recording me jo bola gaya wahi --transcript me do")
+    v = Voice(name=name, audio=meta["reference"], transcript=text, consent=True,
+              backend=backend or (pick_backend() or "piper"),
+              note=f"media se nikaala: {os.path.basename(media)} ({meta['duration_sec']}s)")
+    (d / "voice.json").write_text(json.dumps(v.__dict__, ensure_ascii=False, indent=2), encoding="utf-8")
+    return v
+
+
 def enroll(name: str, audio: str, transcript: str, consent: bool, backend: str = "") -> Voice:
     if not consent:
         raise ConsentMissing(
@@ -152,17 +171,36 @@ def _render_line(backend: str, voice: Voice, text: str, out: Path) -> bool:
     return False
 
 
+EMOTIONS = ("neutral", "dukh", "khushi", "gussa", "dar", "pyaar", "hasai", "rona")
+
+
+def parse_line(line: str) -> tuple[str, str]:
+    """Line se bhaav nikalo: '[dukh] बेटा...' ya 'दादी [gussa]: ...'"""
+    import re
+    m = re.search(r"\[(" + "|".join(EMOTIONS) + r")\]", line)
+    if not m:
+        return "neutral", line.strip()
+    emo = m.group(1)
+    text = (line[:m.start()] + line[m.end():]).strip()
+    text = re.sub(r"^[:\-\s]+", "", text)      # bacha hua colon hatao
+    # "दादी : बेटा..." jaisa speaker prefix hatao (chhota naam hi)
+    text = re.sub(r"^[^:\n]{1,20}:\s*", "", text)
+    return emo, text
+
+
 def speak(name: str, script_path: str, out_dir: str) -> dict:
     v = load_voice(name)
     backend = v.backend if v.backend in [b["name"] for b in backend_status() if b["ready"]] else pick_backend()
     lines = [l.strip() for l in Path(script_path).read_text(encoding="utf-8").splitlines() if l.strip()]
     od = Path(out_dir); od.mkdir(parents=True, exist_ok=True)
     done, failed = [], []
-    for i, line in enumerate(lines, 1):
-        f = od / f"{i:03d}.wav"
+    for i, raw_line in enumerate(lines, 1):
+        emo, line = parse_line(raw_line)
+        f = od / f"{i:03d}_{emo}.wav"
         ok = bool(backend) and _render_line(backend, v, line, f)
-        (done if ok else failed).append({"n": i, "line": line, "file": str(f) if ok else None})
-        print(("ok  " if ok else "FAIL"), i, line[:40])
+        row = {"n": i, "emotion": emo, "line": line, "file": str(f) if ok else None}
+        (done if ok else failed).append(row)
+        print(("ok  " if ok else "FAIL"), i, f"[{emo}]", line[:38])
     return {"voice": name, "backend": backend or "koi nahi", "ok": len(done),
             "failed": len(failed), "out": str(od), "lines": done + failed}
 
@@ -193,6 +231,8 @@ def main() -> int:
     e.add_argument("--name", required=True); e.add_argument("--audio", required=True)
     e.add_argument("--transcript", required=True); e.add_argument("--consent", action="store_true")
     e.add_argument("--backend", default="")
+    e.add_argument("--from-media", default="", help="video ya audio file (mp4/mp3/wav)")
+    e.add_argument("--seconds", type=float, default=12.0)
     s = sub.add_parser("speak")
     s.add_argument("--name", required=True); s.add_argument("--script", required=True)
     s.add_argument("--out", default=str(OUT / "clone"))
@@ -203,7 +243,11 @@ def main() -> int:
         return cmd_voices()
     if a.cmd == "enroll":
         try:
-            v = enroll(a.name, a.audio, a.transcript, a.consent, a.backend)
+            if a.from_media:
+                v = enroll_from_media(a.name, a.from_media, a.consent, a.seconds,
+                                      a.transcript or "", a.backend)
+            else:
+                v = enroll(a.name, a.audio, a.transcript, a.consent, a.backend)
             print(json.dumps(v.__dict__, ensure_ascii=False, indent=2))
             return 0
         except Exception as exc:
