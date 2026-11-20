@@ -1,0 +1,16 @@
+{
+  "name": "ASTRA Intelligence Evolution Engine Free-first v1",
+  "version": "1.0.0",
+  "type": "isolated additive staging package",
+  "files_before_manifest": 22,
+  "training_executed": false,
+  "gpu_tested": false,
+  "live_model_tested": false,
+  "production_integrated": false,
+  "paid_resources_enabled": false,
+  "unit_tests": 7,
+  "unit_tests_passed": 7,
+  "unit_tests_failed": 0,
+  "dataset_smoke_test": "passed: 30 synthetic examples; 24/3/3 group split",
+  "scope": "No existing ASTRA files modified; no production agents changed."
+}

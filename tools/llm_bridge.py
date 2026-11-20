@@ -1,15 +1,8 @@
 #!/usr/bin/env python3
-"""ASTRA LLM Bridge — kisi bhi model se judne ka ek hi darwaza.
+"""ASTRA LLM Bridge v2 — backward-compatible, resilient OpenAI-compatible gateway.
 
-Kaam: OpenAI-compatible API wale kisi bhi provider (GPT, Groq, OpenRouter,
-Together, local Ollama, ya apna server) se baat karna — bina SDK, sirf HTTP.
-Ek key na ho to agla provider apne aap. Sab kuch report me likha jata hai.
-
-Commands:
-  python tools/llm_bridge.py status
-  python tools/llm_bridge.py models
-  python tools/llm_bridge.py chat "Hindi me do line likho"
-  python tools/llm_bridge.py ask-file sawal.txt --out jawab.md
+Existing public functions remain: status(), ready_providers(), chat(), remember().
+No SDK dependency; HTTP uses Python's standard library.
 """
 from __future__ import annotations
 
@@ -18,22 +11,26 @@ import json
 import os
 import sys
 import time
-from dataclasses import dataclass, field
+import urllib.error
+import urllib.parse
+import urllib.request
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 KNOWLEDGE = ROOT / "knowledge"
 
-# provider -> (base_url, env var, default model)
-PROVIDERS: dict[str, dict] = {
-    "openai":     {"base": "https://api.openai.com/v1",        "env": "OPENAI_API_KEY",     "model": "gpt-4o-mini"},
-    "groq":       {"base": "https://api.groq.com/openai/v1",   "env": "GROQ_API_KEY",       "model": "llama-3.3-70b-versatile"},
-    "openrouter": {"base": "https://openrouter.ai/api/v1",     "env": "OPENROUTER_API_KEY", "model": "openai/gpt-4o-mini"},
-    "together":   {"base": "https://api.together.xyz/v1",      "env": "TOGETHER_API_KEY",   "model": "meta-llama/Llama-3.3-70B-Instruct-Turbo"},
-    "ollama":     {"base": "http://127.0.0.1:11434/v1",        "env": None,                 "model": "llama3.1"},
-    "custom":     {"base": os.environ.get("LLM_BASE_URL", ""), "env": "LLM_API_KEY",        "model": os.environ.get("LLM_MODEL", "")},
+PROVIDERS: dict[str, dict[str, Any]] = {
+    "openai": {"base": "https://api.openai.com/v1", "env": "OPENAI_API_KEY", "model": "gpt-4o-mini"},
+    "groq": {"base": "https://api.groq.com/openai/v1", "env": "GROQ_API_KEY", "model": "openai/gpt-oss-120b"},
+    "openrouter": {"base": "https://openrouter.ai/api/v1", "env": "OPENROUTER_API_KEY", "model": "openai/gpt-4o-mini"},
+    "together": {"base": "https://api.together.xyz/v1", "env": "TOGETHER_API_KEY", "model": "meta-llama/Llama-3.3-70B-Instruct-Turbo"},
+    "ollama": {"base": "http://127.0.0.1:11434/v1", "env": None, "model": "llama3.1"},
+    "custom": {"base": "", "env": "LLM_API_KEY", "model": ""},
 }
 ORDER = ["openai", "groq", "openrouter", "together", "ollama", "custom"]
+RETRYABLE_HTTP = {408, 409, 425, 429, 500, 502, 503, 504}
 
 
 @dataclass
@@ -44,137 +41,288 @@ class ProviderState:
     model: str = ""
 
 
-def _key(env: str | None) -> str | None:
-    if not env:
+def _spec(name: str) -> dict[str, Any] | None:
+    raw = PROVIDERS.get(name)
+    if raw is None:
         return None
-    v = os.environ.get(env, "").strip()
-    return v or None
+    prefix = f"ASTRA_{name.upper()}_"
+    base = os.environ.get(prefix + "BASE_URL", raw.get("base", "")).strip().rstrip("/")
+    model = os.environ.get(prefix + "MODEL", raw.get("model", "")).strip()
+    if name == "custom":
+        base = os.environ.get("LLM_BASE_URL", base).strip().rstrip("/")
+        model = os.environ.get("LLM_MODEL", model).strip()
+    return {"base": base, "env": raw.get("env"), "model": model}
 
 
-def status() -> list[ProviderState]:
-    out = []
+def _key(env: str | None) -> str | None:
+    value = os.environ.get(env, "").strip() if env else ""
+    return value or None
+
+
+def _valid_base(base: str) -> bool:
+    try:
+        parsed = urllib.parse.urlparse(base)
+        return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
+    except ValueError:
+        return False
+
+
+def _request(method: str, url: str, payload: dict | None = None,
+             key: str | None = None, timeout: float = 30.0) -> dict:
+    if timeout <= 0:
+        raise ValueError("timeout positive hona chahiye")
+    headers = {"Accept": "application/json", "User-Agent": "ASTRA-llm-bridge/2"}
+    data = None
+    if payload is not None:
+        headers["Content-Type"] = "application/json"
+        data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+    if key:
+        headers["Authorization"] = f"Bearer {key}"
+    req = urllib.request.Request(url, data=data, headers=headers, method=method)
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as response:
+            raw = response.read().decode("utf-8", errors="replace")
+            parsed = json.loads(raw) if raw else {}
+            if not isinstance(parsed, dict):
+                raise RuntimeError("provider ne JSON object nahi diya")
+            return parsed
+    except urllib.error.HTTPError as exc:
+        # Never print response body: it can contain private request details.
+        retry_after = exc.headers.get("Retry-After", "") if exc.headers else ""
+        suffix = f"; retry-after={retry_after}" if retry_after.isdigit() else ""
+        raise RuntimeError(f"HTTP {exc.code}{suffix}") from None
+    except urllib.error.URLError as exc:
+        reason = exc.reason
+        raise RuntimeError(f"network error: {type(reason).__name__}") from None
+    except TimeoutError:
+        raise RuntimeError("request timed out") from None
+    except json.JSONDecodeError:
+        raise RuntimeError("provider ka response valid JSON nahi tha") from None
+
+
+def _probe(base: str, key: str | None = None, timeout: float = 3.0) -> tuple[bool, str]:
+    if not _valid_base(base):
+        return False, "invalid/missing HTTP(S) base URL"
+    try:
+        _request("GET", base + "/models", key=key, timeout=timeout)
+        return True, "models endpoint reachable"
+    except Exception as exc:
+        return False, str(exc)[:120]
+
+
+def status(probe: bool = True, timeout: float = 3.0) -> list[ProviderState]:
+    """Live reachability by default; probe=False checks configuration only."""
+    states: list[ProviderState] = []
     for name in ORDER:
-        spec = PROVIDERS[name]
-        base = spec["base"]
-        if not base:
-            out.append(ProviderState(name, False, "base URL set nahi (LLM_BASE_URL)", spec["model"]))
+        spec = _spec(name)
+        if spec is None:
             continue
-        if spec["env"] and not _key(spec["env"]):
-            out.append(ProviderState(name, False, f"{spec['env']} nahi mila", spec["model"]))
-            continue
-        out.append(ProviderState(name, True, "tayyar", spec["model"]))
-    return out
+        base, env, model = spec["base"], spec["env"], spec["model"]
+        key = _key(env)
+        if not _valid_base(base):
+            states.append(ProviderState(name, False, "valid HTTP(S) base URL nahi", model))
+        elif env and not key:
+            states.append(ProviderState(name, False, f"{env} nahi mila", model))
+        elif not model:
+            states.append(ProviderState(name, False, "model set nahi", model))
+        elif not probe:
+            states.append(ProviderState(name, True, "configuration present; live check skipped", model))
+        else:
+            ok, reason = _probe(base, key, timeout)
+            states.append(ProviderState(name, ok, reason, model))
+    return states
 
 
 def ready_providers() -> list[str]:
-    return [s.name for s in status() if s.ready]
+    return [state.name for state in status() if state.ready]
 
 
 def _post(url: str, payload: dict, key: str | None, timeout: int = 90) -> dict:
-    import requests
-    headers = {"Content-Type": "application/json"}
-    if key:
-        headers["Authorization"] = f"Bearer {key}"
-    r = requests.post(url, json=payload, headers=headers, timeout=timeout)
-    if r.status_code != 200:
-        raise RuntimeError(f"HTTP {r.status_code}: {r.text[:180]}")
-    return r.json()
+    return _request("POST", url, payload=payload, key=key, timeout=timeout)
+
+
+def _content(data: dict) -> str:
+    choices = data.get("choices")
+    if not isinstance(choices, list) or not choices:
+        raise RuntimeError("provider response mein choices nahi hain")
+    message = choices[0].get("message") or {}
+    content = message.get("content", "")
+    if isinstance(content, str):
+        return content.strip()
+    if isinstance(content, list):
+        chunks = []
+        for part in content:
+            if isinstance(part, dict) and part.get("type") in {"text", "output_text"}:
+                value = part.get("text", "")
+                if isinstance(value, str):
+                    chunks.append(value)
+        return "".join(chunks).strip()
+    return ""
+
+
+def _retryable(exc: Exception) -> bool:
+    if isinstance(exc, urllib.error.HTTPError):
+        return exc.code in RETRYABLE_HTTP
+    message = str(exc).lower()
+    return any(word in message for word in ("network error", "timed out", "temporarily unavailable"))
+
+
+def _attempt_chat(base: str, key: str | None, payload: dict, timeout: int,
+                  retries: int) -> dict:
+    last: Exception | None = None
+    for attempt in range(retries + 1):
+        try:
+            return _post(base + "/chat/completions", payload, key, timeout)
+        except Exception as exc:
+            last = exc
+            if attempt >= retries or not _retryable(exc):
+                raise
+            # Short bounded backoff; never sleeps for a provider-supplied long delay.
+            time.sleep(min(0.5 * (2 ** attempt), 2.0))
+    assert last is not None
+    raise last
 
 
 def chat(messages: list[dict], provider: str | None = None, model: str | None = None,
-         temperature: float = 0.6, timeout: int = 90) -> tuple[str, dict]:
-    """Ek jawab lo. Chain: diya hua provider, phir baaki tayyar log."""
-    chain = ([provider] if provider else []) + [p for p in ready_providers() if p != provider]
-    if not chain:
-        raise RuntimeError("koi provider tayyar nahi — key ya base URL do")
-    log = []
+         temperature: float = 0.6, timeout: int = 90,
+         max_tokens: int | None = None, retries: int = 1) -> tuple[str, dict]:
+    """Send chat request; explicit provider first, then configured fallbacks.
+
+    An explicitly supplied model applies only to the explicitly selected provider.
+    Fallback providers use their own configured model to avoid cross-provider model IDs.
+    """
+    if not isinstance(messages, list) or not messages:
+        raise ValueError("messages non-empty list honi chahiye")
+    for index, item in enumerate(messages):
+        if not isinstance(item, dict) or item.get("role") not in {"system", "user", "assistant", "tool"}:
+            raise ValueError(f"messages[{index}] ka role invalid hai")
+        if not isinstance(item.get("content"), (str, list)):
+            raise ValueError(f"messages[{index}].content invalid hai")
+    try:
+        temperature = float(temperature)
+    except (TypeError, ValueError):
+        raise ValueError("temperature numeric honi chahiye") from None
+    if not 0 <= temperature <= 2:
+        raise ValueError("temperature 0 se 2 ke beech honi chahiye")
+    if timeout <= 0 or retries < 0 or retries > 3:
+        raise ValueError("timeout positive aur retries 0 se 3 ke beech hone chahiye")
+    if max_tokens is not None and (not isinstance(max_tokens, int) or max_tokens < 1):
+        raise ValueError("max_tokens positive integer hona chahiye")
+    if provider and provider not in PROVIDERS:
+        raise ValueError(f"unknown provider {provider!r}; options: {', '.join(ORDER)}")
+
+    chain = ([provider] if provider else []) + [name for name in ORDER if name != provider]
+    attempts: list[dict] = []
     for name in chain:
-        spec = PROVIDERS.get(name)
-        if not spec or not spec["base"]:
-            log.append({"provider": name, "ok": False, "note": "base URL nahi"})
+        spec = _spec(name)
+        if spec is None:
             continue
-        use_model = model or spec["model"]
-        if not use_model:
-            log.append({"provider": name, "ok": False, "note": "model nahi"})
+        base, env = spec["base"], spec["env"]
+        key = _key(env)
+        # Only explicit target gets caller's model override.
+        use_model = (model if provider == name and model else spec["model"])
+        if not _valid_base(base) or (env and not key) or not use_model:
+            attempts.append({"provider": name, "ok": False, "note": "configuration incomplete"})
             continue
+        payload: dict[str, Any] = {
+            "model": use_model, "messages": messages, "temperature": temperature
+        }
+        if max_tokens is not None:
+            payload["max_tokens"] = max_tokens
         try:
-            data = _post(f"{spec['base'].rstrip('/')}/chat/completions",
-                         {"model": use_model, "messages": messages, "temperature": temperature},
-                         _key(spec["env"]), timeout)
-            text = (data.get("choices") or [{}])[0].get("message", {}).get("content", "")
-            if text.strip():
-                log.append({"provider": name, "ok": True, "note": use_model})
-                return text, {"provider": name, "model": use_model, "tries": log}
-            log.append({"provider": name, "ok": False, "note": "khaali jawab"})
+            data = _attempt_chat(base, key, payload, timeout, retries)
+            answer = _content(data)
+            if not answer:
+                attempts.append({"provider": name, "ok": False, "note": "empty response"})
+                continue
+            attempts.append({"provider": name, "ok": True, "note": use_model})
+            usage = data.get("usage") if isinstance(data.get("usage"), dict) else {}
+            return answer, {
+                "provider": name, "model": use_model, "tries": attempts,
+                "usage": usage, "request_id": data.get("id"),
+                "finish_reason": (data.get("choices") or [{}])[0].get("finish_reason")
+            }
         except Exception as exc:
-            log.append({"provider": name, "ok": False, "note": f"{type(exc).__name__}: {str(exc)[:140]}"})
-    raise RuntimeError("sab provider fail: " + json.dumps(log, ensure_ascii=False))
+            attempts.append({"provider": name, "ok": False,
+                             "note": f"{type(exc).__name__}: {str(exc)[:100]}"})
+    raise RuntimeError("all configured providers failed: " + json.dumps(attempts, ensure_ascii=False))
 
 
 def remember(question: str, answer: str, provider: str = "") -> Path:
-    """Jo seekha use knowledge file me likho (taaki agli baar yaad rahe)."""
+    """Append a retrieval note; this does not train or update model weights."""
+    if not isinstance(question, str) or not isinstance(answer, str) or not question.strip() or not answer.strip():
+        raise ValueError("question aur answer non-empty text hone chahiye")
     KNOWLEDGE.mkdir(parents=True, exist_ok=True)
     path = KNOWLEDGE / "seekha-hua.md"
-    stamp = time.strftime("%Y-%m-%d %H:%M")
-    with open(path, "a", encoding="utf-8") as fh:
-        fh.write(f"\n## {stamp} · {provider or 'llm'}\n**Sawaal:** {question.strip()[:400]}\n\n"
+    stamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    with path.open("a", encoding="utf-8") as fh:
+        fh.write(f"\n## {stamp} · {provider or 'llm'}\n"
+                 f"**Sawaal:** {question.strip()[:400]}\n\n"
                  f"**Jawab:** {answer.strip()[:1500]}\n")
     return path
 
 
 def cmd_status() -> int:
     states = status()
-    for s in states:
-        print(f"{'[READY]' if s.ready else '[ --  ]'} {s.name:11s} {s.reason:34s} {s.model}")
-    ready = [s.name for s in states if s.ready]
+    for state in states:
+        mark = "[READY]" if state.ready else "[ --  ]"
+        print(f"{mark} {state.name:11s} {state.reason:34s} {state.model}")
+    ready = [state.name for state in states if state.ready]
     print(f"\nChain: {' -> '.join(ORDER)}")
-    print(f"Abhi chalenge: {', '.join(ready) if ready else 'koi nahi (key do)'}")
+    print(f"Abhi reachable: {', '.join(ready) if ready else 'koi nahi (key/server check karo)'}")
     return 0 if ready else 1
 
 
 def cmd_chat(text: str, provider: str | None, remember_it: bool) -> int:
-    msgs = [{"role": "system", "content": "Tum ASTRA ke sahayak ho. Hindi/Hinglish me seedha, saaf jawab do."},
-            {"role": "user", "content": text}]
+    messages = [
+        {"role": "system", "content": "Tum ASTRA ke sahayak ho. Hindi/Hinglish me seedha, saaf jawab do."},
+        {"role": "user", "content": text},
+    ]
     try:
-        answer, meta = chat(msgs, provider=provider)
+        answer, meta = chat(messages, provider=provider)
     except Exception as exc:
         print(f"[x] {exc}")
         return 1
     print(answer)
     print(f"\n— {meta['provider']} / {meta['model']}")
     if remember_it:
-        p = remember(text, answer, meta["provider"])
-        print(f"[memory] {p.relative_to(ROOT)}")
+        print(f"[memory] {remember(text, answer, meta['provider']).relative_to(ROOT)}")
     return 0
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="ASTRA LLM bridge (koi bhi model)")
-    sub = ap.add_subparsers(dest="cmd", required=True)
+    parser = argparse.ArgumentParser(description="ASTRA LLM bridge (multi-provider)")
+    sub = parser.add_subparsers(dest="cmd", required=True)
     sub.add_parser("status")
     sub.add_parser("models")
-    c = sub.add_parser("chat"); c.add_argument("text"); c.add_argument("--provider"); c.add_argument("--remember", action="store_true")
-    f = sub.add_parser("ask-file"); f.add_argument("path"); f.add_argument("--provider"); f.add_argument("--out")
-    a = ap.parse_args()
-    if a.cmd == "status":
+    chat_parser = sub.add_parser("chat")
+    chat_parser.add_argument("text")
+    chat_parser.add_argument("--provider")
+    chat_parser.add_argument("--remember", action="store_true")
+    file_parser = sub.add_parser("ask-file")
+    file_parser.add_argument("path")
+    file_parser.add_argument("--provider")
+    file_parser.add_argument("--out")
+    args = parser.parse_args()
+    if args.cmd == "status":
         return cmd_status()
-    if a.cmd == "models":
-        print(json.dumps({k: v["model"] for k, v in PROVIDERS.items()}, ensure_ascii=False, indent=2))
+    if args.cmd == "models":
+        print(json.dumps({name: _spec(name)["model"] for name in ORDER}, ensure_ascii=False, indent=2))
         return 0
-    if a.cmd == "chat":
-        return cmd_chat(a.text, a.provider, a.remember)
-    text = Path(a.path).read_text(encoding="utf-8")
+    if args.cmd == "chat":
+        return cmd_chat(args.text, args.provider, args.remember)
     try:
-        answer, meta = chat([{"role": "user", "content": text}], provider=a.provider)
+        question = Path(args.path).read_text(encoding="utf-8")
+        answer, _meta = chat([{"role": "user", "content": question}], provider=args.provider)
+        if args.out:
+            Path(args.out).write_text(answer, encoding="utf-8")
+            print(f"likh diya: {args.out}")
+        else:
+            print(answer)
+        return 0
     except Exception as exc:
         print(f"[x] {exc}")
         return 1
-    if a.out:
-        Path(a.out).write_text(answer, encoding="utf-8")
-        print(f"likh diya: {a.out}")
-    else:
-        print(answer)
-    return 0
 
 
 if __name__ == "__main__":

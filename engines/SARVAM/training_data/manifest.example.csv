@@ -1,0 +1,2 @@
+audio_path,transcript,speaker_id,language,split
+audio/example_0001.wav,यहाँ अपना सत्यापित वाक्य लिखें,speaker_01,hi,train
