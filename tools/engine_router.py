@@ -159,16 +159,19 @@ def build_plan(text: str) -> list[Plan]:
     return plans
 
 
-def _call_provider(engine: str, text: str, character: str, out: Path) -> bool:
+def _call_provider(engine: str, text: str, character: str, out: Path, bhaav: str = "") -> bool:
     """Asli render — tools/voice_provider.py ke functions se."""
     sys.path.insert(0, str(ROOT))
     from tools import voice_provider as vp
     if engine == "sarvam":
-        vp.sarvam_tts(text, character, str(out))
+        vp.sarvam_tts(text, character, str(out), bhaav=bhaav or None)
     elif engine == "piper":
-        vp.piper_tts(text, character, str(out))
+        vp.piper_tts(text, character, str(out), bhaav=bhaav or None)
     elif engine == "elevenlabs":
-        vp.eleven_tts(text, character, str(out))
+        try:
+            vp.eleven_tts(text, character, str(out), bhaav=bhaav or None)
+        except TypeError:
+            vp.eleven_tts(text, character, str(out))
     elif engine == "edge":
         bin_ = shutil.which("edge-tts")
         if not bin_:
@@ -180,17 +183,19 @@ def _call_provider(engine: str, text: str, character: str, out: Path) -> bool:
     return out.exists() and out.stat().st_size > 1000
 
 
-def _guarded(engine: str, text: str, character: str, out: Path):
+def _guarded(engine: str, text: str, character: str, out: Path, bhaav: str = ""):
     """Cache + retry + quality check ke saath ek engine call."""
     from tools import tts_guard as tg
     def fn(dst):
-        _call_provider(engine, text, character, Path(dst))
-    path, meta = tg.render(engine, character, text, {"out": str(out)}, fn)
+        _call_provider(engine, text, character, Path(dst), bhaav=bhaav)
+    path, meta = tg.render(engine, character, text,
+                           {"out": str(out), "bhaav": bhaav or "neutral"}, fn)
     return path.exists() and path.stat().st_size > 1000, meta
 
 
 def render_line(text: str, character: str, out: Path,
-                engine: str | None = None, fallbacks: list[str] | None = None) -> tuple[bool, list[dict]]:
+                engine: str | None = None, fallbacks: list[str] | None = None,
+                bhaav: str = "") -> tuple[bool, list[dict]]:
     """Ek line, chain ke saath. Har koshish ka hisaab wapas milta hai."""
     chain = [e for e in ([engine] if engine else []) + (fallbacks or []) if e]
     if not chain:
@@ -198,7 +203,7 @@ def render_line(text: str, character: str, out: Path,
     log = []
     for eng in chain:
         try:
-            ok, meta = _guarded(eng, text, character, out)
+            ok, meta = _guarded(eng, text, character, out, bhaav=bhaav)
             note = ("cache se" if meta.get("cached") else "banaya")
             log.append({"engine": eng, "ok": ok, "note": note})
             if ok:

@@ -41,3 +41,14 @@ def test_show_unknown_raises():
         assert False
     except KeyError as exc:
         assert "aisa bhaav nahi" in str(exc)
+
+
+def test_style_gives_pitch_pace_energy_gap():
+    s = b.style("dukh")
+    assert s["pitch"] < 1.0 and s["pace"] < 1.0 and s["gap_ms"] >= 400
+    g = b.style("gussa")
+    assert g["pitch"] > 1.0 and g["pace"] > 1.0 and g["gap_ms"] < 200
+
+
+def test_style_unknown_emotion_is_neutral():
+    assert b.style("khushiii")["emotion"] == "neutral"

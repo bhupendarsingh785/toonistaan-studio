@@ -54,7 +54,7 @@ def test_render_line_falls_back_on_failure(monkeypatch, tmp_path):
         return True
 
     monkeypatch.setattr(r, "_call_provider", fake)
-    def fake_guarded(eng, text, ch, out):
+    def fake_guarded(eng, text, ch, out, bhaav=""):
         calls.append(eng)
         return (eng != "sarvam"), {"cached": False, "engine": eng}
     monkeypatch.setattr(r, "_guarded", fake_guarded)
@@ -70,7 +70,7 @@ def test_render_line_reports_all_failures(monkeypatch, tmp_path):
         raise RuntimeError("band")
 
     monkeypatch.setattr(r, "_call_provider", fake)
-    monkeypatch.setattr(r, "_guarded", lambda eng, text, ch, out: (False, {"cached": False, "engine": eng}))
+    monkeypatch.setattr(r, "_guarded", lambda eng, text, ch, out, bhaav="": (False, {"cached": False, "engine": eng}))
     ok, log = r.render_line("x", "दादी", tmp_path / "a.wav", "piper", ["espeak"])
     assert ok is False
     assert len(log) == 2 and not any(x["ok"] for x in log)
@@ -82,7 +82,7 @@ def test_render_story_counts_and_reports(monkeypatch, tmp_path):
         return True
 
     monkeypatch.setattr(r, "_call_provider", fake)
-    monkeypatch.setattr(r, "_guarded", lambda eng, text, ch, out: (True, {"cached": False, "engine": eng}))
+    monkeypatch.setattr(r, "_guarded", lambda eng, text, ch, out, bhaav="": (True, {"cached": False, "engine": eng}))
     monkeypatch.setattr(r, "ready_engines", lambda: ["piper"])
     rep = r.render_story("दादी: बेटा आ जा।\nमाँ: खाना खा ले।", tmp_path)
     assert rep["lines"] == 2 and rep["ok"] == 2
@@ -106,7 +106,7 @@ def test_problems_empty_when_all_ready(monkeypatch):
 
 def test_parallel_render_keeps_order(monkeypatch, tmp_path):
     monkeypatch.setattr(r, "ready_engines", lambda: ["piper"])
-    monkeypatch.setattr(r, "_guarded", lambda eng, text, ch, out: (True, {"cached": False, "engine": eng}))
+    monkeypatch.setattr(r, "_guarded", lambda eng, text, ch, out, bhaav="": (True, {"cached": False, "engine": eng}))
     rep = r.render_story_parallel("दादी: एक।\nमाँ: दो।\nलड़का: तीन।", tmp_path, workers=3)
     assert rep["ok"] == 3 and [x["n"] for x in rep["results"]] == [1, 2, 3]
     assert [x["character"] for x in rep["results"]] == ["दादी", "माँ", "लड़का"]

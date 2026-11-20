@@ -129,6 +129,16 @@ def prosody(emotion: str) -> dict:
             "zor": row["zor"], "rukna": row["rukna"]}
 
 
+def style(emotion: str, character: str = "") -> dict:
+    """Ek jagah se bhaav ka style: sur (pitch), raftaar (pace), zor (energy), rukna (pause ms)."""
+    row = BHAV.get(emotion, BHAV["neutral"])
+    gap_ms = {"kam": 120, "normal": 220, "thoda": 320, "zyada": 450,
+              "bahut zyada": 600, "beech me": 380}.get(row.get("rukna", "normal"), 220)
+    return {"emotion": emotion if emotion in BHAV else "neutral",
+            "pitch": round(row["sur"], 3), "pace": round(row["raftaar"], 3),
+            "energy": round(row["zor"], 3), "gap_ms": gap_ms}
+
+
 def list_all() -> list[dict]:
     return [{"emotion": k, **{kk: vv for kk, vv in v.items() if kk != "cues"},
              "cues": len(v["cues"])} for k, v in BHAV.items()]

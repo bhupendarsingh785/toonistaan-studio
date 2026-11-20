@@ -27,38 +27,38 @@ jobs:
           print("key present:", bool(key), flush=True)
           if not key:
               print("RESULT: NO_KEY"); raise SystemExit(0)
-          text = "नमस्ते, मैं दादी हूँ।"
-          payload = {"text": text, "target_language_code": "hi-IN",
-                     "speaker": "rohan", "model": "bulbul:v3"}
+          import json as _json
+          line = "मुझे बहुत तकलीफ़ हो रही है, बेटा।"
+          cases = [("neutral", 1.00, 1.00, 1.00), ("dukh", 0.94, 0.88, 0.90), ("gussa", 1.06, 1.10, 1.15)]
           url = "https://api.sarvam.ai/text-to-speech"
-          r = requests.post(url, json=payload, headers={"api-subscription-key": key,
-                                                        "Content-Type": "application/json"}, timeout=90)
-          print("http:", r.status_code, flush=True)
-          if r.status_code != 200:
-              print("RESULT: FAIL", r.text[:200]); raise SystemExit(0)
-          data = r.json()
-          audio = data.get("audios") or []
-          if not audio:
-              print("RESULT: NO_AUDIO"); raise SystemExit(0)
-          raw = base64.b64decode(audio[0])
-          open("sarvam_out.wav","wb").write(raw)
-          subprocess.run(["ffmpeg","-loglevel","error","-y","-i","sarvam_out.wav","-ac","1","-ar","16000","-c:a","pcm_s16le","m.wav"], check=False)
-          try:
-              x, sr = sf.read("m.wav")
-              dur = len(x)/sr
+          results = {}
+          for name, pitch, pace, loud in cases:
+              payload = {"text": line, "language_code": "hi-IN", "speaker": "rohan",
+                         "model": "bulbul:v3",
+                         "pace": round(pace, 3), "pitch": round((pitch - 1.0) * 0.5, 3),
+                         "loudness": round(loud, 3),
+                         "speech_sample_rate": 24000, "output_audio_codec": "wav"}
+              r = requests.post(url, json=payload, headers={"api-subscription-key": key,
+                                                            "Content-Type": "application/json"}, timeout=90)
+              print(name, "http:", r.status_code, flush=True)
+              if r.status_code != 200:
+                  results[name] = {"error": r.text[:150]}; continue
+              raw = base64.b64decode((r.json().get("audios") or [""])[0])
+              f = f"sarvam_{name}.wav"; open(f, "wb").write(raw)
+              subprocess.run(["ffmpeg","-loglevel","error","-y","-i",f,"-ac","1","-ar","16000","-c:a","pcm_s16le", f"m_{name}.wav"], check=False)
+              x, sr = sf.read(f"m_{name}.wav")
               N,H = int(0.04*sr), int(0.02*sr); f0=[]
               for i in range(0, max(1,len(x)-N), H):
-                  f = x[i:i+N]
-                  if np.sqrt((f**2).mean()) < 0.02: continue
-                  f = f - f.mean(); ac = np.correlate(f,f,"full")[N-1:]
+                  seg = x[i:i+N]
+                  if np.sqrt((seg**2).mean()) < 0.02: continue
+                  seg = seg - seg.mean(); ac = np.correlate(seg,seg,"full")[N-1:]
                   lo,hi = int(sr/400), int(sr/70)
                   if hi >= len(ac): continue
                   k = lo+int(np.argmax(ac[lo:hi]))
                   if k>0: f0.append(sr/k)
-              print("RESULT: OK", json.dumps({"dur": round(dur,2), "hz": int(np.median(f0)) if f0 else 0,
-                                              "bytes": len(raw)}))
-          except Exception as e:
-              print("RESULT: OK_RAW", len(raw), type(e).__name__)
+              results[name] = {"dur": round(len(x)/sr, 2), "hz": int(np.median(f0)) if f0 else 0,
+                               "bytes": len(raw)}
+          print("RESULT:", _json.dumps(results))
           PY
       - uses: actions/upload-artifact@v4
         if: always()

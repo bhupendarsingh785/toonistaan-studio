@@ -372,7 +372,7 @@ def _piper_inprocess(text, model, out_path, length_scale=1.0):
         return False
 
 
-def piper_tts(text, kirdaar="madhur", out="out.wav"):
+def piper_tts(text, kirdaar="madhur", out="out.wav", bhaav=None):
     """PIPER = poora OFFLINE (internet band ho to bhi chalta hai). 0 kharch."""
     if not have_piper():
         return False
@@ -381,7 +381,9 @@ def piper_tts(text, kirdaar="madhur", out="out.wav"):
         return False
     tmp = out + ".piper.wav"
     pace = SARVAM_PACE.get(kirdaar, 1.0)
-    ls = 1.0 / max(0.7, min(1.3, pace))
+    _st = _bhaav_style(bhaav)
+    pace = pace * _st["pace"]                      # bhaav se raftaar
+    ls = 1.0 / max(0.6, min(1.5, pace))
     # tez raasta: model ek baar load, phir seedha python se
     fast_ok = _piper_inprocess(str(text), model, tmp, length_scale=ls)
     if not fast_ok:                                  # in-process fail to CLI (backup)
@@ -396,7 +398,7 @@ def piper_tts(text, kirdaar="madhur", out="out.wav"):
             return False
 
     # kirdaar ka pitch (baaki engines jaisa hi)
-    pitch = SARVAM_PITCH.get(kirdaar, 1.0)
+    pitch = SARVAM_PITCH.get(kirdaar, 1.0) * _st["pitch"]   # bhaav se sur
     ff = None
     try:
         import shutil
@@ -435,6 +437,15 @@ def piper_tts(text, kirdaar="madhur", out="out.wav"):
 
 def have_sarvam():
     return bool(sarvam_key())
+
+
+def _bhaav_style(bhaav) -> dict:
+    """bhavna.py se style — ek hi sach (sur/raftaar/zor/rukna)."""
+    try:
+        from tools import bhavna
+        return bhavna.style(str(bhaav or "neutral"))
+    except Exception:
+        return {"emotion": "neutral", "pitch": 1.0, "pace": 1.0, "energy": 1.0, "gap_ms": 220}
 
 
 # ---------------------------------------------------------------- bhaav (emotion) style
@@ -496,12 +507,17 @@ def sarvam_tts(text, kirdaar="madhur", out="out.wav", bhaav=None):
     import base64
     speaker = os.environ.get(f"SARVAM_SPEAKER_{kirdaar.upper()}") or SARVAM_SPEAKER.get(kirdaar, "shubh")
     temp0, pace0, pitch0 = EMOTION_STYLE.get(str(bhaav or "calm").lower(), EMOTION_STYLE["calm"])
+    _st = _bhaav_style(bhaav)                      # bhavna.py (11 bhaav)
+    pace0 = pace0 * _st["pace"]
+    pitch0 = pitch0 * _st["pitch"]
     payload = {
         "text": prep_text(text)[:2400],
         "language_code": os.environ.get("SARVAM_LANG", "hi-IN"),
         "speaker": speaker,
         "model": os.environ.get("SARVAM_MODEL", "bulbul:v3"),
         "pace": round(float(os.environ.get("SARVAM_PACE", SARVAM_PACE.get(kirdaar, 1.0))) * pace0, 3),
+        "pitch": round(float(os.environ.get("SARVAM_PITCH_PARAM", "0")) + (pitch0 - 1.0) * 0.5, 3),
+        "loudness": round(1.0 * _st["energy"], 3),
         "temperature": float(os.environ.get("SARVAM_TEMP", str(temp0))),
         "speech_sample_rate": 24000,
         "output_audio_codec": "wav",
