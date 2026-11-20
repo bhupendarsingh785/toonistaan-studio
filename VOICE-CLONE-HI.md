@@ -62,3 +62,24 @@ Batata hai: sur ka farq (Hz aur %), timbre cosine, aur verdict — saath me saaf
 
 ## 6. Tests
 `python -m pytest tests -q` → **68 pass** (clone, extract, match — sab ke apne test).
+
+## 7. v3 me naya kya (20 Nov 2026)
+
+| Naya | Fayda |
+|---|---|
+| **Quality gate** | 3 second se chhoti ya kam-bolne wali recording enroll hi nahi hoti — "reference theek nahi: bahut chhoti (1.0s)" jaisa saaf message |
+| **Multi-reference** | `add-reference --emotion dukh` — usi awaaz ka doosra sample. Bhaav ke hisaab se sahi sample chuna jata hai |
+| **Bhaav ke hisaab se reference** | `[dukh]` line ke liye dukh wala sample, na ho to neutral |
+| **Lambi line chunking** | 180 akshar se lambi line sentence par tootti hai (clone models ki limit) |
+| **Piper fallback (saaf nishan)** | Cloning backend na chale to piper se bolta hai, par file naam me `_piper_fallback` likha jata hai — chhupaya nahi jata |
+| **Consent record** | voice.json me kab, kaise ijazat mili — likha jata hai |
+| **audit command** | `voice_clone.py audit` — sab voices ka consent status ek jagah |
+
+Naye commands:
+```bash
+python tools/voice_clone.py add-reference --name dadi --audio dukh.wav \
+  --transcript "बहुत तकलीफ़ हो रही है" --emotion dukh
+python tools/voice_clone.py audit
+```
+
+Tests: **71 pass** (pehle 68 the).

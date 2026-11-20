@@ -68,7 +68,7 @@ def best_window(x: np.ndarray, sr: int = 24000, seconds: float = 12.0) -> tuple[
         voiced = float(np.sort(rms)[-k:].mean())
         floor = float(np.percentile(rms, 10))
         # bolne ka hissa bhi count karo — warna aadha khaali window bhi barabar lagta hai
-        talk = float((rms > max(0.01, floor * 3)).mean())
+        talk = float((rms > max(0.01, float(np.median(rms)) * 0.5)).mean())
         score = voiced * (0.35 + 0.65 * talk) - 0.5 * floor
         if not np.isfinite(score):
             continue
