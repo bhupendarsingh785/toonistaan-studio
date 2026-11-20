@@ -19403,6 +19403,18 @@ DEFAULT_INDEX = {
   "tags": ["water", "stream", "flow", "river"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 60.0
+ },
+ "flowing_river": {
+  "file": "water/flowing_river.mp3",
+  "tags": ["river", "flow", "water"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "leaves_rustling_2": {
+  "file": "nature/leaves_rustling_2.mp3",
+  "tags": ["leaves", "rustle"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 1.72
  }
 }
 
