@@ -47,12 +47,13 @@ jobs:
               f = f"sarvam_{name}.wav"; open(f, "wb").write(raw)
               subprocess.run(["ffmpeg","-loglevel","error","-y","-i",f,"-ac","1","-ar","16000","-c:a","pcm_s16le", f"m_{name}.wav"], check=False)
               x, sr = sf.read(f"m_{name}.wav")
-              N,H = int(0.04*sr), int(0.02*sr); f0=[]
-              for i in range(0, max(1,len(x)-N), H):
+              N,H = int(0.06*sr), int(0.02*sr); f0=[]
+              a0, a1 = int(len(x)*0.2), int(len(x)*0.8)      # beech ka 60% (kinare chhodo)
+              for i in range(a0, max(a0+1, a1-N), H):
                   seg = x[i:i+N]
                   if np.sqrt((seg**2).mean()) < 0.02: continue
                   seg = seg - seg.mean(); ac = np.correlate(seg,seg,"full")[N-1:]
-                  lo,hi = int(sr/400), int(sr/70)
+                  lo,hi = int(sr/350), int(sr/80)
                   if hi >= len(ac): continue
                   k = lo+int(np.argmax(ac[lo:hi]))
                   if k>0: f0.append(sr/k)
@@ -75,12 +76,13 @@ jobs:
               f = f"sw_{label}.wav"; open(f, "wb").write(raw)
               subprocess.run(["ffmpeg","-loglevel","error","-y","-i",f,"-ac","1","-ar","16000","-c:a","pcm_s16le", f"swm_{label}.wav"], check=False)
               x, sr = sf.read(f"swm_{label}.wav")
-              N,H = int(0.04*sr), int(0.02*sr); f0=[]
-              for i in range(0, max(1,len(x)-N), H):
+              N,H = int(0.06*sr), int(0.02*sr); f0=[]
+              a0, a1 = int(len(x)*0.2), int(len(x)*0.8)      # beech ka 60% (kinare chhodo)
+              for i in range(a0, max(a0+1, a1-N), H):
                   seg = x[i:i+N]
                   if np.sqrt((seg**2).mean()) < 0.02: continue
                   seg = seg - seg.mean(); ac = np.correlate(seg,seg,"full")[N-1:]
-                  lo,hi = int(sr/400), int(sr/70)
+                  lo,hi = int(sr/350), int(sr/80)
                   if hi >= len(ac): continue
                   k = lo+int(np.argmax(ac[lo:hi]))
                   if k>0: f0.append(sr/k)

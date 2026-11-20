@@ -516,7 +516,8 @@ def sarvam_tts(text, kirdaar="madhur", out="out.wav", bhaav=None):
         "speaker": speaker,
         "model": os.environ.get("SARVAM_MODEL", "bulbul:v3"),
         "pace": round(float(os.environ.get("SARVAM_PACE", SARVAM_PACE.get(kirdaar, 1.0))) * pace0, 3),
-        "pitch": round(float(os.environ.get("SARVAM_PITCH_PARAM", "0")) + (pitch0 - 1.0) * 0.5, 3),
+        # naapa hua calibration: pitch param 0.3 ≈ +21% F0  =>  1.0 ≈ 70%
+        "pitch": round(float(os.environ.get("SARVAM_PITCH_PARAM", "0")) + (pitch0 - 1.0) / 0.7, 3),
         "loudness": round(1.0 * _st["energy"], 3),
         "temperature": float(os.environ.get("SARVAM_TEMP", str(temp0))),
         "speech_sample_rate": 24000,
