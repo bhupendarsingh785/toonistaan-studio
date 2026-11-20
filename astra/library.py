@@ -19139,6 +19139,66 @@ DEFAULT_INDEX = {
   "tags": ["gong", "bell", "temple"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 8.1
+ },
+ "big_bell_burmese": {
+  "file": "bells/big_bell_burmese.mp3",
+  "tags": ["bell", "big", "temple", "burmese"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 23.78
+ },
+ "temple_bells_set": {
+  "file": "bells/temple_bells_set.mp3",
+  "tags": ["temple", "bells", "multiple"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 5.36
+ },
+ "bell_fx": {
+  "file": "bells/bell_fx.mp3",
+  "tags": ["bell", "fx"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 10.32
+ },
+ "clear_bell_chime": {
+  "file": "bells/clear_bell_chime.mp3",
+  "tags": ["bell", "chime", "clear"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 1.96
+ },
+ "sacred_639hz_bell": {
+  "file": "bells/sacred_639hz_bell.mp3",
+  "tags": ["bell", "639hz", "meditation"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 32.03
+ },
+ "log_bell_low_temple": {
+  "file": "bells/log_bell_low_temple.mp3",
+  "tags": ["bell", "low", "temple", "asmr"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 8.1
+ },
+ "indian_bell_chime": {
+  "file": "bells/indian_bell_chime.mp3",
+  "tags": ["bell", "indian", "chime"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 6.02
+ },
+ "pooja_bell_fast": {
+  "file": "bells/pooja_bell_fast.mp3",
+  "tags": ["pooja", "bell", "fast", "temple"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 13.25
+ },
+ "bell_sound_fx_613873": {
+  "file": "bells/bell_sound_fx_613873.mp3",
+  "tags": ["bell", "fx"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 4.82
+ },
+ "opening_bell": {
+  "file": "bells/opening_bell.mp3",
+  "tags": ["bell", "opening", "chime"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 1.18
  }
 }
 
