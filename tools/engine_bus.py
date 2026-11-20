@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Engine Bus — chaar engine (SARVAM, EDGE, PIPER, ESPEAK) aapas me baat karein.
+"""Engine Bus — chaar engine (EDGE, ELEVENLABS, ESPEAK, PIPER) aapas me baat karein.
 
-Chaar hi engine hain (24 nahi — woh galti se likha gaya tha).
+Chaar hi engine hain. Sarvam in chaar me NAHI hai — woh alag (pehla) engine hai.
 
 Faisla (design):
   - Har engine apni "capability" batata hai (kya bol sakta hai, kaunse bhaav, offline?, kitna tez, kitna mehnga)
@@ -89,11 +89,12 @@ def _atomic_write(path: Path, payload: dict) -> None:
 
 # ------------------------------------------------------- chaar engine (default)
 DEFAULT_ENGINES = [
-    {"name": "sarvam", "emotions": ["neutral", "dukh", "gussa", "khushi", "pyaar", "dar",
-                                    "rona", "hairan", "sharam", "thakan", "hasai"],
-     "languages": ["hi", "en"], "offline": False, "speed": 1.0, "cost": 1.0, "max_chars": 500},
-    {"name": "edge", "emotions": ["neutral", "khushi", "hairan", "hasai"],
+    # CHAAR ENGINE — bas yahi (Sarvam inse alag hai, apna pura engine hai)
+    {"name": "edge", "emotions": ["neutral", "khushi", "hairan", "hasai", "pyaar"],
      "languages": ["hi", "en"], "offline": False, "speed": 1.4, "cost": 0.0, "max_chars": 500},
+    {"name": "elevenlabs", "emotions": ["neutral", "dukh", "gussa", "khushi", "pyaar", "dar",
+                                        "rona", "hairan", "sharam", "thakan", "hasai"],
+     "languages": ["hi", "en"], "offline": False, "speed": 1.0, "cost": 1.0, "max_chars": 500},
     {"name": "piper", "emotions": ["neutral", "pyaar", "thakan"],
      "languages": ["hi"], "offline": True, "speed": 2.0, "cost": 0.0, "max_chars": 300},
     {"name": "espeak", "emotions": ["neutral"],
@@ -102,7 +103,7 @@ DEFAULT_ENGINES = [
 
 
 def ensure_defaults() -> list[Capability]:
-    """Kuch bhi registered na ho to chaar engine ke default daal do."""
+    """Kuch bhi registered na ho to chaar engine (EDGE, ELEVENLABS, ESPEAK, PIPER) daal do."""
     reg = load_registry()
     if not reg:
         for row in DEFAULT_ENGINES:

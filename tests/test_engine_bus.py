@@ -8,7 +8,7 @@ def _caps(tmp_path, monkeypatch):
     monkeypatch.setattr(bus, "BUS", tmp_path / "bus")
     monkeypatch.setattr(bus, "registry_path", lambda: tmp_path / "bus" / "engines.json")
     return [
-        bus.Capability(name="sarvam", emotions=["neutral", "dukh", "gussa"], speed=1.0, cost=1.0),
+        bus.Capability(name="elevenlabs", emotions=["neutral", "dukh", "gussa"], speed=1.0, cost=1.0),
         bus.Capability(name="piper", emotions=["neutral"], speed=2.0, cost=0.0, offline=True),
         bus.Capability(name="espeak", emotions=["neutral"], speed=3.0, cost=0.0, offline=True),
     ]
@@ -45,7 +45,7 @@ def test_plan_keeps_one_voice_per_character(tmp_path, monkeypatch):
 def test_plan_sends_emotion_to_capable_engine(tmp_path, monkeypatch):
     caps = _caps(tmp_path, monkeypatch)
     parts = bus.plan("[dukh] बहुत तकलीफ़ है।", caps)
-    assert parts[0].engine == "sarvam"        # dukh sirf sarvam kar sakta hai
+    assert parts[0].engine == "elevenlabs"    # dukh sirf elevenlabs kar sakta hai
 
 
 def test_run_retries_on_next_engine_when_one_fails(tmp_path, monkeypatch):
@@ -54,14 +54,14 @@ def test_run_retries_on_next_engine_when_one_fails(tmp_path, monkeypatch):
 
     def renderer(engine, part, out):
         calls.append(engine)
-        if engine == "sarvam":
+        if engine == "elevenlabs":
             raise RuntimeError("key nahi")
         Path(out).write_bytes(b"x" * 4000)
         return True
 
     # dukh wali line → sarvam chuna jayega, woh fail hoga, phir doosra engine
     rep = bus.run("दादी [dukh]: लाइन एक।", str(tmp_path / "out"), renderer=renderer, caps=caps)
-    assert rep["done"] == 1 and "sarvam" in calls and len(calls) > 1
+    assert rep["done"] == 1 and "elevenlabs" in calls and len(calls) > 1
     assert (tmp_path / "out" / "manifest.json").exists()
 
 
@@ -87,25 +87,25 @@ def test_default_four_engines(tmp_path, monkeypatch):
     monkeypatch.setattr(bus, "registry_path", lambda: tmp_path / "bus" / "engines.json")
     caps = bus.ensure_defaults()
     names = {c.name for c in caps}
-    assert names == {"sarvam", "edge", "piper", "espeak"}      # chaar hi, 24 nahi
+    assert names == {"edge", "elevenlabs", "piper", "espeak"}   # chaar hi — Sarvam nahi
 
 
 def test_engines_can_message_each_other(tmp_path, monkeypatch):
     monkeypatch.setattr(bus, "BUS", tmp_path / "bus")
     monkeypatch.setattr(bus, "registry_path", lambda: tmp_path / "bus" / "engines.json")
     bus.ensure_defaults()
-    bus.send("sarvam", "piper", "task", {"line": "बेटा आ जा", "emotion": "pyaar"})
+    bus.send("edge", "piper", "task", {"line": "बेटा आ जा", "emotion": "pyaar"})
     msgs = bus.inbox("piper")
-    assert len(msgs) == 1 and msgs[0]["from"] == "sarvam" and msgs[0]["payload"]["emotion"] == "pyaar"
+    assert len(msgs) == 1 and msgs[0]["from"] == "edge" and msgs[0]["payload"]["emotion"] == "pyaar"
 
 
 def test_broadcast_reaches_all_other_engines(tmp_path, monkeypatch):
     monkeypatch.setattr(bus, "BUS", tmp_path / "bus")
     monkeypatch.setattr(bus, "registry_path", lambda: tmp_path / "bus" / "engines.json")
     bus.ensure_defaults()
-    sent = bus.broadcast("sarvam", "info", {"story": "station"})
+    sent = bus.broadcast("edge", "info", {"story": "station"})
     assert len(sent) == 3
-    assert all(bus.inbox(n) for n in ("edge", "piper", "espeak"))
+    assert all(bus.inbox(n) for n in ("elevenlabs", "piper", "espeak"))
 
 
 def test_heartbeat_marks_engine_down(tmp_path, monkeypatch):

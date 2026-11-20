@@ -26,7 +26,19 @@ from concurrent.futures import ThreadPoolExecutor
 
 ROOT = Path(__file__).resolve().parent.parent
 ENGINES = ROOT / "engines"
-ORDER = ["sarvam", "edge", "piper", "espeak", "elevenlabs"]
+# Chaar engine (Sarvam isme nahi — woh alag engine hai).
+# Sarvam chahiye to: ASTRA_INCLUDE_SARVAM=1  ya  --engine sarvam
+ORDER = ["edge", "elevenlabs", "piper", "espeak"]
+OPTIONAL_ENGINES = ["sarvam"]
+
+
+def active_order() -> list[str]:
+    """Kaam ka chain — Sarvam sirf jab khud maanga jaye."""
+    import os
+    order = list(ORDER)
+    if os.environ.get("ASTRA_INCLUDE_SARVAM") == "1":
+        order.append("sarvam")
+    return order
 
 # engine -> (kaunsi file chahiye, kaunsa env var chahiye, kaunsa engine folder)
 FIX = {
@@ -80,7 +92,7 @@ def _which(binary: str) -> bool:
 def engine_status() -> list[EngineState]:
     """Har engine: tayyar hai ya nahi, aur kyun."""
     out: list[EngineState] = []
-    for name in ORDER:
+    for name in active_order():
         spec = SPEC[name]
         if spec["kind"] == "api":
             if not os.environ.get(spec["env"]):
@@ -244,7 +256,8 @@ def cmd_status() -> int:
     for s in states:
         print(f"{'[READY]' if s.ready else '[ --  ]'} {s.name:11s} {s.reason}")
     ready = [s.name for s in states if s.ready]
-    print(f"\nChain: {' -> '.join(ORDER)}")
+    print(f"\nChain: {' -> '.join(active_order())}")
+    print(f"Sarvam (alag engine): {'chain me' if 'sarvam' in active_order() else 'sirf --engine sarvam / ASTRA_INCLUDE_SARVAM=1 par'}")
     print(f"Abhi chalenge: {', '.join(ready) if ready else 'koi nahi'}")
     return 0 if ready else 1
 

@@ -2,7 +2,9 @@
 
 **134 tests pass, 1 skip** · `tools/engine_bus.py` + `tools/bhavna.py`
 
-> Sudhaar: engine **chaar** hain — SARVAM, EDGE, PIPER, ESPEAK. "24" galti se likha gaya tha, ab registry me sirf chaar.
+> **Sudhaar (20 Nov, recheck ke baad):** chaar engine = **EDGE, ELEVENLABS, ESPEAK, PIPER**.
+> **Sarvam inse nahi hai** — woh alag (pehla) engine hai aur default chain me nahi chalta.
+> Chahiye to: `--engine sarvam` ya `ASTRA_INCLUDE_SARVAM=1`.)
 
 ## 1. Chaar engine aapas me baat karte hain
 
