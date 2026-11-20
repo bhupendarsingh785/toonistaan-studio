@@ -104,25 +104,25 @@ def test_espeak() -> dict:
 
 
 def test_edge() -> dict:
-    import shutil
-    binary = shutil.which("edge-tts")
-    if not binary:
+    """Edge ki neural awaaz — library se, proxy+CA ke saath (binary ki zaroorat nahi)."""
+    try:
+        sys.path.insert(0, str(ROOT))
+        from tools import voice_provider as vp
+    except Exception as exc:
+        return {"ok": False, "why": f"{type(exc).__name__}: {str(exc)[:80]}"}
+    if not vp.have_edge():
         return {"ok": False, "why": "edge-tts install nahi"}
     out = Path("/tmp/engine_edge.mp3")
     out.unlink(missing_ok=True)
+    t = time.time()
     try:
-        r = subprocess.run([binary, "--voice", "hi-IN-MadhurNeural",
-                            "--text", "नमस्ते", "--write-media", str(out)],
-                           capture_output=True, text=True, timeout=60)
-    except subprocess.TimeoutExpired:
-        return {"ok": False, "why": "timeout (internet dheema)"}
-    if r.returncode == 0 and out.exists() and out.stat().st_size > 2000:
-        return {"ok": True, "kb": out.stat().st_size // 1024}
-    err = (r.stderr or "").strip().splitlines()
-    tail = err[-1][:110] if err else "render fail"
-    if "name resolution" in tail or "Cannot connect" in tail:
-        tail = "internet band (proxy) — GitHub runner par chalta hai"
-    return {"ok": False, "why": tail}
+        ok = vp.edge_tts("नमस्ते, मैं आपकी आवाज़ हूँ।", "dadi", str(out))
+    except Exception as exc:
+        return {"ok": False, "why": f"{type(exc).__name__}: {str(exc)[:80]}"}
+    if ok:
+        return {"ok": True, "secs": round(time.time() - t, 1),
+                "kb": out.stat().st_size // 1024}
+    return {"ok": False, "why": "render fail (internet/proxy band?)"}
 
 
 def test_elevenlabs() -> dict:
@@ -142,6 +142,8 @@ def test_elevenlabs() -> dict:
 
 ENGINES = {"piper": test_piper, "espeak": test_espeak,
            "edge": test_edge, "elevenlabs": test_elevenlabs}
+# core = bina key ke chalne wale (yeh fail hue to system adhoora)
+CORE = ("piper", "espeak", "edge")
 PACKAGES = {"piper": ["piper-tts"], "espeak": ["espeakng-loader"],
             "edge": ["edge-tts"], "elevenlabs": []}
 
@@ -153,10 +155,12 @@ def setup(install: bool = True) -> dict:
             _pip(*PACKAGES[name])
         report[name] = fn()
     ok = [n for n, r in report.items() if r.get("ok")]
+    core_ok = [n for n in CORE if report.get(n, {}).get("ok")]
     return {"engines": report, "ok": ok, "ok_count": len(ok),
-            "total": len(ENGINES),
-            "verdict": "sab taiyar" if len(ok) == len(ENGINES) else
-                       ("kaam chalau" if ok else "kuch bhi taiyar nahi")}
+            "total": len(ENGINES), "core_ok": core_ok,
+            "verdict": ("sab taiyar" if len(ok) == len(ENGINES) else
+                        ("core taiyar (key wala baaki)" if len(core_ok) == len(CORE)
+                         else "kaam chalau" if ok else "kuch bhi taiyar nahi"))}
 
 
 def main() -> int:

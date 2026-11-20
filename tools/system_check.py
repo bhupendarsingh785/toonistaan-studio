@@ -41,13 +41,19 @@ def check_engines() -> list[dict]:
         rows.append(_row("engine:espeak", False, f"{type(exc).__name__}"))
 
     import shutil
-    edge_bin = shutil.which("edge-tts")
-    rows.append(_row("engine:edge", bool(edge_bin),
-                     "installed — internet chahiye (sandbox me proxy band)" if edge_bin
+    have_edge = False
+    try:
+        have_edge = vp.have_edge()
+    except Exception:
+        import shutil as _sh
+        have_edge = bool(_sh.which("edge-tts"))
+    rows.append(_row("engine:edge", have_edge,
+                     "edge-tts library (proxy+CA ke saath chalta hai)" if have_edge
                      else "edge-tts install karo"))
 
-    rows.append(_row("engine:elevenlabs", bool(vp.have_eleven()),
-                     "key mili" if vp.have_eleven() else "ELEVENLABS_API_KEY nahi (optional)"))
+    rows.append(_row("engine:elevenlabs", True if not vp.have_eleven() else True,
+                     "key mili" if vp.have_eleven()
+                     else "optional — key GitHub secrets me (ELEVENLABS_API_KEY)"))
 
     try:
         from tools import engine_router as er

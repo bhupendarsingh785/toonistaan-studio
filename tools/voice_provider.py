@@ -435,6 +435,63 @@ def piper_tts(text, kirdaar="madhur", out="out.wav", bhaav=None):
     return r2.returncode == 0 and os.path.exists(out) and os.path.getsize(out) > 3000
 
 
+EDGE_VOICES = {"male": "hi-IN-MadhurNeural", "female": "hi-IN-SwaraNeural",
+               "child": "hi-IN-SwaraNeural", "old_female": "hi-IN-SwaraNeural",
+               "old_male": "hi-IN-MadhurNeural"}
+
+
+def edge_tts(text: str, kirdaar: str = "madhur", out: str = "out.mp3",
+             bhaav=None) -> bool:
+    """Microsoft Edge ki neural awaaz — internet chahiye, key nahi.
+
+    Sandbox me proxy + apna CA chahiye, isliye SSL context khud banate hain
+    (edge_tts andar certifi hardcode karta hai — usse override karte hain).
+    """
+    import asyncio, os, ssl
+    from pathlib import Path
+    style = _bhaav_style(bhaav)
+    kism = _kism(kirdaar)
+    voice = EDGE_VOICES.get(kism, EDGE_VOICES["male"])
+    out_path = Path(out)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        import edge_tts
+        import edge_tts.communicate as C
+        import certifi
+        ctx = ssl.create_default_context(cafile=certifi.where())
+        ca = os.environ.get("SSL_CERT_FILE")
+        if ca and os.path.exists(ca):
+            ctx.load_verify_locations(cafile=ca)
+        C._SSL_CTX = ctx
+        rate = f"{int((style['pace'] - 1.0) * 100):+d}%"
+        pitch = f"{int((style['pitch'] - 1.0) * 50):+d}Hz"
+        com = edge_tts.Communicate(str(text), voice, rate=rate, pitch=pitch,
+                                   proxy=os.environ.get("HTTPS_PROXY") or None)
+        asyncio.run(com.save(str(out_path)))
+        return out_path.exists() and out_path.stat().st_size > 1000
+    except Exception:
+        import shutil, subprocess
+        binary = shutil.which("edge-tts")
+        if not binary:
+            return False
+        cmd = [binary, "--voice", voice, "--text", str(text),
+               "--write-media", str(out_path)]
+        proxy = os.environ.get("HTTPS_PROXY")
+        if proxy:
+            cmd += ["--proxy", proxy]
+        r = subprocess.run(cmd, capture_output=True)
+        return r.returncode == 0 and out_path.exists() and out_path.stat().st_size > 1000
+
+
+def have_edge() -> bool:
+    try:
+        import edge_tts  # noqa: F401
+        return True
+    except Exception:
+        import shutil
+        return shutil.which("edge-tts") is not None
+
+
 def have_espeak() -> bool:
     """espeak-ng ka library hai? (pip ka espeakng-loader — binary ki zaroorat nahi)."""
     try:

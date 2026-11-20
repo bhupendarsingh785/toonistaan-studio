@@ -1,0 +1,45 @@
+name: engine live test (chaar engine asli render)
+
+on:
+  workflow_dispatch:
+  push:
+    paths: [".engine-trigger"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: system packages (espeak-ng + ffmpeg)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq espeak-ng ffmpeg
+      - name: python packages
+        run: pip install -q piper-tts edge-tts espeakng-loader soundfile imageio-ffmpeg requests
+      - name: chaar engine ka asli test
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          SARVAM_API_KEY: ${{ secrets.SARVAM_API_KEY }}
+        run: |
+          python - <<'PY'
+          import sys, json
+          sys.path.insert(0, ".")
+          import tools.engine_setup as es
+          rep = es.setup(install=False)
+          print(json.dumps(rep, ensure_ascii=False, indent=1))
+          print("CORE:", ",".join(rep["core_ok"]), "| verdict:", rep["verdict"])
+          PY
+      - name: router se ek line (edge -> piper -> espeak chain)
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: |
+          python - <<'PY'
+          import sys; sys.path.insert(0, ".")
+          from pathlib import Path
+          from tools import engine_router as er
+          out = Path("/tmp/chain.wav")
+          ok, log = er.render_line("बेटा, आ जा पास।", "dadi", out, bhaav="pyaar")
+          print("chain:", ok, log)
+          PY

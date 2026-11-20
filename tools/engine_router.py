@@ -175,11 +175,8 @@ def _call_provider(engine: str, text: str, character: str, out: Path, bhaav: str
     elif engine == "espeak":
         vp.espeak_tts(text, character, str(out), bhaav=bhaav or None)
     elif engine == "edge":
-        bin_ = shutil.which("edge-tts")
-        if not bin_:
-            raise RuntimeError("edge-tts binary nahi hai")
-        subprocess.run([bin_, "--voice", "hi-IN-MadhurNeural", "--text", text,
-                        "--write-media", str(out)], check=True, capture_output=True)
+        if not vp.edge_tts(text, character, str(out), bhaav=bhaav or None):
+            raise RuntimeError("edge-tts render fail (internet/proxy?)")
     else:
         raise RuntimeError(f"{engine} abhi router se render nahi hota")
     return out.exists() and out.stat().st_size > 1000

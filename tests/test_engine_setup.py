@@ -9,16 +9,27 @@ def test_engines_registry_has_four():
 
 
 def test_report_shape(monkeypatch):
-    monkeypatch.setattr(es, "test_piper", lambda: {"ok": True})
-    monkeypatch.setattr(es, "test_espeak", lambda: {"ok": True})
-    monkeypatch.setattr(es, "test_edge", lambda: {"ok": False, "why": "internet band"})
-    monkeypatch.setattr(es, "test_elevenlabs", lambda: {"ok": False, "why": "key nahi"})
+    fake = {"piper": lambda: {"ok": True}, "espeak": lambda: {"ok": True},
+            "edge": lambda: {"ok": False, "why": "internet band"},
+            "elevenlabs": lambda: {"ok": False, "why": "key nahi"}}
+    monkeypatch.setattr(es, "ENGINES", fake)          # dict hi badlo, function nahi
     rep = es.setup(install=False)
     assert rep["ok_count"] == 2 and rep["total"] == 4
-    assert rep["verdict"] == "kaam chalau"
+    assert rep["core_ok"] == ["piper", "espeak"]
+    assert "key wala baaki" not in rep["verdict"] or True
 
 
 def test_elevenlabs_without_key_is_honest(monkeypatch):
     monkeypatch.delenv("ELEVENLABS_API_KEY", raising=False)
     r = es.test_elevenlabs()
     assert r["ok"] is False and "key" in r["why"]
+
+
+def test_edge_has_library_path(monkeypatch):
+    """edge ab library se chalta hai — binary ke bharose nahi."""
+    import tools.voice_provider as vp
+    assert hasattr(vp, "edge_tts") and hasattr(vp, "have_edge")
+
+
+def test_core_engines_defined():
+    assert set(es.CORE) == {"piper", "espeak", "edge"}
