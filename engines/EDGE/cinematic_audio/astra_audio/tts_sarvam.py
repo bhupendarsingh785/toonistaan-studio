@@ -15,7 +15,8 @@ from .story_intelligence import _scene_heading, _speaker_line
 
 API_URL = "https://api.sarvam.ai/text-to-speech"
 SUPPORTED_LANGUAGES = {"hi-IN","bn-IN","ta-IN","te-IN","kn-IN","ml-IN","mr-IN","gu-IN","pa-IN","od-IN","en-IN"}
-SUPPORTED_MODELS = {"bulbul:v2","bulbul:v3","bulbul:v4-flash"}
+# bulbul:v2 Sarvam ne deprecated kar diya (20 Nov 2026) — use mat karo
+SUPPORTED_MODELS = {"bulbul:v3","bulbul:v4-flash"}
 
 class SarvamTTS:
     def __init__(self, api_key: str | None = None, model: str = "bulbul:v4-flash",

@@ -29,7 +29,7 @@ jobs:
               print("RESULT: NO_KEY"); raise SystemExit(0)
           text = "नमस्ते, मैं दादी हूँ।"
           payload = {"text": text, "target_language_code": "hi-IN",
-                     "speaker": "anushka", "model": "bulbul:v2"}
+                     "speaker": "anushka", "model": "bulbul:v3"}
           url = "https://api.sarvam.ai/text-to-speech"
           r = requests.post(url, json=payload, headers={"api-subscription-key": key,
                                                         "Content-Type": "application/json"}, timeout=90)
