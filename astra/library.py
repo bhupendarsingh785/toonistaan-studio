@@ -19517,6 +19517,48 @@ DEFAULT_INDEX = {
   "tags": ["kiss", "sfx"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 5.49
+ },
+ "jungle_crickets_noise": {
+  "file": "nature/jungle_crickets_noise.mp3",
+  "tags": ["jungle", "crickets", "night"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 41.18
+ },
+ "cozy_bedroom_rain": {
+  "file": "nature/cozy_bedroom_rain.mp3",
+  "tags": ["rain", "room", "cozy"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "crickets_night_529705": {
+  "file": "nature/crickets_night_529705.mp3",
+  "tags": ["crickets", "night"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 44.66
+ },
+ "soft_rain_2": {
+  "file": "nature/soft_rain_2.mp3",
+  "tags": ["rain", "soft"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "cricket_grasshopper_balcony": {
+  "file": "nature/cricket_grasshopper_balcony.mp3",
+  "tags": ["cricket", "grasshopper", "night"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "heavy_groove_metal": {
+  "file": "music/heavy_groove_metal.mp3",
+  "tags": ["metal", "heavy", "action"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "heavy_metal_force": {
+  "file": "music/heavy_metal_force.mp3",
+  "tags": ["metal", "heavy", "fight"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
  }
 }
 
