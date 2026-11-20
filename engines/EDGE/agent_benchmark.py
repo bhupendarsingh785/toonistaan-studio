@@ -37,7 +37,8 @@ def evaluate(research_path, cognition_path=None):
     if _pf:
         try:
             import os as _os, json as _json
-            _cand = _pf if _os.path.isabs(_pf) else _os.path.join(str(root), _pf)
+            _root_dir = _os.path.dirname(_os.path.abspath(research_path))
+            _cand = _pf if _os.path.isabs(_pf) else _os.path.join(_root_dir, _pf)
             if _os.path.exists(_cand):
                 _src = _json.load(open(_cand, encoding="utf-8"))
         except Exception:
