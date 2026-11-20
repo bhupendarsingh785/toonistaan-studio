@@ -18959,6 +18959,66 @@ DEFAULT_INDEX = {
   "tags": ["scary", "sting", "horror"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 8.1
+ },
+ "door_bell": {
+  "file": "bells/door_bell.mp3",
+  "tags": ["doorbell", "bell", "home"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 2.88
+ },
+ "creepy_bell_fx": {
+  "file": "bells/creepy_bell_fx.mp3",
+  "tags": ["bell", "creepy", "horror"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 3.47
+ },
+ "school_bell": {
+  "file": "bells/school_bell.mp3",
+  "tags": ["school", "bell", "ring"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 9.1
+ },
+ "continuous_bell_loop": {
+  "file": "bells/continuous_bell_loop.mp3",
+  "tags": ["bell", "loop", "temple"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 53.42
+ },
+ "conch_middle": {
+  "file": "mantra/conch_middle.mp3",
+  "tags": ["conch", "shankh", "temple"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 1.91
+ },
+ "conch_long": {
+  "file": "mantra/conch_long.mp3",
+  "tags": ["conch", "shankh", "ritual"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 23.8
+ },
+ "bell_172780": {
+  "file": "bells/bell_172780.mp3",
+  "tags": ["bell", "ring"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 2.46
+ },
+ "conch_three_blows_2": {
+  "file": "mantra/conch_three_blows_2.mp3",
+  "tags": ["conch", "shankh", "aarti"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 11.98
+ },
+ "old_church_bell": {
+  "file": "bells/old_church_bell.mp3",
+  "tags": ["church", "bell", "old"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 4.44
+ },
+ "alpenhorn": {
+  "file": "bells/alpenhorn.mp3",
+  "tags": ["horn", "alpine", "long"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 5.3
  }
 }
 
