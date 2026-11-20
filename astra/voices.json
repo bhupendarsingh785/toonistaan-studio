@@ -1,11 +1,11 @@
 {
-  "_note": "ASTRA ki awaaz ki poori list. Yahan naam, Sarvam speaker, pitch, pace aur target Hz — sab ek jagah. Badalna ho to sirf yahi file chhedo. voice_provider.py ise khud padhta hai.",
+  "_note": "ASTRA ki awaaz ki poori list. Yahan naam, Sarvam speaker, pitch, pace aur target Hz — sab ek jagah. Badalna ho to sirf yahi file chhedo. voice_provider.py ise khud padhta hai. (20 Nov 2026: bulbul:v3 ke valid speakers par set kiya — v2 ke purane naam Sarvam ne hata diye)",
   "_version": 1,
   "characters": {
     "sutradhar": {
       "naam": "Sutradhar (kahani sunane wala)",
       "kism": "narrator",
-      "sarvam": "shubh",
+      "sarvam": "rohan",
       "pitch": 1.0,
       "pace": 0.96,
       "hz": 112,
@@ -17,7 +17,7 @@
     "madhur": {
       "naam": "Madhur — jawan aadmi, shaant",
       "kism": "male_young",
-      "sarvam": "shubh",
+      "sarvam": "rohan",
       "pitch": 1.0,
       "pace": 1.0,
       "hz": 112,
@@ -65,7 +65,7 @@
     "chaiwala": {
       "naam": "Chaiwala — halka, mazakiya",
       "kism": "male_young",
-      "sarvam": "sunny",
+      "sarvam": "aditya",
       "pitch": 1.15,
       "pace": 1.05,
       "hz": 150,
@@ -77,7 +77,7 @@
     "driver": {
       "naam": "Driver — gaadi chalane wala",
       "kism": "male_mid",
-      "sarvam": "manan",
+      "sarvam": "rahul",
       "pitch": 1.02,
       "pace": 1.0,
       "hz": 122,
@@ -89,7 +89,7 @@
     "constable": {
       "naam": "Constable — police",
       "kism": "male_mid",
-      "sarvam": "ratan",
+      "sarvam": "ashutosh",
       "pitch": 0.97,
       "pace": 1.0,
       "hz": 126,
@@ -101,7 +101,7 @@
     "doctor": {
       "naam": "Doctor — shaant, bharosa",
       "kism": "male_mid",
-      "sarvam": "varun",
+      "sarvam": "rahul",
       "pitch": 1.0,
       "pace": 0.97,
       "hz": 112,
@@ -137,7 +137,7 @@
     "kaka": {
       "naam": "Kaka — bahut budha",
       "kism": "male_old",
-      "sarvam": "kabir",
+      "sarvam": "rohan",
       "pitch": 0.92,
       "pace": 0.92,
       "hz": 92,
@@ -149,7 +149,7 @@
     "mukhiya": {
       "naam": "Mukhiya — gaon ka sarpanch",
       "kism": "male_old",
-      "sarvam": "sumit",
+      "sarvam": "dev",
       "pitch": 0.9,
       "pace": 0.96,
       "hz": 96,
@@ -161,7 +161,7 @@
     "bhoot": {
       "naam": "Bhoot — daravani, gehri",
       "kism": "creature",
-      "sarvam": "aayan",
+      "sarvam": "aditya",
       "pitch": 0.8,
       "pace": 0.88,
       "hz": 86,
@@ -185,7 +185,7 @@
     "sunita": {
       "naam": "Sunita — ghar ki aurat",
       "kism": "female_mid",
-      "sarvam": "shreya",
+      "sarvam": "neha",
       "pitch": 1.03,
       "pace": 1.0,
       "hz": 205,
@@ -209,7 +209,7 @@
     "maa": {
       "naam": "Maa — pyaar, thodi thaki",
       "kism": "female_mid",
-      "sarvam": "kavitha",
+      "sarvam": "kavya",
       "pitch": 0.94,
       "pace": 0.98,
       "hz": 228,
@@ -221,7 +221,7 @@
     "behen": {
       "naam": "Behen — chhoti, chulbuli",
       "kism": "female_young",
-      "sarvam": "tanya",
+      "sarvam": "simran",
       "pitch": 1.16,
       "pace": 1.04,
       "hz": 252,
@@ -257,7 +257,7 @@
     "dadi": {
       "naam": "Dadi — budhi, dhimi",
       "kism": "female_old",
-      "sarvam": "roopa",
+      "sarvam": "pooja",
       "pitch": 0.82,
       "pace": 0.9,
       "hz": 178,
@@ -269,7 +269,7 @@
     "chudail": {
       "naam": "Chudail — daravani aurat",
       "kism": "creature",
-      "sarvam": "ishita",
+      "sarvam": "priya",
       "pitch": 0.88,
       "pace": 0.9,
       "hz": 172,
@@ -293,7 +293,7 @@
     "announce": {
       "naam": "Announcement — station/airport",
       "kism": "announce",
-      "sarvam": "mani",
+      "sarvam": "amit",
       "pitch": 1.35,
       "pace": 1.0,
       "hz": 168,
