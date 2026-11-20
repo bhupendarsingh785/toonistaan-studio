@@ -73,5 +73,30 @@
   "cost": 0.0,
   "max_chars": 300,
   "healthy": true
+ },
+ "sarvam": {
+  "name": "sarvam",
+  "emotions": [
+   "neutral",
+   "dukh",
+   "gussa",
+   "khushi",
+   "pyaar",
+   "dar",
+   "rona",
+   "hairan",
+   "sharam",
+   "thakan",
+   "hasai"
+  ],
+  "languages": [
+   "hi",
+   "en"
+  ],
+  "offline": false,
+  "speed": 1.2,
+  "cost": 1.0,
+  "max_chars": 500,
+  "healthy": true
  }
 }

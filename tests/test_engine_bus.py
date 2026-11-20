@@ -87,7 +87,9 @@ def test_default_four_engines(tmp_path, monkeypatch):
     monkeypatch.setattr(bus, "registry_path", lambda: tmp_path / "bus" / "engines.json")
     caps = bus.ensure_defaults()
     names = {c.name for c in caps}
-    assert names == {"edge", "elevenlabs", "piper", "espeak"}   # chaar hi — Sarvam nahi
+    # chaar core engine + paanchva (sarvam) saathi — dono alag list
+    assert set(bus.CORE_ENGINES) == {"edge", "elevenlabs", "piper", "espeak"}
+    assert set(bus.CORE_ENGINES) <= names and "sarvam" in names
 
 
 def test_engines_can_message_each_other(tmp_path, monkeypatch):
@@ -104,8 +106,8 @@ def test_broadcast_reaches_all_other_engines(tmp_path, monkeypatch):
     monkeypatch.setattr(bus, "registry_path", lambda: tmp_path / "bus" / "engines.json")
     bus.ensure_defaults()
     sent = bus.broadcast("edge", "info", {"story": "station"})
-    assert len(sent) == 3
-    assert all(bus.inbox(n) for n in ("elevenlabs", "piper", "espeak"))
+    assert len(sent) == 4          # baaki chaar (elevenlabs, piper, espeak, sarvam)
+    assert all(bus.inbox(n) for n in ("elevenlabs", "piper", "espeak", "sarvam"))
 
 
 def test_heartbeat_marks_engine_down(tmp_path, monkeypatch):
@@ -121,3 +123,37 @@ def test_emotion_detected_when_no_tag(tmp_path, monkeypatch):
     caps = _caps(tmp_path, monkeypatch)
     parts = bus.plan("मुझे बहुत तकलीफ़ हो रही है, अब क्या करूँ...", caps)
     assert parts[0].emotion in ("dukh", "rona")
+
+
+def test_fifth_engine_is_present_but_not_core(tmp_path, monkeypatch):
+    monkeypatch.setattr(bus, "BUS", tmp_path / "bus")
+    monkeypatch.setattr(bus, "registry_path", lambda: tmp_path / "bus" / "engines.json")
+    names = {c.name for c in bus.ensure_defaults()}
+    assert bus.CORE_ENGINES == ["edge", "elevenlabs", "piper", "espeak"]
+    assert "sarvam" in names and len(names) == 5      # chaar core + paanchva saathi
+
+
+def test_error_is_recorded_and_credited_to_fixer(tmp_path, monkeypatch):
+    monkeypatch.setattr(bus, "BUS", tmp_path / "bus")
+    monkeypatch.setattr(bus, "registry_path", lambda: tmp_path / "bus" / "engines.json")
+    caps = _caps(tmp_path, monkeypatch)
+    def renderer(engine, part, out):
+        if engine == "elevenlabs":
+            raise RuntimeError("key nahi")
+        Path(out).write_bytes(b"z" * 4000); return True
+    bus.run("दादी [dukh]: लाइन।", str(tmp_path / "out"), renderer=renderer, caps=caps)
+    rep = bus.sudhaar_report()
+    assert rep["total_errors"] >= 1
+    assert rep["by_engine"].get("elevenlabs", 0) >= 1
+    assert rep["fixed_by"]                                  # kisne sudhara, likha hai
+
+
+def test_parallel_run_completes_all_parts(tmp_path, monkeypatch):
+    monkeypatch.setattr(bus, "BUS", tmp_path / "bus")
+    monkeypatch.setattr(bus, "registry_path", lambda: tmp_path / "bus" / "engines.json")
+    caps = _caps(tmp_path, monkeypatch)
+    def renderer(engine, part, out):
+        Path(out).write_bytes(b"p" * 4000); return True
+    text = "\n".join(f"किरदार{i}: लाइन {i}।" for i in range(1, 9))
+    rep = bus.run(text, str(tmp_path / "out"), renderer=renderer, caps=caps, workers=4)
+    assert rep["done"] == 8 and rep["failed"] == 0 and rep["workers"] == 4

@@ -99,7 +99,14 @@ DEFAULT_ENGINES = [
      "languages": ["hi"], "offline": True, "speed": 2.0, "cost": 0.0, "max_chars": 300},
     {"name": "espeak", "emotions": ["neutral"],
      "languages": ["hi", "en"], "offline": True, "speed": 3.0, "cost": 0.0, "max_chars": 300},
+    # paanchva engine — chaar ke saath baat karta hai, par chaar me gina nahi jata
+    {"name": "sarvam", "emotions": ["neutral", "dukh", "gussa", "khushi", "pyaar", "dar",
+                                    "rona", "hairan", "sharam", "thakan", "hasai"],
+     "languages": ["hi", "en"], "offline": False, "speed": 1.2, "cost": 1.0, "max_chars": 500,
+     "role": "extra"},
 ]
+
+CORE_ENGINES = ["edge", "elevenlabs", "piper", "espeak"]
 
 
 def ensure_defaults() -> list[Capability]:
@@ -158,6 +165,61 @@ def heartbeat(engine: str, healthy: bool = True, note: str = "") -> dict:
         reg[engine]["note"] = note
     _atomic_write(registry_path(), reg)
     return reg[engine]
+
+
+# ------------------------------------------------------- galti aur sudhaar
+def error_log_path() -> Path:
+    return BUS / "errors.json"
+
+
+def report_error(engine: str, part, error: str, fixed_by: str = "") -> dict:
+    """Galti likho — kaun, kahan, kya; aur kisne sudhara."""
+    BUS.mkdir(parents=True, exist_ok=True)
+    p = error_log_path()
+    rows = []
+    if p.exists():
+        try:
+            data = json.loads(p.read_text(encoding="utf-8"))
+            rows = data.get("errors", []) if isinstance(data, dict) else list(data)
+        except Exception:
+            rows = []
+    row = {"engine": engine, "part": getattr(part, "n", None),
+           "character": getattr(part, "character", ""),
+           "emotion": getattr(part, "emotion", ""),
+           "error": str(error)[:200], "fixed_by": fixed_by,
+           "at": time.strftime("%Y-%m-%d %H:%M:%S")}
+    rows.append(row)
+    _atomic_write(p, {"errors": rows})
+    # engine ko "kamzor" mark karo aur doosre engine ko khabar bhejo
+    try:
+        heartbeat(engine, healthy=True, note=f"galti: {str(error)[:60]}")
+        if fixed_by:
+            send(engine, fixed_by, "thanks", {"error": str(error)[:120], "part": row["part"]})
+            send(fixed_by, engine, "sudhaar", {"kya": "yeh hissa maine banaya", "part": row["part"]})
+    except Exception:
+        pass
+    return row
+
+
+def sudhaar_report() -> dict:
+    """Kitni galtiyan, kis engine ki, kaun sudhaar raha."""
+    p = error_log_path()
+    if p.exists():
+        try:
+            data = json.loads(p.read_text(encoding="utf-8"))
+            rows = data.get("errors", []) if isinstance(data, dict) else list(data)
+        except Exception:
+            rows = []
+    else:
+        rows = []
+    by_engine: dict[str, int] = {}
+    fixed_by: dict[str, int] = {}
+    for r in rows:
+        by_engine[r["engine"]] = by_engine.get(r["engine"], 0) + 1
+        if r.get("fixed_by"):
+            fixed_by[r["fixed_by"]] = fixed_by.get(r["fixed_by"], 0) + 1
+    return {"total_errors": len(rows), "by_engine": by_engine,
+            "fixed_by": fixed_by, "recent": rows[-10:]}
 
 
 # --------------------------------------------------------------- kaam baantna
@@ -244,14 +306,18 @@ def plan(text: str, caps: list[Capability]) -> list[Part]:
 
 
 def run(text: str, out_dir: str, renderer=None, caps: list[Capability] | None = None,
-        retry_next: bool = True) -> dict:
+        retry_next: bool = True, workers: int = 1) -> dict:
     """Parts ko chalाओ. renderer(engine, part, out_path) -> bool."""
-    caps = caps if caps is not None else engines()
+    caps = caps if caps is not None else ensure_defaults()
     od = Path(out_dir); od.mkdir(parents=True, exist_ok=True)
     parts = plan(text, caps)
     locked: dict[str, str] = {}
     t0 = time.time()
     done = 0
+
+    if int(workers) > 1:                       # kai engine ek saath
+        return _run_parallel(parts, od, renderer, caps, retry_next, int(workers), t0)
+
     for p in parts:
         cap = pick_engine(p, caps, locked)
         if not cap:
@@ -278,12 +344,61 @@ def run(text: str, out_dir: str, renderer=None, caps: list[Capability] | None = 
             nxt = [c for c in caps if c.healthy and c.name not in tried]
             if not nxt:
                 break
+            prev = cap.name
             cap = pick_engine(p, nxt, {})       # bhaav wahi, engine doosra
-            p.engine = cap.name if cap else p.engine
+            if cap:
+                p.engine = cap.name
+                report_error(prev, p, p.error or "render fail", fixed_by=cap.name)
         if not ok:
             print(f"FAIL {p.n} [{p.character}/{p.emotion}] {p.error[:60]}", flush=True)
     manifest = {"script_parts": len(parts), "done": done, "failed": len(parts) - done,
                 "seconds": round(time.time() - t0, 2),
+                "parts": [p.__dict__ for p in parts]}
+    _atomic_write(od / "manifest.json", manifest)
+    return manifest
+
+
+def _run_parallel(parts, od, renderer, caps, retry_next, workers, t0) -> dict:
+    """Kai part ek saath — engine ek dusre ki madad karte hain."""
+    from concurrent.futures import ThreadPoolExecutor
+    locked: dict[str, str] = {}
+
+    def job(p):
+        cap = pick_engine(p, caps, locked)
+        if not cap:
+            p.error = "koi engine available nahi"
+            return p
+        p.engine = cap.name
+        locked.setdefault(p.character, cap.name)
+        out = od / f"{p.n:03d}_{p.character}_{p.emotion}.wav"
+        tried = set()
+        while True:
+            p.tries += 1
+            tried.add(cap.name)
+            try:
+                if renderer and renderer(cap.name, p, str(out)):
+                    p.file = str(out); p.ok = True
+                    return p
+                p.error = "render fail"
+            except Exception as exc:
+                p.error = f"{type(exc).__name__}: {str(exc)[:100]}"
+            if not retry_next:
+                return p
+            nxt = [c for c in caps if c.healthy and c.name not in tried]
+            if not nxt:
+                return p
+            prev = cap.name
+            cap = pick_engine(p, nxt, {})
+            if not cap:
+                return p
+            p.engine = cap.name
+            report_error(prev, p, p.error, fixed_by=cap.name)
+
+    with ThreadPoolExecutor(max_workers=max(1, workers)) as ex:
+        list(ex.map(job, parts))
+    done = sum(1 for p in parts if p.ok)
+    manifest = {"script_parts": len(parts), "done": done, "failed": len(parts) - done,
+                "seconds": round(time.time() - t0, 2), "workers": workers,
                 "parts": [p.__dict__ for p in parts]}
     _atomic_write(od / "manifest.json", manifest)
     return manifest
@@ -314,6 +429,8 @@ def main() -> int:
     ms.add_argument("--text", required=True)
     pl = sub.add_parser("plan"); pl.add_argument("--script", required=True)
     rn = sub.add_parser("run"); rn.add_argument("--script", required=True); rn.add_argument("--out", required=True)
+    rn.add_argument("--workers", type=int, default=1)
+    sub.add_parser("sudhaar")
     a = ap.parse_args()
     if a.cmd == "register":
         if a.capabilities and Path(a.capabilities).exists():
@@ -334,10 +451,14 @@ def main() -> int:
     if a.cmd == "say":
         print(json.dumps(send(a.sender, a.to, a.kind, {"text": a.text}),
                          ensure_ascii=False, indent=2)); return 0
+    if a.cmd == "sudhaar":
+        print(json.dumps(sudhaar_report(), ensure_ascii=False, indent=2)); return 0
     text = Path(a.script).read_text(encoding="utf-8")
     if a.cmd == "plan":
-        print(json.dumps([p.__dict__ for p in plan(text, engines())], ensure_ascii=False, indent=1)); return 0
-    rep = run(text, a.out)
+        print(json.dumps([p.__dict__ for p in plan(text, ensure_defaults())], ensure_ascii=False, indent=1)); return 0
+    if a.cmd == "sudhaar":
+        print(json.dumps(sudhaar_report(), ensure_ascii=False, indent=2)); return 0
+    rep = run(text, a.out, workers=getattr(a, "workers", 1))
     print(json.dumps({k: rep[k] for k in ("script_parts", "done", "failed", "seconds")},
                      ensure_ascii=False, indent=2))
     return 0 if rep["failed"] == 0 else 1

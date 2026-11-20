@@ -2,9 +2,10 @@
 
 **134 tests pass, 1 skip** · `tools/engine_bus.py` + `tools/bhavna.py`
 
-> **Sudhaar (20 Nov, recheck ke baad):** chaar engine = **EDGE, ELEVENLABS, ESPEAK, PIPER**.
-> **Sarvam inse nahi hai** — woh alag (pehla) engine hai aur default chain me nahi chalta.
-> Chahiye to: `--engine sarvam` ya `ASTRA_INCLUDE_SARVAM=1`.)
+> **Sudhaar (20 Nov, recheck ke baad):**
+> - **Chaar engine (core):** EDGE, ELEVENLABS, ESPEAK, PIPER — router ki default chain yahi hai.
+> - **Paanchva engine (Sarvam):** bus me poora member hai — baat karta hai, kaam leta hai, galti sudharta hai.
+>   Par chaar me gina nahi jata; router me sirf `--engine sarvam` / `ASTRA_INCLUDE_SARVAM=1` par aata hai.
 
 ## 1. Chaar engine aapas me baat karte hain
 
@@ -48,3 +49,21 @@ Pehchan kaise hoti hai: cues (शब्द) + vakya ke nishaan (`!!`, `?`, `...`
 ## 5. Agla kadam (jo abhi baaki hai)
 - Bus me **parallel workers** (4 engine ek saath) — structure taiyar hai
 - 11 bhaav ke **asli voice samples** (abhi knowledge hai, per-bhaav reference nahi)
+
+## 6. Galtiyan alag karna + sudhaar (naya)
+
+Har galti `bus/errors.json` me likhi jati hai: **kaun engine, kaun part, kya galti, aur kis engine ne sudhara**.
+
+- Jo engine fail hua, usko **khabar** jati hai (`thanks` message) aur jo bacha usko `sudhaar` message
+- `heartbeat` me us engine ka note bhi update hota hai
+- Report dekho: `python tools/engine_bus.py sudhaar`
+
+## 7. Parallel — project jaldi
+```bash
+python tools/engine_bus.py run --script story.txt --out output/bus --workers 4
+```
+4 part ek saath. Har part ka engine pehle se tay (bhaav ke hisaab se), kirdaar ka engine lock, aur galti par doosra engine.
+
+## 8. Naap (is machine par)
+- 8 line, 4 workers, fake renderer → 8/8 done, 0 fail
+- galti wali line → error ledger me entry + `fixed_by` likha gaya
