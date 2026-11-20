@@ -19475,6 +19475,48 @@ DEFAULT_INDEX = {
   "tags": ["city", "night", "crickets"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 60.0
+ },
+ "romantic_keys": {
+  "file": "music/romantic_keys.mp3",
+  "tags": ["romantic", "piano", "love"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 39.47
+ },
+ "kissing_1": {
+  "file": "foley/kissing_1.mp3",
+  "tags": ["kiss", "foley"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 1.54
+ },
+ "kissing_lips": {
+  "file": "foley/kissing_lips.mp3",
+  "tags": ["kiss", "lips"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 0.77
+ },
+ "doorbell_2": {
+  "file": "ui/doorbell_2.mp3",
+  "tags": ["doorbell", "bell"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 3.68
+ },
+ "kissing_2": {
+  "file": "foley/kissing_2.mp3",
+  "tags": ["kiss"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 0.39
+ },
+ "kissing_transition": {
+  "file": "foley/kissing_transition.mp3",
+  "tags": ["kiss", "transition"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 4.1
+ },
+ "kissing_sfx": {
+  "file": "foley/kissing_sfx.mp3",
+  "tags": ["kiss", "sfx"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 5.49
  }
 }
 
