@@ -19199,6 +19199,48 @@ DEFAULT_INDEX = {
   "tags": ["bell", "opening", "chime"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 1.18
+ },
+ "crowd_clap_cheer": {
+  "file": "crowd/crowd_clap_cheer.mp3",
+  "tags": ["crowd", "clap", "cheer"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 7.21
+ },
+ "crowd_cheering": {
+  "file": "crowd/crowd_cheering.mp3",
+  "tags": ["crowd", "cheer"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 16.27
+ },
+ "crowd_epic_pack": {
+  "file": "crowd/crowd_epic_pack.mp3",
+  "tags": ["crowd", "cheer", "ambient"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "crowd_laughing_2": {
+  "file": "crowd/crowd_laughing_2.mp3",
+  "tags": ["crowd", "laugh"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 5.77
+ },
+ "crowd_laughing_07": {
+  "file": "crowd/crowd_laughing_07.mp3",
+  "tags": ["crowd", "laugh"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 2.48
+ },
+ "crowd_noise_big": {
+  "file": "crowd/crowd_noise_big.mp3",
+  "tags": ["crowd", "noise", "market"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "jazz_cafe_crowd": {
+  "file": "crowd/jazz_cafe_crowd.mp3",
+  "tags": ["crowd", "cafe", "restaurant"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
  }
 }
 
