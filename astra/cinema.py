@@ -207,6 +207,21 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
             t = line_end + gap
 
             # line ke shabdon se SFX (max 2), dialogue ke turant baad.
+            # NOTE: pehle yahan `actions` aur `brain` bina define hue use ho rahe the (NameError).
+            try:
+                from astra.action_brain import ACTION_MAP as _ACTIONS
+            except Exception:
+                try:
+                    from action_brain import ACTION_MAP as _ACTIONS
+                except Exception:
+                    _ACTIONS = {}
+            try:
+                from astra.story_brain import EVENT_MAP as _BRAIN
+            except Exception:
+                try:
+                    from story_brain import EVENT_MAP as _BRAIN
+                except Exception:
+                    _BRAIN = {}
             for name in A.detect(text) if hasattr(A, "detect") else []:
                 pass
             try:
@@ -214,12 +229,12 @@ def build(story_path, out_path, verbose=True, gap=0.28, scene_gap=0.45):
                 _env = sc.get("env", "neutral")
                 _horror = any(x in (sc.get("music") or "") for x in ("horror", "suspense"))
                 _sfx = sfx_extra.detect_smart(text, _env, allow_horror=_horror)[:2]
-                if not _sfx and actions:
-                    _sfx = list(actions.get(text, []))[:2]
+                if not _sfx and _ACTIONS:
+                    _sfx = list(_ACTIONS.get(text, []))[:2]
                     if _sfx and verbose:
                         print("ACTION_BRAIN_USED", _sfx, text[:30], flush=True)
-                if not _sfx and brain:
-                    _sfx = list(brain.get(text, []))[:2]
+                if not _sfx and _BRAIN:
+                    _sfx = list(_BRAIN.get(text, []))[:2]
                     if _sfx and verbose:
                         print("STORY_BRAIN_USED", _sfx, text[:34], flush=True)
                 # Avoid a duplicate one-shot footsteps hit when the World Engine

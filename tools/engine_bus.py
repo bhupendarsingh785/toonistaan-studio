@@ -306,9 +306,11 @@ def plan(text: str, caps: list[Capability]) -> list[Part]:
 
 
 def run(text: str, out_dir: str, renderer=None, caps: list[Capability] | None = None,
-        retry_next: bool = True, workers: int = 1) -> dict:
+        retry_next: bool = True, workers: int = 1, live: bool = False) -> dict:
     """Parts ko chalाओ. renderer(engine, part, out_path) -> bool."""
     caps = caps if caps is not None else ensure_defaults()
+    if renderer is None and live:
+        renderer = router_renderer()
     od = Path(out_dir); od.mkdir(parents=True, exist_ok=True)
     parts = plan(text, caps)
     locked: dict[str, str] = {}
@@ -404,6 +406,15 @@ def _run_parallel(parts, od, renderer, caps, retry_next, workers, t0) -> dict:
     return manifest
 
 
+def router_renderer():
+    """Bus ko asli engine_router se jodo — ek hi darwaza, ek hi fallback chain."""
+    from tools import engine_router as er
+    def _render(engine: str, part, out: str) -> bool:
+        ok, _log = er.render_line(part.text, part.character, Path(out), engine, [])
+        return bool(ok)
+    return _render
+
+
 def status() -> dict:
     caps = ensure_defaults()
     return {"engines": len(caps), "healthy": sum(1 for c in caps if c.healthy),
@@ -430,6 +441,7 @@ def main() -> int:
     pl = sub.add_parser("plan"); pl.add_argument("--script", required=True)
     rn = sub.add_parser("run"); rn.add_argument("--script", required=True); rn.add_argument("--out", required=True)
     rn.add_argument("--workers", type=int, default=1)
+    rn.add_argument("--live", action="store_true", help="asli engine se banao (router ke through)")
     sub.add_parser("sudhaar")
     a = ap.parse_args()
     if a.cmd == "register":
@@ -458,7 +470,7 @@ def main() -> int:
         print(json.dumps([p.__dict__ for p in plan(text, ensure_defaults())], ensure_ascii=False, indent=1)); return 0
     if a.cmd == "sudhaar":
         print(json.dumps(sudhaar_report(), ensure_ascii=False, indent=2)); return 0
-    rep = run(text, a.out, workers=getattr(a, "workers", 1))
+    rep = run(text, a.out, workers=getattr(a, "workers", 1), live=getattr(a, "live", False))
     print(json.dumps({k: rep[k] for k in ("script_parts", "done", "failed", "seconds")},
                      ensure_ascii=False, indent=2))
     return 0 if rep["failed"] == 0 else 1

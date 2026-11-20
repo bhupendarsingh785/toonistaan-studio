@@ -157,3 +157,14 @@ def test_parallel_run_completes_all_parts(tmp_path, monkeypatch):
     text = "\n".join(f"किरदार{i}: लाइन {i}।" for i in range(1, 9))
     rep = bus.run(text, str(tmp_path / "out"), renderer=renderer, caps=caps, workers=4)
     assert rep["done"] == 8 and rep["failed"] == 0 and rep["workers"] == 4
+
+
+def test_live_run_uses_router(monkeypatch, tmp_path):
+    """--live par bus asli router se bolta hai (ek darwaza)."""
+    monkeypatch.setattr(bus, "BUS", tmp_path / "bus")
+    monkeypatch.setattr(bus, "registry_path", lambda: tmp_path / "bus" / "engines.json")
+    from tools import engine_router as er
+    called = []
+    monkeypatch.setattr(er, "render_line", lambda text, ch, out, eng, fb: (called.append(eng), (True, []))[1])
+    rep = bus.run("दादी: लाइन।", str(tmp_path / "o"), caps=bus.ensure_defaults(), live=True)
+    assert rep["done"] == 1 and called
