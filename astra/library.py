@@ -19079,6 +19079,66 @@ DEFAULT_INDEX = {
   "tags": ["bell", "ring"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 4.1
+ },
+ "gong_dong_2": {
+  "file": "bells/gong_dong_2.mp3",
+  "tags": ["gong", "bell", "temple"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 8.1
+ },
+ "gong_dong_3": {
+  "file": "bells/gong_dong_3.mp3",
+  "tags": ["gong", "bell", "temple"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 8.1
+ },
+ "school_bell_2": {
+  "file": "bells/school_bell_2.mp3",
+  "tags": ["school", "bell"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 3.74
+ },
+ "evil_bell": {
+  "file": "horror/evil_bell.mp3",
+  "tags": ["bell", "evil", "horror"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 9.12
+ },
+ "long_bell": {
+  "file": "bells/long_bell.mp3",
+  "tags": ["bell", "long", "toll"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 15.94
+ },
+ "church_bell_toll": {
+  "file": "bells/church_bell_toll.mp3",
+  "tags": ["church", "bell", "toll"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 5.25
+ },
+ "gong_dong_1": {
+  "file": "bells/gong_dong_1.mp3",
+  "tags": ["gong", "bell", "temple"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 8.1
+ },
+ "meditation_bowls": {
+  "file": "bells/meditation_bowls.mp3",
+  "tags": ["bowls", "meditation", "temple"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "bike_bell": {
+  "file": "bells/bike_bell.mp3",
+  "tags": ["bike", "bell", "cycle"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 28.16
+ },
+ "gong_dong_4": {
+  "file": "bells/gong_dong_4.mp3",
+  "tags": ["gong", "bell", "temple"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 8.1
  }
 }
 
