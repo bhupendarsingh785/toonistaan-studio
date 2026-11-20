@@ -18851,6 +18851,60 @@ DEFAULT_INDEX = {
   "tags": ["steam train", "train", "whistle"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 41.25
+ },
+ "station_announcement_victoria": {
+  "file": "transport/station_announcement_victoria.mp3",
+  "tags": ["station", "announcement", "crowd"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 37.22
+ },
+ "railway_station_3": {
+  "file": "transport/railway_station_3.mp3",
+  "tags": ["station", "ambience", "railway"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "haunted_house_ambience": {
+  "file": "horror/haunted_house_ambience.mp3",
+  "tags": ["haunted", "ambience", "horror"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "indian_train_arriving_announcement": {
+  "file": "transport/indian_train_arriving_announcement.mp3",
+  "tags": ["station", "announcement", "train", "hindi"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 24.72
+ },
+ "indian_city_road_ambience": {
+  "file": "ambience/indian_city_road_ambience.mp3",
+  "tags": ["city", "road", "india", "ambience"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "indian_traffic_1": {
+  "file": "ambience/indian_traffic_1.mp3",
+  "tags": ["traffic", "india", "city", "horns"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "scream_pathetic_2": {
+  "file": "horror/scream_pathetic_2.mp3",
+  "tags": ["scream", "horror"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 8.1
+ },
+ "station_announcement_tennoji": {
+  "file": "transport/station_announcement_tennoji.mp3",
+  "tags": ["station", "announcement", "japan"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "aarti_2": {
+  "file": "mantra/aarti_2.mp3",
+  "tags": ["aarti", "mantra", "temple"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
  }
 }
 
