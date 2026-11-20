@@ -145,14 +145,14 @@ def fetch_mixkit(name, target_seconds=None):
 
 # hamare SFX naam -> English search (Freesound me English tags hote hain)
 SEARCH_TERMS = {
-    "footsteps": "footsteps walking",
+    "footsteps_indoor": "footsteps walking",
     "leaf_crush": "dry leaves crunch",
     "leaves": "leaves rustle",
     "rain": "rain ambience",
     "wind": "wind ambience",
     "water": "river water flow",
     "water_drop": "water drop",
-    "fire": "fire crackling",
+    "fire_crackling": "fire crackling",
     "thunder": "thunder",
     "door": "wooden door open close house interior",
     "glass": "glass break",
@@ -190,8 +190,8 @@ SEARCH_TERMS = {
 AMBIENCE_TERMS = {
     "village": "indian village morning ambience birds",
     "night": "night crickets insects ambience",
-    "rain": "rain ambience loop",
-    "wind": "wind ambience loop",
+    "rain_heavy": "rain ambience loop",
+    "wind_blowing": "wind ambience loop",
     "room": "room tone quiet",
     "street": "street traffic crowd ambience",
     "jungle": "jungle forest birds ambience",

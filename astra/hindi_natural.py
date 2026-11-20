@@ -227,9 +227,9 @@ HINGLISH = {
     "accha": "अच्छा", "achha": "अच्छा", "bura": "बुरा", "bahut": "बहुत",
     "thoda": "थोड़ा", "zyada": "ज़्यादा", "kam": "कम", "sab": "सब", "kuch": "कुछ",
     "koi": "कोई", "log": "लोग", "dost": "दोस्त", "pyaar": "प्यार", "khushi": "खुशी",
-    "dar": "डर", "darr": "डर", "raat": "रात", "sapna": "सपना", "kahani": "कहानी",
+    "dar": "डर", "darr": "डर", "sapna": "सपना", "kahani": "कहानी",
     "chalo": "चलो", "aao": "आओ", "jao": "जाओ", "dekho": "देखो", "suno": "सुनो",
-    "ruko": "रुको", "chalo": "चलो", "batao": "बताओ", "bolo": "बोलो",
+    "ruko": "रुको", "batao": "बताओ", "bolo": "बोलो",
 }
 
 

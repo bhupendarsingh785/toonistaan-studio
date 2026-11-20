@@ -22,7 +22,9 @@ PATTERNS = {
     "generic": re.compile(r"(?:api[_-]?key|token|secret)\s*[:=]\s*['\"][A-Za-z0-9_\-]{24,}['\"]"),
 }
 SKIP_EXT = {".md", ".txt", ".json", ".lock"}
-SKIP_DIRS = {".git", "models", "__pycache__", "node_modules", "storage", "cache"}
+SKIP_DIRS = {".git", "models", "__pycache__", "node_modules", "storage", "cache",
+             "tests", "test"}          # tests me jaan-boojh kar fake key hoti hai
+FAKE_PREFIX = ("abc", "xyz", "your", "fake", "test", "dummy", "sample", "1234", "xxxx")
 SECRET_FILES = re.compile(r"(^|/)(\.env|secrets?\.(json|ya?ml)|credentials\.json)$")
 
 
@@ -55,8 +57,12 @@ def scan() -> dict:
             continue
         for name, pat in PATTERNS.items():
             for m in pat.finditer(text):
+                val = m.group(0)
+                tail = val.split(":")[-1].strip().strip('\'"').lower()
+                if tail.startswith(FAKE_PREFIX):
+                    continue          # nakli key — jaan-boojh kar rakhi hai
                 hits.append({"file": rel, "kind": name,
-                             "sample": m.group(0)[:24] + "…"})
+                             "sample": val[:24] + "…"})
     return {"leaks": hits, "secret_files": secret_files,
             "ok": not hits and not secret_files,
             "checked": len(tracked_files())}

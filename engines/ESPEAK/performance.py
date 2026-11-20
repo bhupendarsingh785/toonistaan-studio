@@ -53,7 +53,7 @@ def _text_events(text, emotion):
     if not text: return []
     events=[{"kind":"text","text":text,"emotion":emotion,"stretch":False}]
     tail=text[-1]
-    pause={",":130,"，":130,";":180,";":180,":":160,"।":340,".":300,"?":300,"!":300,"…":450}.get(tail)
+    pause={",":130,"，":130,";":180,"；":180,":":160,"।":340,".":300,"?":300,"!":300,"…":450}.get(tail)
     if pause:
         events.append({"kind":"pause","duration_ms":pause,"source":"punctuation"})
     return events
