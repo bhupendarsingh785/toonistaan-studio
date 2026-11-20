@@ -83,3 +83,32 @@ python tools/voice_clone.py audit
 ```
 
 Tests: **71 pass** (pehle 68 the).
+
+## 8. v4 — koi bhi recording chalegi (script ki zaroorat nahi)
+
+**Niyam badal diya:** ab tum koi bhi recording bhej sakte ho — koi bhi insan kisi bhi baat par bol raha ho. Zaroori nahi ki wahi shabd bole jo maine likhe.
+
+Kaise:
+
+```bash
+# 1) video/audio se 3 saaf hisse nikaalo (transcript khud banega, whisper ho to)
+python tools/voice_extract.py run --in koi_bhi.mp4 --out voices/meera --windows 3 --seconds 12
+
+# 2) enroll — transcript optional
+python tools/voice_clone.py enroll --name meera --from-media koi_bhi.mp4 --consent
+#    (transcript na ho to backend xtts khud chun liya jata hai — usko transcript nahi chahiye)
+
+# 3) extra hisse bhaav ke hisaab se jodo
+python tools/voice_clone.py add-reference --name meera --audio voices/meera/reference_2.wav \
+  --emotion dukh --transcript "अगर whisper se transcript aaya hai to yahan daal do"
+```
+
+**Backend ka niyam:**
+| Transcript hai? | Backend | Kyun |
+|---|---|---|
+| haan (whisper ya tumne diya) | indicf5 | usko exact transcript chahiye |
+| nahi | xtts | usko sirf audio chahiye |
+
+**Naya flag:** `--no-transcribe` (whisper ko band rakho), `--windows 3` (ek se zyada saaf hisse).
+
+Tests: **73 pass**.

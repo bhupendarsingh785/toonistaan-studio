@@ -34,14 +34,25 @@ def test_enroll_and_list(tmp_path, monkeypatch):
     assert (tmp_path / "voices" / "dadi" / "reference.wav").exists()
 
 
-def test_enroll_rejects_empty_transcript(tmp_path, monkeypatch):
+def test_enroll_empty_transcript_only_blocked_for_indicf5(tmp_path, monkeypatch):
+    """Naya niyam: bina transcript bhi enroll ho sakta hai — par tab backend xtts."""
     monkeypatch.setattr(vc, "VOICES", tmp_path / "voices")
     audio = _make_wav(tmp_path / "a.wav")
     try:
-        vc.enroll("x", str(audio), "   ", consent=True)
+        vc.enroll("x", str(audio), "   ", consent=True, backend="indicf5")
         assert False
     except ValueError as exc:
         assert "transcript" in str(exc)
+
+
+def test_enroll_without_transcript_uses_xtts(tmp_path, monkeypatch):
+    monkeypatch.setattr(vc, "VOICES", tmp_path / "voices")
+    audio = _make_wav(tmp_path / "b.wav")
+    monkeypatch.setattr(vc, "backend_status",
+                        lambda: [{"name": "xtts", "ready": True, "why": ""},
+                                 {"name": "piper", "ready": True, "why": ""}])
+    v = vc.enroll("koi_bhi", str(audio), "", consent=True)
+    assert v.backend == "xtts" and v.transcript == ""
 
 
 def test_speak_reports_backend_and_failures(tmp_path, monkeypatch):

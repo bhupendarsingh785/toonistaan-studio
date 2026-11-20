@@ -80,11 +80,15 @@ def backend_status() -> list[dict]:
     return out
 
 
-def pick_backend() -> str | None:
-    for b in backend_status():
-        if b["ready"] and b["name"] != "piper":
-            return b["name"]
-    return None
+def pick_backend(need_transcript: bool = False) -> str | None:
+    """need_transcript=True ho to sirf wahi backend jo transcript maangta hai (indicf5)."""
+    ready = [b["name"] for b in backend_status() if b["ready"] and b["name"] != "piper"]
+    if not ready:
+        return None
+    if need_transcript:
+        return "indicf5" if "indicf5" in ready else None
+    # bina transcript: xtts pehle (usko transcript nahi chahiye)
+    return "xtts" if "xtts" in ready else ready[0]
 
 
 # ------------------------------------------------------------------ quality
@@ -147,8 +151,12 @@ def enroll(name: str, audio: str, transcript: str, consent: bool, backend: str =
     src = Path(audio)
     if not src.exists():
         raise FileNotFoundError(f"recording nahi mili: {audio}")
-    if not transcript.strip():
-        raise ValueError("transcript khali hai — recording me jo bola gaya, bilkul wahi likho")
+    transcript = (transcript or "").strip()
+    if not transcript:
+        # transcript na ho to XTTS — usko sirf audio chahiye
+        backend = backend or pick_backend(need_transcript=False)
+        if backend == "indicf5":
+            raise ValueError("indicf5 ko transcript chahiye; transcript na ho to backend xtts rakho")
     q = reference_quality(str(src))
     if not q["ok"]:
         raise ValueError(f"reference theek nahi: {q['why']} — saaf 3-15 second ki recording do")
@@ -157,7 +165,8 @@ def enroll(name: str, audio: str, transcript: str, consent: bool, backend: str =
     shutil.copy2(src, d / "reference.wav")
     v = Voice(name=name, audio=str(d / "reference.wav"), transcript=transcript.strip(),
               consent=True, backend=backend or (pick_backend() or "piper"),
-              note=f"consent diya; quality: {q['talk_ratio']*100:.0f}% bolne ka hissa, {q['duration_sec']}s",
+              note=f"consent diya; quality: {q['talk_ratio']*100:.0f}% bolne ka hissa, {q['duration_sec']}s"
+                   + ("" if transcript else "; transcript nahi (xtts backend)"),
               references=[{"audio": str(d / "reference.wav"), "transcript": transcript.strip(),
                            "emotion": "neutral", "quality": q}],
               consent_note="user ne --consent diya",
