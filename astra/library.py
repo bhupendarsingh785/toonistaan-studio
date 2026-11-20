@@ -19391,6 +19391,18 @@ DEFAULT_INDEX = {
   "tags": ["wind", "mountain", "gust"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 2.04
+ },
+ "wind_howling": {
+  "file": "nature/wind_howling.mp3",
+  "tags": ["wind", "howl"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 14.03
+ },
+ "flowing_water_stream": {
+  "file": "water/flowing_water_stream.mp3",
+  "tags": ["water", "stream", "flow", "river"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
  }
 }
 
