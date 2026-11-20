@@ -68,6 +68,42 @@ def duration(path: Path) -> float:
         return 0.0
 
 
+def fingerprint(path: Path, n: int = 64, seconds: int = 10) -> "list[float]":
+    """Awaaz ka spectrum fingerprint — naam badalne par bhi duplicate pakadta hai."""
+    import numpy as np
+    raw = subprocess.run([_ff(), "-v", "quiet", "-i", str(path), "-t", str(seconds),
+                          "-f", "s16le", "-ac", "1", "-ar", "16000", "-"],
+                         capture_output=True).stdout
+    x = np.frombuffer(raw, dtype=np.int16).astype("float32") / 32768.0
+    if len(x) == 0:
+        return [0.0] * n
+    sp = np.abs(np.fft.rfft(x))
+    if sp.sum() == 0:
+        return [0.0] * n
+    bins = np.array_split(sp[: len(sp) // n * n], n)
+    v = np.array([b.mean() for b in bins])
+    return list(v / (np.linalg.norm(v) + 1e-9))
+
+
+def similarity(a, b) -> float:
+    """Do audio kitne ek jaise hain (0 = alag, 1 = bilkul same)."""
+    fa, fb = fingerprint(Path(a)), fingerprint(Path(b))
+    return float(sum(x * y for x, y in zip(fa, fb)))
+
+
+def find_duplicate(src: Path, threshold: float = 0.95) -> str | None:
+    """Library me pehle se wahi awaaz hai kya (spectrum se)."""
+    f_new = fingerprint(src)
+    best, best_sim = None, 0.0
+    for p in LIB.rglob("*"):
+        if p.suffix.lower() not in AUDIO_EXT:
+            continue
+        sim = float(sum(x * y for x, y in zip(f_new, fingerprint(p))))
+        if sim > best_sim:
+            best, best_sim = p, sim
+    return str(best.relative_to(ROOT)) if best and best_sim >= threshold else None
+
+
 def register(entry_id: str, rel_file: str, tags: list[str], license_note: str, secs: float) -> bool:
     """DEFAULT_INDEX me entry jodo (file ke aakhir wale dict me)."""
     src = LIBPY.read_text(encoding="utf-8")

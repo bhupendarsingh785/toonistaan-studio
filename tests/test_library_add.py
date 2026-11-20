@@ -37,3 +37,18 @@ def test_register_adds_comma_safely(tmp_path, monkeypatch):
     src = libpy.read_text()
     ast.parse(src)                      # syntax valid hona chahiye
     assert '"b"' in src
+
+
+def test_fingerprint_similarity_flags_duplicate():
+    """Ek hi audio ke do naam — similarity se pakde jayein (naam se nahi)."""
+    import numpy as np, soundfile as sf
+    from pathlib import Path
+    sr = 16000
+    t = np.arange(sr * 3) / sr
+    x = (0.3*np.sin(2*np.pi*220*t) + 0.1*np.sin(2*np.pi*440*t)).astype("float32")
+    a = Path("/tmp/dup_a.wav"); b = Path("/tmp/dup_b.wav"); c = Path("/tmp/dup_c.wav")
+    sf.write(a, x, sr); sf.write(b, x, sr)
+    sf.write(c, (0.3*np.sin(2*np.pi*900*t)).astype("float32"), sr)
+    sim_same = la.similarity(a, b)
+    sim_diff = la.similarity(a, c)
+    assert sim_same > 0.95 and sim_diff < 0.8

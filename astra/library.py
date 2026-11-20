@@ -18839,6 +18839,18 @@ DEFAULT_INDEX = {
   "tags": ["laser", "thunder", "transition"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 4.81
+ },
+ "three_tone_chime": {
+  "file": "bells/three_tone_chime.mp3",
+  "tags": ["chime", "three tone", "station"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 3.6
+ },
+ "steam_train_vapor02": {
+  "file": "vehicles/steam_train_vapor02.mp3",
+  "tags": ["steam train", "train", "whistle"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 41.25
  }
 }
 
