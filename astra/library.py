@@ -19559,6 +19559,12 @@ DEFAULT_INDEX = {
   "tags": ["metal", "heavy", "fight"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 60.0
+ },
+ "heavy_thunderstorm": {
+  "file": "nature/heavy_thunderstorm.mp3",
+  "tags": ["thunder", "storm", "heavy"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
  }
 }
 
