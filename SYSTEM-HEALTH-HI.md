@@ -32,3 +32,12 @@ Aaj ka natija: **14/17 pass** — jo teen fail hain woh sach hain: `edge`, `elev
 - Playwright nahi — browser HTTP fallback par
 - Cloning (IndicF5/XTTS) — torch/GPU nahi
 - Training data 0 examples
+
+## 5. Doosri jaanch me aur teen duplicate-key dict mile
+
+`astra/real_audio.py` ke `SEARCH_TERMS` me **4 duplicate keys** (footsteps, rain, wind, fire) — 44 keys me se 40 bache, kuch bhi kaam ka nahi khoya (pehla value hi runtime par jeetta tha).
+
+Isi tarah `astra/library.py` ke `VARIANTS` me **9 duplicates** merge kiye (vinyl 13, transition 25).
+
+## 6. Ab static check saaf
+`pyflakes` me ab **koi undefined name nahi**, koi duplicate key nahi — sirf 3 "variable bana par use nahi hua" (harmless) bache hain: `cinema.py:352 fx`, `server.py:174 cues`, `story_check.py:56 paces`.

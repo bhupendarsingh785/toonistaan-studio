@@ -185,10 +185,6 @@ SEARCH_TERMS = {
     "switch": "light switch click",
     "car": "car passing by street",
     "whoosh": "whoosh transition",
-    "footsteps": "footsteps walking indoor slow",
-    "rain": "rain heavy ambience",
-    "wind": "wind blowing ambience",
-    "fire": "fire crackling close",
 }
 
 AMBIENCE_TERMS = {
