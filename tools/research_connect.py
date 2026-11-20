@@ -125,6 +125,38 @@ def wiki_extract(title: str, lang: str = "en") -> str:
     return ""
 
 
+def search_news(query: str, limit: int = 6) -> list[dict]:
+    """Google News RSS + The Hindu RSS — asli khabar (bina key). India ke liye."""
+    out, seen = [], set()
+    feeds = [
+        "https://news.google.com/rss/search?hl=en-IN&gl=IN&ceid=IN:en&q=" + urllib.parse.quote_plus(query),
+        "https://www.thehindu.com/news/national/feeder/default.rss",
+    ]
+    for url in feeds:
+        body = _get(url)
+        if not body:
+            continue
+        for m in re.finditer(r"<item>(.*?)</item>", body, re.S):
+            block = m.group(1)
+            t = re.search(r"<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>", block, re.S)
+            l = re.search(r"<link>(.*?)</link>", block, re.S)
+            d = re.search(r"<description>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</description>", block, re.S)
+            src = re.search(r'<source url="(https?://[^"]+)"', block)
+            if not l:
+                continue
+            link = _clean(l.group(1))
+            if not link.startswith("http") or link in seen:
+                continue
+            seen.add(link)
+            pub = urllib.parse.urlparse(src.group(1)).hostname if src else ""
+            out.append({"url": link, "title": _clean(t.group(1)) if t else link,
+                        "text": _clean(d.group(1))[:3000] if d else "",
+                        "domain": pub})
+            if len(out) >= limit:
+                return out
+    return out
+
+
 def search_wiki_hi(query: str, limit: int = 4) -> list[dict]:
     api = ("https://hi.wikipedia.org/w/api.php?action=query&list=search&format=json"
            f"&srsearch={urllib.parse.quote_plus(query)}&srlimit={limit}")
@@ -139,7 +171,7 @@ def search_wiki_hi(query: str, limit: int = 4) -> list[dict]:
              "title": r.get("title", "")} for r in data.get("query", {}).get("search", [])[:limit]]
 
 
-SEARCH_ORDER = (("github", search_github), ("wikipedia", search_wiki),
+SEARCH_ORDER = (("news", search_news), ("github", search_github), ("wikipedia", search_wiki),
                 ("arxiv", search_arxiv), ("wikipedia_hi", search_wiki_hi),
                 ("duckduckgo", search_ddg))
 
@@ -199,7 +231,7 @@ def research(query: str, max_sources: int = 5, max_chars: int = 20000) -> dict:
                    if len(ex) > 200 else fetch(hit["url"], max_chars))
         else:
             got = fetch(hit["url"], max_chars)
-        domain = urllib.parse.urlparse(hit["url"]).hostname or ""
+        domain = hit.get("domain") or urllib.parse.urlparse(hit["url"]).hostname or ""
         row = {"url": hit["url"], "domain": domain, "title": hit["title"],
                "text": got.get("text", ""), "sha256": got.get("sha256", ""),
                "relevance": "search_match", "fetched_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
