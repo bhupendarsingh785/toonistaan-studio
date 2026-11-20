@@ -19331,6 +19331,30 @@ DEFAULT_INDEX = {
   "tags": ["temple", "bell", "indian"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 30.6
+ },
+ "grass_rustling_05": {
+  "file": "nature/grass_rustling_05.mp3",
+  "tags": ["grass", "rustle", "field"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 1.1
+ },
+ "dry_grass_rustling": {
+  "file": "nature/dry_grass_rustling.mp3",
+  "tags": ["dry grass", "rustle"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 1.39
+ },
+ "footstep_rustling": {
+  "file": "footsteps/footstep_rustling.mp3",
+  "tags": ["footstep", "rustle", "grass"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 0.62
+ },
+ "soft_wind": {
+  "file": "nature/soft_wind.mp3",
+  "tags": ["wind", "soft", "breeze"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 22.07
  }
 }
 
