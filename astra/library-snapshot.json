@@ -1,5 +1,5 @@
 {
-"count": 1969,
+"count": 1976,
 "files": {
 "library/.cleaned.json": {
 "size": 62560,
@@ -1397,6 +1397,10 @@
 "size": 14253,
 "md5": "5bfc4174081ac5f7edcaf0e0cf27c400"
 },
+"library/nature/soft_rain_2.mp3": {
+"size": 480620,
+"md5": "feb5b49cf9e3af342f418b36841cc699"
+},
 "library/nature/soft_wind_leaves.mp3": {
 "size": 121251,
 "md5": "9e18a3a18fdf3b8257350fa3272e7a41"
@@ -1425,6 +1429,10 @@
 "size": 11745,
 "md5": "1898bf1b73c32fc5a88754e93e9ef802"
 },
+"library/nature/jungle_crickets_noise.mp3": {
+"size": 330092,
+"md5": "4e50359fadb17e621fbd03c006214390"
+},
 "library/nature/city_night_crickets.mp3": {
 "size": 480487,
 "md5": "0d56ec86bd0336ef35e42b71b953c130"
@@ -1433,9 +1441,17 @@
 "size": 480487,
 "md5": "9fcab31f835313ddc95dac63017340c4"
 },
+"library/nature/crickets_night_529705.mp3": {
+"size": 357932,
+"md5": "f51d7736b37e75cd3fa3e83dc12a3315"
+},
 "library/nature/crickets_bugs_night.mp3": {
 "size": 480487,
 "md5": "e1a5de6a654b8265f4f8d1d141f11c1e"
+},
+"library/nature/cricket_grasshopper_balcony.mp3": {
+"size": 480620,
+"md5": "95dc05c63d0e4987b8450cd93dce64ee"
 },
 "library/nature/night_forest_soundscape.mp3": {
 "size": 480487,
@@ -1456,6 +1472,10 @@
 "library/nature/soft_wind.mp3": {
 "size": 177048,
 "md5": "bed59e47e225ebeac634bc5a3e97626f"
+},
+"library/nature/cozy_bedroom_rain.mp3": {
+"size": 480620,
+"md5": "5eb0f548dc064e0204092f4596d9650b"
 },
 "library/nature/cicada_insects.mp3": {
 "size": 338798,
@@ -3257,6 +3277,10 @@
 "size": 373071,
 "md5": "2d41b5888b0e426ca84ccb1d53b9f88c"
 },
+"library/music/heavy_metal_force.mp3": {
+"size": 480620,
+"md5": "95873b7d778e34b9b72707fbc24e79e1"
+},
 "library/music/india_bgm.mp3": {
 "size": 720604,
 "md5": "9aa27d155c991cc9d222845a2bd8514f"
@@ -3464,6 +3488,10 @@
 "library/music/drone_04_a.mp3": {
 "size": 258132,
 "md5": "3a2de8f684a7137d21b78d51b0c75557"
+},
+"library/music/heavy_groove_metal.mp3": {
+"size": 480620,
+"md5": "9173e2d9b522fa406c1a881270776c3f"
 },
 "library/music/guitar_riff_7.mp3": {
 "size": 7357,
