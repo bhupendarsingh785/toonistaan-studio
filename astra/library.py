@@ -19283,6 +19283,54 @@ DEFAULT_INDEX = {
   "tags": ["crowd", "cheer"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 8.05
+ },
+ "stadium_football_crowd": {
+  "file": "crowd/stadium_football_crowd.mp3",
+  "tags": ["stadium", "crowd", "football"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 17.5
+ },
+ "indian_tanpura": {
+  "file": "mantra/indian_tanpura.mp3",
+  "tags": ["tanpura", "drone", "indian"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "crowd_disappointment": {
+  "file": "crowd/crowd_disappointment.mp3",
+  "tags": ["crowd", "disappointment", "reaction"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 3.12
+ },
+ "indian_music_mfcc": {
+  "file": "music/indian_music_mfcc.mp3",
+  "tags": ["indian", "music"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 40.54
+ },
+ "cheering_crowd_3": {
+  "file": "crowd/cheering_crowd_3.mp3",
+  "tags": ["crowd", "cheer"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 4.44
+ },
+ "temple_chanting_people": {
+  "file": "mantra/temple_chanting_people.mp3",
+  "tags": ["temple", "chanting", "bhajan", "crowd"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "crowd_booing": {
+  "file": "crowd/crowd_booing.mp3",
+  "tags": ["crowd", "boo", "negative"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 2.59
+ },
+ "indian_temple_bell_2": {
+  "file": "bells/indian_temple_bell_2.mp3",
+  "tags": ["temple", "bell", "indian"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 30.6
  }
 }
 
