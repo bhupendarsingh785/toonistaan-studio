@@ -18905,6 +18905,60 @@ DEFAULT_INDEX = {
   "tags": ["aarti", "mantra", "temple"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 60.0
+ },
+ "shell_drop_1": {
+  "file": "foley/shell_drop_1.mp3",
+  "tags": ["shell", "drop", "metal"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 0.68
+ },
+ "screenshot_iphone": {
+  "file": "ui/screenshot_iphone.mp3",
+  "tags": ["camera", "screenshot", "phone"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 1.72
+ },
+ "mortar_shell_2": {
+  "file": "foley/mortar_shell_2.mp3",
+  "tags": ["mortar", "shell", "boom"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 10.39
+ },
+ "keyboard_typing_2": {
+  "file": "office/keyboard_typing_2.mp3",
+  "tags": ["keyboard", "typing"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 8.1
+ },
+ "vinyl_stop": {
+  "file": "foley/vinyl_stop.mp3",
+  "tags": ["vinyl", "stop", "scratch"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 2.38
+ },
+ "plastic_rummage_lego": {
+  "file": "foley/plastic_rummage_lego.mp3",
+  "tags": ["plastic", "rummage", "lego"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 21.02
+ },
+ "shell_ripple_water": {
+  "file": "water/shell_ripple_water.mp3",
+  "tags": ["water", "ripple", "shell"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "shotgun_reload": {
+  "file": "foley/shotgun_reload.mp3",
+  "tags": ["shotgun", "reload", "weapon"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 4.03
+ },
+ "scary_sting_2": {
+  "file": "horror/scary_sting_2.mp3",
+  "tags": ["scary", "sting", "horror"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 8.1
  }
 }
 
