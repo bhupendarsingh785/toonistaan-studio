@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Engine Bus — 24 engine aapas me baat karein aur kaam todkar jaldi poora karein.
+"""Engine Bus — chaar engine (SARVAM, EDGE, PIPER, ESPEAK) aapas me baat karein.
+
+Chaar hi engine hain (24 nahi — woh galti se likha gaya tha).
 
 Faisla (design):
   - Har engine apni "capability" batata hai (kya bol sakta hai, kaunse bhaav, offline?, kitna tez, kitna mehnga)
@@ -83,6 +85,80 @@ def _atomic_write(path: Path, payload: dict) -> None:
     os.replace(tmp, path)
 
 
+
+
+# ------------------------------------------------------- chaar engine (default)
+DEFAULT_ENGINES = [
+    {"name": "sarvam", "emotions": ["neutral", "dukh", "gussa", "khushi", "pyaar", "dar",
+                                    "rona", "hairan", "sharam", "thakan", "hasai"],
+     "languages": ["hi", "en"], "offline": False, "speed": 1.0, "cost": 1.0, "max_chars": 500},
+    {"name": "edge", "emotions": ["neutral", "khushi", "hairan", "hasai"],
+     "languages": ["hi", "en"], "offline": False, "speed": 1.4, "cost": 0.0, "max_chars": 500},
+    {"name": "piper", "emotions": ["neutral", "pyaar", "thakan"],
+     "languages": ["hi"], "offline": True, "speed": 2.0, "cost": 0.0, "max_chars": 300},
+    {"name": "espeak", "emotions": ["neutral"],
+     "languages": ["hi", "en"], "offline": True, "speed": 3.0, "cost": 0.0, "max_chars": 300},
+]
+
+
+def ensure_defaults() -> list[Capability]:
+    """Kuch bhi registered na ho to chaar engine ke default daal do."""
+    reg = load_registry()
+    if not reg:
+        for row in DEFAULT_ENGINES:
+            register(Capability.from_dict(row))
+    return engines()
+
+
+# ------------------------------------------------------------- engine baat-cheet
+def send(sender: str, to: str, kind: str, payload: dict) -> dict:
+    """Ek engine doosre ko message bheje (inbox me file banti hai)."""
+    BUS.mkdir(parents=True, exist_ok=True)
+    box = BUS / "messages" / to
+    box.mkdir(parents=True, exist_ok=True)
+    msg = {"from": sender, "to": to, "kind": kind, "payload": payload,
+           "at": time.strftime("%Y-%m-%d %H:%M:%S")}
+    f = box / f"{time.time_ns()}_{sender}_{kind}.json"
+    f.write_text(json.dumps(msg, ensure_ascii=False, indent=1), encoding="utf-8")
+    return msg
+
+
+def inbox(engine: str) -> list[dict]:
+    """Engine ke paas aaye hue message (purane pehle)."""
+    box = BUS / "messages" / engine
+    if not box.exists():
+        return []
+    out = []
+    for f in sorted(box.glob("*.json")):
+        try:
+            out.append(json.loads(f.read_text(encoding="utf-8")))
+        except Exception:
+            continue
+    return out
+
+
+def broadcast(sender: str, kind: str, payload: dict) -> list[dict]:
+    """Sab engine ko ek saath bhejo (misal: 'yeh kahani ka hissa tumhara hai')."""
+    sent = []
+    for cap in engines():
+        if cap.name != sender:
+            sent.append(send(sender, cap.name, kind, payload))
+    return sent
+
+
+def heartbeat(engine: str, healthy: bool = True, note: str = "") -> dict:
+    """Engine zinda hai ya nahi — registry update."""
+    reg = load_registry()
+    if engine not in reg:
+        reg[engine] = Capability(name=engine).__dict__
+    reg[engine]["healthy"] = bool(healthy)
+    reg[engine]["last_beat"] = time.strftime("%Y-%m-%d %H:%M:%S")
+    if note:
+        reg[engine]["note"] = note
+    _atomic_write(registry_path(), reg)
+    return reg[engine]
+
+
 # --------------------------------------------------------------- kaam baantna
 def pick_engine(part, caps: list[Capability], locked: dict | None = None) -> Capability | None:
     """Ek hisse ke liye best engine: pehle bhaav, phir awaaz lock, phir speed/cost."""
@@ -128,6 +204,14 @@ def split_script(text: str, max_chars: int = 220) -> list[Part]:
         if m:
             emo = m.group(1)
             line = (line[:m.start()] + line[m.end():]).strip(" :-")
+        else:
+            try:                      # tag na ho to bhaav khud pehchano
+                from tools import bhavna
+                d = bhavna.detect(line)
+                if d["confidence"] >= 0.6:
+                    emo = d["emotion"]
+            except Exception:
+                pass
         who = "sutradhar"
         if ":" in line:
             head, tail = line.split(":", 1)
@@ -205,7 +289,7 @@ def run(text: str, out_dir: str, renderer=None, caps: list[Capability] | None = 
 
 
 def status() -> dict:
-    caps = engines()
+    caps = ensure_defaults()
     return {"engines": len(caps), "healthy": sum(1 for c in caps if c.healthy),
             "list": [c.__dict__ for c in caps]}
 
@@ -221,6 +305,12 @@ def main() -> int:
     r.add_argument("--speed", type=float, default=1.0)
     r.add_argument("--cost", type=float, default=0.0)
     sub.add_parser("status")
+    ib = sub.add_parser("inbox"); ib.add_argument("--engine", required=True); 
+    hb = sub.add_parser("heartbeat"); hb.add_argument("--engine", required=True)
+    hb.add_argument("--down", action="store_true"); hb.add_argument("--note", default="")
+    ms = sub.add_parser("say"); ms.add_argument("--from", dest="sender", required=True)
+    ms.add_argument("--to", required=True); ms.add_argument("--kind", default="note")
+    ms.add_argument("--text", required=True)
     pl = sub.add_parser("plan"); pl.add_argument("--script", required=True)
     rn = sub.add_parser("run"); rn.add_argument("--script", required=True); rn.add_argument("--out", required=True)
     a = ap.parse_args()
@@ -235,6 +325,14 @@ def main() -> int:
         print(json.dumps(cap.__dict__, ensure_ascii=False, indent=2)); return 0
     if a.cmd == "status":
         print(json.dumps(status(), ensure_ascii=False, indent=2)); return 0
+    if a.cmd == "inbox":
+        print(json.dumps(inbox(a.engine), ensure_ascii=False, indent=1)); return 0
+    if a.cmd == "heartbeat":
+        print(json.dumps(heartbeat(a.engine, healthy=not a.down, note=a.note),
+                         ensure_ascii=False, indent=2)); return 0
+    if a.cmd == "say":
+        print(json.dumps(send(a.sender, a.to, a.kind, {"text": a.text}),
+                         ensure_ascii=False, indent=2)); return 0
     text = Path(a.script).read_text(encoding="utf-8")
     if a.cmd == "plan":
         print(json.dumps([p.__dict__ for p in plan(text, engines())], ensure_ascii=False, indent=1)); return 0

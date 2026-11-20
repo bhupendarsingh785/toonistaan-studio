@@ -80,3 +80,44 @@ def test_partial_progress_is_saved(tmp_path, monkeypatch):
     rep = bus.run("दादी: एक।\nमाँ: दो।", str(tmp_path / "out"), renderer=renderer, caps=caps)
     m = json.loads((tmp_path / "out" / "manifest.json").read_text())
     assert rep["done"] == 2 and m["done"] == 2 and len(m["parts"]) == 2
+
+
+def test_default_four_engines(tmp_path, monkeypatch):
+    monkeypatch.setattr(bus, "BUS", tmp_path / "bus")
+    monkeypatch.setattr(bus, "registry_path", lambda: tmp_path / "bus" / "engines.json")
+    caps = bus.ensure_defaults()
+    names = {c.name for c in caps}
+    assert names == {"sarvam", "edge", "piper", "espeak"}      # chaar hi, 24 nahi
+
+
+def test_engines_can_message_each_other(tmp_path, monkeypatch):
+    monkeypatch.setattr(bus, "BUS", tmp_path / "bus")
+    monkeypatch.setattr(bus, "registry_path", lambda: tmp_path / "bus" / "engines.json")
+    bus.ensure_defaults()
+    bus.send("sarvam", "piper", "task", {"line": "बेटा आ जा", "emotion": "pyaar"})
+    msgs = bus.inbox("piper")
+    assert len(msgs) == 1 and msgs[0]["from"] == "sarvam" and msgs[0]["payload"]["emotion"] == "pyaar"
+
+
+def test_broadcast_reaches_all_other_engines(tmp_path, monkeypatch):
+    monkeypatch.setattr(bus, "BUS", tmp_path / "bus")
+    monkeypatch.setattr(bus, "registry_path", lambda: tmp_path / "bus" / "engines.json")
+    bus.ensure_defaults()
+    sent = bus.broadcast("sarvam", "info", {"story": "station"})
+    assert len(sent) == 3
+    assert all(bus.inbox(n) for n in ("edge", "piper", "espeak"))
+
+
+def test_heartbeat_marks_engine_down(tmp_path, monkeypatch):
+    monkeypatch.setattr(bus, "BUS", tmp_path / "bus")
+    monkeypatch.setattr(bus, "registry_path", lambda: tmp_path / "bus" / "engines.json")
+    bus.ensure_defaults()
+    bus.heartbeat("piper", healthy=False, note="binary nahi")
+    caps = {c.name: c for c in bus.engines()}
+    assert caps["piper"].healthy is False
+
+
+def test_emotion_detected_when_no_tag(tmp_path, monkeypatch):
+    caps = _caps(tmp_path, monkeypatch)
+    parts = bus.plan("मुझे बहुत तकलीफ़ हो रही है, अब क्या करूँ...", caps)
+    assert parts[0].emotion in ("dukh", "rona")

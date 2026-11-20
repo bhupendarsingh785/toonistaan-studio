@@ -1,0 +1,78 @@
+{
+ "sarvam": {
+  "name": "sarvam",
+  "emotions": [
+   "neutral",
+   "dukh",
+   "gussa",
+   "khushi",
+   "pyaar",
+   "dar",
+   "rona",
+   "hairan",
+   "sharam",
+   "thakan",
+   "hasai"
+  ],
+  "languages": [
+   "hi",
+   "en"
+  ],
+  "offline": false,
+  "speed": 1.0,
+  "cost": 1.0,
+  "max_chars": 500,
+  "healthy": true
+ },
+ "edge": {
+  "name": "edge",
+  "emotions": [
+   "neutral",
+   "khushi",
+   "hairan",
+   "hasai"
+  ],
+  "languages": [
+   "hi",
+   "en"
+  ],
+  "offline": false,
+  "speed": 1.4,
+  "cost": 0.0,
+  "max_chars": 500,
+  "healthy": true
+ },
+ "piper": {
+  "name": "piper",
+  "emotions": [
+   "neutral",
+   "pyaar",
+   "thakan"
+  ],
+  "languages": [
+   "hi"
+  ],
+  "offline": true,
+  "speed": 2.0,
+  "cost": 0.0,
+  "max_chars": 300,
+  "healthy": true,
+  "last_beat": "2026-11-20 12:07:12",
+  "note": "binary missing"
+ },
+ "espeak": {
+  "name": "espeak",
+  "emotions": [
+   "neutral"
+  ],
+  "languages": [
+   "hi",
+   "en"
+  ],
+  "offline": true,
+  "speed": 3.0,
+  "cost": 0.0,
+  "max_chars": 300,
+  "healthy": true
+ }
+}

@@ -1,49 +1,48 @@
-# Engine Bus — 24 engine aapas me taalmel (baat-cheet + kaam baantna)
+# Chaar engine ka taalmel — Engine Bus + Bhaav ki samajh
 
-**122 tests pass, 1 skip** · `tools/engine_bus.py`
+**134 tests pass, 1 skip** · `tools/engine_bus.py` + `tools/bhavna.py`
 
-## Kya karta hai
+> Sudhaar: engine **chaar** hain — SARVAM, EDGE, PIPER, ESPEAK. "24" galti se likha gaya tha, ab registry me sirf chaar.
 
-1. **Har engine apni capability batata hai** — kaunse bhaav, kaunsi bhasha, offline hai ya nahi, kitna tez, kitna mehnga, kitne akshar.
-2. **Project chhote parts me tootta hai** — script ki har line ek part. Lambi line `।` par tootti hai.
-3. **Sahi engine ko hissa milta hai** — pehle **bhaav** dekha jata hai (dukh/gussa wali line usi engine par jo woh kar sakta hai), phir speed/cost.
-4. **Ek kirdaar = ek engine** — "awaaz lock". Dadi ki saari line ek hi engine par, warna beech me awaaz badal jati.
-5. **Koi engine fail ho to kaam rukta nahi** — wahi hissa doosre capable engine ko, **bhaav wahi** rehta hai.
-6. **Aadha kaam bachta hai** — har part ki file + `manifest.json`; dobara chalane par jo ban chuka hai wo wahi rehta hai.
+## 1. Chaar engine aapas me baat karte hain
 
-## Commands
+| Command | Kaam |
+|---|---|
+| `status` | kaun kaun hai, zinda hai ya nahi, kya kar sakta hai |
+| `say --from sarvam --to piper --kind task --text "..."` | ek engine doosre ko kaam/message bheje |
+| `inbox --engine piper` | us engine ke paas kya aaya |
+| `broadcast` (code me) | sabko ek saath bhejo |
+| `heartbeat --engine piper --down` | engine band hai — registry me likh jata hai, kaam us par nahi jayega |
+
+Messages file me rehte hain (`bus/messages/<engine>/`), isliye ek engine band ho jaye to bhi baaki ka record bacha rehta hai.
+
+## 2. Kaam todkar jaldi banana
+`plan` / `run` script ko parts me todta hai, aur har part sahi engine ko deta hai:
+- pehle **bhaav** dekha jata hai (dukh wali line sirf wahi engine jo dukh kar sakta hai)
+- phir **speed/cost** (free aur tez pehle)
+- **ek kirdaar = ek engine** (awaaz nahi badalti)
+- engine fail → wahi part doosre engine par, bhaav wahi
+- `manifest.json` se aadha kaam bachta hai (resume)
+
+## 3. Bhaav ki samajh (`tools/bhavna.py`) — 11 bhaav
+neutral, khushi, dukh, gussa, dar, pyaar, hasai, rona, hairan, sharam, thakan.
+
+Har bhaav ke saath: **Hindi naam**, **arth**, **sur** (pitch), **raftaar**, **zor**, **kahan rukna**, **Hindi cues** (jinse pehchanta hai), aur **misaal**.
 
 ```bash
-# engine jodo (jitne bhi ho — 4, 24, jitne chahe)
-python tools/engine_bus.py register --name piper --offline --speed 2 --cost 0 --emotions neutral
-python tools/engine_bus.py register --name sarvam --speed 1 --cost 1 --emotions neutral,dukh,gussa,khusi,dar
-
-# kya kya juda hai
-python tools/engine_bus.py status
-
-# pehle dekho kaun sa hissa kis engine par jayega (render nahi hota)
-python tools/engine_bus.py plan --script story.txt
-
-# chalao
-python tools/engine_bus.py run --script story.txt --out output/bus
+python tools/bhavna.py detect --text "चुप रहो!! कुछ मत बोलो!"     # → gussa, 0.80
+python tools/bhavna.py show --name dukh                          # poora knowledge
+python tools/bhavna.py list
 ```
 
-Script ka format (dono chalta hai):
-```
-दादी [dukh]: बेटा, आ जा पास।
-[gussa] चुप रहो!
-माँ: खाना ठंडा हो रहा है।
-```
+Pehchan kaise hoti hai: cues (शब्द) + vakya ke nishaan (`!!`, `?`, `...`) + khaali line → neutral. Jab script me `[bhaav]` tag na ho, bus **khud bhaav pehchan kar** engine chunta hai.
 
-## Kyun isse "jaldi + accurate"
-| Pehle | Ab |
-|---|---|
-| Ek engine sab kuch kare → dheema | Kaam parts me bata, sahi engine ko |
-| Beech me engine badla → awaaz badli | Kirdaar ka engine lock |
-| Ek engine fail → poora project ruka | Sirf woh part doosre engine par |
-| Dobara chalao → sab shuru se | manifest se resume |
-| Bhaav kahin bhi lagta | Bhaav ke hisaab se engine chuna jata hai |
+## 4. Engine "samajhdar" kaise bane
+- **Hindi samajh**: `hindi_natural.py` (₹, %, samay, numbers, Hinglish) + `bhavna.py` cues
+- **Bhaav pehchan**: 11 bhaav, confidence ke saath
+- **Bhaav ka asar**: sur/raftaar/zor — engine ko bataya jata hai, andaza nahi
+- **Awaaz ki pehchaan**: `voice_match.py` (F0 + timbre), `speaker_verification.py` (ECAPA)
 
-## Aage
-- Parts ko **parallel** chalana (bus me worker pool) — abhi ek ke baad ek, parallel API ready hai
-- 24 engine ke capability JSON ek jagah rakhna (`bus/engines.json`)
+## 5. Agla kadam (jo abhi baaki hai)
+- Bus me **parallel workers** (4 engine ek saath) — structure taiyar hai
+- 11 bhaav ke **asli voice samples** (abhi knowledge hai, per-bhaav reference nahi)
