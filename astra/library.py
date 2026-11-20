@@ -19019,6 +19019,66 @@ DEFAULT_INDEX = {
   "tags": ["horn", "alpine", "long"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 5.3
+ },
+ "notification_bell_1": {
+  "file": "bells/notification_bell_1.mp3",
+  "tags": ["notification", "bell", "phone"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 2.12
+ },
+ "anvil_bell": {
+  "file": "bells/anvil_bell.mp3",
+  "tags": ["anvil", "bell", "metal"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 4.9
+ },
+ "temple_bell_valley": {
+  "file": "bells/temple_bell_valley.mp3",
+  "tags": ["temple", "bell", "distant"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "notification_bell_2": {
+  "file": "bells/notification_bell_2.mp3",
+  "tags": ["notification", "bell"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 1.85
+ },
+ "singing_bowl": {
+  "file": "bells/singing_bowl.mp3",
+  "tags": ["singing bowl", "meditation", "temple"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 11.18
+ },
+ "boxing_bell": {
+  "file": "bells/boxing_bell.mp3",
+  "tags": ["boxing", "bell", "ring"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 15.65
+ },
+ "church_bell_2": {
+  "file": "bells/church_bell_2.mp3",
+  "tags": ["church", "bell", "large"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 47.35
+ },
+ "winner_bell_game_show": {
+  "file": "bells/winner_bell_game_show.mp3",
+  "tags": ["winner", "bell", "game show"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 2.59
+ },
+ "notification_bell_3": {
+  "file": "bells/notification_bell_3.mp3",
+  "tags": ["notification", "bell", "chime"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 3.08
+ },
+ "bell_sound_370341": {
+  "file": "bells/bell_sound_370341.mp3",
+  "tags": ["bell", "ring"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 4.1
  }
 }
 
