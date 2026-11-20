@@ -19355,6 +19355,42 @@ DEFAULT_INDEX = {
   "tags": ["wind", "soft", "breeze"],
   "license": "user upload (Pixabay/Freesound community)",
   "duration": 22.07
+ },
+ "bush_rustling": {
+  "file": "nature/bush_rustling.mp3",
+  "tags": ["bush", "rustle", "jungle"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 1.39
+ },
+ "soft_wind_leaves": {
+  "file": "nature/soft_wind_leaves.mp3",
+  "tags": ["wind", "leaves", "soft"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 15.07
+ },
+ "grass_being_rustled": {
+  "file": "nature/grass_being_rustled.mp3",
+  "tags": ["grass", "rustle"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 51.62
+ },
+ "blizzard_ambient": {
+  "file": "nature/blizzard_ambient.mp3",
+  "tags": ["blizzard", "wind", "howl", "loop"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 39.03
+ },
+ "forest_sounds": {
+  "file": "nature/forest_sounds.mp3",
+  "tags": ["forest", "ambience", "birds"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 60.0
+ },
+ "mountain_wind": {
+  "file": "nature/mountain_wind.mp3",
+  "tags": ["wind", "mountain", "gust"],
+  "license": "user upload (Pixabay/Freesound community)",
+  "duration": 2.04
  }
 }
 
