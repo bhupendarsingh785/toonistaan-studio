@@ -72,8 +72,11 @@ def emotion_scored(f0, sd, jit, rms_db, high_pct, mod, speech_pct):
     sc = {}
     sc["hasi"] = min(1.0, max(0.0, (mod - 0.18) / 0.25)) * (1.0 if rms_db > -32 else 0.4)
     sc["cheekh"] = min(1.0, max(0.0, (rms_db + 24) / 10)) * min(1.0, max(0.0, (high_pct - 15) / 12))
-    sc["darr"] = min(1.0, max(0.0, (jit - 0.03) / 0.04)) * (0.7 + 0.3 * min(1.0, high_pct / 25))
-    sc["gussa"] = min(1.0, max(0.0, (sd - 35) / 25)) * (1.0 if rms_db > -28 else 0.5)
+    # darr = sur kaanpta (jitter zyada), gussa = sur sthir par tez (jitter kam)
+    shake = min(1.0, max(0.0, (jit - 0.025) / 0.035))
+    sc["darr"] = shake * (0.7 + 0.3 * min(1.0, high_pct / 25))
+    steady = max(0.0, 1.0 - jit / 0.05)          # jitter kam ho to hi gussa
+    sc["gussa"] = min(1.0, max(0.0, (sd - 45) / 25)) * steady * (1.0 if rms_db > -28 else 0.5)
     sc["dukh"] = (1.0 if 0 < f0 < 170 else 0.3) * min(1.0, max(0.0, (-24 - rms_db) / 12))
     sc["normal"] = 1.0 if speech_pct > 35 else 0.3
     sc["khamoshi"] = 1.0 if (rms_db < -40 and speech_pct < 10) else 0.0

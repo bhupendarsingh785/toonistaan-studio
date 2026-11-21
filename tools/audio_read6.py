@@ -197,39 +197,49 @@ def vad(x, min_turn=0.6, join_gap=0.5):
 
 
 def f0_of(seg):
-    """YIN-style (CMNDF) F0 — octave galtiyan kam."""
+    """F0 — normalized autocorrelation + parabolic peak (bias-free, octave-safe).
+
+    Pehle CMNDF ka 'pehla dip' use ho raha tha — usse 12% upar aa raha tha.
+    Ab: autocorr ka sabse uncha peak, par **sub-harmonic se bachne** ke liye
+    sabse chhote lag ka peak bhi dekha jata hai (0.85 × max).
+    """
     import numpy as np
     n = len(seg)
     if n < 320:
         return 0.0
+    seg = seg[:2048] if n > 2048 else seg
+    n = len(seg)
     seg = seg - seg.mean()
-    # cumulative mean normalized difference function
-    d = np.zeros(n)
-    for tau in range(1, n // 2):
-        diff = seg[:n - tau] - seg[tau:]
-        d[tau] = float((diff * diff).sum())
-    cmnd = np.ones(n)
-    run = 0.0
-    for tau in range(1, n // 2):
-        run += d[tau]
-        cmnd[tau] = d[tau] * tau / (run + 1e-12) if run > 0 else 1.0
-    lo, hi = int(SR / 400), int(SR / 70)
-    hi = min(hi, n // 2 - 1)
-    if hi <= lo:
+    if float(np.sqrt((seg ** 2).mean())) < 0.005:
         return 0.0
-    seg_c = cmnd[lo:hi]
-    below = np.where(seg_c < 0.25)[0]
-    k = lo + (int(below[0]) if len(below) else int(np.argmin(seg_c)))
-    # parabolic interpolation
-    if 0 < k < len(cmnd) - 1:
-        a, b, c = cmnd[k - 1], cmnd[k], cmnd[k + 1]
+    # normalized autocorrelation
+    ac = np.correlate(seg, seg, "full")[n - 1:]
+    ac = ac / (ac[0] + 1e-12)
+    lo, hi = int(SR / 450), int(SR / 70)
+    hi = min(hi, n - 2)
+    if hi <= lo + 1:
+        return 0.0
+    band = ac[lo:hi]
+    peak = float(band.max())
+    if peak < 0.25:
+        return 0.0
+    # asli peak = **local maximum** jo global max ke kareeb ho (0.9x)
+    # (pehle sirf "0.85x se upar" dekha ja raha tha — isse dhaalu par galat lag pakda jata tha)
+    idx = np.arange(1, len(band) - 1)
+    local = idx[(band[idx] >= band[idx - 1]) & (band[idx] >= band[idx + 1])]
+    strong = [i for i in local if band[i] >= 0.9 * peak]
+    k = lo + (int(strong[0]) if strong else int(np.argmax(band)))
+    # local max par parabolic interpolation
+    if 0 < k < len(ac) - 1:
+        a, b, c = ac[k - 1], ac[k], ac[k + 1]
         denom = (a - 2 * b + c)
         if abs(denom) > 1e-12:
-            k = k + 0.5 * (a - c) / denom
+            shift = 0.5 * (a - c) / denom
+            k = k + max(-0.5, min(0.5, shift))
     return float(SR / k) if k > 0 else 0.0
 
 
-def f0_track(seg, hop=320, win=640):
+def f0_track(seg, hop=1024, win=2048):
     """frame-wise F0 + octave correction + median filter."""
     import numpy as np
     raw = [f0_of(seg[i:i + win]) for i in range(0, max(1, len(seg) - win), hop)]
@@ -302,7 +312,7 @@ def read(path: str, outdir: Path | None = None, learn: bool = False) -> dict:
     # ek hi speaker ke chhote tukde jodo (gap < 1.0 s aur sur paas ho)
     merged = []
     for t_ in turns:
-        if merged and (t_["start"] - merged[-1]["end"]) <= 1.0 \
+        if merged and (t_["start"] - merged[-1]["end"]) <= 0.8 \
            and abs(t_["f0"] - merged[-1]["f0"]) <= 15 and merged[-1]["f0"] and t_["f0"]:
             m = merged[-1]
             m["end"] = t_["end"]

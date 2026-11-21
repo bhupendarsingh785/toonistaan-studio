@@ -76,9 +76,10 @@ def chroma_of(S, hop):
     mask = (f >= 65) & (f <= 2000)
     fm = f[mask]
     pcs = np.round(12 * np.log2(fm / 261.63)).astype(int) % 12
+    Sm = S[:, mask]                      # BUG: pehle poore spectrum ka galat column use ho raha tha
     ch = np.zeros(12)
     for i, pc in enumerate(pcs):
-        ch[pc] += S[:, i].sum()
+        ch[pc] += Sm[:, i].sum()
     return ch / (ch.sum() + 1e-9)
 
 
