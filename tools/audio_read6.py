@@ -335,7 +335,9 @@ def read(path: str, outdir: Path | None = None, learn: bool = False) -> dict:
             f = event_features(piece)
             label, conf = classify(f, prev)
             knn_lab, knn_conf = knn_label(f)
-            final, final_conf = (knn_lab, knn_conf) if (knn_conf >= 0.6 and knn_lab) else (label, conf)
+            # kNN sirf tab jab rules se pakka na ho aur kNN ka vote bhi strong ho
+            use_knn = (knn_conf >= 0.8 and knn_lab and conf < 0.5)
+            final, final_conf = (knn_lab, knn_conf) if use_knn else (label, conf)
             ev = {"at": round(t, 2), "label": final, "confidence": final_conf,
                   "features": f, "knn": knn_lab}
             events.append(ev)
