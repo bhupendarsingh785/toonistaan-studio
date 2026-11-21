@@ -79,7 +79,14 @@ def _trim_silence(src: Path, dest: Path) -> bool:
 
 ENGINE = os.environ.get("STORY_ENGINE", "sarvam")
 # A/B naap se: ishita (F0 std 67) sabse expressive, suhani tez+saaf
-CAST = {"dadi": "ishita", "bachcha": "tanya", "maa": "priya", "narrator": "suhani"}
+CAST = {"dadi": os.environ.get("DADI_SPEAKER", "simran_hi_narration"),
+        "bachcha": os.environ.get("BACHCHA_SPEAKER", "chhavi_hi_kids"),
+        "maa": "priya_hi_recovery", "narrator": "roopa_hi_narration"}
+# har kirdaar ki apni tuning (A/B naap se): dadi bhaari/warm, baccha halka/uncha
+CAST_TUNE = {"dadi":    {"pitch": -0.15, "pace": 0.96},
+             "bachcha": {"pitch": 0.10, "pace": 1.05},
+             "maa":     {"pitch": -0.05, "pace": 1.0},
+             "narrator": {"pitch": 0.0, "pace": 1.0}}
 # bhaav -> temperature (Sarvam: zyada = zyada expressive; dukh/gussa me thoda alag)
 TEMP = {"neutral": 0.70, "dukh": 0.72, "gussa": 0.85, "khushi": 0.85,
         "dar": 0.80, "pyaar": 0.78}
@@ -107,7 +114,10 @@ def render_lines(tmp: Path) -> list[dict]:
     t = 0.25
     for i, line in enumerate(merge_lines(STORY)):
         f = tmp / f"line_{i:02d}.mp3"
-        os.environ["SARVAM_SPEAKER_" + line["who"].upper()] = CAST.get(line["who"], "ishita")
+        os.environ["SARVAM_SPEAKER_" + line["who"].upper()] = CAST.get(line["who"], "simran_hi_narration")
+        _tune = CAST_TUNE.get(line["who"], {})
+        os.environ["SARVAM_PITCH_PARAM"] = str(_tune.get("pitch", 0.0))
+        os.environ["SARVAM_PACE"] = str(_tune.get("pace", 1.0))
         os.environ["SARVAM_TEMP"] = str(TEMP.get(line["bhaav"], 0.75))
         ok, log = er.render_line(line["text"], line["who"], f, engine=ENGINE, bhaav=line["bhaav"])
         if not ok:

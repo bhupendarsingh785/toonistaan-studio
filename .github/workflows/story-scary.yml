@@ -23,14 +23,14 @@ jobs:
           SARVAM_API_KEY_2: ${{ secrets.SARVAM_API_KEY_2 }}
           SARVAM_API_KEY_3: ${{ secrets.SARVAM_API_KEY_3 }}
           STORY_ENGINE: sarvam
-          SARVAM_MODEL: bulbul:v3
+          SARVAM_MODEL: bulbul:v4-flash
           SARVAM_NATURAL: "1"
         run: |
           mkdir -p output
-          python tools/story_audio.py --script stories/daravani-haveli.json --out output/daravani-haveli.mp3
+          python tools/story_audio.py --script stories/daravani-haveli.json --out output/daravani-haveli-v2.mp3
           ls -lh output/
       - uses: actions/upload-artifact@v4
         with:
-          name: daravani-haveli
-          path: output/daravani-haveli.*
+          name: daravani-haveli-v2
+          path: output/daravani-haveli-v2.*
           retention-days: 7
