@@ -35,6 +35,8 @@ PATTERNS = {
     "breakbeat":  {"kick": "X..X....X.X.....", "snare": "....X.......X...", "hat": "X.X.X.X.X.X.X.X.", "bpm": 165},
     "one_drop":   {"kick": "........X.......", "snare": "....X.......X...", "hat": "X.X.X.X.X.X.X.X.", "bpm": 78},
     "afrobeat":   {"kick": "X..X..X...X..X..", "snare": "..X..X..X..X..X.", "hat": "X.XX.X.XX.XX.X.X", "bpm": 108},
+    # asli naap se (Hum Bewafa unwind): kick 1/9-10/13/16, snare 1/8/13/15-16, hat kam
+    "unwind":     {"kick": "X.......XX..X..X", "snare": "X......X....X.XX", "hat": "X.X..X......XX..", "bpm": 76},
 }
 # mood → pattern, scale, progression (scale degrees 1..7), swing, energy
 MOODS = {
@@ -46,6 +48,8 @@ MOODS = {
     "happy":    {"pat": "afrobeat", "scale": "bilawal", "prog": [1, 5, 6, 4], "swing": 0.10, "energy": 1.1, "pad": "warm"},
     "lofi":     {"pat": "boom_bap", "scale": "kafi", "prog": [1, 6, 2, 5], "swing": 0.18, "energy": 0.6, "pad": "soft"},
     "trap":     {"pat": "trap", "scale": "kafi", "prog": [1, 6, 5, 6], "swing": 0.0, "energy": 1.2, "pad": "dark"},
+    # 3 unwind gaano ke naap se (Saagar Kinare / Hum Bewafa / Bade Acche): 76-80 BPM, minor, sparse
+    "unwind":   {"pat": "unwind", "scale": "asavari", "prog": [1, 5, 4, 1], "swing": 0.10, "energy": 0.45, "pad": "soft"},
 }
 
 
