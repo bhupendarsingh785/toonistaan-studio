@@ -27,10 +27,10 @@ jobs:
           SARVAM_NATURAL: "1"
         run: |
           mkdir -p output
-          python tools/story_audio.py --script stories/jungle-nadi-safar.json --soundmap --out output/jungle-nadi-safar-v5.mp3
+          python tools/story_audio.py --script stories/jungle-nadi-safar.json --scene --out output/jungle-nadi-safar-v6.mp3
           ls -lh output/
       - uses: actions/upload-artifact@v4
         with:
-          name: jungle-nadi-safar-v5
-          path: output/jungle-nadi-safar-v5.*
+          name: jungle-nadi-safar-v6
+          path: output/jungle-nadi-safar-v6.*
           retention-days: 7

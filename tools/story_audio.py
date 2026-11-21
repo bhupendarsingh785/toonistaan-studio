@@ -170,14 +170,19 @@ def build(out: Path, lines: list[dict]) -> dict:
             f"adelay={int(l['start']*1000)}|{int(l['start']*1000)},volume=-2dB[dl{len(mix)}]")
         mix.append(f"[dl{len(mix)}]")
 
-    # 3) foley events
-    for start, asset, gain in EVENTS:
+    # 3) foley events — (at, asset, gain) ya (at, asset, gain, dur) dono chalein
+    for ev in EVENTS:
+        start, asset, gain = ev[0], ev[1], ev[2]
+        dur = ev[3] if len(ev) > 3 else 0
         p = LIB / asset
         if not p.exists():
             continue
         cmd += ["-i", str(p)]
         i = sum(1 for a in cmd if a == "-i") - 1
-        filt.append(f"[{i}:a]aresample=44100,adelay={int(start*1000)}|{int(start*1000)},"
+        chain = "aresample=44100"
+        if dur:      # chhota rakho + halka fade (accuracy ke liye)
+            chain += f",atrim=0:{dur:.2f},afade=t=in:st=0:d=0.08,afade=t=out:st={max(0.1, dur-0.15):.2f}:d=0.15"
+        filt.append(f"[{i}:a]{chain},adelay={int(start*1000)}|{int(start*1000)},"
                     f"volume={gain}dB[fx{len(mix)}]")
         mix.append(f"[fx{len(mix)}]")
 
@@ -221,6 +226,8 @@ def main() -> int:
     ap.add_argument("--out", default=str(ROOT / "output" / "kahani.mp3"))
     ap.add_argument("--single", action="store_true", help="poori kahani ek hi awaaz me")
     ap.add_argument("--script", default="", help="JSON kahani file (lines/bed/events)")
+    ap.add_argument("--scene", action="store_true",
+                    help="jagah+duri samajh kar sound lagao (train sirf station par…)")
     ap.add_argument("--soundmap", action="store_true",
                     help="har line ki cheezon ki awaaz khud jodo (bhediya, nadi, patte…)")
     a = ap.parse_args()
@@ -234,6 +241,14 @@ def main() -> int:
         BED = [(b["file"], b["gain"], True) for b in data.get("bed", [])]   # (file, gain, loop)
         EVENTS = [(e["at"], e["file"], e["gain"]) for e in data.get("events", [])]
     lines = render_single(tmp) if a.single else render_lines(tmp)
+    if a.scene:
+        try:
+            from tools import story_scene as ssc
+            rep = ssc.plan(lines, BED if isinstance(BED, list) else None)
+            EVENTS = [(e[0], e[1], e[2], e[3]) for e in rep["events"]]
+            print(json.dumps({"scene_events": len(EVENTS), "beds": len(rep["beds"])}), flush=True)
+        except Exception as _e:
+            print("SCENE_SKIP", str(_e)[:90], flush=True)
     if a.soundmap:
         # asli line-start se har cheez ki awaaz lagao (deep sound design)
         try:
