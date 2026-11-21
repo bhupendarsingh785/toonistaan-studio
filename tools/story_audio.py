@@ -221,6 +221,8 @@ def main() -> int:
     ap.add_argument("--out", default=str(ROOT / "output" / "kahani.mp3"))
     ap.add_argument("--single", action="store_true", help="poori kahani ek hi awaaz me")
     ap.add_argument("--script", default="", help="JSON kahani file (lines/bed/events)")
+    ap.add_argument("--soundmap", action="store_true",
+                    help="har line ki cheezon ki awaaz khud jodo (bhediya, nadi, patte…)")
     a = ap.parse_args()
     out = Path(a.out); out.parent.mkdir(parents=True, exist_ok=True)
     tmp = wt.work_tmp("story")
@@ -232,6 +234,21 @@ def main() -> int:
         BED = [(b["file"], b["gain"], True) for b in data.get("bed", [])]   # (file, gain, loop)
         EVENTS = [(e["at"], e["file"], e["gain"]) for e in data.get("events", [])]
     lines = render_single(tmp) if a.single else render_lines(tmp)
+    if a.soundmap:
+        # asli line-start se har cheez ki awaaz lagao (deep sound design)
+        try:
+            from tools import story_soundmap as sm
+            added = 0
+            for l in lines:
+                for key, words in sm.TRIGGERS.items():
+                    if any(w in l["text"] for w in words):
+                        rel = sm.find(sm.SOUNDS[key]["pat"])
+                        if rel:
+                            EVENTS.append((round(l["start"] + 0.05, 2), rel, sm.SOUNDS[key]["gain"]))
+                            added += 1
+            print(json.dumps({"soundmap_events": added}, ensure_ascii=False), flush=True)
+        except Exception as _e:
+            print("SOUNDMAP_SKIP", str(_e)[:80], flush=True)
     ok_lines = sum(1 for l in lines if l["ok"])
     rep = build(out, lines)
     rep.update({"lines_ok": ok_lines, "lines_total": len(lines), "seconds": round(time.time() - t0, 1)})
