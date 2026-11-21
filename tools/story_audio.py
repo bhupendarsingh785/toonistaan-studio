@@ -82,15 +82,15 @@ ENGINE = os.environ.get("STORY_ENGINE", "sarvam")
 CAST = {"dadi":     os.environ.get("DADI_SPEAKER", "simran_hi_narration"),
         "dada":     "ratan_hi_latenight_warm",
         "maa":      "aparna_hi_customer",
-        "gudiya":   "ishita_hi_ads",
+        "gudiya":   "ritu_hi_kids",
         "sonu":     "chhavi_hi_kids",
         "bachcha":  os.environ.get("BACHCHA_SPEAKER", "chhavi_hi_kids"),
         "narrator": "shubh_hi_stories_dramatic"}
 # har kirdaar ki tuning (F0 band se): budhe bhaari/dheeme, bachche halke/tez
 CAST_TUNE = {"dadi":     {"pitch": -0.15, "pace": 0.95},
-             "dada":     {"pitch": -0.20, "pace": 0.93},
+             "dada":     {"pitch": -0.34, "pace": 0.93},
              "maa":      {"pitch": -0.05, "pace": 0.98},
-             "gudiya":   {"pitch": 0.0,   "pace": 1.03},
+             "gudiya":   {"pitch": -0.08, "pace": 1.03},
              "sonu":     {"pitch": 0.10,  "pace": 1.06},
              "bachcha":  {"pitch": 0.10,  "pace": 1.05},
              "narrator": {"pitch": -0.10, "pace": 0.96}}
