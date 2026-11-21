@@ -191,8 +191,9 @@ def _guarded(engine: str, text: str, character: str, out: Path, bhaav: str = "")
     from tools import tts_guard as tg
     def fn(dst):
         _call_provider(engine, text, character, Path(dst), bhaav=bhaav)
+    # cache key me "out" NAHI jaata (warna har path naya key = cache kabhi hit nahi)
     path, meta = tg.render(engine, character, text,
-                           {"out": str(out), "bhaav": bhaav or "neutral"}, fn)
+                           {"bhaav": bhaav or "neutral"}, fn, want=str(out))
     return path.exists() and path.stat().st_size > 1000, meta
 
 
@@ -202,7 +203,8 @@ def render_line(text: str, character: str, out: Path,
     """Ek line, chain ke saath. Har koshish ka hisaab wapas milta hai."""
     # ek hi darwaza: bina asli shabd (khaali, sirf "।।।") par koi engine nahi — cache bhi nahi
     try:
-        from tools.voice_provider import has_words
+        from tools.voice_provider import has_words, clean_text
+        text = clean_text(text)          # control chars / kachra saaf
         if not has_words(text):
             return False, [{"engine": engine or "chain", "ok": False, "note": "text me asli shabd nahi"}]
     except Exception:

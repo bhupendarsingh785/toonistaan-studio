@@ -59,15 +59,31 @@ def audio_ok(path: str | Path, min_sec: float = 0.35, max_silence: float = 0.95)
     return True, "theek"
 
 
-def render(engine: str, voice: str, text: str, params: dict, fn) -> tuple[Path, dict]:
-    """fn(out_path) -> None. Cache → retry → quality check."""
-    key = rc.key_for(text, voice, engine, params)
+def render(engine: str, voice: str, text: str, params: dict, fn,
+           want: str | None = None) -> tuple[Path, dict]:
+    """fn(out_path) -> None. Cache → retry → quality check.
+
+    `want` = jahan file chahiye. Cache hit par wahan **copy** hoti hai (warna
+    caller ko file milti hi nahi).
+    """
+    # purana tareeka: params me "out" ho to wahi manzil maano
+    want = want or params.get("out")
+    key_params = {k: v for k, v in (params or {}).items() if k != "out"}
+    key = rc.key_for(text, voice, engine, key_params)
     hit = rc.get(key)
     if hit:
-        return hit, {"cached": True, "engine": engine}
+        dest = Path(want) if want else hit
+        if str(dest) != str(hit):
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            import shutil as _sh
+            try:
+                _sh.copy2(hit, dest)
+            except _sh.SameFileError:
+                pass          # ek hi file hai — kuch karne ki zaroorat nahi
+        return dest, {"cached": True, "engine": engine}
     tries = 0
     last = None
-    out = Path(params.get("out") or (rc.CACHE / f"{key}.wav"))
+    out = Path(want) if want else (rc.CACHE / f"{key}.wav")
     out.parent.mkdir(parents=True, exist_ok=True)
     while tries < 3:
         tries += 1

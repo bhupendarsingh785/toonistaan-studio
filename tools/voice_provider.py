@@ -726,6 +726,18 @@ def _learned_style() -> dict:
     return _LEARNED_CACHE
 
 
+def clean_text(text) -> str:
+    """Control chars hatao (\x00-\x1f), sirf newline/tab rakho; spaces saaf karo.
+
+    Kyun: espeak/edge aise text par crash ya khaali file dete hain.
+    """
+    import re as _re
+    t = str(text or "")
+    t = "".join(ch if (ch >= " " or ch in "\n\t") else " " for ch in t)
+    t = _re.sub(r"[ \t]{2,}", " ", t)
+    return t.strip()
+
+
 def has_words(text) -> bool:
     """Asli akshar hain? (khaali, sirf '।।।', sirf number — sab False)."""
     import re
