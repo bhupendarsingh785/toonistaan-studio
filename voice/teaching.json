@@ -1,0 +1,231 @@
+{
+ "version": "1.0",
+ "source": "RISHTEY (asli insaan ki 10-min kahani) ke naap se — 21 Nov 2026",
+ "truth": {
+  "emotion_split": {
+   "pause_and_pace": 0.7,
+   "pitch": 0.3
+  },
+  "no_engine_is_100_percent": "sabse achhe bhi 90-95% tak",
+  "min_character_f0_gap_hz": 25
+ },
+ "human_targets": {
+  "dada": {
+   "f0_median": 96,
+   "f0_std": 15.9,
+   "pace": 3.09,
+   "turns": 27
+  },
+  "purush": {
+   "f0_median": 146,
+   "f0_std": 11.4,
+   "pace": 3.45,
+   "turns": 21
+  },
+  "bachcha": {
+   "f0_median": 300,
+   "f0_std": 35.6,
+   "pace": 3.63,
+   "turns": 20
+  },
+  "mahila": {
+   "f0_median": 213,
+   "f0_std": 16.0,
+   "pace": 4.29,
+   "turns": 14
+  }
+ },
+ "characters": {
+  "narrator": {
+   "band": "dada",
+   "f0": 96,
+   "pace": 3.09,
+   "pause_s": 3.0,
+   "emotion": "thehra"
+  },
+  "dada": {
+   "band": "dada",
+   "f0": 96,
+   "pace": 3.09,
+   "pause_s": 2.6,
+   "emotion": "thehra"
+  },
+  "purush": {
+   "band": "purush",
+   "f0": 146,
+   "pace": 3.45,
+   "pause_s": 1.6,
+   "emotion": "normal"
+  },
+  "maa": {
+   "band": "mahila",
+   "f0": 213,
+   "pace": 4.29,
+   "pause_s": 1.4,
+   "emotion": "pyaar"
+  },
+  "gudiya": {
+   "band": "mahila",
+   "f0": 232,
+   "pace": 4.29,
+   "pause_s": 1.2,
+   "emotion": "josh"
+  },
+  "sonu": {
+   "band": "bachcha",
+   "f0": 300,
+   "pace": 3.63,
+   "pause_s": 1.0,
+   "emotion": "khushi"
+  }
+ },
+ "emotion_map": {
+  "neutral": {
+   "pitch_mul": 1.0,
+   "rate_mul": 1.0,
+   "pause_mul": 1.0
+  },
+  "pyaar": {
+   "pitch_mul": 0.97,
+   "rate_mul": 0.94,
+   "pause_mul": 1.3
+  },
+  "khushi": {
+   "pitch_mul": 1.06,
+   "rate_mul": 1.08,
+   "pause_mul": 0.8
+  },
+  "dukh": {
+   "pitch_mul": 0.93,
+   "rate_mul": 0.88,
+   "pause_mul": 1.6
+  },
+  "dar": {
+   "pitch_mul": 1.04,
+   "rate_mul": 1.12,
+   "pause_mul": 0.7
+  },
+  "gussa": {
+   "pitch_mul": 1.02,
+   "rate_mul": 1.15,
+   "pause_mul": 0.6
+  },
+  "hairan": {
+   "pitch_mul": 1.08,
+   "rate_mul": 1.05,
+   "pause_mul": 0.9
+  }
+ },
+ "engines": {
+  "edge": {
+   "params": {
+    "pitch_hz": "target_f0 - 120",
+    "rate_pct": "(pace/4.0 - 1)*100"
+   },
+   "rules": [
+    "pitch +30Hz se upar kabhi nahi",
+    "har vakya alag render, phir jodo"
+   ],
+   "post": [
+    "highpass 75Hz",
+    "compressor 2.5:1",
+    "treble +1.5dB"
+   ]
+  },
+  "elevenlabs": {
+   "params": {
+    "stability": [
+     0.35,
+     0.45
+    ],
+    "similarity_boost": 0.75,
+    "style": [
+     0.3,
+     0.45
+    ],
+    "speaker_boost": true
+   },
+   "rules": [
+    "stability 0.30 se neeche nahi",
+    "clone ke liye 30s se kam sample nahi"
+   ],
+   "post": [
+    "loudnorm I=-18"
+   ]
+  },
+  "espeak": {
+   "params": {
+    "pitch": "50*target_f0/120",
+    "speed": "pace*40",
+    "gap_ms": "pause*1000"
+   },
+   "rules": [
+    "akela mat chhodo — post chain zaroori"
+   ],
+   "post": [
+    "highpass 75Hz",
+    "compressor 2.5:1",
+    "treble +1.5dB",
+    "halka reverb"
+   ]
+  },
+  "piper": {
+   "params": {
+    "length_scale": "4.0/pace",
+    "sentence_silence": "pause*0.4"
+   },
+   "rules": [
+    "thread-safe nahi — ek baar me ek render",
+    "200 akshar par todo"
+   ],
+   "post": [
+    "highpass 75Hz",
+    "compressor 2.5:1"
+   ]
+  }
+ },
+ "natural_rules": [
+  "ek baar me ek vakya",
+  "thahraav asli rakho (dukh 1.6x, khushi 0.8x)",
+  "sur kabhi seedha nahi (std 15-35)",
+  "shabd kheencho mat (rate 0.88-1.15)",
+  "shuru/ant ki khamoshi kaato (0.12s)",
+  "background 10-12 dB neeche",
+  "har kirdaar ka sur 25 Hz alag"
+ ],
+ "qa_checklist": {
+  "f0_bands_hz": {
+   "dada": [
+    88,
+    125
+   ],
+   "dadi": [
+    140,
+    185
+   ],
+   "mahila": [
+    165,
+    205
+   ],
+   "gudiya": [
+    190,
+    240
+   ],
+   "bachcha": [
+    240,
+    330
+   ]
+  },
+  "min_f0_std": 12,
+  "pace_range": [
+   3.0,
+   4.5
+  ],
+  "background_below_db": [
+   8,
+   16
+  ],
+  "max_peak": 0.95,
+  "clipping_pct": 0
+ }
+}
