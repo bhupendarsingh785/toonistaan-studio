@@ -246,6 +246,12 @@ def main() -> int:
                         if rel:
                             EVENTS.append((round(l["start"] + 0.05, 2), rel, sm.SOUNDS[key]["gain"]))
                             added += 1
+                            if key == "bhediya":
+                                rel2 = sm.find(sm.SOUNDS["bhediya_pair"]["pat"])
+                                if rel2:
+                                    EVENTS.append((round(l["start"] + 0.9, 2), rel2,
+                                                   sm.SOUNDS["bhediya_pair"]["gain"]))
+                                    added += 1
             print(json.dumps({"soundmap_events": added}, ensure_ascii=False), flush=True)
         except Exception as _e:
             print("SOUNDMAP_SKIP", str(_e)[:80], flush=True)

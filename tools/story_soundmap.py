@@ -19,25 +19,24 @@ LIB = ROOT / "astra" / "library"
 
 # cheez -> (library me dhoondhne ke patterns, gain_db, kya bed hai?)
 SOUNDS: dict[str, dict] = {
-    "bhediya":   {"pat": ["animals/dingo_howl.mp3", "animals/wolf_howl.mp3", "animals/dog_howl.mp3"], "gain": -15},
-    "gurrana":   {"pat": ["horror/monster_lurk.mp3", "animals/dog_growl.mp3", "animals/boar_threat.mp3"], "gain": -14},
-    "patte":     {"pat": ["footsteps/feet_leaves.mp3", "footsteps/leaves_dry.mp3", "footsteps/footstep_rustling.mp3"], "gain": -17},
-    "kadam":     {"pat": ["footsteps/steps_soil.mp3", "footsteps/footsteps_walk.mp3", "footsteps/bvk_footsteps_1.mp3"], "gain": -15},
-    "nadi":      {"pat": ["ambience/forest_river_bed.mp3", "ambience/water_relax.mp3", "water/river.mp3"], "gain": -24, "bed": True},
-    "baarish":   {"pat": ["ambience/rain_gentle_1.mp3", "ambience/rain_window.mp3", "nature/rain.mp3"], "gain": -22, "bed": True},
-    "garaj":     {"pat": ["ambience/weather_rain_thunder_storm.mp3", "nature/thunder.mp3", "ambience/thunder_1.mp3"], "gain": -17},
-    "darwaza":   {"pat": ["door/bvk_door_1.mp3", "door/bvk_door_2.mp3", "door/door_creak_1.mp3"], "gain": -15},
-    "khidki":    {"pat": ["door/bvk_door_3.mp3", "ambience/wind_howl_window.mp3"], "gain": -17},
-    "train":     {"pat": ["transport/train_horn_1.mp3", "transport/train_pass.mp3", "transport/train_1.mp3"], "gain": -16},
-    "station":   {"pat": ["transport/station_ambience.mp3", "crowd/crowd_talk_1.mp3"], "gain": -22, "bed": True},
-    "chai":      {"pat": ["kitchen/kettle.mp3", "kitchen/tea_pour.mp3", "kitchen/pour_water_1.mp3"], "gain": -18},
-    "pakshi":    {"pat": ["ambience/bird_chirp_3.mp3", "birds/birds_chirp_1.mp3", "ambience/birds_forest_1.mp3"], "gain": -20, "bed": True},
-    "jhingur":   {"pat": ["ambience/night_crickets.mp3", "nature/crickets.mp3"], "gain": -22, "bed": True},
+    "bhediya":   {"pat": ["animals/dingo_howl.mp3", "animals/dogs_howl.mp3"], "gain": -15},
+    "bhediya_pair": {"pat": ["footsteps/feet_leaves.mp3", "footsteps/leaves_dry.mp3"], "gain": -20},
+    "gurrana":   {"pat": ["horror/monster_lurk.mp3", "animals/dragon_growl.mp3"], "gain": -14},
+    "patte":     {"pat": ["footsteps/feet_leaves.mp3", "footsteps/leaves_dry.mp3", "nature/bush_rustling.mp3"], "gain": -17},
+    "kadam":     {"pat": ["footsteps/steps_soil.mp3", "footsteps/bvk_footsteps_1.mp3"], "gain": -15},
+    "nadi":      {"pat": ["water/flowing_river.mp3", "ambience/forest_river_bed.mp3"], "gain": -24, "bed": True},
+    "baarish":   {"pat": ["ambience/rain_gentle_1.mp3", "ambience/rain_window.mp3"], "gain": -22, "bed": True},
+    "garaj":     {"pat": ["ambience/weather_rain_thunder_storm.mp3"], "gain": -17},
+    "darwaza":   {"pat": ["door/bvk_door_1.mp3", "door/bvk_door_2.mp3"], "gain": -15},
+    "khidki":    {"pat": ["ambience/wind_howl_window.mp3", "door/bvk_door_3.mp3"], "gain": -19},
+    "train":     {"pat": ["transport/steam_train_passing_1.mp3", "transport/indian_train_arriving_announcement.mp3"], "gain": -16},
+    "station":   {"pat": ["transport/train_platform_ambience_1.mp3", "crowd/crowd_applause.mp3"], "gain": -23, "bed": True},
+    "chai":      {"pat": ["water/kettle_cup.mp3", "kitchen/boil_2.mp3"], "gain": -19},
+    "pakshi":    {"pat": ["ambience/bird_chirp_3.mp3", "ambience/birds_forest_1.mp3"], "gain": -20, "bed": True},
+    "jhingur":   {"pat": ["nature/city_night_crickets.mp3", "nature/cicada_insects.mp3"], "gain": -22, "bed": True},
     "hawa":      {"pat": ["ambience/wind_blowing.mp3", "ambience/wind_cold.mp3"], "gain": -23, "bed": True},
     "ghoda":     {"pat": ["animals/horse_walk.mp3", "animals/horse_neigh.mp3"], "gain": -16},
-    "gaadi":     {"pat": ["vehicles/car_pass.mp3", "vehicles/horn_1.mp3"], "gain": -18},
-    "ghanti":    {"pat": ["bells/temple_bell_1.mp3", "bells/bell_1.mp3"], "gain": -18},
-    "bheed":     {"pat": ["crowd/crowd_talk_1.mp3", "crowd/crowd_noise.mp3"], "gain": -22, "bed": True},
+    "bheed":     {"pat": ["crowd/cheering_crowd_2.mp3", "crowd/crowd_applause.mp3"], "gain": -24, "bed": True},
 }
 # text me kaunse shabd kis cheez ko darshate hain
 TRIGGERS: dict[str, list[str]] = {
@@ -87,6 +86,11 @@ def analyse(script: dict) -> dict:
                 missing.append({"line": text[:40], "cheez": key})
                 continue
             found.append({"at": round(t + 0.05, 2), "cheez": key, "file": rel})
+            if key == "bhediya":       # bhediya ke pairon ki awaaz (patton par)
+                rel2 = find(SOUNDS["bhediya_pair"]["pat"])
+                if rel2:
+                    events.append({"at": round(t + 0.9, 2), "file": rel2,
+                                   "gain": SOUNDS["bhediya_pair"]["gain"]})
             events.append({"at": round(t + 0.05, 2), "file": rel, "gain": SOUNDS[key]["gain"]})
         t += 4.0      # andaazan (asli timing render ke baad cues se milta hai)
     return {"found": found, "missing": missing, "events": events}
