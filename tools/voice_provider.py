@@ -555,13 +555,40 @@ def have_sarvam():
     return bool(sarvam_key())
 
 
+_LEARNED_CACHE: dict = {}
+
+
+def _learned_style() -> dict:
+    """teacher_student.py se seekha hua style (naapa hua) — cache ke saath."""
+    if _LEARNED_CACHE:
+        return _LEARNED_CACHE
+    import json
+    from pathlib import Path
+    f = Path(__file__).resolve().parent.parent / "astra" / "learned_style.json"
+    if f.exists():
+        try:
+            _LEARNED_CACHE.update(json.loads(f.read_text(encoding="utf-8")).get("style", {}))
+        except Exception:
+            pass
+    return _LEARNED_CACHE
+
+
 def _bhaav_style(bhaav) -> dict:
-    """bhavna.py se style — ek hi sach (sur/raftaar/zor/rukna)."""
+    """Style ka sach: pehle **seekha hua (naapa hua)**, warna bhavna.py ka default."""
+    emo = str(bhaav or "neutral")
+    base = {"emotion": "neutral", "pitch": 1.0, "pace": 1.0, "energy": 1.0, "gap_ms": 220}
     try:
         from tools import bhavna
-        return bhavna.style(str(bhaav or "neutral"))
+        base = dict(bhavna.style(emo))
     except Exception:
-        return {"emotion": "neutral", "pitch": 1.0, "pace": 1.0, "energy": 1.0, "gap_ms": 220}
+        pass
+    learned = _learned_style().get(emo)
+    if learned:
+        base.update({k: learned[k] for k in ("pitch", "pace", "energy", "gap_ms") if k in learned})
+        base["source"] = "learned"
+    else:
+        base["source"] = "default"
+    return base
 
 
 # ---------------------------------------------------------------- bhaav (emotion) style
