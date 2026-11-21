@@ -1,0 +1,30 @@
+name: voice AB (naturalness)
+
+on:
+  workflow_dispatch:
+  push:
+    paths: [".ab-trigger"]
+
+jobs:
+  ab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -q numpy imageio-ffmpeg
+      - name: AB test
+        env:
+          SARVAM_API_KEY: ${{ secrets.SARVAM_API_KEY }}
+          SARVAM_API_KEY_2: ${{ secrets.SARVAM_API_KEY_2 }}
+          SARVAM_API_KEY_3: ${{ secrets.SARVAM_API_KEY_3 }}
+        run: python tools/voice_ab.py --out ab
+      - uses: actions/upload-artifact@v4
+        with:
+          name: voice-ab
+          path: ab/
+          retention-days: 7
