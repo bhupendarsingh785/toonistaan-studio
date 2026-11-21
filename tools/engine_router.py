@@ -200,6 +200,13 @@ def render_line(text: str, character: str, out: Path,
                 engine: str | None = None, fallbacks: list[str] | None = None,
                 bhaav: str = "") -> tuple[bool, list[dict]]:
     """Ek line, chain ke saath. Har koshish ka hisaab wapas milta hai."""
+    # ek hi darwaza: bina asli shabd (khaali, sirf "।।।") par koi engine nahi — cache bhi nahi
+    try:
+        from tools.voice_provider import has_words
+        if not has_words(text):
+            return False, [{"engine": engine or "chain", "ok": False, "note": "text me asli shabd nahi"}]
+    except Exception:
+        pass
     chain = [e for e in ([engine] if engine else []) + (fallbacks or []) if e]
     if not chain:
         chain = ready_engines()

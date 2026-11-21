@@ -123,18 +123,24 @@ def google(text: str, out: Path, lang: str = "hi", style: dict | None = None) ->
         if r.returncode != 0 or not raw.exists():
             return False
     ext = out.suffix.lower()
+    _style_needed = bool(style) and (abs(style.get("pace", 1.0) - 1) > 0.01
+                                     or abs(style.get("pitch", 1.0) - 1) > 0.01
+                                     or abs(style.get("energy", 1.0) - 1) > 0.01)
     if ext in (".wav", ".wav "):
-        wav_out = out
+        # pehle temp me convert, phir style laga kar asli naam par — warna src==dest ho jata hai
+        wav_tmp = out.with_name(out.stem + ".raw.wav")
         r = subprocess.run([_ff(), "-loglevel", "error", "-y", "-i", str(raw),
-                            "-ac", "1", "-ar", "24000", "-c:a", "pcm_s16le", str(wav_out)],
+                            "-ac", "1", "-ar", "24000", "-c:a", "pcm_s16le", str(wav_tmp)],
                            capture_output=True)
-        if r.returncode != 0:
+        if r.returncode != 0 or not wav_tmp.exists():
             return False
-        if style and (abs(style.get("pace", 1.0) - 1) > 0.01
-                      or abs(style.get("pitch", 1.0) - 1) > 0.01
-                      or abs(style.get("energy", 1.0) - 1) > 0.01):
-            return _apply_style(wav_out, out, style)
-        return wav_out.stat().st_size > 1000
+        if _style_needed:
+            ok = _apply_style(wav_tmp, out, style)
+            wav_tmp.unlink(missing_ok=True)
+            return ok
+        import shutil
+        shutil.move(str(wav_tmp), str(out))
+        return out.stat().st_size > 1000
     if style and (abs(style.get("pace", 1.0) - 1) > 0.01
                   or abs(style.get("pitch", 1.0) - 1) > 0.01
                   or abs(style.get("energy", 1.0) - 1) > 0.01):

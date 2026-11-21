@@ -49,19 +49,36 @@ def _save(idx: dict) -> None:
     os.replace(tmp, INDEX)
 
 
+def _usable(path: Path) -> bool:
+    """Cache ki file asli kaam ki hai? (khamosh ya 0.25s se chhoti = bekaar)."""
+    try:
+        import subprocess
+        from imageio_ffmpeg import get_ffmpeg_exe
+        raw = subprocess.run([get_ffmpeg_exe(), "-v", "quiet", "-i", str(path),
+                              "-f", "s16le", "-ac", "1", "-ar", "8000", "-"],
+                             capture_output=True, timeout=20).stdout
+        if len(raw) < 8000 * 0.25 * 2:        # 0.25 s se chhoti
+            return False
+        import numpy as np
+        x = np.frombuffer(raw, dtype=np.int16).astype("float32") / 32768.0
+        return float(np.sqrt((x ** 2).mean())) > 0.005
+    except Exception:
+        return True          # naap fail ho to file par bharosa rakho
+
+
 def get(key: str) -> Path | None:
     idx = _load()
     row = idx.get(key)
     if not row:
         return None
     p = Path(row["file"])
-    if p.exists() and p.stat().st_size > 1000:
+    if p.exists() and p.stat().st_size > 1000 and _usable(p):
         row["hits"] = row.get("hits", 0) + 1
         row["last_used"] = time.strftime("%Y-%m-%d %H:%M")
         idx[key] = row
         _save(idx)
         return p
-    idx.pop(key, None)          # file gayab ho gayi to entry hatao
+    idx.pop(key, None)          # file gayab/kharab ho gayi to entry hatao
     _save(idx)
     return None
 

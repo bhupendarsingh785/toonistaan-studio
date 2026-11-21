@@ -374,6 +374,8 @@ def _piper_inprocess(text, model, out_path, length_scale=1.0):
 
 def piper_tts(text, kirdaar="madhur", out="out.wav", bhaav=None):
     """PIPER = poora OFFLINE (internet band ho to bhi chalta hai). 0 kharch."""
+    if not has_words(text):
+        return False
     if not have_piper():
         return False
     model = _piper_model(_piper_gender(kirdaar))
@@ -440,6 +442,18 @@ EDGE_VOICES = {"male": "hi-IN-MadhurNeural", "female": "hi-IN-SwaraNeural",
                "old_male": "hi-IN-MadhurNeural"}
 
 
+def _edge_transcode(src, dest) -> bool:
+    """edge mp3 deta hai — .wav maanga ho to asli PCM WAV banao."""
+    import subprocess
+    from pathlib import Path as _P
+    src, dest = _P(src), _P(dest)
+    from imageio_ffmpeg import get_ffmpeg_exe
+    r = subprocess.run([get_ffmpeg_exe(), "-loglevel", "error", "-y", "-i", str(src),
+                        "-ac", "1", "-ar", "24000", "-c:a", "pcm_s16le", str(dest)],
+                       capture_output=True)
+    return r.returncode == 0 and dest.exists() and dest.stat().st_size > 1000
+
+
 def edge_tts(text: str, kirdaar: str = "madhur", out: str = "out.mp3",
              bhaav=None) -> bool:
     """Microsoft Edge ki neural awaaz — internet chahiye, key nahi.
@@ -447,6 +461,8 @@ def edge_tts(text: str, kirdaar: str = "madhur", out: str = "out.mp3",
     Sandbox me proxy + apna CA chahiye, isliye SSL context khud banate hain
     (edge_tts andar certifi hardcode karta hai — usse override karte hain).
     """
+    if not has_words(text):
+        return False
     import asyncio, os, ssl
     from pathlib import Path
     style = _bhaav_style(bhaav)
@@ -468,6 +484,12 @@ def edge_tts(text: str, kirdaar: str = "madhur", out: str = "out.mp3",
         com = edge_tts.Communicate(str(text), voice, rate=rate, pitch=pitch,
                                    proxy=os.environ.get("HTTPS_PROXY") or None)
         asyncio.run(com.save(str(out_path)))
+        if out_path.suffix.lower() == ".wav" and out_path.read_bytes()[:4] != b"RIFF":
+            tmp = out_path.with_name(out_path.stem + ".src.mp3")
+            out_path.replace(tmp)
+            ok = _edge_transcode(tmp, out_path)
+            tmp.unlink(missing_ok=True)
+            return ok
         return out_path.exists() and out_path.stat().st_size > 1000
     except Exception:
         import shutil, subprocess
@@ -505,6 +527,8 @@ def have_espeak() -> bool:
 def espeak_tts(text: str, kirdaar: str = "madhur", out: str = "out.wav",
                bhaav=None) -> bool:
     """espeak-ng se awaaz — offline, bina kisi key ke. Bhaav se raftaar/sur badalta hai."""
+    if not has_words(text):
+        return False
     import ctypes, wave
     from pathlib import Path
     style = _bhaav_style(bhaav)
@@ -575,6 +599,12 @@ def _learned_style() -> dict:
         except Exception:
             pass
     return _LEARNED_CACHE
+
+
+def has_words(text) -> bool:
+    """Asli akshar hain? (khaali, sirf '।।।', sirf number — sab False)."""
+    import re
+    return bool(re.search(r"[^\W\d_]", str(text or ""), re.UNICODE))
 
 
 def _bhaav_style(bhaav) -> dict:
