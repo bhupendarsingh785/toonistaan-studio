@@ -135,7 +135,13 @@ def render_lines(tmp: Path) -> list[dict]:
             if _trim_silence(f, trimmed):
                 f = trimmed
         d = _dur(f) if f.exists() else 0
-        out.append({**line, "file": str(f), "start": round(t, 2), "dur": d, "ok": ok})
+        rec = {**line, "file": str(f), "start": round(t, 2), "dur": d, "ok": ok}
+        out.append(rec)
+        # is line ke liye likhi hui awaazein (exact offset ke saath)
+        for sx in line.get("sfx", []) or []:
+            EVENTS.append((round(max(0.0, t + float(sx.get("at", 0.0))), 2),
+                           sx["file"], float(sx.get("gain", -16)),
+                           float(sx.get("dur", 0)) or None))
         t += d + 0.15                      # chhota saans (0.45s "ruka-ruka" lagta tha)
     return out
 
@@ -174,6 +180,7 @@ def build(out: Path, lines: list[dict]) -> dict:
     for ev in EVENTS:
         start, asset, gain = ev[0], ev[1], ev[2]
         dur = ev[3] if len(ev) > 3 else 0
+        dur = dur or 0
         p = LIB / asset
         if not p.exists():
             continue
