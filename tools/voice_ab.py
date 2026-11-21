@@ -21,6 +21,19 @@ sys.path.insert(0, str(ROOT))
 TEXT = ("बेटा, आ जा पास। आज मैं तुम्हें एक कहानी सुनाती हूँ — "
         "उस जंगल में एक छोटी नदी बहती थी, और उसके किनारे एक बूढ़ा पेड़ था।")
 
+V4_CANDIDATES = [
+    # dadi ke liye (moti, mardana nahi — female, thodi bhaari/warm)
+    {"name": "v4_roopa_narration",   "model": "bulbul:v4-flash", "speaker": "roopa_hi_narration",   "temperature": 0.75, "pace": 0.97},
+    {"name": "v4_suman_companion",   "model": "bulbul:v4-flash", "speaker": "suman_hi_companion",   "temperature": 0.75, "pace": 0.97},
+    {"name": "v4_shalini_companion", "model": "bulbul:v4-flash", "speaker": "shalini_hi_companion", "temperature": 0.78, "pace": 0.97},
+    {"name": "v4_aarti_customer",    "model": "bulbul:v4-flash", "speaker": "aarti_hi_customer",    "temperature": 0.75, "pace": 1.0},
+    {"name": "v4_simran_narration",  "model": "bulbul:v4-flash", "speaker": "simran_hi_narration",  "temperature": 0.75, "pace": 0.97},
+    # bacche ke liye (kids style)
+    {"name": "v4_chhavi_kids",       "model": "bulbul:v4-flash", "speaker": "chhavi_hi_kids",       "temperature": 0.85, "pace": 1.02},
+    {"name": "v4_ritu_kids",         "model": "bulbul:v4-flash", "speaker": "ritu_hi_kids",         "temperature": 0.85, "pace": 1.02},
+    {"name": "v4_kunal_kids",        "model": "bulbul:v4-flash", "speaker": "kunal_hi_kids",        "temperature": 0.85, "pace": 1.02},
+]
+
 VARIANTS = [
     {"name": "v3_priya_t06_p10",   "model": "bulbul:v3", "speaker": "priya",  "temperature": 0.6,  "pace": 1.0},
     {"name": "v3_priya_t085_p10",  "model": "bulbul:v3", "speaker": "priya",  "temperature": 0.85, "pace": 1.0},
@@ -114,7 +127,10 @@ def main() -> int:
         print(json.dumps({"ok": False, "why": "SARVAM key nahi"}))
         return 2
     rows, ki = [], 0
-    for v in VARIANTS:
+    chosen = VARIANTS
+    if os.environ.get("AB_SET") == "v4":
+        chosen = V4_CANDIDATES
+    for v in chosen:
         f = outdir / f"{v['name']}.wav"
         ok, err = False, ""
         for attempt in range(len(keys)):

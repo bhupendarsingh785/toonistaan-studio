@@ -22,6 +22,7 @@ jobs:
           SARVAM_API_KEY: ${{ secrets.SARVAM_API_KEY }}
           SARVAM_API_KEY_2: ${{ secrets.SARVAM_API_KEY_2 }}
           SARVAM_API_KEY_3: ${{ secrets.SARVAM_API_KEY_3 }}
+          AB_SET: v4
         run: python tools/voice_ab.py --out ab
       - uses: actions/upload-artifact@v4
         with:
