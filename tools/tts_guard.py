@@ -27,7 +27,7 @@ class BadAudio(RuntimeError):
     pass
 
 
-def audio_ok(path: str | Path, min_sec: float = 0.35, max_silence: float = 0.95) -> tuple[bool, str]:
+def audio_ok(path: str | Path, min_sec: float = 0.08, max_silence: float = 0.95) -> tuple[bool, str]:
     """Bani awaaz ki jaanch: lambai, khaali pan, NaN."""
     p = Path(path)
     if not p.exists():

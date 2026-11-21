@@ -186,6 +186,42 @@ def _call_provider(engine: str, text: str, character: str, out: Path, bhaav: str
     return out.exists() and out.stat().st_size > 1000
 
 
+def _fix_format(path: Path, want_ext: str) -> bool:
+    """File ka **asli** format maange se match karao (extension par bharosa nahi).
+
+    Kyun: kai engine wav likhte hain chahe naam .mp3 ho — sunne me farq nahi par
+    aage chal kar player/upload fail karta hai.
+    """
+    import subprocess
+    from imageio_ffmpeg import get_ffmpeg_exe
+    want_ext = want_ext.lower()
+    if not path.exists() or path.stat().st_size < 1000:
+        return False
+    try:
+        head = path.read_bytes()[:4]
+    except Exception:
+        return False
+    is_wav = head == b"RIFF"
+    is_mp3 = head[:3] == b"ID3" or head[:2] in (b"\xff\xfb", b"\xff\xf3", b"\xff\xf2")
+    if want_ext == ".mp3" and is_mp3:
+        return True
+    if want_ext == ".wav" and is_wav:
+        return True
+    tmp = path.with_name(path.stem + ".conv" + want_ext)
+    if want_ext == ".mp3":
+        cmd = [get_ffmpeg_exe(), "-loglevel", "error", "-y", "-i", str(path),
+               "-c:a", "libmp3lame", "-b:a", "128k", str(tmp)]
+    else:
+        cmd = [get_ffmpeg_exe(), "-loglevel", "error", "-y", "-i", str(path),
+               "-ac", "1", "-ar", "24000", "-c:a", "pcm_s16le", str(tmp)]
+    r = subprocess.run(cmd, capture_output=True)
+    if r.returncode != 0 or not tmp.exists():
+        tmp.unlink(missing_ok=True)
+        return False
+    tmp.replace(path)
+    return True
+
+
 def _guarded(engine: str, text: str, character: str, out: Path, bhaav: str = ""):
     """Cache + retry + quality check ke saath ek engine call."""
     from tools import tts_guard as tg
@@ -194,7 +230,10 @@ def _guarded(engine: str, text: str, character: str, out: Path, bhaav: str = "")
     # cache key me "out" NAHI jaata (warna har path naya key = cache kabhi hit nahi)
     path, meta = tg.render(engine, character, text,
                            {"bhaav": bhaav or "neutral"}, fn, want=str(out))
-    return path.exists() and path.stat().st_size > 1000, meta
+    if path.exists() and out.suffix.lower() in (".mp3", ".wav"):
+        _fix_format(path, out.suffix)
+    final = out if out.exists() else path
+    return final.exists() and final.stat().st_size > 1000, meta
 
 
 def render_line(text: str, character: str, out: Path,

@@ -477,6 +477,8 @@ def piper_tts(text, kirdaar="madhur", out="out.wav", bhaav=None):
     # lamba text (900+ akshar) ho to vakya tod kar parallel banao
     if len(str(text)) > 900:
         fast_ok = _piper_parallel_long(str(text), model, tmp, length_scale=ls)
+        if not fast_ok:                      # parallel fail -> seedha CLI (bharosa)
+            fast_ok = False
     else:
         fast_ok = _piper_inprocess(str(text), model, tmp, length_scale=ls)
     if not fast_ok:                                  # in-process fail to CLI (backup)
@@ -487,7 +489,7 @@ def piper_tts(text, kirdaar="madhur", out="out.wav", bhaav=None):
         except Exception:
             return False
         if r.returncode != 0 or not os.path.exists(tmp) or os.path.getsize(tmp) < 3000:
-            print("PIPER_FAIL", (r.stderr or b"")[-120:].decode("utf-8", "ignore"), flush=True)
+            # chup-chaap fail (caller ko False milta hai; log me traceback ka dher nahi)
             return False
 
     # kirdaar ka pitch (baaki engines jaisa hi)
