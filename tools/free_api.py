@@ -16,7 +16,7 @@ CLI:
   python tools/free_api.py "..." --bhaav gussa
 """
 from __future__ import annotations
-import argparse, json, os, subprocess, sys, urllib.parse, urllib.request
+import argparse, json, os, subprocess, sys, time, urllib.parse, urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -74,20 +74,35 @@ def _apply_style(src: Path, dest: Path, style: dict) -> bool:
     return r.returncode == 0 and dest.exists() and dest.stat().st_size > 1000
 
 
+def _has_words(text: str) -> bool:
+    """Asli shabd hain? (sirf '।।।' ya khaali par TTS nahi chalana)."""
+    import re
+    return bool(re.search(r"[^\W\d_]", text or "", re.UNICODE))
+
+
 def google(text: str, out: Path, lang: str = "hi", style: dict | None = None) -> bool:
     """Google Translate TTS — free, bina key. Tukdon me laa kar jodta hai."""
     style = style or {}
+    if not _has_words(text):
+        return False
     tmp_dir = out.parent / "_gtts"
     tmp_dir.mkdir(parents=True, exist_ok=True)
     files = []
     for i, piece in enumerate(_chunks(text)):
         url = ("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob"
                f"&tl={lang}&q={urllib.parse.quote(piece)}")
-        req = urllib.request.Request(url, headers={"User-Agent": UA})
-        try:
-            with urllib.request.urlopen(req, timeout=40) as r:
-                data = r.read()
-        except Exception:
+        data = b""
+        for attempt in range(3):
+            req = urllib.request.Request(url, headers={"User-Agent": UA})
+            try:
+                with urllib.request.urlopen(req, timeout=40) as r:
+                    data = r.read()
+                if len(data) > 800:
+                    break
+            except Exception:
+                data = b""
+            time.sleep(0.8 * (attempt + 1))     # 429/network par thoda ruk kar dobara
+        if len(data) < 800:
             continue
         if len(data) < 800:
             continue
@@ -107,6 +122,19 @@ def google(text: str, out: Path, lang: str = "hi", style: dict | None = None) ->
                            cwd=str(tmp_dir), capture_output=True)
         if r.returncode != 0 or not raw.exists():
             return False
+    ext = out.suffix.lower()
+    if ext in (".wav", ".wav "):
+        wav_out = out
+        r = subprocess.run([_ff(), "-loglevel", "error", "-y", "-i", str(raw),
+                            "-ac", "1", "-ar", "24000", "-c:a", "pcm_s16le", str(wav_out)],
+                           capture_output=True)
+        if r.returncode != 0:
+            return False
+        if style and (abs(style.get("pace", 1.0) - 1) > 0.01
+                      or abs(style.get("pitch", 1.0) - 1) > 0.01
+                      or abs(style.get("energy", 1.0) - 1) > 0.01):
+            return _apply_style(wav_out, out, style)
+        return wav_out.stat().st_size > 1000
     if style and (abs(style.get("pace", 1.0) - 1) > 0.01
                   or abs(style.get("pitch", 1.0) - 1) > 0.01
                   or abs(style.get("energy", 1.0) - 1) > 0.01):

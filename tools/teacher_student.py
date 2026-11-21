@@ -118,12 +118,15 @@ def collect(api_key: str, lines: int = 12, voice: str = "21m00Tcm4TlvDq8ikWAM") 
     return {"calls": calls, "rows": len(rows), "meta": str(meta)}
 
 
-def learn(meta_path: Path | None = None) -> dict:
+def learn(meta_path: Path | None = None, source: str | None = None) -> dict:
     """Naap se mapping: bhaav -> (sur, raftaar, zor, rukna)."""
     meta_path = meta_path or (DATA / "teacher_meta.json")
     if not meta_path.exists():
         return {"ok": False, "why": "pehle collect karo (teacher_meta.json nahi)"}
-    rows = [r for r in json.loads(meta_path.read_text(encoding="utf-8"))["rows"] if "hz" in r]
+    meta = json.loads(meta_path.read_text(encoding="utf-8"))
+    rows = [r for r in meta["rows"] if "hz" in r]
+    src = source or ("elevenlabs (measured)" if meta.get("calls")
+                     else f"{meta.get('mode', 'dry-run')} — apne engine ka naap")
     by: dict[str, list] = {}
     for r in rows:
         by.setdefault(r["emotion"], []).append(r)
@@ -144,7 +147,7 @@ def learn(meta_path: Path | None = None) -> dict:
                       "pace": round(cps / b_cps, 3) if b_cps else 1.0,
                       "energy": round(rms / b_rms, 3) if b_rms else 1.0,
                       "gap_ms": int(220 + 260 * max(0.0, (dur / b_dur - 1))) if b_dur else 220}
-    out = {"source": "elevenlabs (measured)", "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    out = {"source": src, "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
            "style": style, "measured_from": len(rows)}
     LEARNED.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     return {"ok": True, "file": str(LEARNED), "emotions": len(style), "from_rows": len(rows)}
@@ -164,7 +167,7 @@ def dry_run() -> dict:
     meta = DATA / "teacher_meta.json"
     meta.write_text(json.dumps({"calls": 0, "mode": "dry-run (piper)", "rows": rows},
                                ensure_ascii=False, indent=1), encoding="utf-8")
-    return {"rows": len(rows), "meta": str(meta), **learn(meta)}
+    return {"rows": len(rows), "meta": str(meta), **learn(meta, source="piper dry-run")}
 
 
 def main() -> int:

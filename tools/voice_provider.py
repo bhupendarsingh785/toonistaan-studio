@@ -567,7 +567,11 @@ def _learned_style() -> dict:
     f = Path(__file__).resolve().parent.parent / "astra" / "learned_style.json"
     if f.exists():
         try:
-            _LEARNED_CACHE.update(json.loads(f.read_text(encoding="utf-8")).get("style", {}))
+            data = json.loads(f.read_text(encoding="utf-8"))
+            src = str(data.get("source", "")).lower()
+            # sirf asli naap (elevenlabs/sarvam) maano — dry-run (apne engine) se nahi
+            if "elevenlabs" in src or "sarvam" in src or "measured_real" in src:
+                _LEARNED_CACHE.update(data.get("style", {}))
         except Exception:
             pass
     return _LEARNED_CACHE
