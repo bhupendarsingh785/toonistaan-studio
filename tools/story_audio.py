@@ -78,6 +78,11 @@ def _trim_silence(src: Path, dest: Path) -> bool:
 
 
 ENGINE = os.environ.get("STORY_ENGINE", "sarvam")
+# A/B naap se: ishita (F0 std 67) sabse expressive, suhani tez+saaf
+CAST = {"dadi": "ishita", "bachcha": "tanya", "maa": "priya", "narrator": "suhani"}
+# bhaav -> temperature (Sarvam: zyada = zyada expressive; dukh/gussa me thoda alag)
+TEMP = {"neutral": 0.70, "dukh": 0.72, "gussa": 0.85, "khushi": 0.85,
+        "dar": 0.80, "pyaar": 0.78}
 
 
 def render_single(tmp: Path) -> list[dict]:
@@ -102,6 +107,8 @@ def render_lines(tmp: Path) -> list[dict]:
     t = 0.25
     for i, line in enumerate(merge_lines(STORY)):
         f = tmp / f"line_{i:02d}.mp3"
+        os.environ["SARVAM_SPEAKER_" + line["who"].upper()] = CAST.get(line["who"], "ishita")
+        os.environ["SARVAM_TEMP"] = str(TEMP.get(line["bhaav"], 0.75))
         ok, log = er.render_line(line["text"], line["who"], f, engine=ENGINE, bhaav=line["bhaav"])
         if not ok:
             ok, log = er.render_line(line["text"], line["who"], f, engine="piper", bhaav=line["bhaav"])
