@@ -285,9 +285,24 @@ SARVAM_TEMP = {
 
 
 
+def sarvam_keys() -> list[str]:
+    """Saari Sarvam keys (ek se zyada ID ho to rotation — coin khatam ho to agli).
+
+    Naam: SARVAM_API_KEY, SARVAM_API_KEY_2, SARVAM_API_KEY_3 …
+    """
+    keys = []
+    for name in ("SARVAM_API_KEY", "SARVAM_API_KEY_2", "SARVAM_API_KEY_3", "SARVAM_API_KEY_4"):
+        k = (os.environ.get(name) or "").strip().strip('"').strip("'")
+        k = re.sub(r"[^A-Za-z0-9\-_]", "", k)
+        if k and k not in keys:
+            keys.append(k)
+    return keys
+
+
 def sarvam_key():
-    k = (os.environ.get("SARVAM_API_KEY") or "").strip().strip('"').strip("'")
-    return re.sub(r"[^A-Za-z0-9\-_]", "", k)
+    """Pehli available key (purana code isse chalta hai)."""
+    ks = sarvam_keys()
+    return ks[0] if ks else ""
 
 
 # ---------------------------------------------------------------- PIPER (offline, free)
@@ -805,19 +820,29 @@ def sarvam_tts(text, kirdaar="madhur", out="out.wav", bhaav=None):
         "speech_sample_rate": 24000,
         "output_audio_codec": "wav",
     }
-    try:
-        raw = _post(SARVAM_URL, payload, {"api-subscription-key": key,
-                                          "Content-Type": "application/json"})
-    except urllib.error.HTTPError as e:
+    keys = sarvam_keys() or [key]
+    raw, last_err = None, None
+    for _k in keys:
+        try:
+            raw = _post(SARVAM_URL, payload, {"api-subscription-key": _k,
+                                              "Content-Type": "application/json"})
+            break
+        except urllib.error.HTTPError as e:
+            last_err = e
+            # 401/402/429 = key/quota ka masla -> agli key (coin bachane ke liye)
+            if e.code in (401, 402, 403, 429):
+                continue
+            break
+    if raw is None:
+        e = last_err
+        if e is None:
+            return False
         body = ""
         try:
             body = e.read().decode("utf-8", "ignore")[:200]
         except Exception:
             pass
         print("SARVAM_FAIL", e.code, body, flush=True)
-        return False
-    except Exception as e:
-        print("SARVAM_FAIL", str(e)[:80], flush=True)
         return False
     try:
         data = json.loads(raw.decode("utf-8", "ignore"))
