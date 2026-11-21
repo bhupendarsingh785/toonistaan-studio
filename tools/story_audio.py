@@ -213,7 +213,7 @@ def main() -> int:
     if a.script:
         data = json.loads(Path(a.script).read_text(encoding="utf-8"))
         STORY = data["lines"]
-        BED = [(b["file"], b["gain"]) for b in data.get("bed", [])]
+        BED = [(b["file"], b["gain"], True) for b in data.get("bed", [])]   # (file, gain, loop)
         EVENTS = [(e["at"], e["file"], e["gain"]) for e in data.get("events", [])]
     lines = render_single(tmp) if a.single else render_lines(tmp)
     ok_lines = sum(1 for l in lines if l["ok"])
