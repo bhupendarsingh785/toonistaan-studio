@@ -12,7 +12,7 @@ CLI:
   python tools/story_audio.py --out output/kahani.mp3
 """
 from __future__ import annotations
-import argparse, json, subprocess, sys, time
+import argparse, json, os, subprocess, sys, time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -77,14 +77,17 @@ def _trim_silence(src: Path, dest: Path) -> bool:
     return r.returncode == 0 and dest.exists() and dest.stat().st_size > 2000
 
 
+ENGINE = os.environ.get("STORY_ENGINE", "sarvam")
+
+
 def render_single(tmp: Path) -> list[dict]:
     """Poori kahani ek hi awaaz (dadi) me — sabse smooth, koi beech ka break nahi."""
     from tools import engine_router as er
     text = " ".join(l["text"] for l in STORY)
     f = tmp / "story_single.mp3"
-    ok, _ = er.render_line(text, "dadi", f, engine="edge", bhaav="pyaar")
+    ok, _ = er.render_line(text, "dadi", f, engine=ENGINE, bhaav="pyaar")
     if not ok:
-        ok, _ = er.render_line(text, "dadi", f, engine="piper", bhaav="pyaar")
+        ok, _ = er.render_line(text, "dadi", f, engine="edge", bhaav="pyaar")
     trimmed = f.with_name("story_single_trim.mp3")
     if ok and _trim_silence(f, trimmed):
         f = trimmed
@@ -99,7 +102,7 @@ def render_lines(tmp: Path) -> list[dict]:
     t = 0.25
     for i, line in enumerate(merge_lines(STORY)):
         f = tmp / f"line_{i:02d}.mp3"
-        ok, log = er.render_line(line["text"], line["who"], f, engine="edge", bhaav=line["bhaav"])
+        ok, log = er.render_line(line["text"], line["who"], f, engine=ENGINE, bhaav=line["bhaav"])
         if not ok:
             ok, log = er.render_line(line["text"], line["who"], f, engine="piper", bhaav=line["bhaav"])
         if not ok:

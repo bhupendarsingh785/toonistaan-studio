@@ -1,0 +1,35 @@
+name: story audio (sarvam natural voice)
+
+on:
+  workflow_dispatch:
+  push:
+    paths: [".story-trigger"]
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: deps
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -q numpy requests imageio-ffmpeg edge-tts
+      - name: render (sarvam, ek hi awaaz, smooth)
+        env:
+          SARVAM_API_KEY: ${{ secrets.SARVAM_API_KEY }}
+          SARVAM_API_KEY_2: ${{ secrets.SARVAM_API_KEY_2 }}
+          SARVAM_API_KEY_3: ${{ secrets.SARVAM_API_KEY_3 }}
+          STORY_ENGINE: sarvam
+        run: |
+          mkdir -p output
+          python tools/story_audio.py --single --out output/kahani-v3.mp3
+          ls -lh output/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kahani-v3
+          path: output/kahani-v3.*
+          retention-days: 7

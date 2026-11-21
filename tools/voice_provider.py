@@ -831,15 +831,19 @@ def sarvam_tts(text, kirdaar="madhur", out="out.wav", bhaav=None):
     _st = _bhaav_style(bhaav)                      # bhavna.py (11 bhaav)
     pace0 = pace0 * _st["pace"]
     pitch0 = pitch0 * _st["pitch"]
+    # insaan jaisa: bhaav ka asar halka (dheema = ruka-ruka lagta hai)
+    _nat = os.environ.get("SARVAM_NATURAL", "1") == "1"
     payload = {
         "text": prep_text(text)[:2400],
         "language_code": os.environ.get("SARVAM_LANG", "hi-IN"),
         "speaker": speaker,
         "model": os.environ.get("SARVAM_MODEL", "bulbul:v3"),
-        "pace": round(float(os.environ.get("SARVAM_PACE", SARVAM_PACE.get(kirdaar, 1.0))) * pace0, 3),
+        "pace": round(min(1.12, max(0.94, float(os.environ.get("SARVAM_PACE", SARVAM_PACE.get(kirdaar, 1.0))) *
+                                (1.0 + (pace0 - 1.0) * 0.35 if _nat else pace0))), 3),
         # naapa hua calibration: pitch param 0.3 ≈ +21% F0  =>  1.0 ≈ 70%
-        "pitch": round(float(os.environ.get("SARVAM_PITCH_PARAM", "0")) + (pitch0 - 1.0) / 0.7, 3),
-        "loudness": round(1.0 * _st["energy"], 3),
+        "pitch": round(max(-0.1, min(0.1, float(os.environ.get("SARVAM_PITCH_PARAM", "0")) +
+                                    ((pitch0 - 1.0) / 0.7) * (0.25 if _nat else 1.0))), 3),
+        "loudness": round(1.0 + (_st["energy"] - 1.0) * (0.4 if _nat else 1.0), 3),
         "temperature": float(os.environ.get("SARVAM_TEMP", str(temp0))),
         "speech_sample_rate": 24000,
         "output_audio_codec": "wav",
