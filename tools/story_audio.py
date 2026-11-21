@@ -204,10 +204,17 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="kahani + background audio")
     ap.add_argument("--out", default=str(ROOT / "output" / "kahani.mp3"))
     ap.add_argument("--single", action="store_true", help="poori kahani ek hi awaaz me")
+    ap.add_argument("--script", default="", help="JSON kahani file (lines/bed/events)")
     a = ap.parse_args()
     out = Path(a.out); out.parent.mkdir(parents=True, exist_ok=True)
     tmp = wt.work_tmp("story")
     t0 = time.time()
+    global STORY, BED, EVENTS
+    if a.script:
+        data = json.loads(Path(a.script).read_text(encoding="utf-8"))
+        STORY = data["lines"]
+        BED = [(b["file"], b["gain"]) for b in data.get("bed", [])]
+        EVENTS = [(e["at"], e["file"], e["gain"]) for e in data.get("events", [])]
     lines = render_single(tmp) if a.single else render_lines(tmp)
     ok_lines = sum(1 for l in lines if l["ok"])
     rep = build(out, lines)

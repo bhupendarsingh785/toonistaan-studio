@@ -1,0 +1,36 @@
+name: daravani kahani (sarvam)
+
+on:
+  workflow_dispatch:
+  push:
+    paths: [".scary-trigger"]
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -q numpy imageio-ffmpeg soundfile scipy
+      - name: render
+        env:
+          SARVAM_API_KEY: ${{ secrets.SARVAM_API_KEY }}
+          SARVAM_API_KEY_2: ${{ secrets.SARVAM_API_KEY_2 }}
+          SARVAM_API_KEY_3: ${{ secrets.SARVAM_API_KEY_3 }}
+          STORY_ENGINE: sarvam
+          SARVAM_MODEL: bulbul:v3
+          SARVAM_NATURAL: "1"
+        run: |
+          mkdir -p output
+          python tools/story_audio.py --script stories/daravani-haveli.json --out output/daravani-haveli.mp3
+          ls -lh output/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: daravani-haveli
+          path: output/daravani-haveli.*
+          retention-days: 7
