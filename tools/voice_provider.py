@@ -572,8 +572,13 @@ def edge_tts(text: str, kirdaar: str = "madhur", out: str = "out.mp3",
         if ca and os.path.exists(ca):
             ctx.load_verify_locations(cafile=ca)
         C._SSL_CTX = ctx
-        rate = f"{int((style['pace'] - 1.0) * 100):+d}%"
-        pitch = f"{int((style['pitch'] - 1.0) * 50):+d}Hz"
+        # insaan jaisa: bhaav ka asar halka (dheema bolna "ruka-ruka" lagta hai)
+        rate_pct = int((style["pace"] - 1.0) * 45)
+        rate_pct = max(-3, min(10, rate_pct)) + int(os.environ.get("EDGE_RATE_EXTRA", "3"))
+        rate = f"{rate_pct:+d}%"
+        pitch_hz = int((style["pitch"] - 1.0) * 22)
+        pitch_hz = max(-4, min(4, pitch_hz))
+        pitch = f"{pitch_hz:+d}Hz"
         com = edge_tts.Communicate(str(text), voice, rate=rate, pitch=pitch,
                                    proxy=os.environ.get("HTTPS_PROXY") or None)
         asyncio.run(com.save(str(out_path)))

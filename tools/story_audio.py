@@ -55,20 +55,62 @@ def _dur(p: Path) -> float:
     return round(len(np.frombuffer(raw, dtype=np.int16)) / 16000, 2)
 
 
+def merge_lines(story: list[dict]) -> list[dict]:
+    """Ek hi kirdaar ki lagataar lines ko jodo — TTS ke beech ke "ruko" kam ho."""
+    merged: list[dict] = []
+    for line in story:
+        if merged and merged[-1]["who"] == line["who"]:
+            merged[-1]["text"] = merged[-1]["text"].rstrip() + " " + line["text"].lstrip()
+        else:
+            merged.append(dict(line))
+    return merged
+
+
+def _trim_silence(src: Path, dest: Path) -> bool:
+    """Line ke shuru/aakhir ki chupai hatao (warna beech me 'khaali' sunai deta hai)."""
+    r = subprocess.run([_ff(), "-loglevel", "error", "-y", "-i", str(src),
+                        "-af", "silenceremove=start_periods=1:start_threshold=-45dB:"
+                               "start_silence=0.12,areverse,"
+                               "silenceremove=start_periods=1:start_threshold=-45dB:"
+                               "start_silence=0.05,areverse",
+                        "-c:a", "libmp3lame", "-b:a", "160k", str(dest)], capture_output=True)
+    return r.returncode == 0 and dest.exists() and dest.stat().st_size > 2000
+
+
+def render_single(tmp: Path) -> list[dict]:
+    """Poori kahani ek hi awaaz (dadi) me — sabse smooth, koi beech ka break nahi."""
+    from tools import engine_router as er
+    text = " ".join(l["text"] for l in STORY)
+    f = tmp / "story_single.mp3"
+    ok, _ = er.render_line(text, "dadi", f, engine="edge", bhaav="pyaar")
+    if not ok:
+        ok, _ = er.render_line(text, "dadi", f, engine="piper", bhaav="pyaar")
+    trimmed = f.with_name("story_single_trim.mp3")
+    if ok and _trim_silence(f, trimmed):
+        f = trimmed
+    d = _dur(f) if f.exists() else 0
+    return [{"who": "dadi", "bhaav": "pyaar", "text": text, "file": str(f),
+             "start": 0.25, "dur": d, "ok": ok}]
+
+
 def render_lines(tmp: Path) -> list[dict]:
     from tools import engine_router as er
     out = []
-    t = 0.35
-    for i, line in enumerate(STORY):
+    t = 0.25
+    for i, line in enumerate(merge_lines(STORY)):
         f = tmp / f"line_{i:02d}.mp3"
         ok, log = er.render_line(line["text"], line["who"], f, engine="edge", bhaav=line["bhaav"])
         if not ok:
             ok, log = er.render_line(line["text"], line["who"], f, engine="piper", bhaav=line["bhaav"])
         if not ok:
             ok, log = er.render_line(line["text"], line["who"], f, engine="free", bhaav=line["bhaav"])
+        if ok:
+            trimmed = f.with_name(f.stem + "_trim.mp3")
+            if _trim_silence(f, trimmed):
+                f = trimmed
         d = _dur(f) if f.exists() else 0
         out.append({**line, "file": str(f), "start": round(t, 2), "dur": d, "ok": ok})
-        t += d + 0.45                      # line ke baad saans lene ka waqt
+        t += d + 0.15                      # chhota saans (0.45s "ruka-ruka" lagta tha)
     return out
 
 
@@ -88,14 +130,18 @@ def build(out: Path, lines: list[dict]) -> dict:
                     f"volume={gain}dB[bed{len(mix)}]")
         mix.append(f"[bed{len(mix)}]")
 
-    # 2) dialogue (duck bed)
+    # 2) dialogue (duck bed) — har line ko halka warm + saaf karo
     for l in lines:
         if not l["ok"] or not Path(l["file"]).exists():
             continue
         cmd += ["-i", str(l["file"])]
         i = sum(1 for a in cmd if a == "-i") - 1
-        filt.append(f"[{i}:a]aresample=44100,adelay={int(l['start']*1000)}|{int(l['start']*1000)},"
-                    f"volume=-3dB[dl{len(mix)}]")
+        filt.append(
+            f"[{i}:a]aresample=44100,"
+            "highpass=f=75,"
+            "acompressor=threshold=-18dB:ratio=2.5:attack=8:release=180:makeup=2,"
+            "treble=g=1.5:f=5500,"
+            f"adelay={int(l['start']*1000)}|{int(l['start']*1000)},volume=-2dB[dl{len(mix)}]")
         mix.append(f"[dl{len(mix)}]")
 
     # 3) foley events
@@ -147,11 +193,12 @@ def build(out: Path, lines: list[dict]) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser(description="kahani + background audio")
     ap.add_argument("--out", default=str(ROOT / "output" / "kahani.mp3"))
+    ap.add_argument("--single", action="store_true", help="poori kahani ek hi awaaz me")
     a = ap.parse_args()
     out = Path(a.out); out.parent.mkdir(parents=True, exist_ok=True)
     tmp = wt.work_tmp("story")
     t0 = time.time()
-    lines = render_lines(tmp)
+    lines = render_single(tmp) if a.single else render_lines(tmp)
     ok_lines = sum(1 for l in lines if l["ok"])
     rep = build(out, lines)
     rep.update({"lines_ok": ok_lines, "lines_total": len(lines), "seconds": round(time.time() - t0, 1)})
