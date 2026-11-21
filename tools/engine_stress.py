@@ -20,6 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+from tools import worktmp as wt
 
 LONG = ("यह एक लंबा वाक्य है जिसमें कहानी के बहुत सारे शब्द हैं और बच्चे सुनते हैं। " * 9)
 LINE = "बेटा, आ जा पास। मैं तुम्हारी माँ हूँ।"
@@ -101,7 +102,7 @@ def main() -> int:
     ap.add_argument("--engine", default="")
     a = ap.parse_args()
     engines = [a.engine] if a.engine else ["free", "piper", "espeak", "edge"]
-    tmp = Path("/tmp/engine_stress")
+    tmp = wt.work_tmp("engine_stress")
     rows, bad = [], []
     for e in engines:
         try:

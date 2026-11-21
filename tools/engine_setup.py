@@ -16,6 +16,8 @@ import argparse, ctypes, json, os, subprocess, sys, time, wave
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+from tools import worktmp as wt  # noqa: E402
 MODELS = ROOT / "models"
 PIPER_MODEL = "hi_IN-priyamvada-medium"
 HF = ("https://huggingface.co/rhasspy/piper-voices/resolve/main/hi/hi_IN/"
@@ -56,7 +58,7 @@ def test_piper() -> dict:
         os.environ.setdefault("PIPER_MODEL_DIR", str(MODELS))
         sys.path.insert(0, str(ROOT))
         from tools import voice_provider as vp
-        out = Path("/tmp/engine_piper.wav")
+        out = wt.work_tmp("setup") / "engine_piper.wav"
         t = time.time()
         ok = vp.piper_tts("नमस्ते, मैं आपकी आवाज़ हूँ।", "dadi", str(out))
         return {"ok": bool(ok), "secs": round(time.time() - t, 1),
@@ -93,7 +95,7 @@ def test_espeak() -> dict:
         audio = b"".join(chunks)
         if not audio:
             return {"ok": False, "why": "espeak ne audio nahi diya"}
-        out = Path("/tmp/engine_espeak.wav")
+        out = wt.work_tmp("setup") / "engine_espeak.wav"
         with wave.open(str(out), "wb") as w:
             w.setnchannels(1); w.setsampwidth(2); w.setframerate(22050)
             w.writeframes(audio)
@@ -112,7 +114,7 @@ def test_edge() -> dict:
         return {"ok": False, "why": f"{type(exc).__name__}: {str(exc)[:80]}"}
     if not vp.have_edge():
         return {"ok": False, "why": "edge-tts install nahi"}
-    out = Path("/tmp/engine_edge.mp3")
+    out = wt.work_tmp("setup") / "engine_edge.mp3"
     out.unlink(missing_ok=True)
     t = time.time()
     try:
@@ -132,7 +134,7 @@ def test_free() -> dict:
         from tools import free_api as fa
     except Exception as exc:
         return {"ok": False, "why": f"{type(exc).__name__}: {str(exc)[:80]}"}
-    out = Path("/tmp/engine_free.mp3")
+    out = wt.work_tmp("setup") / "engine_free.mp3"
     out.unlink(missing_ok=True)
     t = time.time()
     if fa.speak("नमस्ते, मैं आपकी आवाज़ हूँ।", str(out)):

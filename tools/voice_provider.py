@@ -12,6 +12,7 @@ GitHub secret: ELEVENLABS_API_KEY
 Kirdaar -> ElevenLabs voice (default multilingual voice ids; apni voice id bhi daal sakte ho
 env ELEVEN_VOICE_MADHUR / ELEVEN_VOICE_SWARA me).
 """
+from pathlib import Path
 import json
 import os
 
@@ -342,17 +343,39 @@ def _piper_gender(kirdaar):
 
 _PIPER_SESSIONS = {}
 
+_PIPER_TLS = None
+
+
+import threading as _threading
+_PIPER_LOCK = _threading.Lock()
+
+
 def _piper_session(model_path):
-    """Piper model ek hi baar load ho (har line par 2-3 second bachta hai)."""
-    if model_path in _PIPER_SESSIONS:
-        return _PIPER_SESSIONS[model_path]
+    """Piper model **har thread ke liye ek baar** load ho.
+
+    Kyun: PiperVoice thread-safe nahi hai — ek hi voice do thread me chalao to
+    audio adhoora/kharab aata hai. Isliye thread-local session.
+    """
+    global _PIPER_TLS
+    import threading
+    if _PIPER_TLS is None:
+        _PIPER_TLS = threading.local()
+    store = getattr(_PIPER_TLS, "voices", None)
+    if store is None:
+        store = {}
+        _PIPER_TLS.voices = store
+    if model_path in _PIPER_SESSIONS and _PIPER_SESSIONS[model_path] is not None:
+        return _PIPER_SESSIONS[model_path]          # ek hi model, sab thread share karein
+    if model_path in store:
+        return store[model_path]
     try:
         from piper import PiperVoice
         voice = PiperVoice.load(model_path)
-        _PIPER_SESSIONS[model_path] = voice
+        store[model_path] = voice
+        _PIPER_SESSIONS[model_path] = voice      # purane code ke liye
         return voice
     except Exception:
-        _PIPER_SESSIONS[model_path] = None
+        store[model_path] = None
         return None
 
 
@@ -365,11 +388,55 @@ def _piper_inprocess(text, model, out_path, length_scale=1.0):
         import wave
         from piper import SynthesisConfig
         cfg = SynthesisConfig(length_scale=float(length_scale))
-        with wave.open(out_path, "wb") as wf:
-            voice.synthesize_wav(text, wf, syn_config=cfg)
+        with _PIPER_LOCK:
+            with wave.open(out_path, "wb") as wf:
+                voice.synthesize_wav(text, wf, syn_config=cfg)
         return os.path.exists(out_path) and os.path.getsize(out_path) > 3000
     except Exception:
         return False
+
+
+def _piper_parallel_long(text, model, out_path, length_scale=1.0, workers=2):
+    """Lamba text: vakya tod kar parallel synthesize, phir jodo (tez)."""
+    import re, subprocess, tempfile
+    from concurrent.futures import ThreadPoolExecutor
+    parts = [p for p in re.split(r"(?<=[।.!?])\s+", str(text)) if p.strip()]
+    if len(parts) < 3:
+        return False
+    # shared voice + lock = tez (har thread naya model load karna mehnga hai)
+    from tools.worktmp import work_tmp
+    tmpdir = Path(tempfile.mkdtemp(prefix="piper_parts_", dir=str(work_tmp("piper_parts"))))
+    outs = [tmpdir / f"p{i:03d}.wav" for i in range(len(parts))]
+
+    _local = _threading.local()
+
+    def _own_voice_render(idx: int) -> bool:
+        """Worker ka apna PiperVoice — **ek baar** load, phir wahi reuse (har chunk par nahi)."""
+        try:
+            import wave
+            from piper import PiperVoice, SynthesisConfig
+            voice = getattr(_local, "voice", None)
+            if voice is None:
+                voice = PiperVoice.load(model)
+                _local.voice = voice
+            cfg = SynthesisConfig(length_scale=float(length_scale))
+            with wave.open(str(outs[idx]), "wb") as wf:
+                voice.synthesize_wav(parts[idx], wf, syn_config=cfg)
+            return outs[idx].exists() and outs[idx].stat().st_size > 2000
+        except Exception:
+            return _piper_inprocess(parts[idx], model, str(outs[idx]), length_scale)
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        ok = all(pool.map(_own_voice_render, range(len(parts))))
+    if not ok:
+        return False
+    from imageio_ffmpeg import get_ffmpeg_exe
+    lst = tmpdir / "list.txt"
+    lst.write_text("".join(f"file '{o.name}'\n" for o in outs), encoding="utf-8")
+    r = subprocess.run([get_ffmpeg_exe(), "-loglevel", "error", "-y", "-f", "concat",
+                        "-safe", "0", "-i", str(lst), "-c", "copy", str(out_path)],
+                       cwd=str(tmpdir), capture_output=True)
+    return r.returncode == 0 and Path(out_path).exists() and Path(out_path).stat().st_size > 3000
 
 
 def piper_tts(text, kirdaar="madhur", out="out.wav", bhaav=None):
@@ -386,8 +453,12 @@ def piper_tts(text, kirdaar="madhur", out="out.wav", bhaav=None):
     _st = _bhaav_style(bhaav)
     pace = pace * _st["pace"]                      # bhaav se raftaar
     ls = 1.0 / max(0.6, min(1.5, pace))
-    # tez raasta: model ek baar load, phir seedha python se
-    fast_ok = _piper_inprocess(str(text), model, tmp, length_scale=ls)
+    # tez raasta: model ek baar load (per thread), phir seedha python se
+    # lamba text (900+ akshar) ho to vakya tod kar parallel banao
+    if len(str(text)) > 900:
+        fast_ok = _piper_parallel_long(str(text), model, tmp, length_scale=ls)
+    else:
+        fast_ok = _piper_inprocess(str(text), model, tmp, length_scale=ls)
     if not fast_ok:                                  # in-process fail to CLI (backup)
         cmd = [sys.executable, "-m", "piper", "--model", model, "--output_file", tmp,
                "--length_scale", f"{ls:.3f}"]
@@ -524,6 +595,27 @@ def have_espeak() -> bool:
         return shutil.which("espeak-ng") is not None
 
 
+_ESPEAK_LIB = None
+_ESPEAK_LOCK = _threading.Lock()
+_ESPEAK_VOICE_READY = False
+_ESPEAK_RENDERS = 0          # espeak ki voice list (350) bharne se pehle reset karna hai
+
+
+def _espeak_init():
+    """espeak library **ek hi baar** init (do baar init karne se data path double ho jata hai)."""
+    global _ESPEAK_LIB
+    with _ESPEAK_LOCK:
+        if _ESPEAK_LIB is not None:
+            return _ESPEAK_LIB
+        import ctypes
+        import espeakng_loader
+        lib = ctypes.CDLL(espeakng_loader.get_library_path())
+        data = espeakng_loader.get_data_path()
+        lib.espeak_Initialize(2, 0, data.encode(), 0)
+        _ESPEAK_LIB = lib
+        return lib
+
+
 def espeak_tts(text: str, kirdaar: str = "madhur", out: str = "out.wav",
                bhaav=None) -> bool:
     """espeak-ng se awaaz — offline, bina kisi key ke. Bhaav se raftaar/sur badalta hai."""
@@ -535,9 +627,7 @@ def espeak_tts(text: str, kirdaar: str = "madhur", out: str = "out.wav",
     out_path = Path(out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     try:
-        import espeakng_loader
-        lib = ctypes.CDLL(espeakng_loader.get_library_path())
-        data_path = espeakng_loader.get_data_path().encode()
+        lib = _espeak_init()
     except Exception:
         import shutil, subprocess
         binary = shutil.which("espeak-ng") or shutil.which("espeak")
@@ -547,11 +637,18 @@ def espeak_tts(text: str, kirdaar: str = "madhur", out: str = "out.wav",
         r = subprocess.run([binary, "-v", "hi", "-s", str(rate), "-w", str(out_path), text],
                            capture_output=True)
         return r.returncode == 0 and out_path.exists() and out_path.stat().st_size > 1000
-    lib.espeak_Initialize(2, 0, data_path, 0)
-    if lib.espeak_SetVoiceByName(b"hi") != 0:
-        lib.espeak_SetVoiceByName(b"en")
-    lib.espeak_SetParameter(1, int(150 * style["pace"]), 0)      # 1 = rate (words/min)
-    lib.espeak_SetParameter(3, int(max(0, min(99, 50 * style["pitch"]))), 0)  # 3 = pitch
+    global _ESPEAK_VOICE_READY, _ESPEAK_RENDERS, _ESPEAK_LIB
+    _ESPEAK_RENDERS += 1
+    if _ESPEAK_RENDERS % 150 == 0:
+        # espeak andar voice list 350 par bhar jati hai -> library reset (warna render band)
+        with _ESPEAK_LOCK:
+            try:
+                lib.espeak_Terminate()
+            except Exception:
+                pass
+            _ESPEAK_LIB = None
+            _ESPEAK_VOICE_READY = False
+        lib = _espeak_init()
     chunks: list[bytes] = []
 
     CB = ctypes.CFUNCTYPE(ctypes.c_int, ctypes.POINTER(ctypes.c_short),
@@ -564,8 +661,16 @@ def espeak_tts(text: str, kirdaar: str = "madhur", out: str = "out.wav",
         return 0
 
     cb = CB(_cb)
-    lib.espeak_SetSynthCallback(cb)
-    lib.espeak_Synth(str(text).encode("utf-8"), 0, 0, 1, 0, 0, None, None)
+    # espeak thread-safe NAHI hai: voice + params + synth — sab ek hi lock me
+    with _ESPEAK_LOCK:
+        if not _ESPEAK_VOICE_READY:
+            if lib.espeak_SetVoiceByName(b"hi") != 0:
+                lib.espeak_SetVoiceByName(b"en")
+            _ESPEAK_VOICE_READY = True
+        lib.espeak_SetParameter(1, int(150 * style["pace"]), 0)                  # rate
+        lib.espeak_SetParameter(3, int(max(0, min(99, 50 * style["pitch"]))), 0)  # pitch
+        lib.espeak_SetSynthCallback(cb)
+        lib.espeak_Synth(str(text).encode("utf-8"), 0, 0, 1, 0, 0, None, None)
     audio = b"".join(chunks)
     if not audio:
         return False

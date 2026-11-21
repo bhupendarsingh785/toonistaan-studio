@@ -15,6 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+from tools import worktmp as wt
 from tools import engine_router as er
 
 
@@ -22,10 +23,10 @@ def bench(line: str, engines: list[str], character: str = "dadi") -> list[dict]:
     out = []
     for eng in engines:
         t0 = time.time()
-        ok1, log1 = er.render_line(line, character, Path(f"/tmp/bench_{eng}_1.wav"), eng, [])
+        ok1, log1 = er.render_line(line, character, wt.work_tmp("bench") / f"{eng}_1.wav", eng, [])
         first = round(time.time() - t0, 2)
         t0 = time.time()
-        ok2, log2 = er.render_line(line, character, Path(f"/tmp/bench_{eng}_2.wav"), eng, [])
+        ok2, log2 = er.render_line(line, character, wt.work_tmp("bench") / f"{eng}_2.wav", eng, [])
         second = round(time.time() - t0, 2)
         words = max(1, len(line.split()))
         out.append({"engine": eng, "ok": ok1 and ok2, "first_sec": first, "second_sec": second,

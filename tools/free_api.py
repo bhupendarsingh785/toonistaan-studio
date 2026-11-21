@@ -21,6 +21,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+from tools import worktmp as wt
 UA = "Mozilla/5.0 (X11; Linux x86_64) astra-free-tts/1.0"
 MAX_CHUNK = 190
 
@@ -160,7 +161,7 @@ def have(provider: str | None = None) -> bool:
     fn = PROVIDERS.get(name)
     if not fn:
         return False
-    out = Path("/tmp/free_probe.mp3")
+    out = wt.work_tmp("free") / "probe.mp3"
     out.unlink(missing_ok=True)
     try:
         return bool(fn("नमस्ते", out, "hi", {}))
@@ -180,7 +181,7 @@ def speak(text: str, out: str, bhaav=None, lang: str = "hi",
 def main() -> int:
     ap = argparse.ArgumentParser(description="bina key wali free TTS")
     ap.add_argument("text")
-    ap.add_argument("--out", default="/tmp/free_tts.mp3")
+    ap.add_argument("--out", default=str(wt.work_tmp("free") / "tts.mp3"))
     ap.add_argument("--lang", default="hi")
     ap.add_argument("--bhaav", default="")
     ap.add_argument("--provider", default="")

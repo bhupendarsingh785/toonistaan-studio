@@ -33,6 +33,10 @@ def key_for(text: str, voice: str, engine: str, params: dict | None = None) -> s
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:24]
 
 
+import threading as _th
+_CACHE_LOCK = _th.Lock()
+
+
 def _load() -> dict:
     if INDEX.exists():
         try:
@@ -43,10 +47,12 @@ def _load() -> dict:
 
 
 def _save(idx: dict) -> None:
-    CACHE.mkdir(parents=True, exist_ok=True)
-    tmp = INDEX.with_suffix(".tmp")
-    tmp.write_text(json.dumps(idx, ensure_ascii=False, indent=1), encoding="utf-8")
-    os.replace(tmp, INDEX)
+    """Index likhna thread-safe (do render ek saath khatam ho to JSON na toote)."""
+    with _CACHE_LOCK:
+        CACHE.mkdir(parents=True, exist_ok=True)
+        tmp = INDEX.with_suffix(f".{os.getpid()}.tmp")
+        tmp.write_text(json.dumps(idx, ensure_ascii=False, indent=1), encoding="utf-8")
+        os.replace(tmp, INDEX)
 
 
 def _usable(path: Path) -> bool:
