@@ -44,11 +44,17 @@ def decode(path: str):
     return np.frombuffer(r.stdout, dtype=np.int16).astype("float32") / 32768.0
 
 
-def spec(x, n=2048, hop=512):
+def spec(x, n=2048, hop=512, max_seconds: float = 240.0):
+    """memory-safe: lambe gaane par sirf pehle `max_seconds` (aur float32)."""
     import numpy as np
-    win = np.hanning(n)
-    return np.abs(np.array([np.fft.rfft(x[i:i + n] * win)
-                            for i in range(0, max(1, len(x) - n), hop)])), hop
+    if len(x) > max_seconds * SR:
+        x = x[:int(max_seconds * SR)]
+    win = np.hanning(n).astype("float32")
+    frames = range(0, max(1, len(x) - n), hop)
+    out = np.empty((len(frames), n // 2 + 1), dtype="float32")
+    for k, i in enumerate(frames):
+        out[k] = np.abs(np.fft.rfft(x[i:i + n] * win))
+    return out, hop
 
 
 def tempo(S, hop):
@@ -159,7 +165,7 @@ def vocal_f0(x):
     import numpy as np
     try:
         from tools import audio_read6 as ar
-        vals = ar.f0_track(x, hop=512, win=1024)
+        vals = ar.f0_track(x[:SR * 180], hop=1024, win=1024)   # pehle 3 min kaafi
     except Exception:
         vals = []
     if not vals:
