@@ -6,19 +6,19 @@ import tools.sarvam_keys as sk
 
 
 def _clean(monkeypatch, tmp_path):
-    for i in range(1, 7):
+    for i in range(1, 13):
         name = "SARVAM_API_KEY" if i == 1 else f"SARVAM_API_KEY_{i}"
         monkeypatch.delenv(name, raising=False)
     monkeypatch.setattr(sk, "STATE", tmp_path / "state.json")
 
 
-def test_six_keys_read(monkeypatch, tmp_path):
+def test_twelve_keys_read(monkeypatch, tmp_path):
     _clean(monkeypatch, tmp_path)
-    for i in range(1, 7):
+    for i in range(1, 13):
         name = "SARVAM_API_KEY" if i == 1 else f"SARVAM_API_KEY_{i}"
         monkeypatch.setenv(name, f"key{i}_abcdef")
     ks = vp.sarvam_keys()
-    assert len(ks) == 6 and ks[0] == "key1_abcdef"
+    assert len(ks) == 12 and ks[0] == "key1_abcdef"
 
 
 def test_duplicate_not_repeated(monkeypatch, tmp_path):

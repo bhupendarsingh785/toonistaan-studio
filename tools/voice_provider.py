@@ -295,8 +295,8 @@ def sarvam_keys() -> list[str]:
         return [k for _name, k in sk.order()]
     except Exception:
         keys = []
-        for name in ("SARVAM_API_KEY", "SARVAM_API_KEY_2", "SARVAM_API_KEY_3",
-                     "SARVAM_API_KEY_4", "SARVAM_API_KEY_5", "SARVAM_API_KEY_6"):
+        for i in range(1, 13):
+            name = "SARVAM_API_KEY" if i == 1 else f"SARVAM_API_KEY_{i}"
             k = (os.environ.get(name) or "").strip().strip('"').strip("'")
             k = re.sub(r"[^A-Za-z0-9\-_]", "", k)
             if k and k not in keys:

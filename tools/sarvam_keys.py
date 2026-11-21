@@ -2,7 +2,7 @@
 """Sarvam Keys — 6 ID tak rotation (coin khatam ho to agla, dead key yaad rakho).
 
 Kaam:
-  1) 6 tak key padhta hai: SARVAM_API_KEY, _2 … _6
+  1) 12 tak key padhta hai: SARVAM_API_KEY, _2 … _12 (SARVAM_MAX_IDS se badla ja sakta hai)
   2) Har key ka haal yaad rakhta hai (state file): ok / dead / cooldown
   3) Coin/quota khatam (401/402/403/429) -> us key ko **cooldown** me daal kar agla
   4) Server error (5xx) -> usi key se dobara, agla nahi (coin bachao)
@@ -18,7 +18,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 STATE = ROOT / ".sarvam_keys_state.json"
-NAMES = [f"SARVAM_API_KEY{'' if i == 1 else '_' + str(i)}" for i in range(1, 7)]
+MAX_IDS = int(os.environ.get("SARVAM_MAX_IDS", "12"))
+NAMES = [f"SARVAM_API_KEY{'' if i == 1 else '_' + str(i)}" for i in range(1, MAX_IDS + 1)]
 COOLDOWN_SECS = int(os.environ.get("SARVAM_KEY_COOLDOWN", "3600"))
 
 

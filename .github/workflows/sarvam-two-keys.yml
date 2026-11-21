@@ -22,11 +22,17 @@ jobs:
           SARVAM_API_KEY_4: ${{ secrets.SARVAM_API_KEY_4 }}
           SARVAM_API_KEY_5: ${{ secrets.SARVAM_API_KEY_5 }}
           SARVAM_API_KEY_6: ${{ secrets.SARVAM_API_KEY_6 }}
+          SARVAM_API_KEY_7: ${{ secrets.SARVAM_API_KEY_7 }}
+          SARVAM_API_KEY_8: ${{ secrets.SARVAM_API_KEY_8 }}
+          SARVAM_API_KEY_9: ${{ secrets.SARVAM_API_KEY_9 }}
+          SARVAM_API_KEY_10: ${{ secrets.SARVAM_API_KEY_10 }}
+          SARVAM_API_KEY_11: ${{ secrets.SARVAM_API_KEY_11 }}
+          SARVAM_API_KEY_12: ${{ secrets.SARVAM_API_KEY_12 }}
         run: |
           pip install -q requests
           python - <<'PY'
           import os, json, base64, requests
-          names = ["SARVAM_API_KEY"] + [f"SARVAM_API_KEY_{i}" for i in range(2, 7)]
+          names = ["SARVAM_API_KEY"] + [f"SARVAM_API_KEY_{i}" for i in range(2, 13)]
           url = "https://api.sarvam.ai/text-to-speech"
           for n in names:
               k = (os.environ.get(n) or "").strip()
