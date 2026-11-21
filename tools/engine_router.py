@@ -172,6 +172,10 @@ def _call_provider(engine: str, text: str, character: str, out: Path, bhaav: str
             vp.eleven_tts(text, character, str(out), bhaav=bhaav or None)
         except TypeError:
             vp.eleven_tts(text, character, str(out))
+    elif engine == "free":
+        from tools import free_api as fa
+        if not fa.speak(text, str(out), bhaav or None):
+            raise RuntimeError("free tts render fail (internet?)")
     elif engine == "espeak":
         vp.espeak_tts(text, character, str(out), bhaav=bhaav or None)
     elif engine == "edge":

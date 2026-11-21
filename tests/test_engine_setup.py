@@ -4,18 +4,19 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import tools.engine_setup as es
 
 
-def test_engines_registry_has_four():
-    assert set(es.ENGINES) == {"piper", "espeak", "edge", "elevenlabs"}
+def test_engines_registry_has_core_plus_key():
+    assert set(es.ENGINES) == {"piper", "espeak", "edge", "free", "elevenlabs"}
 
 
 def test_report_shape(monkeypatch):
     fake = {"piper": lambda: {"ok": True}, "espeak": lambda: {"ok": True},
+            "free": lambda: {"ok": True},
             "edge": lambda: {"ok": False, "why": "internet band"},
             "elevenlabs": lambda: {"ok": False, "why": "key nahi"}}
     monkeypatch.setattr(es, "ENGINES", fake)          # dict hi badlo, function nahi
     rep = es.setup(install=False)
-    assert rep["ok_count"] == 2 and rep["total"] == 4
-    assert rep["core_ok"] == ["piper", "espeak"]
+    assert rep["ok_count"] == 3 and rep["total"] == 5
+    assert set(rep["core_ok"]) == {"piper", "espeak", "free"}
     assert "key wala baaki" not in rep["verdict"] or True
 
 
@@ -32,4 +33,4 @@ def test_edge_has_library_path(monkeypatch):
 
 
 def test_core_engines_defined():
-    assert set(es.CORE) == {"piper", "espeak", "edge"}
+    assert set(es.CORE) == {"piper", "espeak", "edge", "free"}

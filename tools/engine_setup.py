@@ -125,6 +125,22 @@ def test_edge() -> dict:
     return {"ok": False, "why": "render fail (internet/proxy band?)"}
 
 
+def test_free() -> dict:
+    """Bina key wali free API (Google Translate TTS) — asli render test."""
+    try:
+        sys.path.insert(0, str(ROOT))
+        from tools import free_api as fa
+    except Exception as exc:
+        return {"ok": False, "why": f"{type(exc).__name__}: {str(exc)[:80]}"}
+    out = Path("/tmp/engine_free.mp3")
+    out.unlink(missing_ok=True)
+    t = time.time()
+    if fa.speak("नमस्ते, मैं आपकी आवाज़ हूँ।", str(out)):
+        return {"ok": True, "secs": round(time.time() - t, 1),
+                "kb": out.stat().st_size // 1024}
+    return {"ok": False, "why": "render fail (internet/proxy band?)"}
+
+
 def test_elevenlabs() -> dict:
     key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
     if not key:
@@ -140,12 +156,12 @@ def test_elevenlabs() -> dict:
         return {"ok": False, "why": f"{type(e).__name__}: {str(e)[:100]}"}
 
 
-ENGINES = {"piper": test_piper, "espeak": test_espeak,
+ENGINES = {"piper": test_piper, "espeak": test_espeak, "free": test_free,
            "edge": test_edge, "elevenlabs": test_elevenlabs}
 # core = bina key ke chalne wale (yeh fail hue to system adhoora)
-CORE = ("piper", "espeak", "edge")
+CORE = ("piper", "espeak", "edge", "free")
 PACKAGES = {"piper": ["piper-tts"], "espeak": ["espeakng-loader"],
-            "edge": ["edge-tts"], "elevenlabs": []}
+            "edge": ["edge-tts"], "free": [], "elevenlabs": []}
 
 
 def setup(install: bool = True) -> dict:

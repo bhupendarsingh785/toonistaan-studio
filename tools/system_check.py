@@ -51,6 +51,14 @@ def check_engines() -> list[dict]:
                      "edge-tts library (proxy+CA ke saath chalta hai)" if have_edge
                      else "edge-tts install karo"))
 
+    try:
+        from tools import free_api as fa
+        rows.append(_row("engine:free", fa.have(),
+                         "Google Translate TTS (bina key)" if fa.have()
+                         else "internet/proxy band"))
+    except Exception as exc:
+        rows.append(_row("engine:free", False, f"{type(exc).__name__}"))
+
     rows.append(_row("engine:elevenlabs", True if not vp.have_eleven() else True,
                      "key mili" if vp.have_eleven()
                      else "optional — key GitHub secrets me (ELEVENLABS_API_KEY)"))
