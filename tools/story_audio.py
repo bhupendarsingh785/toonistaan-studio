@@ -79,15 +79,21 @@ def _trim_silence(src: Path, dest: Path) -> bool:
 
 ENGINE = os.environ.get("STORY_ENGINE", "sarvam")
 # A/B naap se: ishita (F0 std 67) sabse expressive, suhani tez+saaf
-CAST = {"dadi": os.environ.get("DADI_SPEAKER", "simran_hi_narration"),
-        "bachcha": os.environ.get("BACHCHA_SPEAKER", "chhavi_hi_kids"),
-        "maa": "priya_hi_recovery", "narrator": "roopa_hi_narration"}
-# har kirdaar ki apni tuning (A/B naap se): dadi bhaari/warm, baccha halka/uncha
-CAST_TUNE = {"dadi":    {"pitch": -0.15, "pace": 0.96},
-             "bachcha": {"pitch": 0.10, "pace": 1.05},
-             "maa":     {"pitch": -0.05, "pace": 1.0},
-             "narrator": {"pitch": 0.0, "pace": 1.0}}
-# bhaav -> temperature (Sarvam: zyada = zyada expressive; dukh/gussa me thoda alag)
+CAST = {"dadi":     os.environ.get("DADI_SPEAKER", "simran_hi_narration"),
+        "dada":     "ratan_hi_latenight_warm",
+        "maa":      "aparna_hi_customer",
+        "gudiya":   "sanchita_hi_social",
+        "sonu":     "kunal_hi_kids",
+        "bachcha":  os.environ.get("BACHCHA_SPEAKER", "chhavi_hi_kids"),
+        "narrator": "shubh_hi_stories_dramatic"}
+# har kirdaar ki tuning (F0 band se): budhe bhaari/dheeme, bachche halke/tez
+CAST_TUNE = {"dadi":     {"pitch": -0.15, "pace": 0.95},
+             "dada":     {"pitch": -0.20, "pace": 0.93},
+             "maa":      {"pitch": -0.05, "pace": 0.98},
+             "gudiya":   {"pitch": 0.05,  "pace": 1.03},
+             "sonu":     {"pitch": 0.12,  "pace": 1.06},
+             "bachcha":  {"pitch": 0.10,  "pace": 1.05},
+             "narrator": {"pitch": -0.10, "pace": 0.96}}
 TEMP = {"neutral": 0.70, "dukh": 0.72, "gussa": 0.85, "khushi": 0.85,
         "dar": 0.80, "pyaar": 0.78}
 
