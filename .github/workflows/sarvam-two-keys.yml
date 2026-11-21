@@ -1,0 +1,43 @@
+name: sarvam two keys test (key print nahi hoti)
+
+on:
+  workflow_dispatch:
+  push:
+    paths: [".keys-trigger"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: dono key se ek-ek line
+        env:
+          SARVAM_API_KEY: ${{ secrets.SARVAM_API_KEY }}
+          SARVAM_API_KEY_2: ${{ secrets.SARVAM_API_KEY_2 }}
+        run: |
+          pip install -q requests
+          python - <<'PY'
+          import os, json, base64, requests
+          names = ["SARVAM_API_KEY", "SARVAM_API_KEY_2"]
+          url = "https://api.sarvam.ai/text-to-speech"
+          for n in names:
+              k = (os.environ.get(n) or "").strip()
+              if not k:
+                  print(f"{n}: SET NAHI (secret add karo)"); continue
+              payload = {"text": "नमस्ते, मैं आपकी आवाज़ हूँ।", "language_code": "hi-IN",
+                         "speaker": "rohan", "model": "bulbul:v3",
+                         "speech_sample_rate": 24000, "output_audio_codec": "wav"}
+              r = requests.post(url, json=payload,
+                                headers={"api-subscription-key": k,
+                                         "Content-Type": "application/json"}, timeout=90)
+              if r.status_code == 200:
+                  audio = base64.b64decode((r.json().get("audios") or [""])[0])
+                  print(f"{n}: OK ({len(audio)} bytes, ~{len(audio)/48000:.1f}s audio)")
+              else:
+                  print(f"{n}: FAIL {r.status_code} {r.text[:120]}")
+          print("ROTATION:", "chalega" if os.environ.get("SARVAM_API_KEY") and os.environ.get("SARVAM_API_KEY_2") else "ek hi key")
+          PY
