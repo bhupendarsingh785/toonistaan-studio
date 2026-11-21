@@ -63,6 +63,29 @@ def modulation(env, sr=SR, lo=3.0, hi=8.0):
     return float(F[m].sum() / (F.sum() + 1e-9))
 
 
+def emotion_scored(f0, sd, jit, rms_db, high_pct, mod, speech_pct):
+    """Mixed affect + confidence + abstain (nava ke contract se seekha).
+
+    Ek hi label thopna galat hai — insaan ek saath dar aur gussa ho sakta hai.
+    Isliye har bhaav ka score nikalte hain; top-2 dete hain; agar koi pakka na ho to 'pata nahi'.
+    """
+    sc = {}
+    sc["hasi"] = min(1.0, max(0.0, (mod - 0.18) / 0.25)) * (1.0 if rms_db > -32 else 0.4)
+    sc["cheekh"] = min(1.0, max(0.0, (rms_db + 24) / 10)) * min(1.0, max(0.0, (high_pct - 15) / 12))
+    sc["darr"] = min(1.0, max(0.0, (jit - 0.03) / 0.04)) * (0.7 + 0.3 * min(1.0, high_pct / 25))
+    sc["gussa"] = min(1.0, max(0.0, (sd - 35) / 25)) * (1.0 if rms_db > -28 else 0.5)
+    sc["dukh"] = (1.0 if 0 < f0 < 170 else 0.3) * min(1.0, max(0.0, (-24 - rms_db) / 12))
+    sc["normal"] = 1.0 if speech_pct > 35 else 0.3
+    sc["khamoshi"] = 1.0 if (rms_db < -40 and speech_pct < 10) else 0.0
+    top = sorted(sc.items(), key=lambda kv: -kv[1])[:2]
+    conf = round(top[0][1], 2)
+    if conf < 0.35:
+        return {"label": "pata nahi", "mixed": [], "confidence": conf, "scores": {k: round(v, 2) for k, v in sc.items()}}
+    mixed = [k for k, v in top if v >= 0.45]
+    return {"label": top[0][0], "mixed": mixed, "confidence": conf,
+            "scores": {k: round(v, 2) for k, v in sc.items()}}
+
+
 def emotion_of(f0, sd, jit, rms_db, high_pct, mod, speech_pct):
     if rms_db < -40 and speech_pct < 10:
         return "khamoshi"
@@ -101,9 +124,10 @@ def read(path: str, step: int = 3) -> dict:
         speech_pct = float((e > max(0.006, np.percentile(e, 15) * 2)).mean() * 100) if len(e) else 0
         f0, sd, jit = f0_med(seg)
         mod = modulation(seg)
-        emo = emotion_of(f0, sd, jit, round(20 * float(np.log10(max(1e-9, rms))), 1),
-                         high_pct, mod, speech_pct)
-        rows.append({"at": i // SR, "emo": emo, "f0": f0, "sd": sd, "jitter": jit,
+        sc = emotion_scored(f0, sd, jit, round(20 * float(np.log10(max(1e-9, rms))), 1),
+                            high_pct, mod, speech_pct)
+        emo = sc["label"]
+        rows.append({"at": i // SR, "emo": emo, "mixed": sc["mixed"], "confidence": sc["confidence"], "f0": f0, "sd": sd, "jitter": jit,
                      "rms_db": round(20 * float(np.log10(max(1e-9, rms))), 1),
                      "high_pct": round(high_pct, 1), "mod": round(mod, 3),
                      "speech_pct": round(speech_pct, 1)})
@@ -115,9 +139,13 @@ def read(path: str, step: int = 3) -> dict:
         else:
             merged.append({"from": r["at"], "to": r["at"] + step, "emo": r["emo"]})
     cnt = Counter(r["emo"] for r in rows)
+    mixed_pairs = Counter(tuple(sorted(r["mixed"])) for r in rows if len(r.get("mixed", [])) > 1)
+    low_conf = sum(1 for r in rows if r.get("confidence", 1) < 0.35)
     return {"ok": True, "file": Path(path).name, "dur": round(dur, 1), "step_s": step,
             "blocks": len(rows), "emotions": dict(cnt),
-            "timeline": merged, "raw": rows}
+            "timeline": merged, "raw": rows,
+            "mixed_top": [("+".join(k), v) for k, v in mixed_pairs.most_common(5)],
+            "low_confidence_blocks": low_conf}
 
 
 def main() -> int:
