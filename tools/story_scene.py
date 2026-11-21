@@ -33,7 +33,9 @@ PLACE_WORDS = {
 }
 TIME_WORDS = {"subah": ["सुबह", "धूप", "मुर्गे", "चिड़ियां"],
               "raat":  ["रात", "अंधेरा", "लालटेन", "सो गया"]}
-WALK_WORDS = ["चलने लगे", "चल पड़ी", "चल पड़े", "भागी", "भाग", "दौड़", "रवाना", "निकल पड़े", "बढ़ने लगे", "गई"]
+# sirf asli chalne wale shabd (pehle "गई" jaise aam shabd se galat kadam baj rahe the)
+WALK_WORDS = ["चलने लगे", "चल पड़ी", "चल पड़े", "भागी", "भाग", "दौड़", "रवाना",
+              "निकल पड़े", "बढ़ने लगे", "पैदल", "चले", "चलती रही", "उतर आई", "चढ़ने लगी"]
 
 ASSETS = {
     "train":    ("transport/steam_train_passing_1.mp3", -14),
@@ -77,7 +79,9 @@ def plan(lines: list[dict], bed_extra: list[tuple[str, float]] | None = None) ->
             key = kind
         if key not in ASSETS:
             return
-        if not force and at - last_used.get(key, -99) < 2.5:
+        cool = {"pakshi": 12.0, "jhingur": 15.0, "train": 15.0, "train_far": 40.0,
+                "bheed": 8.0, "kadam": 3.0, "kadam_far": 4.0, "pair": 5.0}.get(key, 2.5)
+        if not force and at - last_used.get(key, -99) < cool:
             return
         rel, gain = ASSETS[key]
         if not (LIB / rel).exists():
@@ -92,10 +96,10 @@ def plan(lines: list[dict], bed_extra: list[tuple[str, float]] | None = None) ->
 
         # TRAIN — sirf station/train scene me; gaon me door ki halki (ek hi baar)
         if _has(text, ["ट्रेन", "सीटी", "पटरियां", "डिब्बे", "रेलवे"]):
-            if place in ("station", "shahar") or "ट्रेन" in text:
-                add("train", st - 0.4)
+            if place in ("station", "shahar"):
+                add("train", st - 0.4)          # station par asli train
             elif place not in train_done_places:
-                add("train_far", st - 0.4, force=True)
+                add("train_far", st - 0.4, force=True)   # gaon/ghar: bas door se halki
                 train_done_places.add(str(place))
         if place == "station":
             add("station", st + 0.2)
