@@ -286,17 +286,22 @@ SARVAM_TEMP = {
 
 
 def sarvam_keys() -> list[str]:
-    """Saari Sarvam keys (ek se zyada ID ho to rotation — coin khatam ho to agli).
+    """Saari Sarvam keys (6 ID tak) — zinda pehle, cooldown wali baad me.
 
-    Naam: SARVAM_API_KEY, SARVAM_API_KEY_2, SARVAM_API_KEY_3 …
+    Naam: SARVAM_API_KEY, _2, _3, _4, _5, _6
     """
-    keys = []
-    for name in ("SARVAM_API_KEY", "SARVAM_API_KEY_2", "SARVAM_API_KEY_3", "SARVAM_API_KEY_4"):
-        k = (os.environ.get(name) or "").strip().strip('"').strip("'")
-        k = re.sub(r"[^A-Za-z0-9\-_]", "", k)
-        if k and k not in keys:
-            keys.append(k)
-    return keys
+    try:
+        from tools import sarvam_keys as sk
+        return [k for _name, k in sk.order()]
+    except Exception:
+        keys = []
+        for name in ("SARVAM_API_KEY", "SARVAM_API_KEY_2", "SARVAM_API_KEY_3",
+                     "SARVAM_API_KEY_4", "SARVAM_API_KEY_5", "SARVAM_API_KEY_6"):
+            k = (os.environ.get(name) or "").strip().strip('"').strip("'")
+            k = re.sub(r"[^A-Za-z0-9\-_]", "", k)
+            if k and k not in keys:
+                keys.append(k)
+        return keys
 
 
 def sarvam_key():
@@ -826,12 +831,29 @@ def sarvam_tts(text, kirdaar="madhur", out="out.wav", bhaav=None):
         try:
             raw = _post(SARVAM_URL, payload, {"api-subscription-key": _k,
                                               "Content-Type": "application/json"})
+            try:
+                from tools import sarvam_keys as sk
+                sk.mark_ok(_k)
+            except Exception:
+                pass
             break
         except urllib.error.HTTPError as e:
             last_err = e
-            # 401/402/429 = key/quota ka masla -> agli key (coin bachane ke liye)
+            # 401/402/403/429 = key/quota ka masla -> is key ko cooldown, agli try
             if e.code in (401, 402, 403, 429):
+                try:
+                    from tools import sarvam_keys as sk
+                    sk.mark_quota_dead(_k, e.code)
+                except Exception:
+                    pass
                 continue
+            if e.code >= 500:          # server ki galti — usi key se dobara (coin na jaye)
+                try:
+                    raw = _post(SARVAM_URL, payload,
+                                {"api-subscription-key": _k, "Content-Type": "application/json"})
+                    break
+                except Exception:
+                    continue
             break
     if raw is None:
         e = last_err

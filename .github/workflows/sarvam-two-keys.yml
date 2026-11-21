@@ -1,4 +1,4 @@
-name: sarvam two keys test (key print nahi hoti)
+name: sarvam keys test (6 ID tak, key print nahi hoti)
 
 on:
   workflow_dispatch:
@@ -18,11 +18,15 @@ jobs:
         env:
           SARVAM_API_KEY: ${{ secrets.SARVAM_API_KEY }}
           SARVAM_API_KEY_2: ${{ secrets.SARVAM_API_KEY_2 }}
+          SARVAM_API_KEY_3: ${{ secrets.SARVAM_API_KEY_3 }}
+          SARVAM_API_KEY_4: ${{ secrets.SARVAM_API_KEY_4 }}
+          SARVAM_API_KEY_5: ${{ secrets.SARVAM_API_KEY_5 }}
+          SARVAM_API_KEY_6: ${{ secrets.SARVAM_API_KEY_6 }}
         run: |
           pip install -q requests
           python - <<'PY'
           import os, json, base64, requests
-          names = ["SARVAM_API_KEY", "SARVAM_API_KEY_2"]
+          names = ["SARVAM_API_KEY"] + [f"SARVAM_API_KEY_{i}" for i in range(2, 7)]
           url = "https://api.sarvam.ai/text-to-speech"
           for n in names:
               k = (os.environ.get(n) or "").strip()
@@ -39,5 +43,7 @@ jobs:
                   print(f"{n}: OK ({len(audio)} bytes, ~{len(audio)/48000:.1f}s audio)")
               else:
                   print(f"{n}: FAIL {r.status_code} {r.text[:120]}")
-          print("ROTATION:", "chalega" if os.environ.get("SARVAM_API_KEY") and os.environ.get("SARVAM_API_KEY_2") else "ek hi key")
+          ok = [n for n in names if (os.environ.get(n) or "").strip()]
+          print(f"SET KEYS: {len(ok)} ({', '.join(ok)})")
+          print("ROTATION:", "chalega" if len(ok) >= 2 else "ek hi key")
           PY
