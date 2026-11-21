@@ -161,17 +161,31 @@ def structure(x):
 
 
 def vocal_f0(x):
-    """audio_read6 ka YIN + octave correction (saaf sur)."""
+    """Gayak ka sur — pehle bass hatao (150 Hz HPF), phir YIN + range.
+
+    Bass/harmonium ke bina hi awaaz ka sur sahi milta hai.
+    """
     import numpy as np
+    # 150 Hz high-pass (FFT, tez)
+    n = len(x)
+    X = np.fft.rfft(x)
+    f = np.fft.rfftfreq(n, 1 / SR)
+    X = X * (1 / (1 + (150 / (f + 1e-9)) ** 4))
+    hp = np.fft.irfft(X, n)
     try:
         from tools import audio_read6 as ar
-        vals = ar.f0_track(x[:SR * 180], hop=1024, win=1024)   # pehle 3 min kaafi
+        vals = ar.f0_track(hp[:SR * 180], hop=1024, win=1024)
     except Exception:
         vals = []
     if not vals:
-        return 0, 0
-    v = np.array(vals)
-    return int(np.median(v)), round(float(np.std(v)), 1)
+        return 0, 0, {}
+    v = np.array([f_ for f_ in vals if 120 < f_ < 500])
+    if len(v) < 10:
+        return 0, 0, {}
+    med = int(np.median(v))
+    return med, round(float(np.std(v)), 1), {
+        "range_hz": [int(np.percentile(v, 10)), int(np.percentile(v, 90))],
+        "frames": int(len(v))}
 
 
 def read(path: str) -> dict:
@@ -190,7 +204,7 @@ def read(path: str) -> dict:
     ch = chroma_of(S, hop)
     key, kconf, thaat = key_scale(ch)
     pat = drum_pattern(S, hop, bpm)
-    f0, f0sd = vocal_f0(x)
+    f0, f0sd, clusters = vocal_f0(x)
     f = np.fft.rfftfreq(2048, 1 / SR)
     lo = S[:, f < 200].sum(); mid = S[:, (f >= 200) & (f < 2000)].sum(); hi = S[:, f >= 2000].sum()
     tot = lo + mid + hi + 1e-9
@@ -201,7 +215,7 @@ def read(path: str) -> dict:
         "chroma": {NOTE[i]: round(float(v), 3) for i, v in enumerate(ch)},
         "drum_pattern_16": pat,
         "structure": structure(x),
-        "vocal": {"f0_median": f0, "f0_std": f0sd,
+        "vocal": {"f0_median": f0, "f0_std": f0sd, "clusters": clusters,
                   "kism": ("purush" if 0 < f0 < 160 else "mahila" if f0 < 240 else "bachcha/uncha")},
         "mix": {"low_pct": round(100 * float(lo / tot)), "mid_pct": round(100 * float(mid / tot)),
                 "high_pct": round(100 * float(hi / tot))},
