@@ -197,17 +197,59 @@ def vad(x, min_turn=0.6, join_gap=0.5):
 
 
 def f0_of(seg):
+    """YIN-style (CMNDF) F0 — octave galtiyan kam."""
     import numpy as np
     n = len(seg)
     if n < 320:
         return 0.0
     seg = seg - seg.mean()
-    ac = np.correlate(seg, seg, "full")[n - 1:]
+    # cumulative mean normalized difference function
+    d = np.zeros(n)
+    for tau in range(1, n // 2):
+        diff = seg[:n - tau] - seg[tau:]
+        d[tau] = float((diff * diff).sum())
+    cmnd = np.ones(n)
+    run = 0.0
+    for tau in range(1, n // 2):
+        run += d[tau]
+        cmnd[tau] = d[tau] * tau / (run + 1e-12) if run > 0 else 1.0
     lo, hi = int(SR / 400), int(SR / 70)
-    if hi >= len(ac):
+    hi = min(hi, n // 2 - 1)
+    if hi <= lo:
         return 0.0
-    k = lo + int(np.argmax(ac[lo:hi]))
+    seg_c = cmnd[lo:hi]
+    below = np.where(seg_c < 0.25)[0]
+    k = lo + (int(below[0]) if len(below) else int(np.argmin(seg_c)))
+    # parabolic interpolation
+    if 0 < k < len(cmnd) - 1:
+        a, b, c = cmnd[k - 1], cmnd[k], cmnd[k + 1]
+        denom = (a - 2 * b + c)
+        if abs(denom) > 1e-12:
+            k = k + 0.5 * (a - c) / denom
     return float(SR / k) if k > 0 else 0.0
+
+
+def f0_track(seg, hop=320, win=640):
+    """frame-wise F0 + octave correction + median filter."""
+    import numpy as np
+    raw = [f0_of(seg[i:i + win]) for i in range(0, max(1, len(seg) - win), hop)]
+    vals = np.array([v for v in raw if v > 0], dtype="float32")
+    if len(vals) == 0:
+        return []
+    med = float(np.median(vals))
+    fixed = []
+    for v in raw:
+        if v <= 0:
+            continue
+        if v > 1.5 * med:
+            v = v / 2.0                      # octave up galti
+        elif v < 0.67 * med:
+            v = v * 2.0                      # octave down galti
+        fixed.append(v)
+    if len(fixed) >= 5:
+        k = np.ones(5) / 5
+        fixed = np.convolve(np.array(fixed), k, mode="same").tolist()
+    return [f for f in fixed if f > 0]
 
 
 def emotion(f0s, pace):
@@ -241,8 +283,7 @@ def read(path: str, outdir: Path | None = None, learn: bool = False) -> dict:
         if s["type"] != "speech":
             continue
         seg = x[int(s["start"] * SR):int(s["end"] * SR)]
-        f0s = [f0_of(seg[i:i + 640]) for i in range(0, max(1, len(seg) - 640), 320)]
-        f0s = [f for f in f0s if f > 0]
+        f0s = f0_track(seg)
         env = np.abs(seg); w = int(0.02 * SR)
         env = np.array([env[i:i + w].mean() for i in range(0, max(1, len(env) - w), w)])
         syl, last_t = 0, -9.0
