@@ -819,5 +819,24 @@
    "sonu": 1.4025974025974026
   }
  },
- "agla_kadam": "asli pitch engine (WORLD vocoder / PSOLA) chahiye — piper ka formant shift seams banata hai; tabhi F0std 8st tak ja sakta hai bina ASR tode"
+ "agla_kadam": "asli pitch engine (WORLD vocoder / PSOLA) chahiye — piper ka formant shift seams banata hai; tabhi F0std 8st tak ja sakta hai bina ASR tode",
+ "asli_background": {
+  "kya_bana": "tools/local_story/real_bed.py — Swag ki 1120+ recordings me se shabd ke hisaab se bed (synthetic ambience ki jagah)",
+  "files_chune": {
+   "rain": "u_tmwllo5zur-rain-on-a-tin-roof",
+   "river": "loswin23-forest-birds-and-river",
+   "wind": "gregorquendel-designed-fire-winds-swoosh",
+   "crickets": "mosquitoes-and-crickets"
+  },
+  "niyam": [
+   "pattern strict + blacklist (train/window/dragon nahi ginte) — 'rain' me 'train' match ho raha tha",
+   "bed ka level APNE AAP calibrate: gaps me awaaz se 12 dB neeche",
+   "loop par crossfade (seam sunai na de), band-limit 80–9000 Hz, stereo 0.12 width"
+  ],
+  "naap": {
+   "r87 synthetic": "gap bed -37.2 dB (sunai hi nahi deta)",
+   "r91 asli": "gap bed -26.5 dB (fark 7.5 dB)"
+  },
+  "sach": "Sarvam TTS yahan se nahi chalta — sandbox me SARVAM_API_KEY nahi hai (sirf GitHub secret me). GH Actions se chala sakte hain."
+ }
 }
