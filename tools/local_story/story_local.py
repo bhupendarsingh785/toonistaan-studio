@@ -23,10 +23,10 @@ VOICES = {"m": HERE.parent/"voices/hi_IN-pratham-medium.onnx",
 
 # kirdaar: voice, length_scale (slow>1), pitch_shift (semitones), pause
 CAST = {
- "narrator": {"v": "m", "ls": 1.254, "semi": -1.0, "pause": 1.7},
- "dadi":     {"v": "f", "ls": 1.411, "semi": -5.2, "pause": 1.5},
- "sonu":     {"v": "f", "ls": 1.03, "semi": +3.9, "pause": 1.0},
- "maa":      {"v": "f", "ls": 1.165, "semi": -3.8, "pause": 1.3},
+ "narrator": {"v": "m", "ls": 0.98, "ratio": 1.00, "pause": 0.30},
+ "dadi":     {"v": "f", "ls": 1.05, "ratio": 0.72, "pause": 0.28},
+ "maa":      {"v": "f", "ls": 0.98, "ratio": 0.70, "pause": 0.25},
+ "sonu":     {"v": "f", "ls": 0.92, "ratio": 1.02, "pause": 0.22},
 }
 SCRIPT = [
  ("narrator", "सुबह के छह बजे थे। गाँव की छतों से धुआँ उठ रहा था, और दूर नदी कलकल बह रही थी।"),
@@ -40,6 +40,31 @@ SCRIPT = [
  ("sonu",     "दादी, देखो! नदी में कितनी लहरें आ रही हैं!"),
  ("narrator", "शाम को बारिश थम गई। नदी शांत बह रही थी, और आसमान में पहला तारा निकल आया।"),
 ]
+# ---- duniya ki awaaz: shabd se sound (har cheez ka apna sound)
+WORLD = {
+ "नदी": "river", "पानी": "river", "लहर": "river", "बह": "river",
+ "बारिश": "rain", "बूँद": "rain", "भीग": "rain", "बादल": "rain",
+ "हवा": "wind", "ठंड": "wind", "हवा": "wind",
+ "पेड़": "leaves", "पत्त": "leaves", "मिट्टी": "leaves",
+ "चिड़िया": "birds", "पक्षी": "birds", "तारा": "crickets", "शाम": "crickets",
+ "गाँव": "village", "छत": "village", "दादी": "village",
+ "चल": "footsteps", "जाएँगे": "footsteps", "किनारा": "footsteps",
+}
+# zameen ka type (kadmon ki awaaz usi hisaab se)
+GROUND = {
+ "कच्ची": "steps_dirt", "मिट्टी": "steps_dirt", "रास्ता": "steps_dirt", "धूल": "steps_dirt",
+ "पक्का": "steps_concrete", "फर्श": "steps_concrete", "पत्थर": "steps_concrete", "इमारत": "steps_concrete",
+ "पत्ते": "steps_leaves", "सूखे": "steps_leaves", "पत्तों": "steps_leaves",
+ "घास": "steps_grass", "मैदान": "steps_grass",
+ "लकड़ी": "steps_wood", "सीढ़ी": "steps_wood", "लकड़ी की": "steps_wood",
+ "कीचड़": "steps_mud", "दलदल": "steps_mud", "गीली": "steps_mud",
+ "कंकड़": "steps_gravel", "बजरी": "steps_gravel", "पथरीला": "steps_gravel",
+ "चल": "steps_dirt", "जंगल": "steps_leaves",
+}
+# jeev / duniya
+CREATURES = {"भेड़िया": "wolf", "कुत्ता": "dog", "शेर": "lion", "चिड़िया": "birds",
+             "पक्षी": "birds", "झींगुर": "crickets", "नदी": "river", "पानी": "river"}
+
 MOODS = {"bed": [("rain", 0.5), ("river", 0.35), ("wind", 0.25), ("crickets", 0.04)],
          "pad": (130.8, 164.8, 196.0)}
 
@@ -49,14 +74,17 @@ def synth_line(text, cfg, out: Path):
     from piper.config import SynthesisConfig
     v = PiperVoice.load(str(VOICES[cfg["v"]]), config_path=str(VOICES[cfg["v"]]) + ".json")
     raw = out.with_suffix(".raw.wav")
-    sc = SynthesisConfig(length_scale=float(cfg["ls"]))
+    sc = SynthesisConfig(length_scale=float(cfg["ls"]), noise_scale=0.62, noise_w_scale=0.75)
     with wave.open(str(raw), "wb") as w:
         v.synthesize_wav(text, w, syn_config=sc)
     # formant-safe pitch shift + humanize + warm EQ + room + breath (apna FX)
     import voice_fx as fx
     src = load(raw)
-    y = fx.smooth_chain(src, semitones=cfg.get("semi", 0.0), human=True, br=True, warm_eq=True, rv=False)
-    y = fx.formant_shift(y, cfg.get("formant", 1.0))
+    y = fx.pitch_resample(src, cfg.get("ratio", 1.0))
+    y = fx.trim_silence(y)
+    y = fx.compress_silences(y, rel_db=-20, max_gap_ms=28, min_gap_ms=45, keep_ms=16)
+    y = fx.smooth_chain(y, semitones=0.0, human=True, br=True, warm_eq=True, rv=False)
+    y = fx.trim_silence(y, keep_ms=40)
     with wave.open(str(out), "wb") as w:
         w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR)
         w.writeframes((np.clip(y, -1, 1) * 32767).astype("int16").tobytes())
@@ -79,18 +107,59 @@ def build(out_mp3: Path):
         clips.append((who, p, load(p)))
     total = sum(len(c[2]) for c in clips) + int(SR * sum(CAST[c[0]]["pause"] for c in clips)) + SR
     voice = np.zeros(total)
+    _join = True
     t = 0
     marks = []
+    prev_end = 0
     for who, p, sig in clips:
+        if t > 0 and t == prev_end:
+            n = int(0.02 * SR)
+            if n < len(sig):
+                sig = sig.copy()
+                sig[:n] *= np.linspace(0, 1, n)
         voice[t:t+len(sig)] += sig
-        marks.append({"who": who, "start": round(t/SR, 2), "dur": round(len(sig)/SR, 2)})
+        marks.append({"who": who, "start": round(t/SR, 2), "dur": round(len(sig)/SR, 2), "text": SCRIPT[i][1]})
+        prev_end = t + len(sig)
         t += len(sig) + int(SR * CAST[who]["pause"])
     dur = len(voice) / SR
-    # ambience beds
+    # ---- duniya ki awaaz: har line ke shabd se sound, line-wise automation
     bed = np.zeros(total)
-    for name, lvl in MOODS["bed"]:
-        sig = getattr(amb, name)(dur + 1)
-        bed[:total] += sig[:total] * lvl * 0.5
+    base = {"rain": 0.30, "river": 0.22, "wind": 0.18, "crickets": 0.12, "leaves": 0.14,
+            "birds": 0.16, "village": 0.08, "footsteps": 0.0, "air": 0.85}
+    # har sound ka poora track banao, phir line-wise gain lagao
+    # zameen ke kadam: script ke hisaab se material chuno
+    ground_track = None
+    ground_kind = None
+    for m in marks:
+        for word, fn in GROUND.items():
+            if word in m.get("text", "") and hasattr(amb, fn):
+                ground_kind = fn
+                ground_track = getattr(amb, fn)(dur + 1)[:total]
+                break
+        if ground_track is not None:
+            break
+    tracks = {}
+    if ground_track is not None:
+        tracks[ground_kind] = ground_track
+        base[ground_kind] = 0.22
+    for name in base:
+        if hasattr(amb, name):
+            tracks[name] = getattr(amb, name)(dur + 1)[:total]
+    gain = {k: np.full(total, base[k], dtype="float32") for k in tracks}
+    for m in marks:
+        a = int(m["start"] * SR); b = min(total, a + int(m["dur"] * SR))
+        txt = m.get("text", "")
+        for word, snd in WORLD.items():
+            if word in txt and snd in gain:
+                gain[snd][a:b] = np.maximum(gain[snd][a:b], base[snd] * 2.4)
+        # jahan koi world sound nahi, wahan base
+    # smooth automation (1.2 s fade) — bed chatka nahi lagta
+    def smooth(g):
+        k = int(1.2 * SR)
+        ker = np.ones(k, dtype="float32") / k
+        return np.convolve(g, ker, mode="same")
+    for name, tr in tracks.items():
+        bed[:total] += tr * smooth(gain[name])
     bed[:total] += amb.pad_chords(dur + 1, MOODS["pad"])[:total] * 0.35
     # ducking on speech
     duck = np.ones(total)
@@ -101,7 +170,7 @@ def build(out_mp3: Path):
         duck[a:b] = np.minimum(duck[a:b], 0.40)
         duck[b:b+n] = np.linspace(0.40, 1.0, min(n, total-b))[:max(0, min(n, total-b))]
     bed *= duck
-    mix = voice * 0.95 + bed * 0.13
+    mix = voice * 0.95 + bed * 0.17
     mix = np.tanh(mix * 1.05)
     rms = float(np.sqrt((mix**2).mean())) + 1e-9
     mix *= (10 ** (-16/20)) / rms
@@ -113,7 +182,28 @@ def build(out_mp3: Path):
     subprocess.run([FF, "-v", "quiet", "-y", "-i", str(wav), "-codec:a", "libmp3lame",
                     "-b:a", "192k", str(out_mp3)], check=False)
     wav.unlink(missing_ok=True)
-    info = {"engine": "piper (local)", "dur": round(len(mix)/SR, 2), "lines": len(SCRIPT),
+    # voice-only gap naap (bed ke bina) — smoothness ka asli pata
+    _w = 256
+    _e = np.array([np.sqrt((voice[i:i+_w]**2).mean()) for i in range(0, max(1, len(voice)-_w), _w)])
+    _thr = max(1e-4, float(np.percentile(_e, 75)) * 10 ** (-20/20))
+    _q = _e <= _thr
+    _gaps = []; _i = 0
+    while _i < len(_q):
+        if _q[_i]:
+            _j = _i
+            while _j < len(_q) and _q[_j]:
+                _j += 1
+            _ms = (_j - _i) * _w / SR * 1000
+            if 40 <= _ms < 600:
+                _gaps.append(_ms)
+            _i = _j
+        else:
+            _i += 1
+    info = {"engine": "piper (local)",
+            "voice_gaps": len(_gaps),
+            "voice_gap_mean_ms": round(float(np.mean(_gaps)), 0) if _gaps else 0,
+            "voice_gap_max_ms": round(max(_gaps)) if _gaps else 0,
+            "voice_speech_pct": round(100 * (1 - _q.mean()), 1), "dur": round(len(mix)/SR, 2), "lines": len(SCRIPT),
             "marks": marks, "bed": MOODS["bed"], "peak": round(float(np.max(np.abs(mix))), 2),
             "rms_dbfs": round(20*float(np.log10(max(1e-9, float(np.sqrt((mix**2).mean()))))), 1)}
     (HERE / "story_local.json").write_text(json.dumps(info, ensure_ascii=False, indent=1), encoding="utf-8")
