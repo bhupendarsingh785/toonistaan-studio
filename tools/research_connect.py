@@ -176,9 +176,41 @@ def search_wiki_hi(query: str, limit: int = 4) -> list[dict]:
              "title": r.get("title", "")} for r in data.get("query", {}).get("search", [])[:limit]]
 
 
+def search_ddg_lite(query: str, limit: int = 6) -> list[dict]:
+    """DuckDuckGo ka halka page (html wala block ho gaya to yahi chalta hai)."""
+    url = "https://lite.duckduckgo.com/lite/?q=" + urllib.parse.quote_plus(query)
+    body = _get(url)
+    if not body:
+        return []
+    out, seen = [], set()
+    for m in re.finditer(r'<a[^>]+href="(https?://[^"]+)"[^>]*>(.*?)</a>', body, re.S):
+        href, title = m.group(1), _clean(m.group(2))
+        if "duckduckgo.com" in href or href in seen or len(title) < 8:
+            continue
+        seen.add(href); out.append({"url": href, "title": title})
+        if len(out) >= limit: break
+    return out
+
+
+def search_bing(query: str, limit: int = 6) -> list[dict]:
+    """Bing (backup) — ddg block ho to bhi jawab mile."""
+    url = "https://www.bing.com/search?q=" + urllib.parse.quote_plus(query)
+    body = _get(url)
+    if not body:
+        return []
+    out, seen = [], set()
+    for m in re.finditer(r'<h2><a[^>]+href="(https?://[^"]+)"[^>]*>(.*?)</a>', body, re.S):
+        href, title = m.group(1), _clean(m.group(2))
+        if "bing.com" in href or href in seen or not title:
+            continue
+        seen.add(href); out.append({"url": href, "title": title})
+        if len(out) >= limit: break
+    return out
+
+
 SEARCH_ORDER = (("news", search_news), ("github", search_github), ("wikipedia", search_wiki),
                 ("arxiv", search_arxiv), ("wikipedia_hi", search_wiki_hi),
-                ("duckduckgo", search_ddg))
+                ("duckduckgo", search_ddg), ("ddg_lite", search_ddg_lite), ("bing", search_bing))
 
 
 def search_all(query: str, limit: int = 6) -> list[dict]:
@@ -226,9 +258,11 @@ def search_for_agent(query: str, limit: int = 6, start: str | None = None) -> di
 def health() -> dict:
     """Agents ke liye sach: kaunsa source zinda hai, kaunsa nahi (offline me bhi jawab mile)."""
     checks = {}
+    testq = {"wikipedia_hi": "हिंदी स्वर", "duckduckgo": "piper tts", "ddg_lite": "piper tts"}
     for name, fn in SEARCH_ORDER:
+        q = testq.get(name, "piper tts hindi")
         try:
-            checks[name] = bool(fn("piper tts", 1))
+            checks[name] = bool(fn(q, 1))
         except Exception as e:
             checks[name] = f"{type(e).__name__}"
     alive = [k for k, v in checks.items() if v is True]
