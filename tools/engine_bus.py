@@ -1,479 +1,208 @@
 #!/usr/bin/env python3
-"""Engine Bus — chaar engine (EDGE, ELEVENLABS, ESPEAK, PIPER) aapas me baat karein.
+"""Engine Bus — chaar engines ke "agents" ko ek hi bus par jodo.
 
-Chaar hi engine hain. Sarvam in chaar me NAHI hai — woh alag (pehla) engine hai.
+Kya karta hai:
+  1. REGISTRY   : har engine ka config (kaam, speed, quality, offline?, key chahiye?)
+  2. PROBE      : asli test — ek chhota shabd render karke dekhta hai chalta hai ya nahi (PASS/FAIL)
+  3. ROUTER     : kaam ke hisaab se best engine chunta hai (offline/quality/fast/clone)
+  4. BUS        : agents ke beech message (JSONL) — request → reply, taaki ek doosre se baat kare
+  5. HANDOFF    : ek engine fail ho to agla apne aap try (fallback chain)
 
-Faisla (design):
-  - Har engine apni "capability" batata hai (kya bol sakta hai, kaunse bhaav, offline?, kitna tez, kitna mehnga)
-  - Coordinator project ko chhote hisson (parts) me todta hai
-  - Har hissa us engine ko jata hai jo us kaam ke liye theek hai (bhaav + awaaz + speed)
-  - Ek awaaz (kirdaar) hamesha ek hi engine par rehti hai → awaaz nahi badalti
-  - Koi engine fail ho to us ka hissa doosre capable engine ko chala jata hai (bhaav wahi rehta hai)
-  - Aadha kaam bhi bachta hai: har part ka file + manifest likha jata hai (resume)
-
-Commands:
-  python tools/engine_bus.py register --name piper --capabilities piper.json
-  python tools/engine_bus.py status
-  python tools/engine_bus.py plan --script story.txt
-  python tools/engine_bus.py run --script story.txt --out output/bus
+CLI:
+  python tools/engine_bus.py --probe          # chaaron ko test karo
+  python tools/engine_bus.py --route quality  # kaun best hai
+  python tools/engine_bus.py --demo           # agents ka aapas me message
 """
 from __future__ import annotations
-
-import argparse
-import json
-import os
-import time
-from dataclasses import dataclass, field
+import argparse, json, os, shutil, subprocess, sys, time, wave
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-BUS = Path(os.environ.get("ASTRA_BUS_DIR", ROOT / "bus"))
+VOICES = Path("/scratch/work/voices")
+BUS_FILE = ROOT / "knowledge" / "engine-bus.jsonl"
+SR = 22050
+
+REGISTRY = {
+    "piper": {
+        "kind": "offline-neural", "offline": True, "key": False,
+        "quality": 0.72, "speed": 0.80, "hindi": True, "clone": False,
+        "use": ["kahani", "narrator", "batch", "free"],
+        "note": "sabse practical — local, free, unlimited",
+    },
+    "espeak": {
+        "kind": "offline-formant", "offline": True, "key": False,
+        "quality": 0.35, "speed": 0.98, "hindi": True, "clone": False,
+        "use": ["draft", "timing", "backup"],
+        "note": "bahut tez par robotic — sirf draft/timing ke liye",
+    },
+    "edge": {
+        "kind": "cloud-neural", "offline": False, "key": False,
+        "quality": 0.86, "speed": 0.70, "hindi": True, "clone": False,
+        "use": ["quality", "natural"],
+        "note": "Microsoft ka free endpoint — internet chahiye",
+    },
+    "elevenlabs": {
+        "kind": "cloud-clone", "offline": False, "key": True,
+        "quality": 0.93, "speed": 0.55, "hindi": True, "clone": True,
+        "use": ["clone", "emotion", "premium"],
+        "note": "cloning sabse behtar — paid/key chahiye, private rakho",
+    },
+}
 
 
-# --------------------------------------------------------------- capabilities
-@dataclass
-class Capability:
-    """Ek engine kya kar sakta hai."""
-    name: str
-    emotions: list = field(default_factory=lambda: ["neutral"])
-    languages: list = field(default_factory=lambda: ["hi"])
-    offline: bool = False
-    speed: float = 1.0          # 1.0 = normal, 2.0 = do guna tez
-    cost: float = 0.0           # 0 = free, 1 = mehnga
-    max_chars: int = 400
-    healthy: bool = True
-
-    @staticmethod
-    def from_dict(d: dict) -> "Capability":
-        base = {k: d[k] for k in ("name",) if k in d}
-        cap = Capability(name=base.get("name", "?"))
-        for k in ("emotions", "languages", "offline", "speed", "cost", "max_chars", "healthy"):
-            if k in d:
-                setattr(cap, k, d[k])
-        return cap
-
-
-def registry_path() -> Path:
-    return BUS / "engines.json"
-
-
-def register(cap: Capability) -> None:
-    BUS.mkdir(parents=True, exist_ok=True)
-    reg = load_registry()
-    reg[cap.name] = cap.__dict__
-    _atomic_write(registry_path(), reg)
-
-
-def load_registry() -> dict:
-    p = registry_path()
-    if not p.exists():
-        return {}
+# ---------------- probe helpers
+def _wav_ok(p: Path) -> tuple[bool, str]:
+    if not p.exists() or p.stat().st_size < 2000:
+        return False, "file nahi/chhoti"
     try:
-        return json.loads(p.read_text(encoding="utf-8"))
+        with wave.open(str(p)) as w:
+            return (w.getnframes() > 1000), f"{w.getnframes()/w.getframerate():.2f}s"
+    except Exception as e:
+        return False, f"{type(e).__name__}"
+
+
+def probe_piper(tmp: Path) -> tuple[bool, str]:
+    try:
+        from piper import PiperVoice
+        from piper.config import SynthesisConfig
+    except Exception as e:
+        return False, f"piper import nahi: {e}"
+    model = VOICES / "hi_IN-pratham-medium.onnx"
+    if not model.exists():
+        return False, "voice model nahi"
+    try:
+        v = PiperVoice.load(str(model), config_path=str(model) + ".json")
+        out = tmp / "probe-piper.wav"
+        with wave.open(str(out), "wb") as w:
+            v.synthesize_wav("नमस्ते, यह जाँच है।", w,
+                             syn_config=SynthesisConfig(length_scale=1.0, noise_scale=0.62, noise_w_scale=0.75))
+        return _wav_ok(out)
+    except Exception as e:
+        return False, f"{type(e).__name__}: {str(e)[:60]}"
+
+
+def probe_espeak(tmp: Path) -> tuple[bool, str]:
+    exe = shutil.which("espeak-ng") or shutil.which("espeak")
+    if not exe:
+        return False, "espeak binary nahi (apt nahi chal sakta)"
+    out = tmp / "probe-espeak.wav"
+    try:
+        subprocess.run([exe, "-v", "hi", "-w", str(out), "नमस्ते"], check=False, timeout=30,
+                       capture_output=True)
+        return _wav_ok(out)
+    except Exception as e:
+        return False, f"{type(e).__name__}"
+
+
+def probe_edge(tmp: Path) -> tuple[bool, str]:
+    try:
+        import edge_tts  # noqa
     except Exception:
-        return {}
+        return False, "edge-tts install nahi"
+    out = tmp / "probe-edge.mp3"
+    try:
+        import asyncio, edge_tts
+        async def go():
+            c = edge_tts.Communicate("नमस्ते, यह जाँच है।", "hi-IN-MadhurNeural")
+            await c.save(str(out))
+        asyncio.run(go())
+        ok = out.exists() and out.stat().st_size > 2000
+        return ok, f"{out.stat().st_size//1024} KB" if ok else "khaali"
+    except Exception as e:
+        return False, f"{type(e).__name__}: {str(e)[:50]}"
 
 
-def engines() -> list[Capability]:
-    return [Capability.from_dict({"name": k, **v}) for k, v in load_registry().items()]
+def probe_elevenlabs(tmp: Path) -> tuple[bool, str]:
+    key = os.environ.get("ELEVENLABS_API_KEY", "")
+    if not key:
+        return False, "key nahi (private secret me rakho)"
+    try:
+        import urllib.request
+        req = urllib.request.Request("https://api.elevenlabs.io/v1/user",
+                                     headers={"xi-api-key": key})
+        with urllib.request.urlopen(req, timeout=20) as r:
+            d = json.loads(r.read())
+        return True, f"quota ok ({d.get('subscription', {}).get('character_count', '?')})"
+    except Exception as e:
+        return False, f"{type(e).__name__}: {str(e)[:50]}"
 
 
-def _atomic_write(path: Path, payload: dict) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(".tmp")
-    tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8")
-    os.replace(tmp, path)
+PROBES = {"piper": probe_piper, "espeak": probe_espeak, "edge": probe_edge, "elevenlabs": probe_elevenlabs}
 
 
+# ---------------- router
+def route(task: str) -> dict:
+    """task: offline | quality | fast | clone | draft | kahani"""
+    want = {
+        "offline": lambda e: e["offline"] and not e["key"],
+        "quality": lambda e: e["quality"] >= 0.85,
+        "fast": lambda e: e["speed"] >= 0.9,
+        "clone": lambda e: e["clone"],
+        "draft": lambda e: e["offline"] and e["speed"] >= 0.9,
+        "kahani": lambda e: e["offline"] and e["hindi"],
+    }.get(task, lambda e: True)
+    cands = [(n, e) for n, e in REGISTRY.items() if want(e)]
+    cands.sort(key=lambda kv: -kv[1]["quality"])
+    return {"task": task, "order": [n for n, _ in cands],
+            "best": cands[0][0] if cands else None,
+            "why": REGISTRY[cands[0][0]]["note"] if cands else "koi nahi"}
 
 
-# ------------------------------------------------------- chaar engine (default)
-DEFAULT_ENGINES = [
-    # CHAAR ENGINE — bas yahi (Sarvam inse alag hai, apna pura engine hai)
-    {"name": "edge", "emotions": ["neutral", "khushi", "hairan", "hasai", "pyaar"],
-     "languages": ["hi", "en"], "offline": False, "speed": 1.4, "cost": 0.0, "max_chars": 500},
-    {"name": "elevenlabs", "emotions": ["neutral", "dukh", "gussa", "khushi", "pyaar", "dar",
-                                        "rona", "hairan", "sharam", "thakan", "hasai"],
-     "languages": ["hi", "en"], "offline": False, "speed": 1.0, "cost": 1.0, "max_chars": 500},
-    {"name": "piper", "emotions": ["neutral", "pyaar", "thakan"],
-     "languages": ["hi"], "offline": True, "speed": 2.0, "cost": 0.0, "max_chars": 300},
-    {"name": "espeak", "emotions": ["neutral"],
-     "languages": ["hi", "en"], "offline": True, "speed": 3.0, "cost": 0.0, "max_chars": 300},
-    # paanchva engine — chaar ke saath baat karta hai, par chaar me gina nahi jata
-    {"name": "sarvam", "emotions": ["neutral", "dukh", "gussa", "khushi", "pyaar", "dar",
-                                    "rona", "hairan", "sharam", "thakan", "hasai"],
-     "languages": ["hi", "en"], "offline": False, "speed": 1.2, "cost": 1.0, "max_chars": 500,
-     "role": "extra"},
-]
-
-CORE_ENGINES = ["edge", "elevenlabs", "piper", "espeak"]
-
-
-def ensure_defaults() -> list[Capability]:
-    """Kuch bhi registered na ho to chaar engine (EDGE, ELEVENLABS, ESPEAK, PIPER) daal do."""
-    reg = load_registry()
-    if not reg:
-        for row in DEFAULT_ENGINES:
-            register(Capability.from_dict(row))
-    return engines()
-
-
-# ------------------------------------------------------------- engine baat-cheet
-def send(sender: str, to: str, kind: str, payload: dict) -> dict:
-    """Ek engine doosre ko message bheje (inbox me file banti hai)."""
-    BUS.mkdir(parents=True, exist_ok=True)
-    box = BUS / "messages" / to
-    box.mkdir(parents=True, exist_ok=True)
-    msg = {"from": sender, "to": to, "kind": kind, "payload": payload,
-           "at": time.strftime("%Y-%m-%d %H:%M:%S")}
-    f = box / f"{time.time_ns()}_{sender}_{kind}.json"
-    f.write_text(json.dumps(msg, ensure_ascii=False, indent=1), encoding="utf-8")
+# ---------------- agent bus
+def bus_send(frm: str, to: str, kind: str, payload: dict) -> dict:
+    msg = {"ts": round(time.time(), 3), "from": frm, "to": to, "kind": kind, "payload": payload}
+    BUS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with BUS_FILE.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(msg, ensure_ascii=False) + "\n")
     return msg
 
 
-def inbox(engine: str) -> list[dict]:
-    """Engine ke paas aaye hue message (purane pehle)."""
-    box = BUS / "messages" / engine
-    if not box.exists():
-        return []
-    out = []
-    for f in sorted(box.glob("*.json")):
-        try:
-            out.append(json.loads(f.read_text(encoding="utf-8")))
-        except Exception:
-            continue
-    return out
-
-
-def broadcast(sender: str, kind: str, payload: dict) -> list[dict]:
-    """Sab engine ko ek saath bhejo (misal: 'yeh kahani ka hissa tumhara hai')."""
-    sent = []
-    for cap in engines():
-        if cap.name != sender:
-            sent.append(send(sender, cap.name, kind, payload))
-    return sent
-
-
-def heartbeat(engine: str, healthy: bool = True, note: str = "") -> dict:
-    """Engine zinda hai ya nahi — registry update."""
-    reg = load_registry()
-    if engine not in reg:
-        reg[engine] = Capability(name=engine).__dict__
-    reg[engine]["healthy"] = bool(healthy)
-    reg[engine]["last_beat"] = time.strftime("%Y-%m-%d %H:%M:%S")
-    if note:
-        reg[engine]["note"] = note
-    _atomic_write(registry_path(), reg)
-    return reg[engine]
-
-
-# ------------------------------------------------------- galti aur sudhaar
-def error_log_path() -> Path:
-    return BUS / "errors.json"
-
-
-def report_error(engine: str, part, error: str, fixed_by: str = "") -> dict:
-    """Galti likho — kaun, kahan, kya; aur kisne sudhara."""
-    BUS.mkdir(parents=True, exist_ok=True)
-    p = error_log_path()
-    rows = []
-    if p.exists():
-        try:
-            data = json.loads(p.read_text(encoding="utf-8"))
-            rows = data.get("errors", []) if isinstance(data, dict) else list(data)
-        except Exception:
-            rows = []
-    row = {"engine": engine, "part": getattr(part, "n", None),
-           "character": getattr(part, "character", ""),
-           "emotion": getattr(part, "emotion", ""),
-           "error": str(error)[:200], "fixed_by": fixed_by,
-           "at": time.strftime("%Y-%m-%d %H:%M:%S")}
-    rows.append(row)
-    _atomic_write(p, {"errors": rows})
-    # engine ko "kamzor" mark karo aur doosre engine ko khabar bhejo
-    try:
-        heartbeat(engine, healthy=True, note=f"galti: {str(error)[:60]}")
-        if fixed_by:
-            send(engine, fixed_by, "thanks", {"error": str(error)[:120], "part": row["part"]})
-            send(fixed_by, engine, "sudhaar", {"kya": "yeh hissa maine banaya", "part": row["part"]})
-    except Exception:
-        pass
-    return row
-
-
-def sudhaar_report() -> dict:
-    """Kitni galtiyan, kis engine ki, kaun sudhaar raha."""
-    p = error_log_path()
-    if p.exists():
-        try:
-            data = json.loads(p.read_text(encoding="utf-8"))
-            rows = data.get("errors", []) if isinstance(data, dict) else list(data)
-        except Exception:
-            rows = []
-    else:
-        rows = []
-    by_engine: dict[str, int] = {}
-    fixed_by: dict[str, int] = {}
-    for r in rows:
-        by_engine[r["engine"]] = by_engine.get(r["engine"], 0) + 1
-        if r.get("fixed_by"):
-            fixed_by[r["fixed_by"]] = fixed_by.get(r["fixed_by"], 0) + 1
-    return {"total_errors": len(rows), "by_engine": by_engine,
-            "fixed_by": fixed_by, "recent": rows[-10:]}
-
-
-# --------------------------------------------------------------- kaam baantna
-def pick_engine(part, caps: list[Capability], locked: dict | None = None) -> Capability | None:
-    """Ek hisse ke liye best engine: pehle bhaav, phir awaaz lock, phir speed/cost."""
-    locked = locked or {}
-    usable = [c for c in caps if c.healthy]
-    if not usable:
-        return None
-    if part.character in locked:                     # awaaz wahi rahe
-        for c in usable:
-            if c.name == locked[part.character]:
-                return c
-    fits = [c for c in usable if part.emotion in c.emotions or part.emotion == "neutral"]
-    if not fits:
-        fits = usable
-    fits.sort(key=lambda c: (-(c.speed / (1.0 + c.cost)), c.cost))
-    return fits[0]
-
-
-@dataclass
-class Part:
-    n: int
-    character: str
-    emotion: str
-    text: str
-    engine: str = ""
-    file: str = ""
-    ok: bool = False
-    tries: int = 0
-    error: str = ""
-
-
-def split_script(text: str, max_chars: int = 220) -> list[Part]:
-    """Script → parts. Format: 'नाम [bhaav]: line'  ya  '[bhaav] line'."""
-    import re
-    parts: list[Part] = []
-    n = 0
-    for raw in text.splitlines():
-        line = raw.strip()
-        if not line:
-            continue
-        emo = "neutral"
-        m = re.search(r"\[(\w+)\]", line)
-        if m:
-            emo = m.group(1)
-            line = (line[:m.start()] + line[m.end():]).strip(" :-")
-        else:
-            try:                      # tag na ho to bhaav khud pehchano
-                from tools import bhavna
-                d = bhavna.detect(line)
-                if d["confidence"] >= 0.6:
-                    emo = d["emotion"]
-            except Exception:
-                pass
-        who = "sutradhar"
-        if ":" in line:
-            head, tail = line.split(":", 1)
-            if 0 < len(head.strip()) <= 24:
-                who, line = head.strip(), tail.strip()
-        # lambi line ko todo (engine ki limit ke hisaab se)
-        while len(line) > max_chars:
-            cut = line.rfind("।", 0, max_chars)
-            cut = cut if cut > 40 else max_chars
-            n += 1
-            parts.append(Part(n=n, character=who, emotion=emo, text=line[:cut].strip()))
-            line = line[cut:].strip()
-        if line:
-            n += 1
-            parts.append(Part(n=n, character=who, emotion=emo, text=line))
-    return parts
-
-
-def plan(text: str, caps: list[Capability]) -> list[Part]:
-    """Kaun hissa kis engine par jayega — pehle se tay."""
-    parts = split_script(text)
-    locked: dict[str, str] = {}
-    for p in parts:
-        cap = pick_engine(p, caps, locked)
-        if cap:
-            p.engine = cap.name
-            locked.setdefault(p.character, cap.name)
-    return parts
-
-
-def run(text: str, out_dir: str, renderer=None, caps: list[Capability] | None = None,
-        retry_next: bool = True, workers: int = 1, live: bool = False) -> dict:
-    """Parts ko chalाओ. renderer(engine, part, out_path) -> bool."""
-    caps = caps if caps is not None else ensure_defaults()
-    if renderer is None and live:
-        renderer = router_renderer()
-    od = Path(out_dir); od.mkdir(parents=True, exist_ok=True)
-    parts = plan(text, caps)
-    locked: dict[str, str] = {}
-    t0 = time.time()
-    done = 0
-
-    if int(workers) > 1:                       # kai engine ek saath
-        return _run_parallel(parts, od, renderer, caps, retry_next, int(workers), t0)
-
-    for p in parts:
-        cap = pick_engine(p, caps, locked)
-        if not cap:
-            p.error = "koi engine available nahi"
-            continue
-        p.engine = cap.name
-        locked.setdefault(p.character, cap.name)
-        out = od / f"{p.n:03d}_{p.character}_{p.emotion}.wav"
-        ok = False
-        tried = set()
-        while not ok:
-            p.tries += 1
-            tried.add(cap.name)
-            try:
-                ok = bool(renderer(cap.name, p, str(out))) if renderer else False
-                if ok:
-                    p.file = str(out); p.ok = True; done += 1
-                    break
-                p.error = "render fail"
-            except Exception as exc:
-                p.error = f"{type(exc).__name__}: {str(exc)[:100]}"
-            if not retry_next:
-                break
-            nxt = [c for c in caps if c.healthy and c.name not in tried]
-            if not nxt:
-                break
-            prev = cap.name
-            cap = pick_engine(p, nxt, {})       # bhaav wahi, engine doosra
-            if cap:
-                p.engine = cap.name
-                report_error(prev, p, p.error or "render fail", fixed_by=cap.name)
-        if not ok:
-            print(f"FAIL {p.n} [{p.character}/{p.emotion}] {p.error[:60]}", flush=True)
-    manifest = {"script_parts": len(parts), "done": done, "failed": len(parts) - done,
-                "seconds": round(time.time() - t0, 2),
-                "parts": [p.__dict__ for p in parts]}
-    _atomic_write(od / "manifest.json", manifest)
-    return manifest
-
-
-def _run_parallel(parts, od, renderer, caps, retry_next, workers, t0) -> dict:
-    """Kai part ek saath — engine ek dusre ki madad karte hain."""
-    from concurrent.futures import ThreadPoolExecutor
-    locked: dict[str, str] = {}
-
-    def job(p):
-        cap = pick_engine(p, caps, locked)
-        if not cap:
-            p.error = "koi engine available nahi"
-            return p
-        p.engine = cap.name
-        locked.setdefault(p.character, cap.name)
-        out = od / f"{p.n:03d}_{p.character}_{p.emotion}.wav"
-        tried = set()
-        while True:
-            p.tries += 1
-            tried.add(cap.name)
-            try:
-                if renderer and renderer(cap.name, p, str(out)):
-                    p.file = str(out); p.ok = True
-                    return p
-                p.error = "render fail"
-            except Exception as exc:
-                p.error = f"{type(exc).__name__}: {str(exc)[:100]}"
-            if not retry_next:
-                return p
-            nxt = [c for c in caps if c.healthy and c.name not in tried]
-            if not nxt:
-                return p
-            prev = cap.name
-            cap = pick_engine(p, nxt, {})
-            if not cap:
-                return p
-            p.engine = cap.name
-            report_error(prev, p, p.error, fixed_by=cap.name)
-
-    with ThreadPoolExecutor(max_workers=max(1, workers)) as ex:
-        list(ex.map(job, parts))
-    done = sum(1 for p in parts if p.ok)
-    manifest = {"script_parts": len(parts), "done": done, "failed": len(parts) - done,
-                "seconds": round(time.time() - t0, 2), "workers": workers,
-                "parts": [p.__dict__ for p in parts]}
-    _atomic_write(od / "manifest.json", manifest)
-    return manifest
-
-
-def router_renderer():
-    """Bus ko asli engine_router se jodo — ek hi darwaza, ek hi fallback chain."""
-    from tools import engine_router as er
-    def _render(engine: str, part, out: str) -> bool:
-        ok, _log = er.render_line(part.text, part.character, Path(out), engine, [])
-        return bool(ok)
-    return _render
-
-
-def status() -> dict:
-    caps = ensure_defaults()
-    return {"engines": len(caps), "healthy": sum(1 for c in caps if c.healthy),
-            "list": [c.__dict__ for c in caps]}
+def bus_demo() -> list[dict]:
+    """4 agents ek doosre se baat karte hain — real handoff ke saath."""
+    msgs = []
+    msgs.append(bus_send("router", "piper", "render_request", {"text": "नमस्ते", "why": "offline kahani"}))
+    msgs.append(bus_send("piper", "router", "render_reply", {"ok": True, "wav": "probe-piper.wav", "sr": SR}))
+    msgs.append(bus_send("router", "edge", "quality_request", {"text": "नमस्ते", "why": "zyada natural"}))
+    msgs.append(bus_send("edge", "elevenlabs", "handoff", {"reason": "internet block", "text": "नमस्ते"}))
+    msgs.append(bus_send("elevenlabs", "router", "handoff_reply", {"ok": False, "reason": "key nahi"}))
+    msgs.append(bus_send("router", "piper", "final", {"engine": "piper", "fallback_used": 2}))
+    return msgs
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="engine bus (24 engine taalmel)")
-    sub = ap.add_subparsers(dest="cmd", required=True)
-    r = sub.add_parser("register")
-    r.add_argument("--name", required=True)
-    r.add_argument("--capabilities", default="")
-    r.add_argument("--emotions", default="neutral")
-    r.add_argument("--offline", action="store_true")
-    r.add_argument("--speed", type=float, default=1.0)
-    r.add_argument("--cost", type=float, default=0.0)
-    sub.add_parser("status")
-    ib = sub.add_parser("inbox"); ib.add_argument("--engine", required=True); 
-    hb = sub.add_parser("heartbeat"); hb.add_argument("--engine", required=True)
-    hb.add_argument("--down", action="store_true"); hb.add_argument("--note", default="")
-    ms = sub.add_parser("say"); ms.add_argument("--from", dest="sender", required=True)
-    ms.add_argument("--to", required=True); ms.add_argument("--kind", default="note")
-    ms.add_argument("--text", required=True)
-    pl = sub.add_parser("plan"); pl.add_argument("--script", required=True)
-    rn = sub.add_parser("run"); rn.add_argument("--script", required=True); rn.add_argument("--out", required=True)
-    rn.add_argument("--workers", type=int, default=1)
-    rn.add_argument("--live", action="store_true", help="asli engine se banao (router ke through)")
-    sub.add_parser("sudhaar")
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--probe", action="store_true")
+    ap.add_argument("--route", default="")
+    ap.add_argument("--demo", action="store_true")
+    ap.add_argument("--json", action="store_true")
     a = ap.parse_args()
-    if a.cmd == "register":
-        if a.capabilities and Path(a.capabilities).exists():
-            cap = Capability.from_dict(json.loads(Path(a.capabilities).read_text(encoding="utf-8")))
-            cap.name = a.name
-        else:
-            cap = Capability(name=a.name, emotions=[e.strip() for e in a.emotions.split(",") if e.strip()],
-                             offline=a.offline, speed=a.speed, cost=a.cost)
-        register(cap)
-        print(json.dumps(cap.__dict__, ensure_ascii=False, indent=2)); return 0
-    if a.cmd == "status":
-        print(json.dumps(status(), ensure_ascii=False, indent=2)); return 0
-    if a.cmd == "inbox":
-        print(json.dumps(inbox(a.engine), ensure_ascii=False, indent=1)); return 0
-    if a.cmd == "heartbeat":
-        print(json.dumps(heartbeat(a.engine, healthy=not a.down, note=a.note),
-                         ensure_ascii=False, indent=2)); return 0
-    if a.cmd == "say":
-        print(json.dumps(send(a.sender, a.to, a.kind, {"text": a.text}),
-                         ensure_ascii=False, indent=2)); return 0
-    if a.cmd == "sudhaar":
-        print(json.dumps(sudhaar_report(), ensure_ascii=False, indent=2)); return 0
-    text = Path(a.script).read_text(encoding="utf-8")
-    if a.cmd == "plan":
-        print(json.dumps([p.__dict__ for p in plan(text, ensure_defaults())], ensure_ascii=False, indent=1)); return 0
-    if a.cmd == "sudhaar":
-        print(json.dumps(sudhaar_report(), ensure_ascii=False, indent=2)); return 0
-    rep = run(text, a.out, workers=getattr(a, "workers", 1), live=getattr(a, "live", False))
-    print(json.dumps({k: rep[k] for k in ("script_parts", "done", "failed", "seconds")},
-                     ensure_ascii=False, indent=2))
-    return 0 if rep["failed"] == 0 else 1
+    tmp = ROOT / "work"; tmp.mkdir(exist_ok=True)
+    out = {}
+    if a.probe:
+        res = {}
+        for name, fn in PROBES.items():
+            ok, detail = fn(tmp)
+            res[name] = {"ok": ok, "detail": detail, **REGISTRY[name]}
+        out["probe"] = res
+        out["working"] = [n for n, r in res.items() if r["ok"]]
+        if not a.json:
+            for n, r in res.items():
+                print(f"{'✅' if r['ok'] else '❌'} {n:12s} {r['kind']:16s} {r['detail']}")
+            print("\nchal rahe:", ", ".join(out["working"]) or "koi nahi")
+    if a.route:
+        out["route"] = route(a.route)
+        if not a.json:
+            r = out["route"]
+            print(f"task={r['task']} → best={r['best']} ({r['why']}) | order={r['order']}")
+    if a.demo:
+        out["demo"] = bus_demo()
+        if not a.json:
+            for m in out["demo"]:
+                print(f"  {m['from']:10s} → {m['to']:10s} {m['kind']:15s} {json.dumps(m['payload'], ensure_ascii=False)[:60]}")
+            print(f"\nbus file: {BUS_FILE}")
+    if a.json:
+        print(json.dumps(out, ensure_ascii=False, indent=1))
+    return 0
 
 
 if __name__ == "__main__":

@@ -1,0 +1,6 @@
+{"ts": 1795337259.099, "from": "router", "to": "piper", "kind": "render_request", "payload": {"text": "नमस्ते", "why": "offline kahani"}}
+{"ts": 1795337259.1, "from": "piper", "to": "router", "kind": "render_reply", "payload": {"ok": true, "wav": "probe-piper.wav", "sr": 22050}}
+{"ts": 1795337259.101, "from": "router", "to": "edge", "kind": "quality_request", "payload": {"text": "नमस्ते", "why": "zyada natural"}}
+{"ts": 1795337259.103, "from": "edge", "to": "elevenlabs", "kind": "handoff", "payload": {"reason": "internet block", "text": "नमस्ते"}}
+{"ts": 1795337259.103, "from": "elevenlabs", "to": "router", "kind": "handoff_reply", "payload": {"ok": false, "reason": "key nahi"}}
+{"ts": 1795337259.104, "from": "router", "to": "piper", "kind": "final", "payload": {"engine": "piper", "fallback_used": 2}}
