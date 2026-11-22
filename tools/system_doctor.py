@@ -238,7 +238,24 @@ def c_shabd():
         add("shabd-mala", "FAIL", f"{type(e).__name__}: {str(e)[:40]}")
 
 
-CHECKS = [c_shabd, c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
+def c_activate():
+    """Sab modules jagao: kitne ACTIVE/READY/BROKEN (system_activate.py)."""
+    try:
+        import subprocess, sys as _s
+        out = subprocess.run([_s.executable, str(ROOT / "tools" / "system_activate.py"), "--json"],
+                             capture_output=True, text=True, timeout=180)
+        txt = out.stdout[out.stdout.find("{"):]
+        d = json.loads(txt)
+        c = d["counts"]
+        ok = c.get("BROKEN", 0) == 0
+        add("activation audit", "PASS" if ok else "FAIL",
+            f"ACTIVE {c.get('ACTIVE',0)} | READY {c.get('READY',0)} | NEEDS {c.get('NEEDS',0)} | "
+            f"CLI {c.get('CLI',0)} | BROKEN {c.get('BROKEN',0)}")
+    except Exception as e:
+        add("activation audit", "WARN", f"{type(e).__name__}")
+
+
+CHECKS = [c_activate, c_shabd, c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
           c_engines, c_tools, c_qa_thresholds, c_judge_smoke, c_selftest]
 
 

@@ -1,10 +1,13 @@
+import os
+from pathlib import Path as _P
+VOICE_DIR = _P(os.environ.get("SEETAL_VOICES", "/scratch/work/voices"))
 import wave, subprocess, numpy as np, json
 from piper import PiperVoice
 from piper.config import SynthesisConfig
 from imageio_ffmpeg import get_ffmpeg_exe
 from faster_whisper import WhisperModel
 FF=get_ffmpeg_exe()
-v=PiperVoice.load("voices/hi_IN-pratham-medium.onnx", config_path="voices/hi_IN-pratham-medium.onnx.json")
+v=PiperVoice.load(str(VOICE_DIR / "hi_IN-pratham-medium.onnx"), config_path=str(VOICE_DIR / "hi_IN-pratham-medium.onnx.json"))
 m=WhisperModel("small", device="cpu", compute_type="int8", cpu_threads=1, download_root="/scratch/work/whisper")
 def say(t):
     with wave.open("/tmp/p.wav","wb") as w:

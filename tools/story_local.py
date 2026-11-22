@@ -19,14 +19,15 @@ sys.path.insert(0, str(HERE))
 SR = 22050
 
 VOICES = {"m": HERE.parent/"voices/hi_IN-pratham-medium.onnx",
+          "m2": HERE.parent/"voices/hi_IN-rohan-medium.onnx",     # narrator (naap me behtar)
           "f": HERE.parent/"voices/hi_IN-priyamvada-medium.onnx"}
 
 # kirdaar: voice, length_scale (slow>1), pitch_shift (semitones), pause
 CAST = {
- "narrator": {"v": "m", "ls": 0.98, "ratio": 1.00, "pause": 0.52},
- "dadi":     {"v": "f", "ls": 1.06, "ratio": 0.96, "pause": 0.50},   # ASR-safe: formant todna band
- "maa":      {"v": "f", "ls": 0.99, "ratio": 1.00, "pause": 0.48},
- "sonu":     {"v": "f", "ls": 0.94, "ratio": 1.04, "pause": 0.46},   # bachcha: tez + thoda ooncha
+ "narrator": {"v": "m2", "ls": 1.00, "ratio": 1.00, "formant": 0.97, "pause": 0.44},   # rohan + h-spell
+ "dadi":     {"v": "f", "ls": 1.08, "ratio": 1.00, "formant": 0.94, "pause": 0.42},   # dadi: formant neecha = badi umar, ASR safe
+ "maa":      {"v": "f", "ls": 1.00, "ratio": 1.00, "formant": 0.94, "pause": 0.42},
+ "sonu":     {"v": "f", "ls": 0.98, "ratio": 1.02, "formant": 1.05, "pause": 0.40},   # bachcha: halka ooncha/patla
 }
 SCRIPT = [
  ("narrator", "सुबह के छह बजे थे। गाँव की छतों से धुआँ उठ रहा था, और दूर नदी कलकल बह रही थी।"),
@@ -146,6 +147,44 @@ def _presence(x):
     return np.fft.irfft(X * g, n)
 
 
+def room_tone(n, level_db=-52, seed=3):
+    """hamesha chalu room tone — asli duniya kabhi poori chup nahi hoti (holes band)."""
+    import numpy as np
+    rng = np.random.default_rng(seed)
+    x = rng.normal(0, 1, n)
+    X = np.fft.rfft(x); f = np.fft.rfftfreq(n, 1 / SR)
+    x = np.fft.irfft(X / (1 + (120 / (f + 1e-9)) ** 2), n)      # pink-ish
+    x = x / (np.max(np.abs(x)) + 1e-9)
+    return (x * (10 ** (level_db / 20))).astype("float32")
+
+
+# bhaav → prosody (realtime/bhaav.py ka target use hota hai)
+BHAV_PROFILE = {   # sur (semi), raftaar (ls guna), zor (dB)
+    "khushi":  (+1.0, 0.96, +1.0),
+    "gussa":   (+0.7, 0.94, +2.0),
+    "dar":     (+1.2, 1.02, +0.5),
+    "dukh":    (-0.8, 1.08, -1.0),
+    "pyaar":   (-0.4, 1.05, +0.2),
+    "hairani": (+0.9, 1.00, +0.8),
+    "neutral": (0.0, 1.00, 0.0),
+}
+
+
+def bhaav_prosody(text, who):
+    """line ka bhaav → (semi, ls_guna, gain_db). Na ho to neutral."""
+    try:
+        import sys as _s
+        _s.path.insert(0, str(HERE.parent / "realtime"))
+        import bhaav as B
+        r = B.target({"text": text, "who": who})
+        emo, inten = r.get("emotion", "neutral"), float(r.get("intensity", 0) or 0)
+        semi, lsm, db = BHAV_PROFILE.get(emo, BHAV_PROFILE["neutral"])
+        k = min(1.0, max(0.0, inten))
+        return semi * k * 0.5, 1 + (lsm - 1) * k, db * k, emo, inten   # sur aadha (naap: zyada = ASR tootta)
+    except Exception:
+        return 0.0, 1.0, 0.0, "neutral", 0.0
+
+
 MOODS = {"bed": [("rain", 0.5), ("river", 0.35), ("wind", 0.25), ("crickets", 0.04)],
          "pad": (130.8, 164.8, 196.0)}
 
@@ -161,6 +200,37 @@ def _voice(key):
     return _VCACHE[key]
 
 
+_LINE_GATES = []
+
+
+def line_check(y, sr, who, text):
+    """Line-level jaanch — halka (numpy only, 2 GB RAM me bhi chalta hai).
+    gates.py/nirantarta.py ka kaam yahin inline: clipping, RMS, brightness, echo, gap."""
+    import numpy as np
+    rec = {"who": who, "text": text[:40]}
+    try:
+        peak = float(np.max(np.abs(y)))
+        rms = float(np.sqrt((y ** 2).mean()))
+        n = min(len(y), sr * 4)
+        S = np.abs(np.fft.rfft(y[:n] * np.hanning(n)))
+        f = np.fft.rfftfreq(n, 1 / sr)
+        bright = float((S * f).sum() / (S.sum() + 1e-9))
+        k = 16
+        env = np.array([np.abs(y[i:i + k]).mean() for i in range(0, max(1, len(y) - k), k)])
+        a = np.correlate(env - env.mean(), env - env.mean(), "full")[len(env) - 1:]
+        a = a / (a[0] + 1e-12)
+        step = k / sr
+        lo, hi = int(0.017 / step), int(0.031 / step)
+        echo = float(np.max(np.abs(a[lo:hi + 1]))) if hi < len(a) else 0.0
+        rec["gates"] = {"clip": round(peak, 3), "rms_db": round(20 * float(np.log10(max(1e-9, rms))), 1),
+                        "bright": round(bright), "echo": round(echo, 3),
+                        "clip_ok": peak < 0.99, "echo_ok": echo < 0.78}
+    except Exception as e:
+        rec["gates"] = {"error": type(e).__name__}
+    _LINE_GATES.append(rec)
+    return rec
+
+
 def synth_line(text, cfg, out: Path):
     from piper import PiperVoice
     from piper.config import SynthesisConfig
@@ -170,16 +240,26 @@ def synth_line(text, cfg, out: Path):
     import random as _rnd
     _seed = abs(hash(text)) % (2 ** 31)
     _r = _rnd.Random(_seed)
-    _ls = float(cfg["ls"]) * _r.uniform(0.96, 1.04)
+    _semi_b, _ls_b, _db_b, _emo, _inten = bhaav_prosody(text, cfg.get("who", ""))
+    _ls = float(cfg["ls"]) * _r.uniform(0.96, 1.04) * _ls_b
     _ratio = float(cfg.get("ratio", 1.0)) * _r.uniform(0.985, 1.015)
     sc = SynthesisConfig(length_scale=_ls, noise_scale=0.62 + _r.uniform(-0.04, 0.04),
                          noise_w_scale=0.75)
+    import respell as RS
+    _txt = RS.respell(text)          # mahapraan giraane wali galti ka ilaaj (sirf TTS ke liye)
     with wave.open(str(raw), "wb") as w:
-        v.synthesize_wav(text, w, syn_config=sc)
+        v.synthesize_wav(_txt, w, syn_config=sc)
     # formant-safe pitch shift + humanize + warm EQ + room + breath (apna FX)
     import voice_fx as fx
     src = load(raw)
     y = fx.pitch_resample(src, _ratio)
+    if abs(_semi_b) > 0.15:
+        y = fx.pitch_shift_formant(y, _semi_b)
+    if abs(_db_b) > 0.2:
+        y = y * (10 ** (_db_b / 20.0))
+    if cfg.get("formant"):
+        y = fx.formant_shift(y, float(cfg["formant"]))     # umar/chehra: F0 nahi, formant badlo (ASR safe)
+    y = fx.prosody_contour(y, SR, depth_st=float(cfg.get("contour", 0.6)), seed=abs(hash(text)) % 9999)
     y = fx.trim_silence(y)
     y = fx.compress_silences(y, SR, min_gap=0.10, max_gap=0.35)   # duniya niyam: saans bachi rahe
     y = fx.smooth_chain(y, semitones=0.0, human=True, br=True, warm_eq=True, rv=False)
@@ -188,6 +268,10 @@ def synth_line(text, cfg, out: Path):
         w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR)
         w.writeframes((np.clip(y, -1, 1) * 32767).astype("int16").tobytes())
     raw.unlink(missing_ok=True)
+    try:
+        line_check(y, SR, cfg.get("who", ""), text)      # realtime/gates + nirantarta — har line par
+    except Exception:
+        pass
     return out
 
 
@@ -197,17 +281,29 @@ def load(p: Path):
     return np.frombuffer(r.stdout, dtype=np.int16).astype("float32") / 32768
 
 
+def group_script(script):
+    """Lagatar ek hi kirdaar ki lines jodo — beech me rukna band (ruk-ruk ka ilaaj)."""
+    out = []
+    for who, text in script:
+        if out and out[-1][0] == who:
+            out[-1] = (who, out[-1][1] + " " + text)
+        else:
+            out.append((who, text))
+    return out
+
+
 def build(out_mp3: Path):
     import ambience as amb
     work = HERE / "work"; work.mkdir(exist_ok=True)
     clips = []
     _last_breath_s = 0.0
     _breath_log = []
-    for i, (who, text) in enumerate(SCRIPT):
-        p = synth_line(text, CAST[who], work / f"line{i:02d}.wav")
+    _script = group_script(SCRIPT)
+    for i, (who, text) in enumerate(_script):
+        p = synth_line(text, {**CAST[who], "who": who}, work / f"line{i:02d}.wav")
         clips.append((who, p, load(p)))
     # scene break: har 4th line ke baad lamba ruk (duniya ubharne ke liye) — duniya niyam 1.4–2.6s
-    scene_gap = {i: 1.7 for i in range(3, len(clips), 4)}
+    scene_gap = {i: 1.2 for i in range(3, len(clips), 4)}
     total = (sum(len(c[2]) for c in clips)
              + int(SR * sum(CAST[c[0]]["pause"] for c in clips))
              + int(SR * sum(scene_gap.values())) + SR)
@@ -225,15 +321,18 @@ def build(out_mp3: Path):
         voice[t:t+len(sig)] += sig
         # saans: time + bhaav ke hisaab se (line number se nahi)
         _since = (t / SR) - _last_breath_s
-        _plan = breath_plan(SCRIPT[_idx][1], _since)
+        _gap_before = (t / SR) - prev_end / SR if prev_end else 0
+        _plan = breath_plan(_script[_idx][1], _since) if _gap_before >= 0.9 else None
         if _plan:
             _emo, _dur, _lvl, _band = _plan
             br = breath(_dur, level=_lvl, band=_band, seed=100 + _idx)
-            b_start = max(0, t - int(SR * _dur) - int(SR * 0.05))
+            b_start = max(prev_end, t - len(br) - int(SR * 0.06))   # BUG: saans speech par chadh rahi thi (pehla shabd kha jaati thi)
             voice[b_start:b_start + len(br)] += br
             _last_breath_s = t / SR
             _breath_log.append({"at_s": round(t / SR, 2), "emotion": _emo, "dur_s": _dur})
-        marks.append({"who": who, "start": round(t/SR, 2), "dur": round(len(sig)/SR, 2), "text": SCRIPT[_idx][1]})
+        _semi_i, _ls_i, _db_i, _emo_i, _inten_i = bhaav_prosody(_script[_idx][1], who)
+        marks.append({"who": who, "start": round(t/SR, 2), "dur": round(len(sig)/SR, 2),
+                      "text": _script[_idx][1], "bhaav": _emo_i, "intensity": round(_inten_i, 2)})
         prev_end = t + len(sig)
         idx_now = len(marks) - 1
         t += len(sig) + int(SR * CAST[who]["pause"]) + int(SR * scene_gap.get(idx_now, 0))
@@ -291,9 +390,12 @@ def build(out_mp3: Path):
         voice = _hp(voice, 130); bed = _hp(bed, 220)
     mix = voice * 0.95 + bed * 0.16
     mix = _presence(np.tanh(mix * 1.05))
+    mix[:len(room_tone(len(mix)))] += room_tone(len(mix))   # holes band
     mix_st = None
     if _os.environ.get("SEETAL_STEREO", "1") == "1":
         mix_st = _stereo(voice * 0.95, np.tanh(bed * 0.17 * 1.05) * 0.30, width=0.10, delay_ms=4)
+        _rt = room_tone(len(mix_st), level_db=-48)
+        mix_st[:, 0] += _rt; mix_st[:, 1] += _rt * 0.96     # dono channel me halka room tone
     rms = float(np.sqrt((mix**2).mean())) + 1e-9
     mix *= (10 ** (-16.9/20)) / rms
     mix = mix / max(1.0, float(np.max(np.abs(mix)))/0.95)
@@ -338,7 +440,7 @@ def build(out_mp3: Path):
             "voice_gap_mean_ms": round(float(np.mean(_gaps)), 0) if _gaps else 0,
             "voice_gap_max_ms": round(max(_gaps)) if _gaps else 0,
             "voice_speech_pct": round(100 * (1 - _q.mean()), 1), "dur": round(len(mix)/SR, 2), "lines": len(SCRIPT),
-            "breaths": _breath_log, "breaths_per_min": round(len(_breath_log) / max(1e-6, (len(mix)/SR/60)), 2),
+            "line_checks": _LINE_GATES, "breaths": _breath_log, "breaths_per_min": round(len(_breath_log) / max(1e-6, (len(mix)/SR/60)), 2),
             "marks": marks, "bed": MOODS["bed"], "peak": round(float(np.max(np.abs(mix))), 2),
             "rms_dbfs": round(20*float(np.log10(max(1e-9, float(np.sqrt((mix**2).mean()))))), 1)}
     (HERE / "story_local.json").write_text(json.dumps(info, ensure_ascii=False, indent=1), encoding="utf-8")
