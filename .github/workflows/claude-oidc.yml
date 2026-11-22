@@ -67,6 +67,8 @@ jobs:
               v = os.environ.get(env, "").strip()
               if v:
                   body[key] = v
+          # workspace_id hamesha chahiye — khaali ho to "default" bhejo
+          body.setdefault("workspace_id", "default")
           missing = [k for k in ("federation_rule_id", "organization_id") if not body[k]]
           if missing:
               print("MISSING:", missing); sys.exit(1)
