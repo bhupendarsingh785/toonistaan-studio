@@ -94,6 +94,8 @@ def band(x, sr, lo=80, hi=9000):
 def speech_like(path: Path, sr: int = 16000, max_s: float = 40.0) -> int:
     """File me insaan ki awaaz kitne % hai (80-300 Hz periodicity + 300-3000 Hz band).
     Naap: bolne wali file = 41%, saaf nadi = 0%, 'howling wind' = 65% (wo awaaz jaisa lagta hai)."""
+    if any(k in path.name.lower() for k in HOWL_OK):
+        return 0        # bhediya ki howl "insaan ki awaaz" nahi hai (naam se pehchan)
     x = load_mono(path, sr, max_s=max_s)
     if x is None:
         return 0
@@ -115,6 +117,7 @@ def speech_like(path: Path, sr: int = 16000, max_s: float = 40.0) -> int:
 
 
 SPEECH_MAX = 12      # isse zyada = bed me awaaz, chhod do
+HOWL_OK = ("wolf", "howl", "howling", "coyote", "jackal")   # ye jaan-boojh kar rakhi awaazein hain
 
 
 def make_bed(kinds, n, sr, level_db=-26, seed=11):
