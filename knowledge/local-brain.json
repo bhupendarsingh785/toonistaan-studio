@@ -49,10 +49,12 @@
    "mid patla + high chubhta = hollow/machine awaaz (mid 55–65%, high ≤20%)"
   ],
   "smoothness_rules": [
-   "har line: trim silence (40–60 ms) → andar ki gap 65 ms → 20 ms fade-in",
-   "lines ke beech pause 0.35–0.6 s (1.5 s nahi — woh 'hole' lagta hai)",
-   "length_scale 0.9–1.2 (1.4+ = bahut dheema, artificial)",
-   "micro amplitude dips hatao (woh shabd kaat dete hain)"
+   "piper: length_scale 0.92–1.05 (1.2+ = ruk-ruk kar bolna)",
+   "piper: noise_scale 0.62, noise_w_scale 0.75 (natural prosody)",
+   "har line: trim 25–40 ms → andar ki 80 ms+ gap ko 35 ms karo → 20 ms fade-in",
+   "lines ke beech pause 0.22–0.35 s (1.5 s nahi)",
+   "humanize me amplitude micro-dips band (woh shabd kaat dete hain)",
+   "target: andar ke 80 ms+ gaps ≤5, pace 12–14 akshar/s, speech 65–70%"
   ],
   "emotion_map": {
    "neutral": {
@@ -263,6 +265,23 @@
   "background 0.30 par tha → khamoshi hi nahi bachi",
   "CAST patch chupchap fail hua → dadi 240 Hz par reh gayi",
   "length_scale 1.4+ kar diya → ruk-ruk kar bolna",
-  "line ke andar ki 1 s+ gaps compress nahi kiye"
- ]
+  "line ke andar ki 1 s+ gaps compress nahi kiye",
+  "smoothness ke liye sirf gaps compress kiye, piper ke noise_w/length_scale ko nahi chhua — isliye phir ruk-ruk laga"
+ ],
+ "duniya_ki_awaaz": {
+  "niyam": "jis cheez ka zikr ho, usi ki awaaz background me ubhare — nadi, hawa, barish, patte, chidaiyan, jhingur, kadam, gaon",
+  "kaise": "script ke shabd → sound map; har line ke hisaab se gain 2.4x tak; 1.2 s smooth fade (chatka nahi)",
+  "levels": "bed speech se 10–14 dB neeche (SNR 12–22 dB)",
+  "map": {
+   "नदी/पानी/लहर": "river",
+   "बारिश/बूँद/बादल": "rain",
+   "हवा/ठंड": "wind",
+   "पेड़/पत्ते/मिट्टी": "leaves",
+   "चिड़िया/पक्षी": "birds",
+   "तारा/शाम": "crickets",
+   "गाँव/छत/दादी": "village",
+   "चलना/किनारा": "footsteps"
+  },
+  "sabak": "sirf ek flat bed nahi — duniya badalti rehni chahiye, warna scene mar jata hai"
+ }
 }

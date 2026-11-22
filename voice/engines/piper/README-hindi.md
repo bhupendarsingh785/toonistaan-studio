@@ -1,29 +1,61 @@
-# PIPER — kya karna hai (saaf Hindi)
+# PIPER — kya karna hai (Hindi)
 
-**Kya hai:** Piper — offline neural, dheema par apna
+**Kya hai:** Piper — offline neural (yahi local me chalta hai)
 
-## 1. Awaaz ki setting (per kirdaar)
+## 1. Sur ka target (naap kar)
 
-| Kirdaar | Setting |
+| Kirdaar | F0 (Hz) |
 |---|---|
-| narrator | `{"length_scale": 1.29, "sentence_silence": 1.2}` |
-| dada | `{"length_scale": 1.29, "sentence_silence": 1.04}` |
-| purush | `{"length_scale": 1.16, "sentence_silence": 0.64}` |
-| maa | `{"length_scale": 0.93, "sentence_silence": 0.56}` |
-| gudiya | `{"length_scale": 0.93, "sentence_silence": 0.48}` |
-| sonu | `{"length_scale": 1.1, "sentence_silence": 0.4}` |
+| narrator | 90–125 |
+| dada | 95–130 |
+| dadi | 140–185 |
+| mahila | 165–205 |
+| ladki | 200–245 |
+| bachcha | 240–330 |
 
-## 2. Bhaav ka naksha (sur ×, raftaar ×, thahraav ×)
+## 2. Robot lagne ke 5 karan (inse bacho)
 
-- **neutral**: sur 1.0 · raftaar 1.0 · thahraav 1.0
-- **pyaar**: sur 0.97 · raftaar 0.94 · thahraav 1.3
-- **khushi**: sur 1.06 · raftaar 1.08 · thahraav 0.8
-- **dukh**: sur 0.93 · raftaar 0.88 · thahraav 1.6
-- **dar**: sur 1.04 · raftaar 1.12 · thahraav 0.7
-- **gussa**: sur 1.02 · raftaar 1.15 · thahraav 0.6
-- **hairan**: sur 1.08 · raftaar 1.05 · thahraav 0.9
+- pitch shift se formants khisakte hain (chipmunk/monster) → resample + formant soch
+- comb-filter reverb (17/23/31 ms) = goonj → reverb band ya smooth tail
+- line ke andar lambi khamoshi = 'ruk-ruk kar bolna' → 110 ms se lambi gap 65 ms karo
+- line ke shuru/aakhir ki silence trim nahi = har line ke baad hole
+- mid patla + high chubhta = hollow/machine awaaz (mid 55–65%, high ≤20%)
 
-## 3. Beats (16 step — `X` = bajta hai)
+## 3. Smoothness ke niyam (ruk-ruk kar bolna band)
+
+- piper: length_scale 0.92–1.05 (1.2+ = ruk-ruk kar bolna)
+- piper: noise_scale 0.62, noise_w_scale 0.75 (natural prosody)
+- har line: trim 25–40 ms → andar ki 80 ms+ gap ko 35 ms karo → 20 ms fade-in
+- lines ke beech pause 0.22–0.35 s (1.5 s nahi)
+- humanize me amplitude micro-dips band (woh shabd kaat dete hain)
+- target: andar ke 80 ms+ gaps ≤5, pace 12–14 akshar/s, speech 65–70%
+
+## 4. Bhaav ke signal
+
+- **cheekh**: `{"rms_dbfs": -10.4, "high_3k_pct": 29.1}`
+- **hasi**: `{"modulation_3_8hz": 0.315}`
+- **darr**: `{"f0_jitter": 0.057}`
+- **gussa**: `{"f0_sd_min": 50, "jitter_max": 0.05}`
+- **dukh**: `{"f0_max": 165, "rms_dbfs_max": -26}`
+
+## 5. Shabd galat (piper G2P)
+
+piper ka Hindi G2P: व girta hai, ि→े, ठ→ख/त, श→ष, ौ→ो
+
+| Script | Bola jaata |
+|---|---|
+| बारिश | बारेश |
+| गाँव | गाँ |
+| ठंडक | खन्न |
+| देखो | बेखो |
+| भीगने | भीट में |
+| कितनी | किच्मी |
+| छाता | च्हाता |
+| खुशबू | फुष्बो |
+
+**Hal:** respell dictionary + carrier-phrase test (अब सुनो, <शब्द>) — akela shabd ASR se test nahi hota
+
+## 6. Beats (16 step)
 
 **keherwa** (92 BPM)
 ```
@@ -61,12 +93,6 @@ kick  X...X...X...X...
 snare ....X.......X...
 hat   ..X...X...X...X.
 ```
-**boom_bap** (90 BPM)
-```
-kick  X.....X..X......
-snare ....X.......X...
-hat   X.X.X.X.X.X.X.X.
-```
 **trap** (140 BPM)
 ```
 kick  X.......X...X...
@@ -79,43 +105,23 @@ kick  X..X....X.X.....
 snare ....X.......X...
 hat   X.X.X.X.X.X.X.X.
 ```
-**one_drop** (78 BPM)
-```
-kick  ........X.......
-snare ....X.......X...
-hat   X.X.X.X.X.X.X.X.
-```
-**afrobeat** (108 BPM)
-```
-kick  X..X..X...X..X..
-snare ..X..X..X..X..X.
-hat   X.XX.X.XX.XX.X.X
-```
-
-## 4. Bhaav ke asli signal (naap se)
-
-- **cheekh**: `{"zor_dbfs": -10.4, "high_band_3k_pct": 29.1}`
-- **hasi**: `{"modulation_3_8hz": 0.315}`
-- **darr_kaanpta**: `{"f0_jitter": 0.057}`
-- **gussa**: `{"f0_sd_min": 50}`
-- **dukh**: `{"f0_max_hz": 165, "zor_dbfs_max": -26}`
-
-## 5. Audio ke blueprint
-
-- **kahani**: {"pause_s": 3.0, "background_below_db": [10, 12], "turns_avg_s": 4.0, "mood_mix": "dukh 30%, neutral 40%, khushi 15%, dar 15%"}
-- **vlog**: {"pause_s": 5.0, "background_below_db": [20, 22], "turns_avg_s": 1.3, "f0_hz": [150, 195]}
-- **gaana**: {"bpm": [76, 132], "mix_mid_pct": [52, 61], "chords": "minor family for dard, major for bhakti"}
-- **horror**: {"scream_pct": 3, "story_pct": 46, "silence_before_scream": true, "build_before_jhatka_s": [5, 10], "cycle_s": [60, 90]}
-
-## 6. Is engine ke niyam
-
-- thread-safe nahi — ek baar me ek render
-- 200 akshar par todo
 
 ## 7. QA (bina iske deliver nahi)
 
-- sur band me (dada 88–125, dadi 140–185, mahila 165–205, ladki 190–240, bachcha 240–330)
-- sur ka kaanpna (std) 12+
-- raftaar 3.0–4.5 akshar/s
-- background 8–16 dB neeche
-- clipping 0%, peak < 0.95
+- clipping_pct: <0.01
+- peak: 0.5–0.97
+- dc_offset: <0.01
+- mid_pct: 55–68
+- high_pct: <=20
+- snr_db: 12–22
+- echo: <0.78 (insaan 0.43–0.72)
+- f0_spread_pct: <=15
+- wer: <0.25
+- internal_gap_ms: <=70
+
+## 8. Is engine ke niyam
+
+- har line: trim → andar ki gap 65 ms → 20 ms fade-in
+- lines ke beech pause 0.35–0.6 s
+- length_scale 0.9–1.2
+- reverb/comb band rakho
