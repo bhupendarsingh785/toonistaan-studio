@@ -371,5 +371,57 @@
    "बारिश": "rain"
   },
   "sabak": "har jeev/kirdaar ki apni awaaz — khana, peena, saans, chalna, sab mehsoos hona chahiye"
+ },
+ "sound_library": {
+  "total_catalogued": 1142,
+  "by_cat": {
+   "insects": 37,
+   "birds": 66,
+   "creatures": 148,
+   "footsteps": 618,
+   "water": 90,
+   "horror": 32,
+   "human": 128,
+   "wind": 15,
+   "rain": 8
+  },
+  "jeev": {
+   "crow": 30,
+   "bird": 19,
+   "cat": 18,
+   "dog": 12,
+   "tiger": 11,
+   "lion": 11,
+   "horse": 10,
+   "wolf": 9,
+   "elephant": 9,
+   "cricket": 9,
+   "monkey": 9,
+   "python": 6,
+   "boar": 6,
+   "dingo": 5,
+   "panda": 5,
+   "rhino": 4,
+   "camel": 4,
+   "insect": 4,
+   "kangaroo": 4,
+   "zebra": 4,
+   "chimp": 3,
+   "mosquito": 2,
+   "frog": 1,
+   "bear": 1,
+   "snake": 1
+  },
+  "footstep_materials": {
+   "mitti/keechad (dull, <900 Hz)": 122,
+   "lakdi/ghaas (900–1800)": 257,
+   "kankad/pakka halka (1800–3500)": 239
+  },
+  "kaise_use": "tools/sound_catalog.py se catalog; pipeline keyword se best file chunti hai (quality ≥0.8)",
+  "kami": [
+   "sookhe patte (>7000 Hz) sample kam — apni synth se bana lo",
+   "rain sirf 8 files — apni barish synth (code) hi behtar",
+   "frog/bear/snake 1-1 file — inki awaaz khud banani padegi"
+  ]
  }
 }
