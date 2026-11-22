@@ -119,6 +119,7 @@ hat   X.X.X.X.X.X.X.X.
 - f0_spread_pct: <=15
 - wer: <0.25
 - internal_gap_ms: <=70
+- footstep_material_centroid: target band ke andar (dirt 200-900, concrete 1800-5000, leaves 3500-9000)
 
 ## 8. Is engine ke niyam
 

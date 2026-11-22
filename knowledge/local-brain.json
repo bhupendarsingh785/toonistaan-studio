@@ -6,7 +6,8 @@
   "asli audio sirf seekhne ke liye — copy/use nahi",
   "har cheez naapo, andaza nahi",
   "patch ke baad output verify karo (chupchap fail hota hai)",
-  "bina QA ke deliver nahi"
+  "bina QA ke deliver nahi",
+  "bahar se aaya system bina CHECK kiye include nahi — sirf majboot hisse lo, kamzori chhodo"
  ],
  "awaaz": {
   "targets": {
@@ -248,7 +249,8 @@
    "echo": "<0.78 (insaan 0.43–0.72)",
    "f0_spread_pct": "<=15",
    "wer": "<0.25",
-   "internal_gap_ms": "<=70"
+   "internal_gap_ms": "<=70",
+   "footstep_material_centroid": "target band ke andar (dirt 200-900, concrete 1800-5000, leaves 3500-9000)"
   },
   "tools": {
    "audio_judge.py": "poora scorecard",
@@ -337,5 +339,37 @@
    "gaps reference me bhi hain (mean 104–180 ms) — matlab 'ruk-ruk' gaps se nahi, DULLNESS se lagta hai",
    "local ko match karne ke liye: presence +2.3 dB @3.2k, air +1.45 dB @6.2k, de-ess @7.5k, air bed layer"
   ]
+ },
+ "zameen_ke_kadam": {
+  "niyam": "jahan chalna ho, wahan ki ZAMEEN ki awaaz aani chahiye — kachchi mitti, pakka farash, sookhe patte, ghaas, lakdi, keechad, kankad",
+  "naap": {
+   "steps_dirt": "centroid ~600 Hz (dull thud)",
+   "steps_concrete": "~4500 Hz (teekha click)",
+   "steps_leaves": "~8000 Hz (chhar-chhar)",
+   "steps_grass": "~1900 Hz (soft swish)",
+   "steps_wood": "~1000 Hz (resonant knock)",
+   "steps_mud": "~500 Hz (geela squelch)",
+   "steps_gravel": "~3200 Hz (chhote patthar)"
+  },
+  "script_map": {
+   "कच्ची/मिट्टी/रास्ता/धूल": "steps_dirt",
+   "पक्का/फर्श/पत्थर/इमारत": "steps_concrete",
+   "पत्ते/सूखे": "steps_leaves",
+   "घास/मैदान": "steps_grass",
+   "लकड़ी/सीढ़ी": "steps_wood",
+   "कीचड़/दलदल/गीली": "steps_mud",
+   "कंकड़/बजरी/पथरीला": "steps_gravel"
+  },
+  "jeev": {
+   "भेड़िया": "growl",
+   "कुत्ता": "bark",
+   "शेर": "roar",
+   "चिड़िया": "birds",
+   "झींगुर": "crickets",
+   "नदी/पानी": "river",
+   "हवा": "wind",
+   "बारिश": "rain"
+  },
+  "sabak": "har jeev/kirdaar ki apni awaaz — khana, peena, saans, chalna, sab mehsoos hona chahiye"
  }
 }

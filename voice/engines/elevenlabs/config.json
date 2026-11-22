@@ -87,6 +87,7 @@
   "echo": "<0.78 (insaan 0.43–0.72)",
   "f0_spread_pct": "<=15",
   "wer": "<0.25",
-  "internal_gap_ms": "<=70"
+  "internal_gap_ms": "<=70",
+  "footstep_material_centroid": "target band ke andar (dirt 200-900, concrete 1800-5000, leaves 3500-9000)"
  }
 }
