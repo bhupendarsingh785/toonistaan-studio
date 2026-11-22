@@ -91,6 +91,32 @@ def band(x, sr, lo=80, hi=9000):
     return np.fft.irfft(X * g, n)
 
 
+def speech_like(path: Path, sr: int = 16000, max_s: float = 40.0) -> int:
+    """File me insaan ki awaaz kitne % hai (80-300 Hz periodicity + 300-3000 Hz band).
+    Naap: bolne wali file = 41%, saaf nadi = 0%, 'howling wind' = 65% (wo awaaz jaisa lagta hai)."""
+    x = load_mono(path, sr, max_s=max_s)
+    if x is None:
+        return 0
+    n = sr // 2; hits = tot = 0
+    for i in range(0, len(x) - n, n):
+        w = x[i:i + n]
+        if float(np.sqrt((w ** 2).mean())) < 0.004:
+            continue
+        tot += 1
+        w0 = w - w.mean()
+        ac = np.correlate(w0, w0, "full")[len(w0) - 1:]
+        lo, hi = int(sr / 300), int(sr / 80)
+        per = float(np.max(ac[lo:hi]) / (ac[0] + 1e-9)) if hi < len(ac) else 0.0
+        S = np.abs(np.fft.rfft(w0 * np.hanning(len(w0)))); f = np.fft.rfftfreq(len(w0), 1 / sr)
+        band = S[(f >= 300) & (f < 3000)].sum() / (S.sum() + 1e-9)
+        if per > 0.35 and band > 0.45:
+            hits += 1
+    return round(100 * hits / max(1, tot))
+
+
+SPEECH_MAX = 12      # isse zyada = bed me awaaz, chhod do
+
+
 def make_bed(kinds, n, sr, level_db=-26, seed=11):
     """kinds = [(naam, wazan)] — asli files se bed; na mile to None."""
     rng = np.random.default_rng(seed)
@@ -100,7 +126,12 @@ def make_bed(kinds, n, sr, level_db=-26, seed=11):
         cands = find(kind)
         if not cands:
             continue
-        p = cands[int(rng.integers(0, len(cands)))]
+        p = None
+        for c in cands:
+            if speech_like(c) <= SPEECH_MAX:
+                p = c; break
+        if p is None:
+            continue        # sab me awaaz mili — bed se hata do
         x = load_mono(p, sr)
         if x is None:
             continue
