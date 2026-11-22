@@ -47,6 +47,7 @@ STAGES = [
     ("shabd",     "local_story.respell", "respell",        ["text", "hspell", "safe"],              False, "Hindi shabd-mala theek (chandrabindu/nasal)"),
     ("bhaav",     "realtime.bhaav",      "target",         ["line", "context"],                     False, "Har line ka lakshya bhaav"),
     ("awaaz",     "engine_router",       "render_line",    ["text", "character", "out", "engine", "fallbacks", "bhaav"], True, "Line ki awaaz (engine chain + fallback)"),
+    ("shabd_live","local_story.shabd_live", "best",        ["text", "voice"],                       False, "Shabd jaanch + sudhaar (aadhe shabd ka ilaaz; SEETAL_WORD_CHECK=1)"),
     ("gates",     "realtime.gates",      "check",          ["y", "sr", "profile", "text"],          False, "Line ki jaanch: echo, gap, presence"),
     ("gate_fix",  "realtime.gates",      "apply_fix",      ["y", "sr", "fix", "gate_res", "text"],  False, "Line par hi sudhaar"),
     ("ruke",      "world.duniya",        "pause_after",    ["text", "next_who", "who", "scene_break", "wmap", "rng"], True, "Lines ke beech insaan jaise ruke"),
@@ -363,6 +364,15 @@ def run(script_path: str, out_dir: str) -> int:
             used = next((t.get("engine") for t in reversed(tries or []) if isinstance(t, dict) and t.get("ok")), None)
             if used and L["who"] not in lock:
                 lock[L["who"]] = used
+            import os as _os
+            if _os.environ.get("SEETAL_WORD_CHECK") == "1":
+                try:
+                    _sl = get_fn("local_story.shabd_live", "best")
+                    _r = _sl(t2, "rohan", keep=p)      # behtar roop mila to wahi line likh do
+                    _b = (_r or {}).get("best") or {}
+                    h.note("shabd_live", _b.get("cer", 1) < 0.15, f"line {i}: cer={_b.get('cer')} variant={_b.get('variant')}")
+                except Exception as _e:
+                    h.note("shabd_live", False, f"line {i}: {type(_e).__name__}")
             y = _wav(p)
             res = _stage(h, "gates", g("gates"), y, SR, None, L["text"], required=False) or []
             for gr in res:

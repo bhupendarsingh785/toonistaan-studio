@@ -679,6 +679,16 @@ LEVELS = {
     "steps_gravel",
     "leaves"
    ],
+   "local_story/shabd_live.py": [
+    "best",
+    "risky",
+    "variants",
+    "_model",
+    "_say",
+    "_hear",
+    "_cer",
+    "main",
+   ],
    "local_story/real_bed.py": [
     "find",
     "_ff",
