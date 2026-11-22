@@ -1,0 +1,89 @@
+{
+ "targets": {
+  "narrator": [
+   90,
+   125
+  ],
+  "dada": [
+   95,
+   130
+  ],
+  "dadi": [
+   140,
+   185
+  ],
+  "mahila": [
+   165,
+   205
+  ],
+  "ladki": [
+   200,
+   245
+  ],
+  "bachcha": [
+   240,
+   330
+  ]
+ },
+ "measured": {
+  "narrator": 104,
+  "dadi": 169,
+  "maa": 153,
+  "sonu": 233
+ },
+ "emotion_map": {
+  "neutral": {
+   "pitch_mul": 1.0,
+   "rate_mul": 1.0,
+   "pause_mul": 1.0
+  },
+  "khushi": {
+   "pitch_mul": 1.08,
+   "rate_mul": 1.1,
+   "pause_mul": 0.8
+  },
+  "dukh": {
+   "pitch_mul": 0.94,
+   "rate_mul": 0.85,
+   "pause_mul": 1.4
+  },
+  "dar": {
+   "pitch_mul": 1.06,
+   "rate_mul": 1.15,
+   "pause_mul": 0.7
+  },
+  "gussa": {
+   "pitch_mul": 1.04,
+   "rate_mul": 1.12,
+   "pause_mul": 0.75
+  },
+  "hairan": {
+   "pitch_mul": 1.1,
+   "rate_mul": 0.95,
+   "pause_mul": 1.2
+  },
+  "pyaar": {
+   "pitch_mul": 0.98,
+   "rate_mul": 0.9,
+   "pause_mul": 1.25
+  }
+ },
+ "smoothness": [
+  "har line: trim silence (40–60 ms) → andar ki gap 65 ms → 20 ms fade-in",
+  "lines ke beech pause 0.35–0.6 s (1.5 s nahi — woh 'hole' lagta hai)",
+  "length_scale 0.9–1.2 (1.4+ = bahut dheema, artificial)",
+  "micro amplitude dips hatao (woh shabd kaat dete hain)"
+ ],
+ "qa": {
+  "clipping_pct": "<0.01",
+  "peak": "0.5–0.97",
+  "dc_offset": "<0.01",
+  "mid_pct": "55–68",
+  "high_pct": "<=20",
+  "snr_db": "12–22",
+  "echo": "<0.78 (insaan 0.43–0.72)",
+  "f0_spread_pct": "<=15",
+  "wer": "<0.25",
+  "internal_gap_ms": "<=70"
+ }
+}

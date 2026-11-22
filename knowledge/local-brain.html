@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="hi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Seetal Local Brain</title>
+<style>
+:root{--bg:#0b1020;--card:#141c33;--tx:#e8eefc;--dim:#9fb0d0;--ac:#5eead4}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.6 system-ui,"Nirmala UI",sans-serif}
+header{padding:18px 16px;background:linear-gradient(135deg,#123,#1b2a4a);position:sticky;top:0;z-index:5;border-bottom:1px solid #24325a}
+h1{margin:0;font-size:20px}h1 span{color:var(--ac)}
+#q{width:100%;margin-top:10px;padding:12px 14px;border-radius:12px;border:1px solid #2b3a63;background:#0e1730;color:var(--tx);font-size:16px}
+main{padding:14px;max-width:900px;margin:0 auto}
+h2{font-size:17px;margin:22px 0 8px;color:var(--ac)}
+h3{font-size:15px;margin:14px 0 4px}
+table{width:100%;border-collapse:collapse;margin:8px 0;font-size:14px}
+td,th{border:1px solid #24325a;padding:7px 9px;text-align:left;vertical-align:top}
+th{background:#17213c;color:#bcd}
+pre{background:#0e1730;border:1px solid #24325a;border-radius:10px;padding:10px;overflow:auto;font-size:13px;color:#a7f3d0}
+ul,ol{padding-left:22px}li{margin:4px 0}
+.card{background:var(--card);border:1px solid #24325a;border-radius:14px;padding:4px 14px 12px;margin:10px 0}
+footer{padding:20px 16px;color:var(--dim);font-size:13px;text-align:center}
+mark{background:#5eead4;color:#04231f;border-radius:3px}
+</style></head><body>
+<header><h1>Seetal <span>Local Brain</span> · v2.0</h1>
+<input id="q" placeholder="Kuch bhi dhoondo… (jaise: dadi, echo, hasi, bhakti, WER)"></header>
+<main id="m"><div class="card"><section><h2>Niym</h2><ul><li>asli audio sirf seekhne ke liye — copy/use nahi</li><li>har cheez naapo, andaza nahi</li><li>patch ke baad output verify karo (chupchap fail hota hai)</li><li>bina QA ke deliver nahi</li></ul></section><section><h2>Awaaz ke target</h2><table><tr><th>Kirdaar</th><th>F0 band (Hz)</th></tr><tr><td>narrator</td><td>90–125</td></tr><tr><td>dada</td><td>95–130</td></tr><tr><td>dadi</td><td>140–185</td></tr><tr><td>mahila</td><td>165–205</td></tr><tr><td>ladki</td><td>200–245</td></tr><tr><td>bachcha</td><td>240–330</td></tr></table></section><section><h2>Robot lagne ke 5 karan</h2><ol><li>pitch shift se formants khisakte hain (chipmunk/monster) → resample + formant soch</li><li>comb-filter reverb (17/23/31 ms) = goonj → reverb band ya smooth tail</li><li>line ke andar lambi khamoshi = 'ruk-ruk kar bolna' → 110 ms se lambi gap 65 ms karo</li><li>line ke shuru/aakhir ki silence trim nahi = har line ke baad hole</li><li>mid patla + high chubhta = hollow/machine awaaz (mid 55–65%, high ≤20%)</li></ol></section><section><h2>Smoothness ke niyam</h2><ol><li>har line: trim silence (40–60 ms) → andar ki gap 65 ms → 20 ms fade-in</li><li>lines ke beech pause 0.35–0.6 s (1.5 s nahi — woh 'hole' lagta hai)</li><li>length_scale 0.9–1.2 (1.4+ = bahut dheema, artificial)</li><li>micro amplitude dips hatao (woh shabd kaat dete hain)</li></ol></section><section><h2>Bhaav ke signal (naap se)</h2><table><tr><th>Bhaav</th><th>Signal</th></tr><tr><td>cheekh</td><td>{"rms_dbfs": -10.4, "high_3k_pct": 29.1}</td></tr><tr><td>hasi</td><td>{"modulation_3_8hz": 0.315}</td></tr><tr><td>darr</td><td>{"f0_jitter": 0.057}</td></tr><tr><td>gussa</td><td>{"f0_sd_min": 50, "jitter_max": 0.05}</td></tr><tr><td>dukh</td><td>{"f0_max": 165, "rms_dbfs_max": -26}</td></tr></table></section><section><h2>Shabd galat (piper G2P)</h2><p>piper ka Hindi G2P: व girta hai, ि→े, ठ→ख/त, श→ष, ौ→ो</p><table><tr><th>Script</th><th>Bola jaata hai</th></tr><tr><td>बारिश</td><td>बारेश</td></tr><tr><td>गाँव</td><td>गाँ</td></tr><tr><td>ठंडक</td><td>खन्न</td></tr><tr><td>देखो</td><td>बेखो</td></tr><tr><td>भीगने</td><td>भीट में</td></tr><tr><td>कितनी</td><td>किच्मी</td></tr><tr><td>छाता</td><td>च्हाता</td></tr><tr><td>खुशबू</td><td>फुष्बो</td></tr></table><p><b>Hal:</b> respell dictionary + carrier-phrase test (अब सुनो, &lt;शब्द&gt;) — akela shabd ASR se test nahi hota</p></section><section><h2>Beats (16 step)</h2><h3>keherwa — 92 BPM</h3><pre>kick  X.......X.......
+snare ....X.......X...
+hat   X.X.X.X.X.X.X.X.</pre><h3>dadra — 84 BPM</h3><pre>kick  X.....X.........
+snare ......X.....X...
+hat   X...X...X...X...</pre><h3>teen — 100 BPM</h3><pre>kick  X.....X.....X...
+snare ....X.......X..X
+hat   X.X.X.X.X.X.X.X.</pre><h3>unwind — 76 BPM</h3><pre>kick  X.......XX..X..X
+snare X......X....X.XX
+hat   X.X..X......XX..</pre><h3>bhakti — 132 BPM</h3><pre>kick  ......XXXX.XX...
+snare ............XXXX
+hat   .........XXX....</pre><h3>four_floor — 124 BPM</h3><pre>kick  X...X...X...X...
+snare ....X.......X...
+hat   ..X...X...X...X.</pre><h3>trap — 140 BPM</h3><pre>kick  X.......X...X...
+snare ....X.......X...
+hat   X.XXX.XXX.XXX.XX</pre><h3>breakbeat — 165 BPM</h3><pre>kick  X..X....X.X.....
+snare ....X.......X...
+hat   X.X.X.X.X.X.X.X.</pre></section><section><h2>Beats ke sabak</h2><ul><li>sparse beat bhi beat hai — khaali jagah gayak ke liye</li><li>off-beat snare groove deta hai</li><li>bhajan me chaal aage (7–16 step)</li><li>komal gaane 70–85 BPM, bhakti 125–135, pop 90–125</li></ul></section><section><h2>Blueprint</h2><table><tr><th>Kism</th><th>Naksha</th></tr><tr><td>kahani</td><td>{"pause_s": [0.35, 0.6], "background_below_db": [10, 12], "speech_pct": [60, 70]}</td></tr><tr><td>vlog</td><td>{"pause_s": [0.3, 0.5], "background_below_db": [20, 22], "f0": [150, 195]}</td></tr><tr><td>horror</td><td>{"scream_pct": 3, "story_pct": 46, "silence_before_scream": true, "cycle_s": [60, 90]}</td></tr><tr><td>gaana</td><td>{"bpm": [76, 132], "mid_pct": [52, 61]}</td></tr></table></section><section><h2>QA (bina iske deliver nahi)</h2><table><tr><th>Check</th><th>Chahiye</th></tr><tr><td>clipping_pct</td><td>&lt;0.01</td></tr><tr><td>peak</td><td>0.5–0.97</td></tr><tr><td>dc_offset</td><td>&lt;0.01</td></tr><tr><td>mid_pct</td><td>55–68</td></tr><tr><td>high_pct</td><td>&lt;=20</td></tr><tr><td>snr_db</td><td>12–22</td></tr><tr><td>echo</td><td>&lt;0.78 (insaan 0.43–0.72)</td></tr><tr><td>f0_spread_pct</td><td>&lt;=15</td></tr><tr><td>wer</td><td>&lt;0.25</td></tr><tr><td>internal_gap_ms</td><td>&lt;=70</td></tr></table></section><section><h2>Meri galtiyan (taaki dobara na ho)</h2><ol><li>pitch shift se goonj aayi (comb reverb + phasiness)</li><li>background 0.30 par tha → khamoshi hi nahi bachi</li><li>CAST patch chupchap fail hua → dadi 240 Hz par reh gayi</li><li>length_scale 1.4+ kar diya → ruk-ruk kar bolna</li><li>line ke andar ki 1 s+ gaps compress nahi kiye</li></ol></section></div></main>
+<footer>22 Nov 2026 · sab naap kar likha gaya — andaza nahi</footer>
+<script>
+const q=document.getElementById('q'),m=document.getElementById('m');
+const html=m.innerHTML;
+q.addEventListener('input',()=>{const v=q.value.trim();m.innerHTML=html;if(!v)return;
+ const w=new RegExp(v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi');
+ m.querySelectorAll('section,tr,li,p,h3,pre').forEach(el=>{
+   if(w.test(el.textContent)){el.innerHTML=el.innerHTML.replace(w,x=>'<mark>'+x+'</mark>');}
+ });});
+</script></body></html>

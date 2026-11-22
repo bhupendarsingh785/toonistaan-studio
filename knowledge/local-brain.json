@@ -1,0 +1,268 @@
+{
+ "version": "2.0",
+ "date": "2026-11-22",
+ "kya_hai": "Seetal ne saikdon asli audio (kahani, gaane, vlog, horror) naap kar jo seekha — poora gyaan ek jagah. Har local engine isse padh kar wahi quality laa sakta hai.",
+ "niyam": [
+  "asli audio sirf seekhne ke liye — copy/use nahi",
+  "har cheez naapo, andaza nahi",
+  "patch ke baad output verify karo (chupchap fail hota hai)",
+  "bina QA ke deliver nahi"
+ ],
+ "awaaz": {
+  "targets": {
+   "narrator": [
+    90,
+    125
+   ],
+   "dada": [
+    95,
+    130
+   ],
+   "dadi": [
+    140,
+    185
+   ],
+   "mahila": [
+    165,
+    205
+   ],
+   "ladki": [
+    200,
+    245
+   ],
+   "bachcha": [
+    240,
+    330
+   ]
+  },
+  "measured_cast": {
+   "narrator": 104,
+   "dadi": 169,
+   "maa": 153,
+   "sonu": 233
+  },
+  "robotic_ke_5_karan": [
+   "pitch shift se formants khisakte hain (chipmunk/monster) → resample + formant soch",
+   "comb-filter reverb (17/23/31 ms) = goonj → reverb band ya smooth tail",
+   "line ke andar lambi khamoshi = 'ruk-ruk kar bolna' → 110 ms se lambi gap 65 ms karo",
+   "line ke shuru/aakhir ki silence trim nahi = har line ke baad hole",
+   "mid patla + high chubhta = hollow/machine awaaz (mid 55–65%, high ≤20%)"
+  ],
+  "smoothness_rules": [
+   "har line: trim silence (40–60 ms) → andar ki gap 65 ms → 20 ms fade-in",
+   "lines ke beech pause 0.35–0.6 s (1.5 s nahi — woh 'hole' lagta hai)",
+   "length_scale 0.9–1.2 (1.4+ = bahut dheema, artificial)",
+   "micro amplitude dips hatao (woh shabd kaat dete hain)"
+  ],
+  "emotion_map": {
+   "neutral": {
+    "pitch_mul": 1.0,
+    "rate_mul": 1.0,
+    "pause_mul": 1.0
+   },
+   "khushi": {
+    "pitch_mul": 1.08,
+    "rate_mul": 1.1,
+    "pause_mul": 0.8
+   },
+   "dukh": {
+    "pitch_mul": 0.94,
+    "rate_mul": 0.85,
+    "pause_mul": 1.4
+   },
+   "dar": {
+    "pitch_mul": 1.06,
+    "rate_mul": 1.15,
+    "pause_mul": 0.7
+   },
+   "gussa": {
+    "pitch_mul": 1.04,
+    "rate_mul": 1.12,
+    "pause_mul": 0.75
+   },
+   "hairan": {
+    "pitch_mul": 1.1,
+    "rate_mul": 0.95,
+    "pause_mul": 1.2
+   },
+   "pyaar": {
+    "pitch_mul": 0.98,
+    "rate_mul": 0.9,
+    "pause_mul": 1.25
+   }
+  }
+ },
+ "bhaav_ke_signal": {
+  "cheekh": {
+   "rms_dbfs": -10.4,
+   "high_3k_pct": 29.1
+  },
+  "hasi": {
+   "modulation_3_8hz": 0.315
+  },
+  "darr": {
+   "f0_jitter": 0.057
+  },
+  "gussa": {
+   "f0_sd_min": 50,
+   "jitter_max": 0.05
+  },
+  "dukh": {
+   "f0_max": 165,
+   "rms_dbfs_max": -26
+  },
+  "note": "hasi ko sur se nahi, 3–8 Hz modulation se pakdo; darr ko jitter se; cheekh ko high band se"
+ },
+ "shabd_galat": {
+  "problem": "piper ka Hindi G2P: व girta hai, ि→े, ठ→ख/त, श→ष, ौ→ो",
+  "examples": {
+   "बारिश": "बारेश",
+   "गाँव": "गाँ",
+   "ठंडक": "खन्न",
+   "देखो": "बेखो",
+   "भीगने": "भीट में",
+   "कितनी": "किच्मी",
+   "छाता": "च्हाता",
+   "खुशबू": "फुष्बो"
+  },
+  "hal": "respell dictionary + carrier-phrase test (अब सुनो, <शब्द>) — akela shabd ASR se test nahi hota"
+ },
+ "beats": {
+  "patterns_16": {
+   "keherwa": {
+    "kick": "X.......X.......",
+    "snare": "....X.......X...",
+    "hat": "X.X.X.X.X.X.X.X.",
+    "bpm": 92
+   },
+   "dadra": {
+    "kick": "X.....X.........",
+    "snare": "......X.....X...",
+    "hat": "X...X...X...X...",
+    "bpm": 84
+   },
+   "teen": {
+    "kick": "X.....X.....X...",
+    "snare": "....X.......X..X",
+    "hat": "X.X.X.X.X.X.X.X.",
+    "bpm": 100
+   },
+   "unwind": {
+    "kick": "X.......XX..X..X",
+    "snare": "X......X....X.XX",
+    "hat": "X.X..X......XX..",
+    "bpm": 76
+   },
+   "bhakti": {
+    "kick": "......XXXX.XX...",
+    "snare": "............XXXX",
+    "hat": ".........XXX....",
+    "bpm": 132
+   },
+   "four_floor": {
+    "kick": "X...X...X...X...",
+    "snare": "....X.......X...",
+    "hat": "..X...X...X...X.",
+    "bpm": 124
+   },
+   "trap": {
+    "kick": "X.......X...X...",
+    "snare": "....X.......X...",
+    "hat": "X.XXX.XXX.XXX.XX",
+    "bpm": 140
+   },
+   "breakbeat": {
+    "kick": "X..X....X.X.....",
+    "snare": "....X.......X...",
+    "hat": "X.X.X.X.X.X.X.X.",
+    "bpm": 165
+   }
+  },
+  "sabak": [
+   "sparse beat bhi beat hai — khaali jagah gayak ke liye",
+   "off-beat snare groove deta hai",
+   "bhajan me chaal aage (7–16 step)",
+   "komal gaane 70–85 BPM, bhakti 125–135, pop 90–125"
+  ]
+ },
+ "blueprints": {
+  "kahani": {
+   "pause_s": [
+    0.35,
+    0.6
+   ],
+   "background_below_db": [
+    10,
+    12
+   ],
+   "speech_pct": [
+    60,
+    70
+   ]
+  },
+  "vlog": {
+   "pause_s": [
+    0.3,
+    0.5
+   ],
+   "background_below_db": [
+    20,
+    22
+   ],
+   "f0": [
+    150,
+    195
+   ]
+  },
+  "horror": {
+   "scream_pct": 3,
+   "story_pct": 46,
+   "silence_before_scream": true,
+   "cycle_s": [
+    60,
+    90
+   ]
+  },
+  "gaana": {
+   "bpm": [
+    76,
+    132
+   ],
+   "mid_pct": [
+    52,
+    61
+   ]
+  }
+ },
+ "qa": {
+  "checks": {
+   "clipping_pct": "<0.01",
+   "peak": "0.5–0.97",
+   "dc_offset": "<0.01",
+   "mid_pct": "55–68",
+   "high_pct": "<=20",
+   "snr_db": "12–22",
+   "echo": "<0.78 (insaan 0.43–0.72)",
+   "f0_spread_pct": "<=15",
+   "wer": "<0.25",
+   "internal_gap_ms": "<=70"
+  },
+  "tools": {
+   "audio_judge.py": "poora scorecard",
+   "asr_cache.py": "tez ASR cache",
+   "self_listen.py": "line-wise ASR",
+   "music_make2.py": "beats+sur",
+   "song_read.py": "gaana padho",
+   "horror_read.py": "darr ka blueprint",
+   "emotion_read.py": "bhaav timeline",
+   "local_story.py": "piper kahani"
+  }
+ },
+ "galtiyan_jo_ki": [
+  "pitch shift se goonj aayi (comb reverb + phasiness)",
+  "background 0.30 par tha → khamoshi hi nahi bachi",
+  "CAST patch chupchap fail hua → dadi 240 Hz par reh gayi",
+  "length_scale 1.4+ kar diya → ruk-ruk kar bolna",
+  "line ke andar ki 1 s+ gaps compress nahi kiye"
+ ]
+}
