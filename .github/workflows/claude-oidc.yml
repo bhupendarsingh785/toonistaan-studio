@@ -1,0 +1,54 @@
+# Claude API bina kisi stored key ke — GitHub OIDC (Workload Identity Federation)
+# Zaroori: repo Settings → Secrets me ye 4 values (IDs) daalo:
+#   ANTHROPIC_FEDERATION_RULE_ID  (fdrl_...)
+#   ANTHROPIC_ORGANIZATION_ID     (UUID)
+#   ANTHROPIC_SERVICE_ACCOUNT_ID  (svac_...)
+#   ANTHROPIC_WORKSPACE_ID        (wrkspc_...)
+name: claude-oidc-test
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  call-claude:
+    runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_FEDERATION_RULE_ID: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID }}
+      ANTHROPIC_ORGANIZATION_ID: ${{ vars.ANTHROPIC_ORGANIZATION_ID }}
+      ANTHROPIC_SERVICE_ACCOUNT_ID: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
+      ANTHROPIC_WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
+      ANTHROPIC_IDENTITY_TOKEN_FILE: /tmp/gha-jwt
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: GitHub OIDC token lo
+        run: |
+          curl -sS -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://api.anthropic.com" \
+            | jq -r .value > "$ANTHROPIC_IDENTITY_TOKEN_FILE"
+          echo "JWT bytes: $(wc -c < $ANTHROPIC_IDENTITY_TOKEN_FILE)"
+
+      - name: Anthropic access token (exchange)
+        run: |
+          JWT=$(cat "$ANTHROPIC_IDENTITY_TOKEN_FILE")
+          ACCESS=$(curl -sS https://api.anthropic.com/v1/oauth/token \
+            -H "content-type: application/json" \
+            -d "{\"grant_type\":\"urn:ietf:params:oauth:grant-type:jwt-bearer\",\"assertion\":\"$JWT\",\"federation_rule_id\":\"$ANTHROPIC_FEDERATION_RULE_ID\",\"organization_id\":\"$ANTHROPIC_ORGANIZATION_ID\",\"service_account_id\":\"$ANTHROPIC_SERVICE_ACCOUNT_ID\",\"workspace_id\":\"$ANTHROPIC_WORKSPACE_ID\"}" \
+            | jq -r .access_token)
+          if [ "$ACCESS" = "null" ] || [ -z "$ACCESS" ]; then echo "TOKEN FAIL"; exit 1; fi
+          echo "::add-mask::$ACCESS"
+          echo "ANTHROPIC_ACCESS_TOKEN=$ACCESS" >> $GITHUB_ENV
+
+      - name: Claude se ek chhota test
+        run: |
+          curl -sS https://api.anthropic.com/v1/messages \
+            -H "x-api-key: $ANTHROPIC_ACCESS_TOKEN" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "content-type: application/json" \
+            -d '{"model":"claude-sonnet-4-5","max_tokens":64,"messages":[{"role":"user","content":"Reply in Hindi: namaste, ek line me bolo ki tum kaun ho."}]}' \
+            | jq -r '.content[0].text // .error.message'
