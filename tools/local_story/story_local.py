@@ -134,6 +134,18 @@ def breath_plan(text: str, t_since_breath: float):
     return None
 
 
+def _presence(x):
+    """master presence EQ — smooth reference ke target (bright ~2086, mid ~57, high ~27)."""
+    import numpy as np
+    n = len(x); X = np.fft.rfft(x); f = np.fft.rfftfreq(n, 1 / SR)
+    g = np.ones_like(f)
+    g -= 0.55 * np.exp(-((f - 550) ** 2) / (2 * 500 ** 2))     # mid ka bhaaripan kam
+    g += 1.60 * np.exp(-((f - 3100) ** 2) / (2 * 1200 ** 2))   # presence
+    g += 1.00 * np.exp(-((f - 6200) ** 2) / (2 * 1600 ** 2))   # air
+    g -= 0.15 * np.exp(-((f - 7600) ** 2) / (2 * 1100 ** 2))   # halka de-ess
+    return np.fft.irfft(X * g, n)
+
+
 MOODS = {"bed": [("rain", 0.5), ("river", 0.35), ("wind", 0.25), ("crickets", 0.04)],
          "pad": (130.8, 164.8, 196.0)}
 
@@ -154,13 +166,20 @@ def synth_line(text, cfg, out: Path):
     from piper.config import SynthesisConfig
     v = _voice(cfg["v"])
     raw = out.with_suffix(".raw.wav")
-    sc = SynthesisConfig(length_scale=float(cfg["ls"]), noise_scale=0.62, noise_w_scale=0.75)
+    # prosody jitter — insaan har line ek jaisi nahi bolta (sur ±1.5%, raftaar ±4%)
+    import random as _rnd
+    _seed = abs(hash(text)) % (2 ** 31)
+    _r = _rnd.Random(_seed)
+    _ls = float(cfg["ls"]) * _r.uniform(0.96, 1.04)
+    _ratio = float(cfg.get("ratio", 1.0)) * _r.uniform(0.985, 1.015)
+    sc = SynthesisConfig(length_scale=_ls, noise_scale=0.62 + _r.uniform(-0.04, 0.04),
+                         noise_w_scale=0.75)
     with wave.open(str(raw), "wb") as w:
         v.synthesize_wav(text, w, syn_config=sc)
     # formant-safe pitch shift + humanize + warm EQ + room + breath (apna FX)
     import voice_fx as fx
     src = load(raw)
-    y = fx.pitch_resample(src, cfg.get("ratio", 1.0))
+    y = fx.pitch_resample(src, _ratio)
     y = fx.trim_silence(y)
     y = fx.compress_silences(y, SR, min_gap=0.10, max_gap=0.35)   # duniya niyam: saans bachi rahe
     y = fx.smooth_chain(y, semitones=0.0, human=True, br=True, warm_eq=True, rv=False)
@@ -269,9 +288,9 @@ def build(out_mp3: Path):
     bed *= duck
     import os as _os
     if _os.environ.get("SEETAL_HP", "1") == "1":
-        voice = _hp(voice, 130); bed = _hp(bed, 110)
-    mix = voice * 0.95 + bed * 0.17
-    mix = np.tanh(mix * 1.05)
+        voice = _hp(voice, 130); bed = _hp(bed, 220)
+    mix = voice * 0.95 + bed * 0.16
+    mix = _presence(np.tanh(mix * 1.05))
     mix_st = None
     if _os.environ.get("SEETAL_STEREO", "1") == "1":
         mix_st = _stereo(voice * 0.95, np.tanh(bed * 0.17 * 1.05) * 0.30, width=0.10, delay_ms=4)
@@ -280,6 +299,12 @@ def build(out_mp3: Path):
     mix = mix / max(1.0, float(np.max(np.abs(mix)))/0.95)
     wav = out_mp3.with_suffix(".wav")
     if mix_st is not None:
+        mix_st = np.stack([_presence(mix_st[:, 0]), _presence(mix_st[:, 1])], axis=1)
+        # soft limiter (peak 0.98) phir RMS -16.9 dBFS — LUFS target -16 ke liye
+        mix_st = mix_st / max(1e-9, float(np.max(np.abs(mix_st)))) * 0.98
+        mix_st = np.tanh(mix_st * 1.05)
+        _r = float(np.sqrt((mix_st ** 2).mean())) + 1e-9
+        mix_st = mix_st * (10 ** (-16.9 / 20)) / _r
         st = np.clip(mix_st / max(1.0, float(np.max(np.abs(mix_st))) / 0.95), -1, 1)
         with wave.open(str(wav), "wb") as w:
             w.setnchannels(2); w.setsampwidth(2); w.setframerate(SR)
