@@ -19,11 +19,12 @@ sys.path.insert(0, str(HERE))
 SR = 22050
 
 VOICES = {"m": HERE.parent/"voices/hi_IN-pratham-medium.onnx",
+          "m2": HERE.parent/"voices/hi_IN-rohan-medium.onnx",     # narrator (naap me behtar)
           "f": HERE.parent/"voices/hi_IN-priyamvada-medium.onnx"}
 
 # kirdaar: voice, length_scale (slow>1), pitch_shift (semitones), pause
 CAST = {
- "narrator": {"v": "m", "ls": 0.98, "ratio": 1.00, "pause": 0.44},
+ "narrator": {"v": "m2", "ls": 1.00, "ratio": 1.00, "pause": 0.44},   # rohan + h-spell
  "dadi":     {"v": "f", "ls": 1.04, "ratio": 0.98, "pause": 0.42},   # best naap (r72)
  "maa":      {"v": "f", "ls": 0.99, "ratio": 1.00, "pause": 0.42},
  "sonu":     {"v": "f", "ls": 0.98, "ratio": 1.02, "pause": 0.40},   # bachcha: tez par rukta nahi
@@ -185,8 +186,10 @@ def synth_line(text, cfg, out: Path):
     _ratio = float(cfg.get("ratio", 1.0)) * _r.uniform(0.985, 1.015)
     sc = SynthesisConfig(length_scale=_ls, noise_scale=0.62 + _r.uniform(-0.04, 0.04),
                          noise_w_scale=0.75)
+    import respell as RS
+    _txt = RS.respell(text)          # mahapraan giraane wali galti ka ilaaj (sirf TTS ke liye)
     with wave.open(str(raw), "wb") as w:
-        v.synthesize_wav(text, w, syn_config=sc)
+        v.synthesize_wav(_txt, w, syn_config=sc)
     # formant-safe pitch shift + humanize + warm EQ + room + breath (apna FX)
     import voice_fx as fx
     src = load(raw)

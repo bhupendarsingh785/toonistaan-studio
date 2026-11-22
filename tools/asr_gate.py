@@ -46,20 +46,58 @@ def model(size="small"):
     return WhisperModel(size, device="cpu", compute_type="int8", download_root=str(MODEL_CACHE))
 
 
-def cer(want, got):
-    """akshar-level CER. akshar.align() -> (ops, E, H) tuple deta hai."""
+# ---- Hindi phonetic distance (akshar/shak ko alag karta hai)
+_ASP = {"क": "ख", "ग": "घ", "ज": "झ", "ड": "ढ", "द": "ध", "ब": "भ", "त": "थ", "प": "फ", "च": "छ", "ट": "ठ"}
+_ASP.update({v: k for k, v in _ASP.items()})
+_DENT_RETRO = [set("तट"), set("दड"), set("नण"), set("सषश"), set("लळ")]
+_MATRA_LEN = [set("िी"), set("ुू"), set("ेै"), set("ोौ")]
+
+
+def _phone_dist(a, b):
+    """0 = same, 1 = bilkul alag; 0.2-0.5 = shak (varga/matra/nasal ka fark)."""
+    if a == b:
+        return 0.0
+    if not a or not b:
+        return 0.5          # akshar chhoot gaya / jud gaya — aadha galti
+    ca, ma = a[0], a[1:]
+    cb, mb = b[0], b[1:]
+    if ca == cb:
+        # sirf matra ka fark
+        if ma == mb:
+            return 0.0
+        for grp in _MATRA_LEN:
+            if ma in grp and mb in grp:
+                return 0.25
+        if (ma == "" or mb == ""):
+            return 0.3      # schwa girna
+        return 0.35
+    if _ASP.get(ca) == cb or _ASP.get(cb) == ca:
+        return 0.4          # mahapraan ka fark (ख↔क)
+    for grp in _DENT_RETRO:
+        if ca in grp and cb in grp:
+            return 0.5      # dantya ↔ murdhanya
+    if ma == mb:
+        return 0.6          # vyanjan alag, matra same
+    return 1.0
+
+
+def cer(want, got, phonetic=True):
+    """akshar CER. phonetic=True to shak wali galti aadhi ginti hai (insaani naap)."""
     try:
         import akshar as A
         r = A.align(A.normalize(want), A.normalize(got))
         ops = r[0] if isinstance(r, tuple) else r
         if isinstance(ops, list) and ops:
+            total = 0.0
             bad = 0
             for pair in ops:
                 e = pair[0][0] if pair[0] else None
                 h = pair[1][0] if pair[1] else None
-                if e != h:
+                d = _phone_dist(e or "", h or "") if phonetic else (0.0 if e == h else 1.0)
+                total += d
+                if d > 0.0:
                     bad += 1
-            return bad / max(1, len(ops)), {"ops": len(ops), "bad": bad}
+            return round(total / max(1, len(ops)), 3), {"ops": len(ops), "bad": bad}
     except Exception:
         pass
     a, b = list(want or ""), list(got or "")
@@ -68,7 +106,7 @@ def cer(want, got):
         prev, d[0] = d[0], i
         for j, cb in enumerate(b, 1):
             prev, d[j] = d[j], min(d[j] + 1, d[j - 1] + 1, prev + (ca != cb))
-    return (d[len(b)] / max(1, len(a))), {}
+    return round(d[len(b)] / max(1, len(a)), 3), {}
 
 
 def judge(audio, marks=None, text=None, size="small", limit=None):
@@ -88,14 +126,14 @@ def judge(audio, marks=None, text=None, size="small", limit=None):
             want = mk.get("text", "")
             c, _ = cer(want, got)
             out["lines"].append({"who": mk.get("who", "?"), "want": want, "got": got,
-                                 "cer": round(c, 3), "verdict": "PASS" if c < 0.25 else ("WARN" if c < 0.45 else "FAIL")})
+                                 "cer": round(c, 3), "verdict": "PASS" if c < 0.15 else ("WARN" if c < 0.30 else "FAIL")})
     else:
         x = load16k(audio)
         segs, _ = m.transcribe(x, language="hi", beam_size=1, vad_filter=False)
         got = " ".join(s.text.strip() for s in segs)
         c, _ = cer(text or "", got)
         out["lines"].append({"who": "-", "want": text or "", "got": got, "cer": round(c, 3),
-                             "verdict": "PASS" if c < 0.25 else ("WARN" if c < 0.45 else "FAIL")})
+                             "verdict": "PASS" if c < 0.15 else ("WARN" if c < 0.30 else "FAIL")})
     cers = [l["cer"] for l in out["lines"]]
     out["mean_cer"] = round(sum(cers) / len(cers), 3) if cers else None
     out["overall"] = "PASS" if cers and max(cers) < 0.25 else ("WARN" if cers and max(cers) < 0.45 else "FAIL")

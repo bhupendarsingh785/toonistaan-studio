@@ -719,5 +719,39 @@
    }
   },
   "bacha": "narrator (pratham) kamzor — rohan model chahiye"
+ },
+ "narrator_fix": {
+  "research": [
+   "piper ki Hindi G2P **mahapraan (aspirated) vyanjan gira deti hai**: छ→च, थ→त, ध→द, ख→क",
+   "asli galtiyan: छह→'चैहे', थे→'ते', छतों→'चतो', धुआँ→'दूवान', उठ→'उठे'",
+   "whisper-small (2GB RAM) medium load nahi hota — isliye naap ko phonetic banana pada"
+  ],
+  "fixes": {
+   "voice": "narrator = rohan (m2), F0 102 Hz — pratham se behtar",
+   "respell": "h-spell: ख→क्ह, घ→ग्ह, छ→च्ह, झ→ज्ह, ठ→ट्ह, ढ→ड्ह, थ→त्ह, ध→द्ह, फ→प्ह, भ→ब्ह (sirf TTS ko, script asli)",
+   "safe": "गाँव→गांव, धुआँ→धुआं, आँख→आंख, आँसू→आंसू",
+   "metric": "phonetic CER — mahapraan 0.4, dantya↔murdhanya 0.5, matra-lambai 0.25, schwa 0.3"
+  },
+  "naap": {
+   "narrator_ph_cer": {
+    "pehle": 0.341,
+    "ab": 0.155
+   },
+   "hspell_test": {
+    "asis": 0.265,
+    "h-spell": 0.192
+   },
+   "poora": {
+    "mean_ph_cer": 0.164,
+    "sonu": [
+     0.062,
+     0.277
+    ],
+    "dadi": 0.162,
+    "narrator": 0.155
+   },
+   "world_qa": "PASS (holes 0.47, stereo 0.135, pauses 12.2/min, breaths 3.66, mud -13.3, LUFS -15.9)"
+  },
+  "sabak": "voice badalne se pehle likhai theek karo — h-spell ne akela hi 0.265 → 0.192 kiya"
  }
 }
