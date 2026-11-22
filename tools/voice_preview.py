@@ -18,7 +18,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import voice_provider as vp  # noqa: E402
 sys.path.insert(0, os.path.dirname(HERE))
-from astra.hindi_natural import naturalize  # noqa: E402
+try:
+    from astra.hindi_natural import naturalize  # noqa: E402
+except Exception:
+    naturalize = None   # astra optional (yahan nahi hai)
 
 # edge-tts ki Hindi awaazein (free)
 EDGE_BY_KISM = {

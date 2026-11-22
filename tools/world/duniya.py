@@ -28,7 +28,7 @@ import awaazein as AW
 import spotting as S
 import rachna as RC
 
-SR = 48000
+SR = 44100   # sutradhar/voice ke saath ek hi SR (warna stems misalign)
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 MAP_PATH = ROOT / "knowledge" / "world-map.json"
@@ -749,9 +749,9 @@ def master(st, out_path, lufs=-16.0, tp=-1.5):
                        capture_output=True, text=True).stderr
     j = json.loads(m[m.rfind("{"):m.rfind("}") + 1])
     af = (f"loudnorm=I={lufs}:TP={tp}:LRA=11:measured_I={j['input_i']}:measured_TP={j['input_tp']}:"
-          f"measured_LRA={j['input_lra']}:measured_thresh={j['input_thresh']}:offset={j['target_offset']}:linear=true,"
+          f"measured_LRA={j['input_lra']}:measured_thresh={j['input_thresh']}:offset={j['target_offset']},"
           f"alimiter=limit={10 ** (tp / 20):.3f}:level=false")
-    args = ["ffmpeg", "-v", "error", "-y", "-i", str(tmp), "-af", af, "-ar", str(SR)]
+    args = ["ffmpeg", "-v", "error", "-y", "-i", str(tmp), "-af", af, "-ar", str(SR), "-ac", "2"]
     args += (["-c:a", "libmp3lame", "-b:a", "192k"] if str(out_path).endswith(".mp3") else [])
     subprocess.run(args + [str(out_path)], check=True)
     tmp.unlink(missing_ok=True)

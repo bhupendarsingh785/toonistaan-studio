@@ -102,6 +102,15 @@ def engine_status() -> list[EngineState]:
             continue
         problems = []
         folder = ENGINES / spec["folder"]
+        # piper: python module bhi kaafi hai (CLI binary/folder zaroori nahi) — naap se
+        if name == "piper":
+            try:
+                import importlib.util as _iu
+                if _iu.find_spec("piper") is not None:
+                    out.append(EngineState(name, True, "python piper module mila"))
+                    continue
+            except Exception:
+                pass
         if not folder.exists():
             problems.append(f"folder missing: engines/{spec['folder']}")
         if spec.get("bin") and not _which(spec["bin"]):
@@ -162,7 +171,11 @@ def build_plan(text: str) -> list[Plan]:
 def _call_provider(engine: str, text: str, character: str, out: Path, bhaav: str = "") -> bool:
     """Asli render — tools/voice_provider.py ke functions se."""
     sys.path.insert(0, str(ROOT))
-    from tools import voice_provider as vp
+    sys.path.insert(0, str(ROOT / "tools"))       # 'python tools/x.py' se chalne par bhi import chale
+    try:
+        from tools import voice_provider as vp
+    except ModuleNotFoundError:
+        import voice_provider as vp
     if engine == "sarvam":
         vp.sarvam_tts(text, character, str(out), bhaav=bhaav or None)
     elif engine == "piper":
@@ -224,7 +237,11 @@ def _fix_format(path: Path, want_ext: str) -> bool:
 
 def _guarded(engine: str, text: str, character: str, out: Path, bhaav: str = ""):
     """Cache + retry + quality check ke saath ek engine call."""
-    from tools import tts_guard as tg
+    sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "tools"))
+    try:
+        from tools import tts_guard as tg
+    except ModuleNotFoundError:
+        import tts_guard as tg
     def fn(dst):
         _call_provider(engine, text, character, Path(dst), bhaav=bhaav)
     # cache key me "out" NAHI jaata (warna har path naya key = cache kabhi hit nahi)
@@ -240,6 +257,7 @@ def render_line(text: str, character: str, out: Path,
                 engine: str | None = None, fallbacks: list[str] | None = None,
                 bhaav: str = "") -> tuple[bool, list[dict]]:
     """Ek line, chain ke saath. Har koshish ka hisaab wapas milta hai."""
+    out = Path(out)      # BUG: str aane par out.suffix crash hota tha (sutradhar str deta hai)
     # ek hi darwaza: bina asli shabd (khaali, sirf "।।।") par koi engine nahi — cache bhi nahi
     try:
         from tools.voice_provider import has_words, clean_text

@@ -1,0 +1,268 @@
+{
+ "engine": "piper (local)",
+ "voice_gaps": 80,
+ "voice_gap_mean_ms": 218.0,
+ "voice_gap_max_ms": 1765,
+ "voice_speech_pct": 62.2,
+ "dur": 48.83,
+ "lines": 10,
+ "line_checks": [
+  {
+   "who": "narrator",
+   "text": "सुबह के छह बजे थे। गाँव की छतों से धुआँ ",
+   "gates": {
+    "clip": 0.928,
+    "rms_db": -19.3,
+    "bright": 1231,
+    "echo": 0.566,
+    "clip_ok": true,
+    "echo_ok": true
+   }
+  },
+  {
+   "who": "sonu",
+   "text": "दादी! दादी, आज बारिश होगी क्या?",
+   "gates": {
+    "clip": 0.92,
+    "rms_db": -19.5,
+    "bright": 1382,
+    "echo": 0.677,
+    "clip_ok": true,
+    "echo_ok": true
+   }
+  },
+  {
+   "who": "dadi",
+   "text": "होगी बेटा। देख, हवा में ठंडक आ गई है।",
+   "gates": {
+    "clip": 0.931,
+    "rms_db": -17.9,
+    "bright": 1078,
+    "echo": 0.639,
+    "clip_ok": true,
+    "echo_ok": true
+   }
+  },
+  {
+   "who": "sonu",
+   "text": "फिर आज हम नदी नहीं जाएँगे?",
+   "gates": {
+    "clip": 0.911,
+    "rms_db": -14.4,
+    "bright": 1305,
+    "echo": 0.45,
+    "clip_ok": true,
+    "echo_ok": true
+   }
+  },
+  {
+   "who": "dadi",
+   "text": "जाएँगे। बारिश में नदी का किनारा सबसे सुं",
+   "gates": {
+    "clip": 0.936,
+    "rms_db": -15.5,
+    "bright": 1332,
+    "echo": 0.56,
+    "clip_ok": true,
+    "echo_ok": true
+   }
+  },
+  {
+   "who": "narrator",
+   "text": "दोपहर तक बादल घिर आए। पहली बूँद गिरी, और",
+   "gates": {
+    "clip": 0.914,
+    "rms_db": -18.6,
+    "bright": 1250,
+    "echo": 0.604,
+    "clip_ok": true,
+    "echo_ok": true
+   }
+  },
+  {
+   "who": "maa",
+   "text": "अम्मा, छाता ले लो। बच्चा भीग जाएगा।",
+   "gates": {
+    "clip": 0.918,
+    "rms_db": -17.6,
+    "bright": 1326,
+    "echo": 0.641,
+    "clip_ok": true,
+    "echo_ok": true
+   }
+  },
+  {
+   "who": "dadi",
+   "text": "भीगने दो। मिट्टी की खुशबू बच्चों को ज़िं",
+   "gates": {
+    "clip": 0.937,
+    "rms_db": -15.1,
+    "bright": 1165,
+    "echo": 0.605,
+    "clip_ok": true,
+    "echo_ok": true
+   }
+  },
+  {
+   "who": "sonu",
+   "text": "दादी, देखो! नदी में कितनी लहरें आ रही है",
+   "gates": {
+    "clip": 0.924,
+    "rms_db": -14.7,
+    "bright": 1152,
+    "echo": 0.67,
+    "clip_ok": true,
+    "echo_ok": true
+   }
+  },
+  {
+   "who": "narrator",
+   "text": "शाम को बारिश थम गई। नदी शांत बह रही थी, ",
+   "gates": {
+    "clip": 0.914,
+    "rms_db": -17.8,
+    "bright": 1315,
+    "echo": 0.608,
+    "clip_ok": true,
+    "echo_ok": true
+   }
+  }
+ ],
+ "real_bed": [
+  {
+   "kind": "rain",
+   "file": "u_tmwllo5zur-rain-on-a-tin-roof-226791.mp3",
+   "w": 0.5
+  },
+  {
+   "kind": "river",
+   "file": "loswin23-forest-birds-and-river-585677.mp3",
+   "w": 0.35
+  },
+  {
+   "kind": "wind",
+   "file": "gregorquendel-designed-fire-winds-swoosh-04-116788.mp3",
+   "w": 0.25
+  },
+  {
+   "kind": "crickets",
+   "file": "mosquitoes-and-crickets.mp3",
+   "w": 0.04
+  }
+ ],
+ "breaths": [
+  {
+   "at_s": 17.74,
+   "emotion": "neutral",
+   "dur_s": 0.5
+  },
+  {
+   "at_s": 37.59,
+   "emotion": "neutral",
+   "dur_s": 0.5
+  }
+ ],
+ "breaths_per_min": 2.46,
+ "marks": [
+  {
+   "who": "narrator",
+   "start": 0.0,
+   "dur": 6.75,
+   "text": "सुबह के छह बजे थे। गाँव की छतों से धुआँ उठ रहा था, और दूर नदी कलकल बह रही थी।",
+   "bhaav": "neutral",
+   "intensity": 0.0
+  },
+  {
+   "who": "sonu",
+   "start": 7.19,
+   "dur": 2.45,
+   "text": "दादी! दादी, आज बारिश होगी क्या?",
+   "bhaav": "hairani",
+   "intensity": 0.91
+  },
+  {
+   "who": "dadi",
+   "start": 10.04,
+   "dur": 3.89,
+   "text": "होगी बेटा। देख, हवा में ठंडक आ गई है।",
+   "bhaav": "pyaar",
+   "intensity": 0.73
+  },
+  {
+   "who": "sonu",
+   "start": 14.35,
+   "dur": 1.79,
+   "text": "फिर आज हम नदी नहीं जाएँगे?",
+   "bhaav": "hairani",
+   "intensity": 0.51
+  },
+  {
+   "who": "dadi",
+   "start": 17.74,
+   "dur": 4.06,
+   "text": "जाएँगे। बारिश में नदी का किनारा सबसे सुंदर होता है।",
+   "bhaav": "khushi",
+   "intensity": 0.56
+  },
+  {
+   "who": "narrator",
+   "start": 22.22,
+   "dur": 4.97,
+   "text": "दोपहर तक बादल घिर आए। पहली बूँद गिरी, और पूरा गाँव महक उठा।",
+   "bhaav": "neutral",
+   "intensity": 0.0
+  },
+  {
+   "who": "maa",
+   "start": 27.62,
+   "dur": 3.02,
+   "text": "अम्मा, छाता ले लो। बच्चा भीग जाएगा।",
+   "bhaav": "pyaar",
+   "intensity": 0.36
+  },
+  {
+   "who": "dadi",
+   "start": 31.06,
+   "dur": 4.91,
+   "text": "भीगने दो। मिट्टी की खुशबू बच्चों को ज़िंदगी भर याद रहती है।",
+   "bhaav": "khushi",
+   "intensity": 0.56
+  },
+  {
+   "who": "sonu",
+   "start": 37.59,
+   "dur": 3.35,
+   "text": "दादी, देखो! नदी में कितनी लहरें आ रही हैं!",
+   "bhaav": "hairani",
+   "intensity": 0.56
+  },
+  {
+   "who": "narrator",
+   "start": 41.35,
+   "dur": 6.05,
+   "text": "शाम को बारिश थम गई। नदी शांत बह रही थी, और आसमान में पहला तारा निकल आया।",
+   "bhaav": "gussa",
+   "intensity": 0.56
+  }
+ ],
+ "bed": [
+  [
+   "rain",
+   0.5
+  ],
+  [
+   "river",
+   0.35
+  ],
+  [
+   "wind",
+   0.25
+  ],
+  [
+   "crickets",
+   0.04
+  ]
+ ],
+ "peak": 0.95,
+ "rms_dbfs": -19.6
+}

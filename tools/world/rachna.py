@@ -28,7 +28,7 @@ ROOT = HERE.parent.parent
 sys.path.insert(0, str(HERE))
 import seekho as SK
 
-SR = 48000
+SR = 44100   # sutradhar/voice ke saath ek hi SR (warna stems misalign)
 RULES_PATH = ROOT / "knowledge" / "situation-rules.json"
 _CACHE = {}
 

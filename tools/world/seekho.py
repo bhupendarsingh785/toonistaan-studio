@@ -28,7 +28,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 LEARN_DIR = ROOT / "knowledge" / "learned"
 EVENTS_PATH = ROOT / "knowledge" / "sound-events.json"
-SR = 48000
+SR = 44100   # sutradhar/voice ke saath ek hi SR (warna stems misalign)
 ASR = 22050   # vishleshan ka sample rate (tez)
 
 def load(path, sr=SR):

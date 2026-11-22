@@ -18,6 +18,8 @@ Kram seekha hua: bahi.best_methods() — jo tareeka is kism par pehle jeeta, woh
 from __future__ import annotations
 import json, re, time, unicodedata
 from pathlib import Path
+import sys as _sys, pathlib as _pl
+_sys.path.insert(0, str(_pl.Path(__file__).resolve().parent))
 import akshar as A
 
 ASP = {"ख": "क", "घ": "ग", "छ": "च", "झ": "ज", "ठ": "ट", "ढ": "ड", "थ": "त", "ध": "द", "फ": "प", "भ": "ब"}

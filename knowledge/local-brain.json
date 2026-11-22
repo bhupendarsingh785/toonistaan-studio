@@ -838,5 +838,37 @@
    "r91 asli": "gap bed -26.5 dB (fark 7.5 dB)"
   },
   "sach": "Sarvam TTS yahan se nahi chalta — sandbox me SARVAM_API_KEY nahi hai (sirf GitHub secret me). GH Actions se chala sakte hain."
+ },
+ "buzz_fix": {
+  "asli_wajah": "harsh 2–4.5 kHz — hamara 1.02, insaan 0.52–0.75 (do guna) = 'girrr/barrr' robot buzz",
+  "fix": [
+   "presence EQ 3.1k: 1.6 → 1.0, 6.2k: 1.0 → 0.35",
+   "de_buzz(): 2.4–5.2 kHz par −1.5 dB (naya function voice_fx me)",
+   "echo naap se pata chala ki echo hamara 0.653 vs insaan 0.688–0.704 — echo problem hi nahi thi"
+  ],
+  "naap": {
+   "harsh": {
+    "pehle": 1.02,
+    "ab": 0.46,
+    "insaan": 0.75
+   },
+   "bright": {
+    "pehle": 2046,
+    "ab": 1770,
+    "insaan": 1126
+   }
+  },
+  "bhaav_ka_asar": {
+   "dadi pyaar 216 Hz → dadi khushi 258 Hz (+3.5 semitone)": "ab sunai deta hai",
+   "sonu hairani 219/213 Hz": "sahi"
+  },
+  "r93": {
+   "world_qa": "PASS",
+   "ph_cer_mean": 0.213,
+   "dadi": 0.352,
+   "narrator": 0.173,
+   "sonu": 0.113
+  },
+  "bacha": "dadi par sur+formant dono = ASR tootta (cap 0.6 try kiya, 0.524 — aur kharab); asli hal WORLD vocoder ya dadi ki alag voice model"
  }
 }

@@ -141,8 +141,8 @@ def _presence(x):
     n = len(x); X = np.fft.rfft(x); f = np.fft.rfftfreq(n, 1 / SR)
     g = np.ones_like(f)
     g -= 0.55 * np.exp(-((f - 550) ** 2) / (2 * 500 ** 2))     # mid ka bhaaripan kam
-    g += 1.60 * np.exp(-((f - 3100) ** 2) / (2 * 1200 ** 2))   # presence
-    g += 1.00 * np.exp(-((f - 6200) ** 2) / (2 * 1600 ** 2))   # air
+    g += 1.00 * np.exp(-((f - 3100) ** 2) / (2 * 1200 ** 2))   # presence
+    g += 0.35 * np.exp((0) * -1) * np.exp(-((f - 6200) ** 2) / (2 * 1600 ** 2))   # air
     g -= 0.15 * np.exp(-((f - 7600) ** 2) / (2 * 1100 ** 2))   # halka de-ess
     return np.fft.irfft(X * g, n)
 
@@ -170,7 +170,7 @@ BHAV_PROFILE = {   # sur (semi), raftaar (ls guna), zor (dB)
 }
 
 
-def bhaav_prosody(text, who):
+def bhaav_prosody(text, who, cfg_who=None):
     """line ka bhaav → (semi, ls_guna, gain_db). Na ho to neutral."""
     try:
         import sys as _s
@@ -180,7 +180,9 @@ def bhaav_prosody(text, who):
         emo, inten = r.get("emotion", "neutral"), float(r.get("intensity", 0) or 0)
         semi, lsm, db = BHAV_PROFILE.get(emo, BHAV_PROFILE["neutral"])
         k = min(1.0, max(0.0, inten))
-        return semi * k * 0.5, 1 + (lsm - 1) * k, db * k, emo, inten   # sur aadha (naap: zyada = ASR tootta)
+        _semi = max(-1.6, min(1.6, semi * k))    # ±1.6 st; dadi par cap try kiya (0.6) — ASR aur kharab hua
+        _lsm = 1 + (lsm - 1) * k * 1.6                   # raftaar ka asar 1.6 guna
+        return _semi, _lsm, db * k, emo, inten
     except Exception:
         return 0.0, 1.0, 0.0, "neutral", 0.0
 
@@ -263,6 +265,7 @@ def synth_line(text, cfg, out: Path):
     y = fx.trim_silence(y)
     y = fx.compress_silences(y, SR, min_gap=0.10, max_gap=0.35)   # duniya niyam: saans bachi rahe
     y = fx.smooth_chain(y, semitones=0.0, human=True, br=True, warm_eq=True, rv=False)
+    y = fx.de_buzz(y, SR)
     y = fx.trim_silence(y, keep_ms=40)
     with wave.open(str(out), "wb") as w:
         w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR)

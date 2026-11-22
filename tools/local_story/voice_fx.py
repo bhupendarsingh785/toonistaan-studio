@@ -330,3 +330,12 @@ def prosody_contour(y, sr, depth_st=1.0, parts=3, seed=7):
             z[-win:] *= np.linspace(1, 0, win)
         out[a:b] += z
     return out
+
+
+def de_buzz(x, sr, cut_db=-1.5, lo=2400, hi=5200):
+    """'girrr/barrr' robot buzz ka ilaaj — 2.4–5.2 kHz ka harsh hissa neecha.
+    Naap: hamara harsh(2-4.5k/0.8-2k) 1.02, insaan 0.52–0.75."""
+    import numpy as np
+    n = len(x); X = np.fft.rfft(x); f = np.fft.rfftfreq(n, 1 / sr)
+    g = 1 + (10 ** (cut_db / 20) - 1) * np.exp(-((f - (lo + hi) / 2) ** 2) / (2 * ((hi - lo) / 2.2) ** 2))
+    return np.fft.irfft(X * g, n)

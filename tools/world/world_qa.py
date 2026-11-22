@@ -14,7 +14,7 @@ python tools/world/world_qa.py --audio out.mp3 [--json qa.json]
 import argparse, json, subprocess, sys
 import numpy as np
 
-SR = 48000
+SR = 44100   # sutradhar/voice ke saath ek hi SR (warna stems misalign)
 
 def decode(p):
     r = subprocess.run(["ffmpeg", "-v", "error", "-i", p, "-f", "f32le", "-ac", "2", "-ar", str(SR), "-"], capture_output=True, check=True)

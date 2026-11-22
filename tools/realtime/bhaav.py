@@ -19,6 +19,8 @@ import numpy as np
 
 HERE = Path(__file__).resolve().parent
 KN = HERE.parent.parent / "knowledge"
+import sys as _sys, pathlib as _pl
+_sys.path.insert(0, str(_pl.Path(__file__).resolve().parent))
 import akshar as A
 
 _R = {}

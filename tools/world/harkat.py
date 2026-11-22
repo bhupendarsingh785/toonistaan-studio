@@ -25,7 +25,7 @@ import math
 import numpy as np
 from scipy import signal as ss
 
-SR = 48000
+SR = 44100   # sutradhar/voice ke saath ek hi SR (warna stems misalign)
 
 def _bp(lo, hi, o=2): return ss.butter(o, [lo / (SR / 2), min(hi, SR / 2 - 200) / (SR / 2)], "band", output="sos")
 def _lp(f, o=2): return ss.butter(o, min(f, SR / 2 - 200) / (SR / 2), "low", output="sos")
