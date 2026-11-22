@@ -24,6 +24,8 @@ sys.path.insert(0, str(ROOT))
 from tools import research_connect as rc
 
 # chaar agent + unka sochne ka tareeka (query ke saath angle)
+START_ENGINE = {"EDGE": "wikipedia", "ELEVENLABS": "arxiv", "ESPEAK": "github", "PIPER": "news"}
+
 AGENTS = {
     "EDGE":        {"agent": "VAJRA",  "browser": "DRISHTI", "research": "NETRA",
                     "angle": "official/primary source pehle"},
@@ -71,9 +73,10 @@ def negotiate(topic: str, agents: list[str]) -> dict[str, list[str]]:
 def _run_agent(agent: str, queries: list[str], per: int) -> dict:
     t0 = time.time()
     rows, err = [], ""
+    start = START_ENGINE.get(agent)
     for q in queries:
         try:
-            rep = rc.research(q, max_sources=per)
+            rep = rc.research(q, max_sources=per, start=start) if "start" in rc.research.__code__.co_varnames else rc.research(q, max_sources=per)
             for s in rep["sources"]:
                 s["agent"] = agent
                 s["query"] = q

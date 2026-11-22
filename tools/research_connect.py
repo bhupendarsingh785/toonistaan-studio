@@ -201,6 +201,41 @@ def search_all(query: str, limit: int = 6) -> list[dict]:
     return [{"engine": "+".join(used) or "none", "results": out[:limit]}]
 
 
+def search_for_agent(query: str, limit: int = 6, start: str | None = None) -> dict:
+    """Ek agent ke liye — apne engine se shuru, fail ho to baaki (domain variety ke liye)."""
+    order = list(SEARCH_ORDER)
+    if start:
+        order.sort(key=lambda kv: 0 if kv[0] == start else 1)
+    out, seen, used = [], set(), []
+    for name, fn in order:
+        if len(out) >= limit:
+            break
+        try:
+            hits = fn(query, limit)
+        except Exception:
+            continue
+        if hits:
+            used.append(name)
+        for h in hits:
+            if h["url"] in seen:
+                continue
+            seen.add(h["url"]); out.append(h)
+    return {"engine": "+".join(used) or "none", "results": out[:limit]}
+
+
+def health() -> dict:
+    """Agents ke liye sach: kaunsa source zinda hai, kaunsa nahi (offline me bhi jawab mile)."""
+    checks = {}
+    for name, fn in SEARCH_ORDER:
+        try:
+            checks[name] = bool(fn("piper tts", 1))
+        except Exception as e:
+            checks[name] = f"{type(e).__name__}"
+    alive = [k for k, v in checks.items() if v is True]
+    return {"alive": alive, "dead": [k for k, v in checks.items() if v is not True], "detail": checks,
+            "ok": len(alive) >= 2}
+
+
 def search(query: str, limit: int = 6) -> dict:
     res = search_all(query, limit)
     return res[0] if res else {"engine": "none", "results": []}
@@ -240,9 +275,10 @@ def _relevant(hit: dict, query: str) -> bool:
     return total >= 2 or in_title >= 1 or (total >= 1 and len(words) <= 3)
 
 
-def research(query: str, max_sources: int = 5, max_chars: int = 20000) -> dict:
-    """Ek query par asli sources — schema wahi jo engine agents use karte hain."""
-    found = search(query, limit=max_sources * 2)
+def research(query: str, max_sources: int = 5, max_chars: int = 20000, start: str | None = None) -> dict:
+    """Ek query par asli sources — schema wahi jo engine agents use karte hain.
+    start: kaunsa source pehle (har agent ka apna — domain variety)."""
+    found = search_for_agent(query, limit=max_sources * 2, start=start)
     sources, used = [], 0
     for hit in found["results"]:
         if used >= max_sources:

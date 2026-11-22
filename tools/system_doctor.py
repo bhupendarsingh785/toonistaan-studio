@@ -175,8 +175,9 @@ def c_collision():
     import collections
     names = collections.defaultdict(list)
     for f in (ROOT / "tools").rglob("*.py"):
-        if "__pycache__" in str(f):
-            continue
+        _rel = str(f.relative_to(ROOT))
+        if "__pycache__" in str(f) or _rel.startswith(("tools/purana/", "tools/backup/", "tools/world_v1")):
+            continue   # purana/ = jaan-boojh kar archive
         names[f.name].append(str(f.relative_to(ROOT)))
     dups = {k: v for k, v in names.items() if len(v) > 1}
     add("module collision", "PASS" if not dups else "FAIL",
@@ -255,7 +256,31 @@ def c_activate():
         add("activation audit", "WARN", f"{type(e).__name__}")
 
 
-CHECKS = [c_activate, c_shabd, c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
+def c_agents():
+    """4 agents + 4 browsers: sources zinda hain? mesh chal raha hai?"""
+    try:
+        import sys as _s
+        _s.path.insert(0, str(ROOT / "tools"))
+        _s.path.insert(0, str(ROOT))
+        import research_connect as rc
+        h = rc.health()
+        add("agents: sources", "PASS" if h["ok"] else "WARN",
+            f"zinda {len(h['alive'])}: {', '.join(h['alive'])} | band: {', '.join(h['dead']) or '-'}")
+        try:
+            import browser_mesh as bm
+            r = bm.mesh("hindi tts prosody", per=1, workers=4)
+            _ag = r.get("agents", {})
+            _vals = _ag.values() if isinstance(_ag, dict) else _ag
+            got = sum(1 for a in _vals if isinstance(a, dict) and a.get("collected", 0) > 0)
+            add("agents: mesh", "PASS" if got >= 3 else ("WARN" if got >= 1 else "FAIL"),
+                f"{got}/4 agent laaye, {r.get('evidence_count')} evidence, {r.get('seconds_total')}s")
+        except Exception as e:
+            add("agents: mesh", "WARN", f"{type(e).__name__}: {str(e)[:40]}")
+    except Exception as e:
+        add("agents: sources", "FAIL", f"{type(e).__name__}")
+
+
+CHECKS = [c_agents, c_activate, c_shabd, c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
           c_engines, c_tools, c_qa_thresholds, c_judge_smoke, c_selftest]
 
 
