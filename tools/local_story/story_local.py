@@ -24,10 +24,10 @@ VOICES = {"m": HERE.parent/"voices/hi_IN-pratham-medium.onnx",
 
 # kirdaar: voice, length_scale (slow>1), pitch_shift (semitones), pause
 CAST = {
- "narrator": {"v": "m2", "ls": 1.00, "ratio": 1.00, "pause": 0.44},   # rohan + h-spell
- "dadi":     {"v": "f", "ls": 1.04, "ratio": 0.98, "pause": 0.42},   # best naap (r72)
- "maa":      {"v": "f", "ls": 0.99, "ratio": 1.00, "pause": 0.42},
- "sonu":     {"v": "f", "ls": 0.98, "ratio": 1.02, "pause": 0.40},   # bachcha: tez par rukta nahi
+ "narrator": {"v": "m2", "ls": 1.00, "ratio": 1.00, "formant": 0.97, "pause": 0.44},   # rohan + h-spell
+ "dadi":     {"v": "f", "ls": 1.08, "ratio": 1.00, "formant": 0.88, "pause": 0.42},   # dadi: formant neecha = badi umar, ASR safe
+ "maa":      {"v": "f", "ls": 1.00, "ratio": 1.00, "formant": 0.94, "pause": 0.42},
+ "sonu":     {"v": "f", "ls": 0.98, "ratio": 1.02, "formant": 1.05, "pause": 0.40},   # bachcha: halka ooncha/patla
 }
 SCRIPT = [
  ("narrator", "सुबह के छह बजे थे। गाँव की छतों से धुआँ उठ रहा था, और दूर नदी कलकल बह रही थी।"),
@@ -194,6 +194,11 @@ def synth_line(text, cfg, out: Path):
     import voice_fx as fx
     src = load(raw)
     y = fx.pitch_resample(src, _ratio)
+    if cfg.get("semi"):
+        y = fx.pitch_shift_formant(y, float(cfg["semi"]))
+    if cfg.get("formant"):
+        y = fx.formant_shift(y, float(cfg["formant"]))     # umar/chehra: F0 nahi, formant badlo (ASR safe)
+    y = fx.prosody_contour(y, SR, depth_st=float(cfg.get("contour", 0.6)), seed=abs(hash(text)) % 9999)
     y = fx.trim_silence(y)
     y = fx.compress_silences(y, SR, min_gap=0.10, max_gap=0.35)   # duniya niyam: saans bachi rahe
     y = fx.smooth_chain(y, semitones=0.0, human=True, br=True, warm_eq=True, rv=False)
@@ -256,7 +261,7 @@ def build(out_mp3: Path):
         if _plan:
             _emo, _dur, _lvl, _band = _plan
             br = breath(_dur, level=_lvl, band=_band, seed=100 + _idx)
-            b_start = max(0, t - int(SR * _dur) - int(SR * 0.03))
+            b_start = max(prev_end, t - len(br) - int(SR * 0.06))   # BUG: saans speech par chadh rahi thi (pehla shabd kha jaati thi)
             voice[b_start:b_start + len(br)] += br
             _last_breath_s = t / SR
             _breath_log.append({"at_s": round(t / SR, 2), "emotion": _emo, "dur_s": _dur})

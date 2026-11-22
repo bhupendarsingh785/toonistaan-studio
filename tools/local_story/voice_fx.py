@@ -292,3 +292,41 @@ def crossfade_join(a, b, ms=25):
     fade_in = np.linspace(0, 1, n)
     mid = a[-n:] * fade_out + b[:n] * fade_in
     return np.concatenate([a[:-n], mid, b[n:]])
+
+
+def prosody_contour(y, sr, depth_st=1.0, parts=3, seed=7):
+    """Insaan ki tarah line ke andar sur ka utaar-chadhav (robotic = flat F0).
+
+    Human naap (22 Nov): F0 std 8–13 semitone. Hamara piper: 4.8–5.5.
+    Ilaaj: line ko 5 hisson me tod kar har hisse par halka pitch-shift —
+    shuru me chadhav (+), ant me utaar (−) — plus chhota random jitter.
+    """
+    import numpy as np
+    rng = np.random.default_rng(seed)
+    n = len(y)
+    if n < sr * 0.4:
+        return y
+    # contour: shuru ooncha, ant neecha (phrase-fall), beech me halka random
+    base = np.linspace(0.45, -1.0, parts)   # halka: seams kam, awaaz saaf
+    rnd = rng.uniform(-0.25, 0.25, parts)
+    contour = (base + rnd) * depth_st
+    idx = np.linspace(0, n, parts + 1).astype(int)
+    out = np.zeros(n, dtype=np.float32)
+    win = int(sr * 0.02)
+    for i in range(parts):
+        a, b = idx[i], idx[i + 1]
+        seg = y[a:b]
+        if len(seg) < 512:
+            out[a:b] += seg
+            continue
+        z = pitch_shift_formant(seg, float(contour[i]))
+        z = z[:b - a]
+        if len(z) < b - a:
+            z = np.pad(z, (0, b - a - len(z)))
+        # crossfade kinare
+        if i > 0 and win < len(z):
+            z[:win] *= np.linspace(0, 1, win)
+        if i < parts - 1 and win < len(z):
+            z[-win:] *= np.linspace(1, 0, win)
+        out[a:b] += z
+    return out

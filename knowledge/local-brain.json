@@ -780,5 +780,44 @@
     "verdict": "PASS"
    }
   }
- }
+ },
+ "human_vs_ours": {
+  "naap": {
+   "HUMAN rishtey": {
+    "F0med": 120,
+    "F0std_st": 8.2,
+    "range_st": 21.2,
+    "jitter": 0.109
+   },
+   "HUMAN aahat": {
+    "F0med": 178,
+    "F0std_st": 13.56,
+    "range_st": 30.1,
+    "jitter": 0.209
+   },
+   "OURS r76 dadi": {
+    "F0med": 227,
+    "F0std_st": 4.73,
+    "range_st": 12.9
+   },
+   "OURS r76 narrator": {
+    "F0med": 167,
+    "F0std_st": 5.02,
+    "range_st": 10.7
+   }
+  },
+  "matlab": "hamara sur insaan se AADHA hai (robotic ki asli wajah) + dadi ki F0 227 Hz (bahut jawaan)",
+  "fixes_try": {
+   "prosody_contour (5 hisse)": "F0std 4.7→6.5 par dadi CER 0.14→0.39 (formant shift seam) — REJECT",
+   "formant_shift 0.88 (F0 nahi badalta)": "centroid 1568→1420 (badi umar), isolated CER 0.131 — ACCEPT",
+   "breath overlap BUG": "saans speech ke start par chadh rahi thi (pehla shabd kha jaati) — clamp se fix"
+  },
+  "r84": {
+   "mean_ph_cer": 0.171,
+   "narrator": 0.246,
+   "dadi": 0.253,
+   "sonu": 1.4025974025974026
+  }
+ },
+ "agla_kadam": "asli pitch engine (WORLD vocoder / PSOLA) chahiye — piper ka formant shift seams banata hai; tabhi F0std 8st tak ja sakta hai bina ASR tode"
 }
