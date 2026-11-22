@@ -194,7 +194,36 @@ def c_world_version():
         f"{len(mods)} modules, naye functions: {', '.join(new) or 'koi nahi'}")
 
 
-CHECKS = [c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
+def c_realtime():
+    """v3 ka real-time checker: line bante hi akshar/bhaav jaanch."""
+    rt = ROOT / "tools" / "realtime"
+    need = ["akshar.py", "kaan.py", "gates.py", "nirantarta.py", "sudhaar.py", "bahi.py", "live.py", "bhaav.py"]
+    have = [n for n in need if (rt / n).exists()]
+    rules = ROOT / "knowledge" / "bhaav-rules.json"
+    emos = 0
+    if rules.exists():
+        d = json.loads(rules.read_text(encoding="utf-8"))
+        emos = len(d.get("signature", {}))
+    add("realtime checker", "PASS" if len(have) == len(need) and emos >= 4 else "WARN",
+        f"{len(have)}/{len(need)} modules, {emos} bhaav signatures")
+
+
+def c_bhaav_kaam():
+    """bhaav.target() asli line par chalta hai — warna checker bekaar."""
+    try:
+        import sys as _s
+        _s.path.insert(0, str(ROOT / "tools" / "realtime"))
+        import bhaav as B
+        got = [B.target({"text": t}).get("emotion") for t in
+               ("वाह! बहुत खुश हूँ।", "आँसू देखकर दुख हुआ।", "कौन है वहाँ? डर लगा।", "नदी बह रही थी।")]
+        want = ["khushi", "dukh", "dar", "neutral"]
+        ok = sum(1 for a, b in zip(got, want) if a == b)
+        add("bhaav pehchan", "PASS" if ok == 4 else ("WARN" if ok >= 2 else "FAIL"), f"{ok}/4 sahi ({', '.join(got)})")
+    except Exception as e:
+        add("bhaav pehchan", "FAIL", f"{type(e).__name__}: {str(e)[:50]}")
+
+
+CHECKS = [c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
           c_engines, c_tools, c_qa_thresholds, c_judge_smoke, c_selftest]
 
 

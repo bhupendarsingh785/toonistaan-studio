@@ -1,0 +1,234 @@
+{
+  "_note": "Bhaav ka gyaan. 'signature' = neutral awaaz se kitna hatna = poora (100%) bhaav. Ikaai: f0 = semitone, range = semitone (p90-p10), rate = log(raftaar anupaat), energy = dB, bright = log(chamak anupaat), end = aakhri 30% me sur ka utaar/chadhav (semitone), pause = ruke ka hissa (0-1) ka fark. Yeh shuruaati andaaze hain (bhaav-shastra + prosody research ke aam rujhaan); system har sahi line se inhe apni awaaz ke liye seekhta hai.",
+  "dims": [
+    "f0",
+    "range",
+    "rate",
+    "energy",
+    "bright",
+    "end",
+    "pause"
+  ],
+  "scale": {
+    "f0": 1.0,
+    "range": 1.5,
+    "rate": 0.08,
+    "energy": 2.0,
+    "bright": 0.08,
+    "end": 1.5,
+    "pause": 0.06
+  },
+  "signature": {
+    "khushi": {
+      "f0": 1.8,
+      "range": 2.0,
+      "rate": 0.07,
+      "energy": 2.0,
+      "bright": 0.08,
+      "end": 0.5,
+      "pause": -0.02
+    },
+    "gussa": {
+      "f0": 1.2,
+      "range": 2.5,
+      "rate": 0.1,
+      "energy": 5.0,
+      "bright": 0.15,
+      "end": -1.0,
+      "pause": -0.03
+    },
+    "dar": {
+      "f0": 2.2,
+      "range": 0.5,
+      "rate": 0.15,
+      "energy": -1.0,
+      "bright": -0.05,
+      "end": 1.0,
+      "pause": 0.04
+    },
+    "dukh": {
+      "f0": -1.5,
+      "range": -2.0,
+      "rate": -0.18,
+      "energy": -3.0,
+      "bright": -0.12,
+      "end": -1.5,
+      "pause": 0.08
+    },
+    "hairani": {
+      "f0": 2.5,
+      "range": 3.5,
+      "rate": 0.0,
+      "energy": 2.0,
+      "bright": 0.05,
+      "end": 2.5,
+      "pause": 0.02
+    },
+    "pyaar": {
+      "f0": 0.5,
+      "range": 0.5,
+      "rate": -0.06,
+      "energy": -2.0,
+      "bright": -0.08,
+      "end": 0.0,
+      "pause": 0.03
+    }
+  },
+  "names": {
+    "neutral": "सामान्य",
+    "khushi": "ख़ुशी",
+    "gussa": "ग़ुस्सा",
+    "dar": "डर",
+    "dukh": "दुख",
+    "hairani": "हैरानी",
+    "pyaar": "प्यार/स्नेह"
+  },
+  "words": {
+    "khushi": [
+      "ख़ुश",
+      "खुश",
+      "वाह",
+      "मज़ा",
+      "मजा",
+      "सुंदर",
+      "शाबाश",
+      "हँस*",
+      "हंस*",
+      "जीत*",
+      "बधाई",
+      "प्यारा"
+    ],
+    "gussa": [
+      "चुप",
+      "बाहर निकलो",
+      "ग़ुस्सा",
+      "गुस्सा",
+      "बदतमीज़",
+      "बदतमीज",
+      "हिम्मत कैसे",
+      "ख़बरदार",
+      "खबरदार",
+      "निकल",
+      "बस करो"
+    ],
+    "dar": [
+      "डर",
+      "डरा",
+      "डरी",
+      "डर*",
+      "बचाओ",
+      "भूत",
+      "कौन है",
+      "काँप*",
+      "कांप*",
+      "अँधेरा",
+      "अंधेरा",
+      "मदद"
+    ],
+    "dukh": [
+      "दुख",
+      "रो",
+      "रोने",
+      "रोया",
+      "रोई",
+      "आँसू",
+      "आंसू",
+      "नहीं रही",
+      "नहीं रहा",
+      "अकेला",
+      "अकेली",
+      "माफ़",
+      "माफ",
+      "काश",
+      "हाय",
+      "उदास"
+    ],
+    "hairani": [
+      "क्या!",
+      "सच में",
+      "अरे",
+      "अच्छा!",
+      "यकीन",
+      "कैसे",
+      "अचानक",
+      "ओह"
+    ],
+    "pyaar": [
+      "बेटा",
+      "बेटी",
+      "प्यार",
+      "मेरे लाल",
+      "मेरी गुड़िया",
+      "चिंता मत",
+      "सो जाओ",
+      "प्यारे"
+    ]
+  },
+  "interjections": [
+    "अरे",
+    "वाह",
+    "हाय",
+    "उफ़",
+    "उफ",
+    "ओह",
+    "अहा",
+    "अजी",
+    "हे भगवान",
+    "बाप रे",
+    "छी"
+  ],
+  "intensifiers": [
+    "बहुत",
+    "बिल्कुल",
+    "एकदम",
+    "सच में",
+    "कितना",
+    "कितनी",
+    "इतना",
+    "इतनी",
+    "ज़रा भी",
+    "कभी नहीं",
+    "बेहद"
+  ],
+  "word_target": {
+    "_note": "Zor wale shabd ka lakshya (poore bhaav par, I=1). Lamba = shabd ki apni ummeed se guna; sur = line ke beech se semitone; zor = dB; ruka = shabd se pehle ms.",
+    "default": {
+      "len": 1.25,
+      "f0": 3.0,
+      "energy": 3.0,
+      "pause_ms": 0
+    },
+    "dukh": {
+      "len": 1.35,
+      "f0": -1.0,
+      "energy": -1.0,
+      "pause_ms": 180
+    },
+    "dar": {
+      "len": 1.15,
+      "f0": 3.5,
+      "energy": 1.0,
+      "pause_ms": 80
+    },
+    "gussa": {
+      "len": 1.15,
+      "f0": 2.5,
+      "energy": 5.0,
+      "pause_ms": 0
+    },
+    "interjection": {
+      "len": 1.4,
+      "f0": 3.5,
+      "energy": 3.0,
+      "pause_ms": 0,
+      "pause_after_ms": 160
+    }
+  },
+  "tolerance": {
+    "min_frac": 0.65,
+    "max_frac": 1.5,
+    "min_cos": 0.35,
+    "word_min_frac": 0.5,
+    "_note": "min_cos 0.35: khushi/hairani/dar jaise oonchi-urja bhaav aapas me milte hain; kism ki seema thodi dheeli."
+  }
+}

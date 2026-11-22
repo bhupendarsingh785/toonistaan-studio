@@ -624,5 +624,31 @@
    "world_qa_overall": "PASS"
   },
   "sabak": "saans headline/line se bandhi nahi hoti — time aur bhav se bandhti hai"
+ },
+ "realtime_checker_v3": {
+  "source": "seetal-duniya-engine-3.zip",
+  "kya_hai": [
+   "tools/realtime/ (8 modules, 1474 lines): akshar, kaan, gates, nirantarta, sudhaar, bahi, live, bhaav",
+   "knowledge/bhaav-rules.json: 6 bhaav signature (khushi/gussa/dar/dukh/neutral + ek), 7 dims (f0/range/rate/energy/bright/end/pause)"
+  ],
+  "kya_karta_hai": [
+   "har line bante hi: ASR → akshar-akshar milaan → galti ki kism (15 kism: mahapraan, ghosh, murdhanya, ushm, nukta, matra, sanyukt…)",
+   "pakki galti (line dobara) vs shak (darj) — likhai ke fark barabar",
+   "echo F0-safe (cepstrum) — 105 Hz sur ko echo nahi samajhta",
+   "bhaav: lakshya (text se) vs mila (audio se, signature cosine + projection)",
+   "sudhaar: likhai badal kar dobara (ख→क्ह, ि↔ी, ँ↔ं, क्ष→क्श) + raftaar/sur/zor/chamak",
+   "yaad: galti-bahi + shabdkosh + voice-profiles + bhaav-yaad (agli render se pehle)",
+   "nirantarta: kirdaar ki awaaz bhatke to pakde (sur/raftaar/zor pakka; chamak/rang halka)"
+  ],
+  "naap": {
+   "modules": "8/8 import OK",
+   "bhaav_pehchan": "4/4 sahi (khushi, dukh, dar, neutral)",
+   "doctor": "PASS 16 | WARN 0 | FAIL 1"
+  },
+  "dependency": "faster-whisper (kaan.py) — abhi install nahi; ASR ke bina SimulatedEar se test",
+  "install": {
+   "tools/realtime": "src/tools/realtime",
+   "backup_v2": "src/backup/world_v2"
+  }
  }
 }
