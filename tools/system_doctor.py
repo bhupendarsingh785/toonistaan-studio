@@ -24,7 +24,13 @@ def c_voices():
     v = ROOT / "voices"
     need = ["hi_IN-pratham-medium.onnx", "hi_IN-priyamvada-medium.onnx", "hi_IN-rohan-medium.onnx"]
     have = [n for n in need if (v / n).exists() or (Path("/scratch/work/voices") / n).exists()]
-    add("piper voices", "PASS" if len(have) == 3 else "FAIL", f"{len(have)}/3")
+    import os
+    if len(have) == 3:
+        add("piper voices", "PASS", "3/3 maujood")
+    elif os.environ.get("CI") or os.environ.get("GITHUB_ACTIONS"):
+        add("piper voices", "WARN", f"{len(have)}/3 — CI me model nahi (repo me 60MB file nahi jaati)")
+    else:
+        add("piper voices", "FAIL", f"{len(have)}/3 — voices/ me onnx daalo")
 
 
 def c_brain():
