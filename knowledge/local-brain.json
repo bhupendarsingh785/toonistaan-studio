@@ -517,7 +517,36 @@
   "bacha_hua": [
    "rohan voice model (reset me gaya)",
    "paragraph-wise prosody (aur smoothness)"
-  ]
+  ],
+  "v2_update": {
+   "source": "seetal-duniya-engine-2.zip (22 Nov 2026)",
+   "kya_naya": [
+    "apply_emotion() — line ka bhaav (gussa/dar/dukh) mix par asar",
+    "apply_weather() — mausam layer",
+    "auto_repace() — script na ho to ruke khud lagana",
+    "situation_at() / indoor_muffle() / phone_voice() / outdoor_reverb() — jagah ke hisaab se awaaz",
+    "voice_chain() — voice par FX chain",
+    "syn_bird/syn_crickets/syn_koel/syn_leaves/syn_rain/syn_river/syn_step/syn_thunder/syn_wind — khud banayi awaazein"
+   ],
+   "install": {
+    "world": "src/tools/world (v2)",
+    "backup_v1": "src/backup/world_v1 (import se bahar)",
+    "knowledge": "world-map/sound-events/situation-rules + learned/ (v2)"
+   },
+   "naap": {
+    "qa_v2_on_v65": {
+     "holes_pct": 0.03,
+     "stereo_width": 0.242,
+     "sentence_pauses_per_min": 4.5,
+     "breaths_per_min": 3.38,
+     "mud_db": -10.8,
+     "lufs": -16.8,
+     "overall": "FAIL"
+    }
+   },
+   "sabak": "v2 ka QA sidecar (*.pauses.json) ke bina mix par naapta hai — bed gaps bhar deta hai, isliye 4.5 aaya; pipeline sidecar likhta hai to 11.0 aata hai (v1 naap). Ye galti nahi, tareeka hai.",
+   "conflict_check": "tools/ me duplicate module naam = 0 (backup ko tools/ se bahar rakha); doctor me do naye check: module collision + duniya version"
+  }
  },
  "saans_model": {
   "research": [

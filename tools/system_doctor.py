@@ -170,7 +170,31 @@ def c_world_engine():
         f"{len(have)}/{len(need)} modules, {kws} keywords")
 
 
-CHECKS = [c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
+def c_collision():
+    """tools/ ke andar duplicate module naam = galat import ka khatra."""
+    import collections
+    names = collections.defaultdict(list)
+    for f in (ROOT / "tools").rglob("*.py"):
+        if "__pycache__" in str(f):
+            continue
+        names[f.name].append(str(f.relative_to(ROOT)))
+    dups = {k: v for k, v in names.items() if len(v) > 1}
+    add("module collision", "PASS" if not dups else "FAIL",
+        "koi duplicate nahi" if not dups else "; ".join(f"{k}:{len(v)}" for k, v in list(dups.items())[:4]))
+
+
+def c_world_version():
+    p = ROOT / "knowledge" / "world-map.json"
+    if not p.exists():
+        return add("duniya version", "WARN", "world-map nahi")
+    d = json.loads(p.read_text(encoding="utf-8"))
+    mods = [x.name for x in (ROOT / "tools" / "world").glob("*.py")]
+    new = [m for m in ("apply_emotion", "apply_weather", "auto_repace") if m in (ROOT / "tools" / "world" / "duniya.py").read_text(encoding="utf-8")]
+    add("duniya version", "PASS" if len(mods) >= 7 and len(new) >= 2 else "WARN",
+        f"{len(mods)} modules, naye functions: {', '.join(new) or 'koi nahi'}")
+
+
+CHECKS = [c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
           c_engines, c_tools, c_qa_thresholds, c_judge_smoke, c_selftest]
 
 
