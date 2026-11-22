@@ -26,6 +26,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Diagnostics (kaunsi value sahi hai)
+        run: |
+          python3 - <<'EOF'
+          import os, re
+          checks = {
+            "ANTHROPIC_FEDERATION_RULE_ID": (r"^fdrl_[A-Za-z0-9]+$", "fdrl_"),
+            "ANTHROPIC_ORGANIZATION_ID": (r"^[0-9a-fA-F-]{36}$", "UUID"),
+            "ANTHROPIC_SERVICE_ACCOUNT_ID": (r"^svac_[A-Za-z0-9]+$", "svac_ (optional)"),
+            "ANTHROPIC_WORKSPACE_ID": (r"^wrkspc_[A-Za-z0-9]+$", "wrkspc_ (optional)"),
+          }
+          for k, (pat, want) in checks.items():
+              v = os.environ.get(k, "")
+              if not v:
+                  print(f"{k}: EMPTY (chahiye: {want})"); continue
+              ok = bool(re.match(pat, v))
+              print(f"{k}: len={len(v)} start={v[:6]!r} end={v[-4:]!r} valid={ok} (chahiye: {want})")
+          EOF
+
       - name: GitHub OIDC token lo
         run: |
           curl -sS -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
