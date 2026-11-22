@@ -23,10 +23,10 @@ VOICES = {"m": HERE.parent/"voices/hi_IN-pratham-medium.onnx",
 
 # kirdaar: voice, length_scale (slow>1), pitch_shift (semitones), pause
 CAST = {
- "narrator": {"v": "m", "ls": 0.98, "ratio": 1.00, "pause": 0.30},
- "dadi":     {"v": "f", "ls": 1.05, "ratio": 0.72, "pause": 0.28},
- "maa":      {"v": "f", "ls": 0.98, "ratio": 0.70, "pause": 0.25},
- "sonu":     {"v": "f", "ls": 0.92, "ratio": 1.02, "pause": 0.22},
+ "narrator": {"v": "m", "ls": 0.98, "ratio": 1.00, "pause": 0.52},
+ "dadi":     {"v": "f", "ls": 1.05, "ratio": 0.72, "pause": 0.50},
+ "maa":      {"v": "f", "ls": 0.98, "ratio": 0.70, "pause": 0.48},
+ "sonu":     {"v": "f", "ls": 0.92, "ratio": 1.02, "pause": 0.46},
 }
 SCRIPT = [
  ("narrator", "सुबह के छह बजे थे। गाँव की छतों से धुआँ उठ रहा था, और दूर नदी कलकल बह रही थी।"),
@@ -64,6 +64,38 @@ GROUND = {
 # jeev / duniya
 CREATURES = {"भेड़िया": "wolf", "कुत्ता": "dog", "शेर": "lion", "चिड़िया": "birds",
              "पक्षी": "birds", "झींगुर": "crickets", "नदी": "river", "पानी": "river"}
+
+def breath(dur=0.30, level=0.05, seed=5):
+    """halki saans (inhale) — gap me daalne ke liye. High-mid band, dheema envelope."""
+    import numpy as np
+    n = int(SR * dur); t = np.arange(n) / SR
+    rng = np.random.default_rng(seed)
+    nz = rng.normal(0, 1, n)
+    X = np.fft.rfft(nz); f = np.fft.rfftfreq(n, 1 / SR)
+    band = 1 / (1 + (280 / (f + 1e-9)) ** 4) * 1 / (1 + (2600 / (f + 1e-9)) ** 4)
+    nz = np.fft.irfft(X * band, n)
+    env = np.sin(np.pi * np.clip(t / dur, 0, 1)) ** 1.6
+    return (nz / (np.max(np.abs(nz)) + 1e-9) * env * level).astype("float32")
+
+
+def _hp(x, fc=110.0):
+    """low-cut — bhaaripan (mud) kam karne ke liye."""
+    import numpy as np
+    n = len(x); X = np.fft.rfft(x); f = np.fft.rfftfreq(n, 1 / SR)
+    return np.fft.irfft(X / (1 + (fc / (f + 1e-9)) ** 4), n)
+
+
+def _stereo(voice, bed, width=0.06, delay_ms=7):
+    """mono se stereo — awaaz beech me, duniya baayein-daayein (duniya engine ka asar)."""
+    import numpy as np
+    d = int(SR * delay_ms / 1000)
+    bl = np.concatenate([bed, np.zeros(d)])[:len(bed)]
+    br = np.concatenate([np.zeros(d), bed])[:len(bed)]
+    L = voice + bl * (1 + width)
+    R = voice + br * (1 - width * 0.2)
+    st = np.stack([L, R], axis=1)
+    return st
+
 
 MOODS = {"bed": [("rain", 0.5), ("river", 0.35), ("wind", 0.25), ("crickets", 0.04)],
          "pad": (130.8, 164.8, 196.0)}
@@ -105,7 +137,11 @@ def build(out_mp3: Path):
     for i, (who, text) in enumerate(SCRIPT):
         p = synth_line(text, CAST[who], work / f"line{i:02d}.wav")
         clips.append((who, p, load(p)))
-    total = sum(len(c[2]) for c in clips) + int(SR * sum(CAST[c[0]]["pause"] for c in clips)) + SR
+    # scene break: har 4th line ke baad lamba ruk (duniya ubharne ke liye) — duniya niyam 1.4–2.6s
+    scene_gap = {i: 1.7 for i in range(3, len(clips), 4)}
+    total = (sum(len(c[2]) for c in clips)
+             + int(SR * sum(CAST[c[0]]["pause"] for c in clips))
+             + int(SR * sum(scene_gap.values())) + SR)
     voice = np.zeros(total)
     _join = True
     t = 0
@@ -118,9 +154,14 @@ def build(out_mp3: Path):
                 sig = sig.copy()
                 sig[:n] *= np.linspace(0, 1, n)
         voice[t:t+len(sig)] += sig
+        if i % 2 == 1:
+            br = breath(0.30, level=0.045, seed=100 + i)
+            b_start = max(0, t - int(SR * 0.30) - int(SR * 0.06))
+            voice[b_start:b_start + len(br)] += br
         marks.append({"who": who, "start": round(t/SR, 2), "dur": round(len(sig)/SR, 2), "text": SCRIPT[i][1]})
         prev_end = t + len(sig)
-        t += len(sig) + int(SR * CAST[who]["pause"])
+        idx_now = len(marks) - 1
+        t += len(sig) + int(SR * CAST[who]["pause"]) + int(SR * scene_gap.get(idx_now, 0))
     dur = len(voice) / SR
     # ---- duniya ki awaaz: har line ke shabd se sound, line-wise automation
     bed = np.zeros(total)
@@ -170,15 +211,27 @@ def build(out_mp3: Path):
         duck[a:b] = np.minimum(duck[a:b], 0.40)
         duck[b:b+n] = np.linspace(0.40, 1.0, min(n, total-b))[:max(0, min(n, total-b))]
     bed *= duck
+    import os as _os
+    if _os.environ.get("SEETAL_HP", "0") == "1":
+        voice = _hp(voice, 140); bed = _hp(bed, 120)
     mix = voice * 0.95 + bed * 0.17
     mix = np.tanh(mix * 1.05)
+    mix_st = None
+    if _os.environ.get("SEETAL_STEREO", "0") == "1":
+        mix_st = _stereo(voice * 0.95, np.tanh(bed * 0.17 * 1.05), width=0.06, delay_ms=7)
     rms = float(np.sqrt((mix**2).mean())) + 1e-9
-    mix *= (10 ** (-16/20)) / rms
+    mix *= (10 ** (-18/20)) / rms
     mix = mix / max(1.0, float(np.max(np.abs(mix)))/0.95)
     wav = out_mp3.with_suffix(".wav")
-    with wave.open(str(wav), "wb") as w:
-        w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR)
-        w.writeframes((np.clip(mix, -1, 1)*32767).astype("int16").tobytes())
+    if mix_st is not None:
+        st = np.clip(mix_st / max(1.0, float(np.max(np.abs(mix_st))) / 0.95), -1, 1)
+        with wave.open(str(wav), "wb") as w:
+            w.setnchannels(2); w.setsampwidth(2); w.setframerate(SR)
+            w.writeframes((st * 32767).astype("int16").tobytes())
+    else:
+        with wave.open(str(wav), "wb") as w:
+            w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR)
+            w.writeframes((np.clip(mix, -1, 1) * 32767).astype("int16").tobytes())
     subprocess.run([FF, "-v", "quiet", "-y", "-i", str(wav), "-codec:a", "libmp3lame",
                     "-b:a", "192k", str(out_mp3)], check=False)
     wav.unlink(missing_ok=True)
@@ -194,7 +247,7 @@ def build(out_mp3: Path):
             while _j < len(_q) and _q[_j]:
                 _j += 1
             _ms = (_j - _i) * _w / SR * 1000
-            if 40 <= _ms < 600:
+            if 40 <= _ms < 3000:
                 _gaps.append(_ms)
             _i = _j
         else:
@@ -207,6 +260,13 @@ def build(out_mp3: Path):
             "marks": marks, "bed": MOODS["bed"], "peak": round(float(np.max(np.abs(mix))), 2),
             "rms_dbfs": round(20*float(np.log10(max(1e-9, float(np.sqrt((mix**2).mean()))))), 1)}
     (HERE / "story_local.json").write_text(json.dumps(info, ensure_ascii=False, indent=1), encoding="utf-8")
+    # world_qa ke liye voice-stem gaps (sidecar) — mix me bed gaps chhupa deta hai
+    try:
+        _all = [round(g/1000, 3) for g in _gaps]
+        Path(str(out_mp3).rsplit(".", 1)[0] + ".pauses.json").write_text(
+            json.dumps({"voice_gaps_s": _all}, ensure_ascii=False), encoding="utf-8")
+    except Exception:
+        pass
     return info
 
 
