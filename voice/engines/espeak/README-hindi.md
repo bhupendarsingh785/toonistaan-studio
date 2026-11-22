@@ -29,6 +29,7 @@
 - lines ke beech pause 0.22–0.35 s (1.5 s nahi)
 - humanize me amplitude micro-dips band (woh shabd kaat dete hain)
 - target: andar ke 80 ms+ gaps ≤5, pace 12–14 akshar/s, speech 65–70%
+- smooth reference ka target: low 15–17, mid 55–57, high 27–30%, brightness 2086–2187 Hz, RMS -18.5 dBFS
 
 ## 4. Bhaav ke signal
 

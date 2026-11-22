@@ -54,7 +54,8 @@
    "har line: trim 25–40 ms → andar ki 80 ms+ gap ko 35 ms karo → 20 ms fade-in",
    "lines ke beech pause 0.22–0.35 s (1.5 s nahi)",
    "humanize me amplitude micro-dips band (woh shabd kaat dete hain)",
-   "target: andar ke 80 ms+ gaps ≤5, pace 12–14 akshar/s, speech 65–70%"
+   "target: andar ke 80 ms+ gaps ≤5, pace 12–14 akshar/s, speech 65–70%",
+   "smooth reference ka target: low 15–17, mid 55–57, high 27–30%, brightness 2086–2187 Hz, RMS -18.5 dBFS"
   ],
   "emotion_map": {
    "neutral": {
@@ -266,7 +267,8 @@
   "CAST patch chupchap fail hua → dadi 240 Hz par reh gayi",
   "length_scale 1.4+ kar diya → ruk-ruk kar bolna",
   "line ke andar ki 1 s+ gaps compress nahi kiye",
-  "smoothness ke liye sirf gaps compress kiye, piper ke noise_w/length_scale ko nahi chhua — isliye phir ruk-ruk laga"
+  "smoothness ke liye sirf gaps compress kiye, piper ke noise_w/length_scale ko nahi chhua — isliye phir ruk-ruk laga",
+  "main 'garam/dull' EQ ki taraf chali gayi (mid 69, high 9) — Swag ka smooth reference bright hai, isliye ruk-ruk lagta tha"
  ],
  "duniya_ki_awaaz": {
   "niyam": "jis cheez ka zikr ho, usi ki awaaz background me ubhare — nadi, hawa, barish, patte, chidaiyan, jhingur, kadam, gaon",
@@ -283,5 +285,57 @@
    "चलना/किनारा": "footsteps"
   },
   "sabak": "sirf ek flat bed nahi — duniya badalti rehni chahiye, warna scene mar jata hai"
+ },
+ "smooth_reference": {
+  "kya_hai": "SMOOTH reference — Swag ke banwaye hue jungle-nadi-safar v5/v8 (Sarvam) ka naap. Local engines ko isi ke kareeb laana hai.",
+  "files": {
+   "v5": "/scratch/input/jungle-nadi-safar-v5.mp3",
+   "v8": "/scratch/input/jungle-nadi-safar-v8.mp3"
+  },
+  "targets": {
+   "speech_pct": [
+    82,
+    95
+   ],
+   "inner_gaps": "40–115 (mean 104–180 ms, max 300–580 ms)",
+   "f0_clusters": [
+    120,
+    320
+   ],
+   "low_pct": [
+    15,
+    17
+   ],
+   "mid_pct": [
+    55,
+    57
+   ],
+   "high_pct": [
+    27,
+    30
+   ],
+   "brightness_hz": [
+    2086,
+    2187
+   ],
+   "rms_dbfs": [
+    -18.6,
+    -18.5
+   ],
+   "peak": [
+    0.79,
+    0.8
+   ],
+   "spectral_flux": [
+    57.5,
+    58.3
+   ]
+  },
+  "sabak": [
+   "smooth reference KAALI/dull nahi hai — bright 2086–2187 Hz (mera local 1157 tha)",
+   "mid 55–57%, high 27–30% — yahi 'khula, clear' sunai deta hai",
+   "gaps reference me bhi hain (mean 104–180 ms) — matlab 'ruk-ruk' gaps se nahi, DULLNESS se lagta hai",
+   "local ko match karne ke liye: presence +2.3 dB @3.2k, air +1.45 dB @6.2k, de-ess @7.5k, air bed layer"
+  ]
  }
 }
