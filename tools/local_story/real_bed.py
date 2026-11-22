@@ -22,6 +22,8 @@ PATTERNS = {
     "wind":    ["soft-wind", "wind", "hawa"],
     "leaves":  ["leaves-rustl", "rustle", "grass-rustl"],
     "steps":   ["footsteps-dirt", "footsteps-on-gravel", "soil-steps", "footsteps"],
+    "jungle":  ["jungle-nature", "jungle-in-maharashtra", "night-forest-soundscape", "forest-sounds"],
+    "wolf":    ["wolf-howling", "wolf-crying-howl", "lone-wolf-cries", "wolf"],
 }
 
 
@@ -57,7 +59,7 @@ def _ff():
         return "ffmpeg"
 
 
-def load_mono(path: Path, sr: int, max_s: float = 30.0):
+def load_mono(path: Path, sr: int, max_s: float = 18.0):
     FF = _ff()
     raw = subprocess.run([FF, "-v", "quiet", "-t", str(max_s), "-i", str(path),
                           "-f", "f32le", "-ac", "1", "-ar", str(sr), "-"], capture_output=True).stdout
@@ -105,7 +107,8 @@ def make_bed(kinds, n, sr, level_db=-26, seed=11):
         x = band(x, sr)
         x = loop_to(x, n)
         x = x / (np.max(np.abs(x)) + 1e-9) * (10 ** (level_db / 20)) * w
-        bed += x
+        bed += x.astype(np.float32)
+        del x
         used.append({"kind": kind, "file": p.name, "w": w})
     if not used:
         return None, []

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Local Story — sirf apne system se audio (Sarvam nahi): Piper + apni ambience + apna mix."""
 from __future__ import annotations
+import os
 import json, subprocess, sys, wave
 
 def ffmpeg_bin():
@@ -16,7 +17,7 @@ import numpy as np
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-SR = 22050
+SR = int(os.environ.get('SEETAL_SR', '22050'))   # 2 GB RAM me 16000 chalao
 
 VOICES = {"m": HERE.parent/"voices/hi_IN-pratham-medium.onnx",
           "m2": HERE.parent/"voices/hi_IN-rohan-medium.onnx",     # narrator (naap me behtar)
@@ -28,6 +29,8 @@ CAST = {
  "dadi":     {"v": "f", "ls": 1.08, "ratio": 1.00, "formant": 0.94, "pause": 0.42},   # dadi: formant neecha = badi umar, ASR safe
  "maa":      {"v": "f", "ls": 1.00, "ratio": 1.00, "formant": 0.94, "pause": 0.42},
  "sonu":     {"v": "f", "ls": 0.98, "ratio": 1.02, "formant": 1.05, "pause": 0.40},   # bachcha: halka ooncha/patla
+ "bhediya":  {"v": "m", "ls": 1.06, "ratio": 1.00, "formant": 0.90, "pause": 0.46},   # bhediya→insaan: gehri, dheemi
+ "stree":    {"v": "f", "ls": 1.02, "ratio": 1.00, "formant": 1.00, "pause": 0.42},   # premika: garam, saaf
 }
 SCRIPT = [
  ("narrator", "सुबह के छह बजे थे। गाँव की छतों से धुआँ उठ रहा था, और दूर नदी कलकल बह रही थी।"),
@@ -287,7 +290,8 @@ def load(p: Path):
 def group_script(script):
     """Lagatar ek hi kirdaar ki lines jodo — beech me rukna band (ruk-ruk ka ilaaj)."""
     out = []
-    for who, text in script:
+    for row in script:
+        who, text = row[0], row[1]
         if out and out[-1][0] == who:
             out[-1] = (who, out[-1][1] + " " + text)
         else:
@@ -345,7 +349,8 @@ def build(out_mp3: Path):
     _real_used = []
     try:
         import real_bed as RB
-        _kinds = [(k, w) for k, w in MOODS["bed"]]
+        _env = os.environ.get("SEETAL_BED", "").strip()
+        _kinds = [(x.split(":")[0], float(x.split(":")[1])) for x in _env.split(",")] if _env else [(k, w) for k, w in MOODS["bed"]]
         _rb, _real_used = RB.make_bed(_kinds, total, SR, level_db=-24)
         if _rb is not None:
             bed += _rb.astype(np.float32)      # ASLI recordings (synthetic nahi)
@@ -472,4 +477,9 @@ def build(out_mp3: Path):
 
 if __name__ == "__main__":
     out = Path(sys.argv[1]) if len(sys.argv) > 1 else HERE / "local-story.mp3"
+    SCRIPT_JSON = Path(sys.argv[2]) if len(sys.argv) > 2 else None
+    if SCRIPT_JSON and SCRIPT_JSON.exists():
+        import json as _json
+        _new = [(r["who"], r["text"], r.get("bhaav", "")) for r in _json.loads(SCRIPT_JSON.read_text(encoding="utf-8"))]
+        globals()["SCRIPT"] = _new
     print(json.dumps(build(out), ensure_ascii=False))
