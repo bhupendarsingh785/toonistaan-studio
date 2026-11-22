@@ -16,7 +16,7 @@ import numpy as np
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-SR = 44100
+SR = 22050
 
 VOICES = {"m": HERE.parent/"voices/hi_IN-pratham-medium.onnx",
           "f": HERE.parent/"voices/hi_IN-priyamvada-medium.onnx"}
@@ -85,7 +85,7 @@ def _hp(x, fc=110.0):
     return np.fft.irfft(X / (1 + (fc / (f + 1e-9)) ** 4), n)
 
 
-def _stereo(voice, bed, width=0.06, delay_ms=7):
+def _stereo(voice, bed, width=0.10, delay_ms=4):
     """mono se stereo — awaaz beech me, duniya baayein-daayein (duniya engine ka asar)."""
     import numpy as np
     d = int(SR * delay_ms / 1000)
@@ -101,10 +101,21 @@ MOODS = {"bed": [("rain", 0.5), ("river", 0.35), ("wind", 0.25), ("crickets", 0.
          "pad": (130.8, 164.8, 196.0)}
 
 
+_VCACHE = {}
+
+
+def _voice(key):
+    """PiperVoice ek hi baar load — har line par load karna hi speed ka asli bug tha."""
+    if key not in _VCACHE:
+        from piper import PiperVoice
+        _VCACHE[key] = PiperVoice.load(str(VOICES[key]), config_path=str(VOICES[key]) + ".json")
+    return _VCACHE[key]
+
+
 def synth_line(text, cfg, out: Path):
     from piper import PiperVoice
     from piper.config import SynthesisConfig
-    v = PiperVoice.load(str(VOICES[cfg["v"]]), config_path=str(VOICES[cfg["v"]]) + ".json")
+    v = _voice(cfg["v"])
     raw = out.with_suffix(".raw.wav")
     sc = SynthesisConfig(length_scale=float(cfg["ls"]), noise_scale=0.62, noise_w_scale=0.75)
     with wave.open(str(raw), "wb") as w:
@@ -154,8 +165,8 @@ def build(out_mp3: Path):
                 sig = sig.copy()
                 sig[:n] *= np.linspace(0, 1, n)
         voice[t:t+len(sig)] += sig
-        if i % 2 == 1:
-            br = breath(0.30, level=0.045, seed=100 + i)
+        if i % 3 == 2:
+            br = breath(0.26, level=0.032, seed=100 + i)
             b_start = max(0, t - int(SR * 0.30) - int(SR * 0.06))
             voice[b_start:b_start + len(br)] += br
         marks.append({"who": who, "start": round(t/SR, 2), "dur": round(len(sig)/SR, 2), "text": SCRIPT[i][1]})
@@ -212,15 +223,15 @@ def build(out_mp3: Path):
         duck[b:b+n] = np.linspace(0.40, 1.0, min(n, total-b))[:max(0, min(n, total-b))]
     bed *= duck
     import os as _os
-    if _os.environ.get("SEETAL_HP", "0") == "1":
-        voice = _hp(voice, 140); bed = _hp(bed, 120)
+    if _os.environ.get("SEETAL_HP", "1") == "1":
+        voice = _hp(voice, 130); bed = _hp(bed, 110)
     mix = voice * 0.95 + bed * 0.17
     mix = np.tanh(mix * 1.05)
     mix_st = None
-    if _os.environ.get("SEETAL_STEREO", "0") == "1":
-        mix_st = _stereo(voice * 0.95, np.tanh(bed * 0.17 * 1.05), width=0.06, delay_ms=7)
+    if _os.environ.get("SEETAL_STEREO", "1") == "1":
+        mix_st = _stereo(voice * 0.95, np.tanh(bed * 0.17 * 1.05) * 0.30, width=0.10, delay_ms=4)
     rms = float(np.sqrt((mix**2).mean())) + 1e-9
-    mix *= (10 ** (-18/20)) / rms
+    mix *= (10 ** (-16.9/20)) / rms
     mix = mix / max(1.0, float(np.max(np.abs(mix)))/0.95)
     wav = out_mp3.with_suffix(".wav")
     if mix_st is not None:

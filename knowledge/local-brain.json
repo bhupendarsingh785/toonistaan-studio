@@ -492,14 +492,31 @@
     "holes_pct": 0.0,
     "measured_on": "voice-stem (sidecar)",
     "kaise": "line pause 0.46–0.52s, scene break 1.7s, halki saans layer, gap range 40ms–3s"
+   },
+   "r43_all_pass": {
+    "world_qa_overall": "PASS",
+    "holes_pct": 0.19,
+    "stereo_width": 0.113,
+    "sentence_pauses_per_min": 11.0,
+    "breaths_per_min": 3.31,
+    "mud_db": -5.4,
+    "lufs": -15.9,
+    "render_time_s": 98,
+    "sr": 22050,
+    "fixes": [
+     "voice cache (har line par PiperVoice.load — speed ka asli bug)",
+     "SR 44100 → 22050 (piper ka native) — 2.5× tez",
+     "stereo default ON (width 0.10, 4 ms)",
+     "high-pass 130/110 Hz — mud -5.4 dB",
+     "level -16.9 dBFS → LUFS -15.9",
+     "saans har 3rd line, level 0.032 — zyada nahi"
+    ]
    }
   },
   "agla_kadam": "line ke beech 0.45–0.60s aur vakya ke baad 0.45–0.70s rakho, phir world_qa dobara",
   "bacha_hua": [
-   "stereo width target 0.08–0.45 (v35 me 0.677 — zyada; tuning baaki)",
-   "mud ≤ −4 dB (v35 me −3.8)",
-   "LUFS −16 ±1.5 (v35 me −14.3)",
-   "machine dheemi ho gayi to render timeout — chhote story par test karna hoga"
+   "rohan voice model (reset me gaya)",
+   "paragraph-wise prosody (aur smoothness)"
   ]
  }
 }

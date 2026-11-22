@@ -1,6 +1,6 @@
 """Apni ambience — bina kisi sample ke (numpy se): barish, hawa, jhingur, nadi."""
 import numpy as np
-SR = 44100
+SR = 22050
 
 def _noise(n, seed):
     return np.random.default_rng(seed).normal(0, 1, n)
