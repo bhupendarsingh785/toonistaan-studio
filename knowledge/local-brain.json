@@ -650,5 +650,35 @@
    "tools/realtime": "src/tools/realtime",
    "backup_v2": "src/backup/world_v2"
   }
+ },
+ "asr_gate": {
+  "tool": "tools/asr_gate.py (faster-whisper int8 + akshar.py CER)",
+  "kya_pakda": [
+   "BUG 1: build() ke doosre loop me `i`/`text` pichhle loop se bache the → har line ka marks-text aur saans AAKHRI line ka tha",
+   "BUG 2: CAST ratio 0.70–0.72 (dadi/maa) formant tod raha tha → ASR padh hi nahi paata (CER 0.9)"
+  ],
+  "naap": {
+   "pehle": {
+    "mean_cer": 0.912,
+    "overall": "FAIL"
+   },
+   "ab": {
+    "mean_cer": 0.167,
+    "overall": "WARN",
+    "lines": {
+     "sonu": 0.083,
+     "sonu2": 0.0,
+     "dadi": 0.091,
+     "dadi2": 0.294,
+     "narrator": 0.368
+    }
+   }
+  },
+  "sabak": [
+   "ratio 0.95–1.05 ke bahar jaana = formant todna = robot + ASR fail",
+   "stale loop variable = sabse chupa hua bug (audio theek, marks galat)",
+   "ASR gate har render par chalana chahiye — yahi 'sach' batata hai"
+  ],
+  "dependency": "faster-whisper 1.2.1 (small int8), ffmpeg shim, numpy decode (av bug bypass)"
  }
 }
