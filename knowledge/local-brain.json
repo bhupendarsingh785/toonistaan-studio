@@ -423,5 +423,26 @@
    "rain sirf 8 files — apni barish synth (code) hi behtar",
    "frog/bear/snake 1-1 file — inki awaaz khud banani padegi"
   ]
+ },
+ "awaaz_ki_training": {
+  "kya": "asli sounds se har class ka signature (naap) + MFCC kNN model",
+  "signatures": "knowledge/sound-signatures.json",
+  "model": "knowledge/sound-model.json (563 samples, 9 classes)",
+  "accuracy": {
+   "v1": 0.29,
+   "v2": 0.25,
+   "v2_clean_labels": 0.54
+  },
+  "sach": "54% — sirf sanity check ke liye; species-level pehchan abhi nahi",
+  "confusions": [
+   "human cheekh vs jeev ki cheekh",
+   "barish vs paani"
+  ],
+  "human_protected": true,
+  "aage": [
+   "200 files haath se tag",
+   "per-species 30-30 samples",
+   "spectral contrast + chroma features"
+  ]
  }
 }
