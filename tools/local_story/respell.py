@@ -19,6 +19,12 @@ SAFE = [("गाँव", "गांव"), ("गाँवों", "गांव�
 
 
 def respell(text: str, hspell: bool = True, safe: bool = True) -> str:
+    """Ab hindi_shabd.py ka poora niyam lagta hai (nasal + safe roop + h-spell)."""
+    try:
+        import hindi_shabd as HS
+        return HS.respell(text, hspell=hspell, nasal=safe)
+    except Exception:
+        pass
     t = text
     if safe:
         for a, b in SAFE:

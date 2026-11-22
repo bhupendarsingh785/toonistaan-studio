@@ -753,5 +753,32 @@
    "world_qa": "PASS (holes 0.47, stereo 0.135, pauses 12.2/min, breaths 3.66, mud -13.3, LUFS -15.9)"
   },
   "sabak": "voice badalne se pehle likhai theek karo — h-spell ne akela hi 0.265 → 0.192 kiya"
+ },
+ "hindi_shabd_mala": {
+  "checker_ki_sachchai": {
+   "test": "10 jaane-maane jode (mahapraan, matra, ushm, nukta, sanyukt, anunasik)",
+   "sahi": "10/10 (उठ→उट bhi sahi: wo mahapraan hi hai, murdhanya nahi)"
+  },
+  "naya": "tools/local_story/hindi_shabd.py — shabd-mala check (chandrabindu/anunasvar, halant, purane roop) + TTS-safe respell",
+  "niyam": {
+   "chandrabindu": "sirf khule अ/आ par — गाँव, आँख, धुआँ, हँस",
+   "anusvar": "baaki jagah — छतों, हिंदी, गंगा, संत",
+   "purana_roop": "हिन्दी → हिंदी",
+   "h-spell": "sirf shabd ke BEECH ka mahapraan (shuru me 'ब्हेटा' garbage banta hai — naap se pakda)"
+  },
+  "naap": {
+   "pehle": {
+    "mean_ph_cer": 0.167,
+    "dadi": 0.311,
+    "narrator": 0.149
+   },
+   "ab_r76": {
+    "mean_ph_cer": 0.137,
+    "narrator": 0.174,
+    "sonu": 0.092,
+    "dadi": 0.144,
+    "verdict": "PASS"
+   }
+  }
  }
 }

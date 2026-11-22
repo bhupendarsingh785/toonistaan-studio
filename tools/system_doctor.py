@@ -223,7 +223,22 @@ def c_bhaav_kaam():
         add("bhaav pehchan", "FAIL", f"{type(e).__name__}: {str(e)[:50]}")
 
 
-CHECKS = [c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
+def c_shabd():
+    """Hindi shabd-mala checker: chandrabindu/anunasvar niyam + TTS respell."""
+    try:
+        import sys as _s
+        _s.path.insert(0, str(ROOT / "tools" / "local_story"))
+        import hindi_shabd as H
+        good = H.report("गाँव की छतों से धुआँ उठ रहा था")["count"]
+        bad = H.report("हिन्दी में आंख")["count"]
+        tts = H.respell("छतों से धुआँ")
+        ok = good == 0 and bad >= 2 and "धुआं" in tts
+        add("shabd-mala", "PASS" if ok else "WARN", f"sahi line {good} issue, galat line {bad} issue, tts '{tts}'")
+    except Exception as e:
+        add("shabd-mala", "FAIL", f"{type(e).__name__}: {str(e)[:40]}")
+
+
+CHECKS = [c_shabd, c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
           c_engines, c_tools, c_qa_thresholds, c_judge_smoke, c_selftest]
 
 

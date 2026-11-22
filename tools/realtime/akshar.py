@@ -144,6 +144,24 @@ def classify(exp, got):
         return "anunasik" if (ANUSVARA in de + dg or CHANDRA in de + dg) else "schwa", f"'{exp}' -> '{got}'"
     return "vyanjan", f"'{exp}' -> '{got}'"
 
+def classify_all(exp, got):
+    """Ek fark me ek se zyada kism (jaise ठ↔ट = mahapraan + murdhanya). Pehla = mukhya."""
+    k1, why = classify(exp, got)
+    out = [k1]
+    try:
+        ce, *_ = parts(exp); cg, *_ = parts(got)
+        if len(ce) == 1 and len(cg) == 1:
+            a, b = ce[0], cg[0]
+            fa, fb = F.get(a), F.get(b)
+            if frozenset((a, b)) in MURDHA_DANT and "murdhanya" not in out:
+                out.append("murdhanya")
+            if fa and fb and fa[0] == fb[0] and fa[3] == fb[3] == "stop" and fa[2] != fb[2] and "mahapraan" not in out:
+                out.append("mahapraan")
+    except Exception:
+        pass
+    return out, why
+
+
 def _sub_cost(a, b):
     if a == b: return 0.0
     ca, _, ma, *_ = parts(a); cb, _, mb, *_ = parts(b)
