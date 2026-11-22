@@ -82,7 +82,7 @@ def synth_line(text, cfg, out: Path):
     src = load(raw)
     y = fx.pitch_resample(src, cfg.get("ratio", 1.0))
     y = fx.trim_silence(y)
-    y = fx.compress_silences(y, rel_db=-20, max_gap_ms=28, min_gap_ms=45, keep_ms=16)
+    y = fx.compress_silences(y, SR, min_gap=0.10, max_gap=0.35)   # duniya niyam: saans bachi rahe
     y = fx.smooth_chain(y, semitones=0.0, human=True, br=True, warm_eq=True, rv=False)
     y = fx.trim_silence(y, keep_ms=40)
     with wave.open(str(out), "wb") as w:

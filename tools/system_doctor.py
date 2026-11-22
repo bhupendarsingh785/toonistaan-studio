@@ -151,7 +151,26 @@ def c_selftest():
         add("selftest suite", "WARN", f"{type(e).__name__}")
 
 
-CHECKS = [c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
+def c_world_engine():
+    w = ROOT / "tools" / "world"
+    need = ["duniya.py", "world_qa.py", "rachna.py", "awaazein.py", "spotting.py", "seekho.py", "harkat.py"]
+    have = [n for n in need if (w / n).exists()]
+    wm = ROOT / "knowledge" / "world-map.json"
+    kws = 0
+    if wm.exists():
+        d = json.loads(wm.read_text(encoding="utf-8"))
+        def _leaves(x):
+            if isinstance(x, dict):
+                return sum(_leaves(v) for v in x.values())
+            if isinstance(x, list):
+                return len(x)
+            return 1
+        kws = _leaves(d.get("keywords", {}))
+    add("duniya engine", "PASS" if len(have) == len(need) and kws >= 40 else "WARN",
+        f"{len(have)}/{len(need)} modules, {kws} keywords")
+
+
+CHECKS = [c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
           c_engines, c_tools, c_qa_thresholds, c_judge_smoke, c_selftest]
 
 

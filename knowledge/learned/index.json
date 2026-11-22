@@ -1,0 +1,38 @@
+{
+ "cow": {
+  "type": "events",
+  "units": 1,
+  "from": "cow.wav",
+  "on": "2026-11-22"
+ },
+ "horse": {
+  "type": "events",
+  "units": 1,
+  "from": "horse.wav",
+  "on": "2026-11-22"
+ },
+ "glass_clink": {
+  "type": "events",
+  "units": 1,
+  "from": "glasses.wav",
+  "on": "2026-11-22"
+ },
+ "applause": {
+  "type": "texture",
+  "units": 1,
+  "from": "applause.wav",
+  "on": "2026-11-22"
+ },
+ "gong": {
+  "type": "events",
+  "units": 2,
+  "from": "gong.wav",
+  "on": "2026-11-22"
+ },
+ "train": {
+  "type": "texture",
+  "units": 1,
+  "from": "train.wav",
+  "on": "2026-11-22"
+ }
+}

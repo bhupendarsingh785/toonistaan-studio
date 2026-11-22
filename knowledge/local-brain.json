@@ -56,7 +56,8 @@
    "lines ke beech pause 0.22–0.35 s (1.5 s nahi)",
    "humanize me amplitude micro-dips band (woh shabd kaat dete hain)",
    "target: andar ke 80 ms+ gaps ≤5, pace 12–14 akshar/s, speech 65–70%",
-   "smooth reference ka target: low 15–17, mid 55–57, high 27–30%, brightness 2086–2187 Hz, RMS -18.5 dBFS"
+   "smooth reference ka target: low 15–17, mid 55–57, high 27–30%, brightness 2086–2187 Hz, RMS -18.5 dBFS",
+   "gap 0.10s se kam KABHI nahi — 28ms compression se robotic lagta tha (duniya engine ka sabak)"
   ],
   "emotion_map": {
    "neutral": {
@@ -261,6 +262,14 @@
    "horror_read.py": "darr ka blueprint",
    "emotion_read.py": "bhaav timeline",
    "local_story.py": "piper kahani"
+  },
+  "world_gates": {
+   "holes_pct": "<0.5",
+   "stereo_width": "0.08–0.45",
+   "sentence_pauses_per_min": ">=8",
+   "breaths_per_min": ">=1",
+   "mud_db": "<=-4",
+   "lufs": "-16±1.5"
   }
  },
  "galtiyan_jo_ki": [
@@ -444,5 +453,39 @@
    "per-species 30-30 samples",
    "spectral contrast + chroma features"
   ]
+ },
+ "duniya_engine_adopted": {
+  "source": "seetal-duniya-engine.zip (Swag ka diya system) — sirf advanced hisse liye",
+  "kya_liya": [
+   "pause rules: inside-line 0.10–0.35s, comma 0.16–0.26, sentence 0.45–0.70, question 0.55–0.85, speaker change 0.35–0.60, scene 1.4–2.6",
+   "world-map.json: 150+ shabd → awaaz, surfaces (leaves/soil/stone/water), levels_db (bed −15 dB under speech, duck 6 dB), time_of_day",
+   "world_qa.py gates: holes <0.5%, stereo width 0.08–0.45, sentence pauses ≥8/min, breaths ≥1/min, mud ≤ −4 dB, LUFS −16 ±1.5",
+   "stereo duniya (Haas/pan) — mono se stereo",
+   "learned sounds: per-sound dna/limits/memory (seekho.py)",
+   "spotting + harkat + rachna + awaazein modules"
+  ],
+  "kya_nahi_liya": [
+   "koi bhi cheez bina test kiye nahi",
+   "unka demo script/pipeline replace nahi kiya — sirf engine"
+  ],
+  "naap": {
+   "hamara_purana": {
+    "stereo": 0.0,
+    "mud_db": -2.7,
+    "lufs": -16.7,
+    "speech_pct": 89.6
+   },
+   "unke_engine_ke_baad": {
+    "stereo": 0.149,
+    "mud_db": -5.1,
+    "lufs": -16.2,
+    "holes_pct": 0.0
+   },
+   "bacha_hua": [
+    "sentence pauses 0.0/min (chahiye ≥8)",
+    "breaths 0.0/min (chahiye ≥1)"
+   ]
+  },
+  "agla_kadam": "line ke beech 0.45–0.60s aur vakya ke baad 0.45–0.70s rakho, phir world_qa dobara"
  }
 }

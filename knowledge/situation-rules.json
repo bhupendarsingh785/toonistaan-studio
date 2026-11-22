@@ -1,0 +1,130 @@
+{
+  "_note": "Halat -> awaaz kaise badle. Rachna engine har seekhi hui awaaz par yeh lagata hai. Yahan badlo/jodo — engine apne aap use karega. pitch_st = semitone, tempo = tez/dheema (1 = jaisa seekha), jitter = laya me kitni be-tartibi, bright = chamak, count = kitne tukde, gain_db = zor.",
+  "base_random": {
+    "pitch_st": 0.9,
+    "tempo": 0.1,
+    "gain_db": 1.5,
+    "bright": 0.1,
+    "jitter": 0.08
+  },
+  "emotion": {
+    "neutral": {},
+    "dar": {
+      "tempo": 1.25,
+      "pitch_st": 0.8,
+      "jitter": 0.2,
+      "gain_db": 1.5,
+      "bright": 1.1,
+      "count": 1.2
+    },
+    "gussa": {
+      "tempo": 1.2,
+      "pitch_st": 0.4,
+      "jitter": 0.1,
+      "gain_db": 3.5,
+      "bright": 1.2,
+      "count": 1.4
+    },
+    "khushi": {
+      "tempo": 1.12,
+      "pitch_st": 0.6,
+      "jitter": 0.1,
+      "gain_db": 0.5,
+      "bright": 1.12
+    },
+    "dukh": {
+      "tempo": 0.82,
+      "pitch_st": -0.9,
+      "jitter": 0.06,
+      "gain_db": -2.5,
+      "bright": 0.85,
+      "count": 0.7
+    },
+    "shanti": {
+      "tempo": 0.9,
+      "pitch_st": -0.3,
+      "jitter": 0.05,
+      "gain_db": -2.0,
+      "bright": 0.92,
+      "count": 0.8
+    }
+  },
+  "size": {
+    "chhota": {
+      "pitch_st": 3.5,
+      "bright": 1.2
+    },
+    "bada": {
+      "pitch_st": -3.5,
+      "bright": 0.82
+    },
+    "bachcha": {
+      "pitch_st": 5.0,
+      "bright": 1.25,
+      "tempo": 1.1
+    }
+  },
+  "intensity": {
+    "halka": {
+      "gain_db": -4,
+      "count": 0.6
+    },
+    "tez": {
+      "gain_db": 3,
+      "count": 1.5,
+      "tempo": 1.1
+    }
+  },
+  "distance_words": {
+    "door": 6.0,
+    "paas": 1.0,
+    "bilkul paas": 0.6
+  },
+  "size_words": {
+    "chhota": [
+      "छोटा",
+      "छोटी",
+      "नन्हा",
+      "नन्ही",
+      "पिल्ला",
+      "chhota"
+    ],
+    "bada": [
+      "बड़ा",
+      "बड़ी",
+      "विशाल",
+      "भारी",
+      "bada"
+    ],
+    "bachcha": [
+      "बच्चा",
+      "बछड़ा",
+      "बच्चे"
+    ]
+  },
+  "intensity_words": {
+    "halka": [
+      "धीरे",
+      "हल्का",
+      "हल्की",
+      "धीमे",
+      "dheere"
+    ],
+    "tez": [
+      "ज़ोर",
+      "जोर",
+      "तेज़",
+      "तेज",
+      "ज़ोर-ज़ोर",
+      "zor",
+      "tez"
+    ]
+  },
+  "qa": {
+    "min_similarity": 0.45,
+    "min_margin": 0.1,
+    "candidates": 6,
+    "memory": 24,
+    "_note": "pehchaan: roop apni asli se >=0.45 mile AUR kisi bhi doosri seekhi awaaz se 0.10 zyada. naya-pan: pichhle 24 roopon se alag."
+  }
+}

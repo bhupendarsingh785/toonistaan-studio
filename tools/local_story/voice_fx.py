@@ -248,52 +248,36 @@ def trim_silence(x, keep_ms=60, thr_db=-42):
     return x[a:b]
 
 
-def compress_silences(x, rel_db=-20, max_gap_ms=28, min_gap_ms=45, keep_ms=16, abs_db=-45):
-    """Line ke ANDAR ki khamoshi chhoti karo — **line ke apne RMS ke hisaab se**.
+def compress_silences(x, sr=44100, min_gap=0.10, max_gap=0.35, thr_db=-45):
+    """Gap compression — DUNIYA engine ke niyam (adopted).
 
-    Pehle fixed -36 dB par gaps pakde ja rahe the; bed/saans usse upar thi, isliye
-    gaps bache reh gaye. Ab: speech ke median se `rel_db` neeche = gap.
+    Pehle: 50ms+ gap → 28ms (speech 89%) — isi se "ruk-ruk/robotic" lagta tha.
+    Ab: gap ko max_gap (0.35s) tak chhota karo, par min_gap (0.10s) se NEECHE kabhi nahi.
+    Insaan saans leta hai; 89% speech ka matlab bina saans bolna.
     """
     import numpy as np
-    win = 128
-    e = np.array([np.sqrt((x[i:i + win] ** 2).mean()) for i in range(0, len(x) - win, win)])
+    w = int(0.005 * sr)
+    e = np.array([np.sqrt((x[i:i + w] ** 2).mean()) for i in range(0, max(1, len(x) - w), w)])
     if not len(e):
         return x
-    speech_ref = float(np.percentile(e, 75))
-    thr = max(10 ** (abs_db / 20), speech_ref * 10 ** (rel_db / 20))
-    quiet = e <= thr
-    runs = []
-    i, n = 0, len(quiet)
-    while i < n:
-        if quiet[i]:
+    thr = max(10 ** (thr_db / 20), float(np.percentile(e, 75)) * 0.12)
+    q = e <= thr
+    out, prev, i = [], 0, 0
+    while i < len(q):
+        if q[i]:
             j = i
-            while j < n and quiet[j]:
+            while j < len(q) and q[j]:
                 j += 1
-            if (j - i) * win / SR * 1000 >= min_gap_ms:
-                runs.append((i, j))
+            dur = (j - i) * w / sr
+            if dur >= min_gap:
+                sa, sb = i * w, min(len(x), j * w)
+                out.append(x[prev:sa])
+                keep = int(min(max_gap, max(min_gap, dur)) * sr)
+                out.append(x[sa:sa + keep] if keep <= sb - sa else x[sa:sb])
+                prev = sb
             i = j
         else:
             i += 1
-    if not runs:
-        return x
-    out = []
-    prev = 0
-    fade = int(0.006 * SR)
-    for a, b in runs:
-        sa, sb = a * win, min(len(x), b * win)
-        piece = x[prev:sa]
-        out.append(piece)
-        keep = int(keep_ms / 1000 * SR)
-        target = int(max_gap_ms / 1000 * SR)
-        seg_gap = x[sa:sb]
-        # gap ke beech se chhota rakho + micro fade (click nahi)
-        take = min(len(seg_gap), max(keep, target))
-        g = seg_gap[:take].copy()
-        if len(g) > 2 * fade > 0:
-            g[:fade] *= np.linspace(0, 1, fade)
-            g[-fade:] *= np.linspace(1, 0, fade)
-        out.append(g)
-        prev = sb
     out.append(x[prev:])
     return np.concatenate(out) if out else x
 
