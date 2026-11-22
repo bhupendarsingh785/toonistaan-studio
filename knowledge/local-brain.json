@@ -680,5 +680,44 @@
    "ASR gate har render par chalana chahiye — yahi 'sach' batata hai"
   ],
   "dependency": "faster-whisper 1.2.1 (small int8), ffmpeg shim, numpy decode (av bug bypass)"
+ },
+ "bhaav_target_v2": {
+  "kya_badla": [
+   "wazan: vismayadi 2.0 > bhaav-shabd 1.5 > tez-karne-wala 0.5 > punctuation 0.3",
+   "intensity saturating (1-exp(-0.55*score)) — 25% se 100%",
+   "punh-raavriti (ek shabd do baar = zyada)",
+   "context: pichhli line ka bhaav + kirdaar ka swabhav (dadi→pyaar, bachcha→hairani)",
+   "mixed top-2 share (jaise pyaar 62% + khushi 38%)",
+   "arc: chadhav/utar/flat (! ? se)",
+   "shabd-war zor: len/f0/energy/pause"
+  ],
+  "test": {
+   "वाह! बहुत खुश": "khushi 100%",
+   "आँसू देखकर दुख": "dukh 90%",
+   "कौन है वहाँ? डर": "dar 100%",
+   "दादी! आज बारिश होगी क्या?": "hairani 91%",
+   "होगी बेटा...": "pyaar 73%"
+  }
+ },
+ "smooth_fix_v72": {
+  "kya_badla": [
+   "lagatar ek hi kirdaar ki lines JODI (group_script) — beech ka ruk gaya",
+   "pause 0.40–0.44s (0.46–0.52 se kam), scene break 1.7 → 1.2s",
+   "saans sirf 0.9s se bade ruk me, speech se 0.03s pehle",
+   "room tone (-48 dB, dono channel) — background holes band"
+  ],
+  "naap": {
+   "world_qa": "PASS (holes 0.31, stereo 0.143, pauses 12.9/min, breaths 3.88, mud -12.4, LUFS -16.0)",
+   "asr": {
+    "mean_cer": 0.227,
+    "sonu": [
+     0.154,
+     0.0
+    ],
+    "dadi": 0.375,
+    "narrator": 0.378
+   }
+  },
+  "bacha": "narrator (pratham) kamzor — rohan model chahiye"
  }
 }

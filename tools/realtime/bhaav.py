@@ -33,37 +33,113 @@ def _has(text, w):
     return re.search(rf"(?<![{_L}]){re.escape(w)}" + ("" if stem else rf"(?![{_L}])"), text) is not None
 
 # ---------------------------------------------------------------- 1. lakshya (text)
-def target(line):
-    R = rules(); text = line["text"]; words = A.normalize(text).split()
+def target(line, context=None):
+    """Lakshya bhaav — gehri samajh (v2).
+
+    Kaise: (1) shabd ka wazan (vismayadi > bhaav-shabd > tez-karne-wala > punctuation),
+           (2) line ka 'emotion' field (sabse bada wazan),
+           (3) punh-raavriti (ek hi bhaav-shabd do baar = zyada),
+           (4) sawaal/chidev (! ? …), (5) pichhli line ka bhaav (context),
+           (6) kirdaar ka swabhav (dadi -> pyaar, bachcha -> hairani).
+    Lautata hai: emotion, intensity (0–1), mixed (top-2 hissa), emphasis (shabd-war target), arc.
+    """
+    R = rules(); text = line.get("text", "")
+    W = {"interjection": 2.0, "bhaav": 1.5, "intensifier": 0.5, "punct": 0.3}
     score = {e: 0.0 for e in R["signature"]}
+    hit = {e: [] for e in R["signature"]}
+
     for e, ws in R["words"].items():
         for w in ws:
-            if _has(text, w.rstrip("!")): score[e] += 1.0
+            w2 = w.rstrip("!").rstrip("*")
+            if not w2:
+                continue
+            n = len(re.findall(rf"(?<![{_L}]){re.escape(w2)}", text))
+            if n:
+                score[e] += W["bhaav"] * min(2, n)          # punh-raavriti par zyada
+                hit[e].append(w2)
+
+    for w in R["interjections"]:
+        if _has(text, w):
+            for e, ws in R["words"].items():
+                if w in ws:
+                    score[e] += W["interjection"]
+    for w in R["intensifiers"]:
+        if _has(text, w.split()[0]):
+            for e in score:
+                score[e] += W["intensifier"] * 0.25
+    # chidev
+    score["gussa"] += W["punct"] * text.count("!")
+    score["hairani"] += W["punct"] * (text.count("?") * 1.5)
+    score["dukh"] += W["punct"] * text.count("…")
+
+    # line ka field
     emo = line.get("emotion") or line.get("bhaav")
-    if emo in score: score[emo] += 3.0
-    best = max(score, key=score.get) if any(score.values()) else "neutral"
-    if score.get(best, 0) == 0: best = "neutral"
-    inten = 0.0
-    if best != "neutral":
-        inten = 0.45 + 0.12 * min(3, score[best])
-        inten += 0.12 * text.count("!") + 0.05 * text.count("?") + 0.08 * sum(_has(text, w) for w in R["intensifiers"])
-        if "…" in text or "..." in text: inten += 0.05 if best in ("dukh", "dar") else 0
-        inten = float(min(1.0, line.get("intensity", inten)))
-    # zor wale shabd
+    if emo in score:
+        score[emo] += 3.0
+
+    # kirdaar ka swabhav (halka)
+    who = (line.get("who") or "").lower()
+    bias = {"dadi": {"pyaar": 0.9}, "maa": {"pyaar": 0.8}, "sonu": {"hairani": 0.7, "khushi": 0.4}}
+    for e, b in bias.get(who, {}).items():
+        if e in score:
+            score[e] += b
+
+    # pichhli line ka bhaav (context) — thoda sa
+    if context:
+        prev = context.get("emotion")
+        if prev in score and score.get(prev, 0) > 0:
+            score[prev] += 0.4
+
+    tot = sum(score.values())
+    best = max(score, key=score.get) if tot > 0 else "neutral"
+    if score.get(best, 0) <= 0:
+        best = "neutral"
+
+    # intensity: saturating (0.25 se 1.0), punctuation/emphasis se boost
+    if best == "neutral":
+        inten = 0.0
+    else:
+        raw = score[best]
+        inten = 1.0 - math.exp(-0.55 * raw)
+        inten += 0.10 * min(2, text.count("!")) + 0.04 * min(3, text.count("?"))
+        if "…" in text or "..." in text:
+            inten += 0.05 if best in ("dukh", "dar") else 0
+        inten = max(0.25, min(1.0, line.get("intensity", inten)))
+
+    # mixed (top-2 hissa) — "pyaar 60% + khushi 40%" jaisa sach
+    ranked = sorted(((e, v) for e, v in score.items() if v > 0), key=lambda kv: -kv[1])[:2]
+    s2 = sum(v for _, v in ranked) or 1.0
+    mixed = [{"emotion": e, "share": round(v / s2, 2)} for e, v in ranked]
+
+    # shabd-war zor
     emph = []
-    raw = [w.strip("।,.!?\"'…") for w in text.split()]
-    for wi, w in enumerate(raw):
+    raw_words = [w.strip("।,.!?\"'…") for w in text.split()]
+    for wi, w in enumerate(raw_words):
         why = None
-        if any(_has(w, x) for x in R["interjections"]): why = "interjection"
-        elif any(_has(w, x.split()[0]) for x in R["intensifiers"]) and not any(_has(text, x) for x in R["intensifiers"] if " " in x and not _has(text, x)): why = "intensifier"
-        elif best != "neutral" and any(_has(w, x.split()[0].rstrip("!")) for x in R["words"].get(best, []) if (" " not in x or _has(text, x.rstrip("!")))): why = "bhaav-shabd"
-        elif wi + 1 < len(raw) and text.split()[wi].endswith("!") and best != "neutral": why = "! se pehle"
+        if not w:
+            continue
+        if any(_has(w, x.rstrip("!")) for x in R["interjections"]):
+            why = "interjection"
+        elif any(_has(w, x.split()[0]) for x in R["intensifiers"]):
+            why = "intensifier"
+        elif best != "neutral" and w in hit.get(best, []):
+            why = "bhaav-shabd"
+        elif wi + 1 < len(raw_words) and wi < len(text.split()) and text.split()[wi].endswith("!") and best != "neutral":
+            why = "! se pehle"
         if why:
-            T = dict(R["word_target"]["interjection"] if why == "interjection" else R["word_target"].get(best, R["word_target"]["default"]))
+            T = dict(R["word_target"].get("interjection" if why == "interjection" else best, R["word_target"]["default"]))
             k = max(inten, 0.5)
-            emph.append({"word": w, "i": wi, "why": why, "len": round(1 + (T["len"] - 1) * k, 2), "f0": round(T["f0"] * k, 1),
-                         "energy": round(T["energy"] * k, 1), "pause_ms": int(T.get("pause_ms", 0) * k), "pause_after_ms": int(T.get("pause_after_ms", 0) * k)})
-    return {"emotion": best, "intensity": round(inten, 2), "emphasis": emph}
+            emph.append({"word": w, "i": wi, "why": why,
+                         "len": round(1 + (T.get("len", 1) - 1) * k, 2),
+                         "f0": round(T.get("f0", 0) * k, 1),
+                         "energy": round(T.get("energy", 0) * k, 1),
+                         "pause_ms": int(T.get("pause_ms", 0) * k),
+                         "pause_after_ms": int(T.get("pause_after_ms", 0) * k)})
+    # arc: line ke andar bhaav ka utaar-chadhav (! end me = chadhav)
+    arc = "chadhav" if text.rstrip().endswith(("!", "?")) else ("utar" if best in ("dukh", "pyaar") else "flat")
+    return {"emotion": best, "intensity": round(inten, 2), "mixed": mixed,
+            "emphasis": emph, "arc": arc, "score": {k: round(v, 2) for k, v in score.items() if v}}
+
 
 # ---------------------------------------------------------------- 2. maap (audio)
 def prosody(y, sr):

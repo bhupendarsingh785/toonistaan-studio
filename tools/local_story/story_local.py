@@ -23,10 +23,10 @@ VOICES = {"m": HERE.parent/"voices/hi_IN-pratham-medium.onnx",
 
 # kirdaar: voice, length_scale (slow>1), pitch_shift (semitones), pause
 CAST = {
- "narrator": {"v": "m", "ls": 0.98, "ratio": 1.00, "pause": 0.52},
- "dadi":     {"v": "f", "ls": 1.06, "ratio": 0.96, "pause": 0.50},   # ASR-safe: formant todna band
- "maa":      {"v": "f", "ls": 0.99, "ratio": 1.00, "pause": 0.48},
- "sonu":     {"v": "f", "ls": 0.94, "ratio": 1.04, "pause": 0.46},   # bachcha: tez + thoda ooncha
+ "narrator": {"v": "m", "ls": 0.98, "ratio": 1.00, "pause": 0.44},
+ "dadi":     {"v": "f", "ls": 1.04, "ratio": 0.98, "pause": 0.42},   # best naap (r72)
+ "maa":      {"v": "f", "ls": 0.99, "ratio": 1.00, "pause": 0.42},
+ "sonu":     {"v": "f", "ls": 0.98, "ratio": 1.02, "pause": 0.40},   # bachcha: tez par rukta nahi
 }
 SCRIPT = [
  ("narrator", "सुबह के छह बजे थे। गाँव की छतों से धुआँ उठ रहा था, और दूर नदी कलकल बह रही थी।"),
@@ -146,6 +146,17 @@ def _presence(x):
     return np.fft.irfft(X * g, n)
 
 
+def room_tone(n, level_db=-52, seed=3):
+    """hamesha chalu room tone — asli duniya kabhi poori chup nahi hoti (holes band)."""
+    import numpy as np
+    rng = np.random.default_rng(seed)
+    x = rng.normal(0, 1, n)
+    X = np.fft.rfft(x); f = np.fft.rfftfreq(n, 1 / SR)
+    x = np.fft.irfft(X / (1 + (120 / (f + 1e-9)) ** 2), n)      # pink-ish
+    x = x / (np.max(np.abs(x)) + 1e-9)
+    return (x * (10 ** (level_db / 20))).astype("float32")
+
+
 MOODS = {"bed": [("rain", 0.5), ("river", 0.35), ("wind", 0.25), ("crickets", 0.04)],
          "pad": (130.8, 164.8, 196.0)}
 
@@ -197,17 +208,29 @@ def load(p: Path):
     return np.frombuffer(r.stdout, dtype=np.int16).astype("float32") / 32768
 
 
+def group_script(script):
+    """Lagatar ek hi kirdaar ki lines jodo — beech me rukna band (ruk-ruk ka ilaaj)."""
+    out = []
+    for who, text in script:
+        if out and out[-1][0] == who:
+            out[-1] = (who, out[-1][1] + " " + text)
+        else:
+            out.append((who, text))
+    return out
+
+
 def build(out_mp3: Path):
     import ambience as amb
     work = HERE / "work"; work.mkdir(exist_ok=True)
     clips = []
     _last_breath_s = 0.0
     _breath_log = []
-    for i, (who, text) in enumerate(SCRIPT):
+    _script = group_script(SCRIPT)
+    for i, (who, text) in enumerate(_script):
         p = synth_line(text, CAST[who], work / f"line{i:02d}.wav")
         clips.append((who, p, load(p)))
     # scene break: har 4th line ke baad lamba ruk (duniya ubharne ke liye) — duniya niyam 1.4–2.6s
-    scene_gap = {i: 1.7 for i in range(3, len(clips), 4)}
+    scene_gap = {i: 1.2 for i in range(3, len(clips), 4)}
     total = (sum(len(c[2]) for c in clips)
              + int(SR * sum(CAST[c[0]]["pause"] for c in clips))
              + int(SR * sum(scene_gap.values())) + SR)
@@ -225,15 +248,16 @@ def build(out_mp3: Path):
         voice[t:t+len(sig)] += sig
         # saans: time + bhaav ke hisaab se (line number se nahi)
         _since = (t / SR) - _last_breath_s
-        _plan = breath_plan(SCRIPT[_idx][1], _since)
+        _gap_before = (t / SR) - prev_end / SR if prev_end else 0
+        _plan = breath_plan(_script[_idx][1], _since) if _gap_before >= 0.9 else None
         if _plan:
             _emo, _dur, _lvl, _band = _plan
             br = breath(_dur, level=_lvl, band=_band, seed=100 + _idx)
-            b_start = max(0, t - int(SR * _dur) - int(SR * 0.05))
+            b_start = max(0, t - int(SR * _dur) - int(SR * 0.03))
             voice[b_start:b_start + len(br)] += br
             _last_breath_s = t / SR
             _breath_log.append({"at_s": round(t / SR, 2), "emotion": _emo, "dur_s": _dur})
-        marks.append({"who": who, "start": round(t/SR, 2), "dur": round(len(sig)/SR, 2), "text": SCRIPT[_idx][1]})
+        marks.append({"who": who, "start": round(t/SR, 2), "dur": round(len(sig)/SR, 2), "text": _script[_idx][1]})
         prev_end = t + len(sig)
         idx_now = len(marks) - 1
         t += len(sig) + int(SR * CAST[who]["pause"]) + int(SR * scene_gap.get(idx_now, 0))
@@ -291,9 +315,12 @@ def build(out_mp3: Path):
         voice = _hp(voice, 130); bed = _hp(bed, 220)
     mix = voice * 0.95 + bed * 0.16
     mix = _presence(np.tanh(mix * 1.05))
+    mix[:len(room_tone(len(mix)))] += room_tone(len(mix))   # holes band
     mix_st = None
     if _os.environ.get("SEETAL_STEREO", "1") == "1":
         mix_st = _stereo(voice * 0.95, np.tanh(bed * 0.17 * 1.05) * 0.30, width=0.10, delay_ms=4)
+        _rt = room_tone(len(mix_st), level_db=-48)
+        mix_st[:, 0] += _rt; mix_st[:, 1] += _rt * 0.96     # dono channel me halka room tone
     rms = float(np.sqrt((mix**2).mean())) + 1e-9
     mix *= (10 ** (-16.9/20)) / rms
     mix = mix / max(1.0, float(np.max(np.abs(mix)))/0.95)
