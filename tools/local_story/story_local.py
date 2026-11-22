@@ -65,15 +65,16 @@ GROUND = {
 CREATURES = {"भेड़िया": "wolf", "कुत्ता": "dog", "शेर": "lion", "चिड़िया": "birds",
              "पक्षी": "birds", "झींगुर": "crickets", "नदी": "river", "पानी": "river"}
 
-def breath(dur=0.30, level=0.05, seed=5):
+def breath(dur=0.50, level=0.030, band=(300, 2000), seed=5):
     """halki saans (inhale) — gap me daalne ke liye. High-mid band, dheema envelope."""
     import numpy as np
     n = int(SR * dur); t = np.arange(n) / SR
     rng = np.random.default_rng(seed)
     nz = rng.normal(0, 1, n)
     X = np.fft.rfft(nz); f = np.fft.rfftfreq(n, 1 / SR)
-    band = 1 / (1 + (280 / (f + 1e-9)) ** 4) * 1 / (1 + (2600 / (f + 1e-9)) ** 4)
-    nz = np.fft.irfft(X * band, n)
+    lo, hi = band
+    bandm = 1 / (1 + (lo / (f + 1e-9)) ** 4) * 1 / (1 + (hi / (f + 1e-9)) ** 4)
+    nz = np.fft.irfft(X * bandm, n)
     env = np.sin(np.pi * np.clip(t / dur, 0, 1)) ** 1.6
     return (nz / (np.max(np.abs(nz)) + 1e-9) * env * level).astype("float32")
 
@@ -95,6 +96,42 @@ def _stereo(voice, bed, width=0.10, delay_ms=4):
     R = voice + br * (1 - width * 0.2)
     st = np.stack([L, R], axis=1)
     return st
+
+
+# --- saans ka model (research se): speech me inhale ~0.5s, exhale lamba
+# arousal zyada (dar/gussa) = tez + chhoti + shallow; sadness = dheemi + gehri (sigh)
+BREATH_MODEL = {
+    #             rate/min  dur_s      level   band(Hz)
+    "neutral": (11, 0.50, 0.030, (300, 2000)),
+    "calm":    (9,  0.55, 0.028, (280, 1800)),
+    "sad":     (8,  0.75, 0.050, (260, 1600)),
+    "happy":   (17, 0.38, 0.034, (320, 2400)),
+    "anger":   (21, 0.40, 0.060, (350, 3200)),
+    "fear":    (26, 0.27, 0.048, (400, 4200)),
+}
+EMO_WORDS = {
+    "fear":  ["डर", "भागो", "चिल्ला", "बचाओ", "काँप", "सहम", "खतरा"],
+    "anger": ["गुस्सा", "अरे", "चुप", "बेवकूफ", "मार"],
+    "sad":   ["दुख", "रो", "आँसू", "मर", "अकेल", "याद"],
+    "happy": ["खुश", "हँस", "मज़ा", "मजा", "आनंद"],
+}
+
+
+def line_emotion(text: str) -> str:
+    for emo, words in EMO_WORDS.items():
+        if any(w in text for w in words):
+            return emo
+    return "neutral"
+
+
+def breath_plan(text: str, t_since_breath: float):
+    """Kab saans leni chahiye — line index se nahi, TIME aur BHAV se (insaan jaisa)."""
+    emo = line_emotion(text)
+    rate, dur, level, band = BREATH_MODEL[emo]
+    need_after = 60.0 / rate          # itne second me ek saans
+    if t_since_breath >= need_after:
+        return emo, dur, level, band
+    return None
 
 
 MOODS = {"bed": [("rain", 0.5), ("river", 0.35), ("wind", 0.25), ("crickets", 0.04)],
@@ -145,6 +182,8 @@ def build(out_mp3: Path):
     import ambience as amb
     work = HERE / "work"; work.mkdir(exist_ok=True)
     clips = []
+    _last_breath_s = 0.0
+    _breath_log = []
     for i, (who, text) in enumerate(SCRIPT):
         p = synth_line(text, CAST[who], work / f"line{i:02d}.wav")
         clips.append((who, p, load(p)))
@@ -165,10 +204,16 @@ def build(out_mp3: Path):
                 sig = sig.copy()
                 sig[:n] *= np.linspace(0, 1, n)
         voice[t:t+len(sig)] += sig
-        if i % 3 == 2:
-            br = breath(0.26, level=0.032, seed=100 + i)
-            b_start = max(0, t - int(SR * 0.30) - int(SR * 0.06))
+        # saans: time + bhaav ke hisaab se (line number se nahi)
+        _since = (t / SR) - _last_breath_s
+        _plan = breath_plan(text, _since)
+        if _plan:
+            _emo, _dur, _lvl, _band = _plan
+            br = breath(_dur, level=_lvl, band=_band, seed=100 + i)
+            b_start = max(0, t - int(SR * _dur) - int(SR * 0.05))
             voice[b_start:b_start + len(br)] += br
+            _last_breath_s = t / SR
+            _breath_log.append({"at_s": round(t / SR, 2), "emotion": _emo, "dur_s": _dur})
         marks.append({"who": who, "start": round(t/SR, 2), "dur": round(len(sig)/SR, 2), "text": SCRIPT[i][1]})
         prev_end = t + len(sig)
         idx_now = len(marks) - 1
@@ -268,6 +313,7 @@ def build(out_mp3: Path):
             "voice_gap_mean_ms": round(float(np.mean(_gaps)), 0) if _gaps else 0,
             "voice_gap_max_ms": round(max(_gaps)) if _gaps else 0,
             "voice_speech_pct": round(100 * (1 - _q.mean()), 1), "dur": round(len(mix)/SR, 2), "lines": len(SCRIPT),
+            "breaths": _breath_log, "breaths_per_min": round(len(_breath_log) / max(1e-6, (len(mix)/SR/60)), 2),
             "marks": marks, "bed": MOODS["bed"], "peak": round(float(np.max(np.abs(mix))), 2),
             "rms_dbfs": round(20*float(np.log10(max(1e-9, float(np.sqrt((mix**2).mean()))))), 1)}
     (HERE / "story_local.json").write_text(json.dumps(info, ensure_ascii=False, indent=1), encoding="utf-8")

@@ -518,5 +518,82 @@
    "rohan voice model (reset me gaya)",
    "paragraph-wise prosody (aur smoothness)"
   ]
+ },
+ "saans_model": {
+  "research": [
+   "speech me inhalation chhoti aur tez — average ~0.5 s (kai studies me 0.68 s); exhale lamba (speech ke saath)",
+   "resting respiratory rate 12–26/min (adults); speech breathing rate zyada variable",
+   "high arousal (dar, gussa) → tez + shallow; sadness/withdrawal → dheemi, gehri, sigh",
+   "happy (high arousal) → rate upar; calm (low arousal) → rate neeche"
+  ],
+  "table": {
+   "neutral": {
+    "rate_per_min": 11,
+    "dur_s": 0.5,
+    "level": 0.03,
+    "band_hz": [
+     300,
+     2000
+    ]
+   },
+   "calm": {
+    "rate_per_min": 9,
+    "dur_s": 0.55,
+    "level": 0.028,
+    "band_hz": [
+     280,
+     1800
+    ]
+   },
+   "sad": {
+    "rate_per_min": 8,
+    "dur_s": 0.75,
+    "level": 0.05,
+    "band_hz": [
+     260,
+     1600
+    ]
+   },
+   "happy": {
+    "rate_per_min": 17,
+    "dur_s": 0.38,
+    "level": 0.034,
+    "band_hz": [
+     320,
+     2400
+    ]
+   },
+   "anger": {
+    "rate_per_min": 21,
+    "dur_s": 0.4,
+    "level": 0.06,
+    "band_hz": [
+     350,
+     3200
+    ]
+   },
+   "fear": {
+    "rate_per_min": 26,
+    "dur_s": 0.27,
+    "level": 0.048,
+    "band_hz": [
+     400,
+     4200
+    ]
+   }
+  },
+  "kaise_kaam_karta_hai": "line number se nahi — (a) pichhli saans se kitna time hua, (b) line ka bhav (shabd se) — in dono se tay hota hai",
+  "naap_r50": {
+   "breaths_per_min": 5.48,
+   "breath_times_s": [
+    6.43,
+    14.9,
+    25.41,
+    35.19,
+    44.29
+   ],
+   "world_qa_overall": "PASS"
+  },
+  "sabak": "saans headline/line se bandhi nahi hoti — time aur bhav se bandhti hai"
  }
 }
