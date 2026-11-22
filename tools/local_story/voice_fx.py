@@ -140,7 +140,7 @@ def pitch_shift_formant(x, semitones: float):
     return y
 
 
-def humanize(x, drift_semi=0.25, micro=True):
+def humanize(x, drift_semi=0.25, micro=False):
     """sur me halka drift + micro timing — 'seedha robot' nahi lagta."""
     t = np.arange(len(x)) / SR
     lfo = 1 + 0.0025 * np.sin(2 * np.pi * 0.7 * t + 0.3)          # ~±0.25 semi drift
@@ -167,18 +167,20 @@ def breath(x, level=0.006):
 
 
 def warm(x):
-    """EQ — audit ke hisaab se: low rumble kato, mid bhado, high (sibilance) ghatao.
+    """EQ — SMOOTH reference (Sarvam v5/v8) se match: bright 2086–2187 Hz, mid 55–57%, high 27–30%.
 
-    Naap: hamara mid 40% / high 30% tha; asli insaan mid 65% / high 14%.
+    Pehle maine ise 'insaan ki narration' jaisa garam kiya tha (mid 69, high 9) —
+    isi wajah se flat/ruk-ruk lag raha tha. Ab reference ke hisaab se.
     """
+    import numpy as np
     n = len(x)
     X = np.fft.rfft(x); f = np.fft.rfftfreq(n, 1 / SR)
     curve = np.ones_like(f)
-    curve *= 1 / (1 + (110 / (f + 1e-9)) ** 4)                       # <110 Hz rumble cut
-    curve += 1.05 * np.exp(-((f - 700) ** 2) / (2 * 420 ** 2))       # mid body +2.5 dB
-    curve += 0.55 * np.exp(-((f - 1800) ** 2) / (2 * 700 ** 2))      # presence
-    curve -= 0.45 * np.exp(-((f - 4200) ** 2) / (2 * 1200 ** 2))     # de-ess (strong)
-    curve *= 1 / (1 + (f / 9000) ** 6)                               # air cut
+    curve *= 1 / (1 + (95 / (f + 1e-9)) ** 4)                        # rumble cut
+    curve += 0.05 * np.exp(-((f - 600) ** 2) / (2 * 380 ** 2))       # body (kam)
+    curve += 2.30 * np.exp(-((f - 3200) ** 2) / (2 * 1400 ** 2))     # presence
+    curve += 1.45 * np.exp(-((f - 6200) ** 2) / (2 * 1900 ** 2))     # air
+    curve -= 0.38 * np.exp(-((f - 7500) ** 2) / (2 * 1300 ** 2))     # de-ess
     y = np.fft.irfft(X * curve, n)
     return y
 
@@ -214,3 +216,95 @@ def smooth_chain(x, semitones=0.0, human=True, br=True, warm_eq=True, rv=False):
     if peak > 0.95:
         y = y / peak * 0.95
     return y
+
+
+def pitch_resample(x, ratio: float):
+    """Sabse saaf pitch change: resample (koi SOLA/phasiness nahi).
+
+    Pitch ×ratio, duration ÷ratio. Isliye piper me length_scale ko ÷ratio karo,
+    taaki duration wapas theek ho. Formants bhi saath badalte hain — dadi/bachche
+    ke liye yahi natural hai.
+    """
+    import numpy as np
+    if abs(ratio - 1.0) < 0.005:
+        return x
+    n_out = max(2, int(len(x) / ratio))
+    return np.interp(np.linspace(0, len(x) - 1, n_out), np.arange(len(x)), x)
+
+
+def trim_silence(x, keep_ms=60, thr_db=-42):
+    """Shuru/aakhir ki khamoshi hatao (warna har line ke baad 'hole' lagta hai)."""
+    import numpy as np
+    if len(x) < 512:
+        return x
+    win = 256
+    e = np.array([np.sqrt((x[i:i + win] ** 2).mean()) for i in range(0, len(x) - win, win)])
+    thr = max(1e-4, 10 ** (thr_db / 20))
+    idx = np.where(e > thr)[0]
+    if not len(idx):
+        return x
+    a = max(0, idx[0] * win - int(keep_ms / 1000 * SR))
+    b = min(len(x), idx[-1] * win + win + int(keep_ms / 1000 * SR))
+    return x[a:b]
+
+
+def compress_silences(x, rel_db=-20, max_gap_ms=28, min_gap_ms=45, keep_ms=16, abs_db=-45):
+    """Line ke ANDAR ki khamoshi chhoti karo — **line ke apne RMS ke hisaab se**.
+
+    Pehle fixed -36 dB par gaps pakde ja rahe the; bed/saans usse upar thi, isliye
+    gaps bache reh gaye. Ab: speech ke median se `rel_db` neeche = gap.
+    """
+    import numpy as np
+    win = 128
+    e = np.array([np.sqrt((x[i:i + win] ** 2).mean()) for i in range(0, len(x) - win, win)])
+    if not len(e):
+        return x
+    speech_ref = float(np.percentile(e, 75))
+    thr = max(10 ** (abs_db / 20), speech_ref * 10 ** (rel_db / 20))
+    quiet = e <= thr
+    runs = []
+    i, n = 0, len(quiet)
+    while i < n:
+        if quiet[i]:
+            j = i
+            while j < n and quiet[j]:
+                j += 1
+            if (j - i) * win / SR * 1000 >= min_gap_ms:
+                runs.append((i, j))
+            i = j
+        else:
+            i += 1
+    if not runs:
+        return x
+    out = []
+    prev = 0
+    fade = int(0.006 * SR)
+    for a, b in runs:
+        sa, sb = a * win, min(len(x), b * win)
+        piece = x[prev:sa]
+        out.append(piece)
+        keep = int(keep_ms / 1000 * SR)
+        target = int(max_gap_ms / 1000 * SR)
+        seg_gap = x[sa:sb]
+        # gap ke beech se chhota rakho + micro fade (click nahi)
+        take = min(len(seg_gap), max(keep, target))
+        g = seg_gap[:take].copy()
+        if len(g) > 2 * fade > 0:
+            g[:fade] *= np.linspace(0, 1, fade)
+            g[-fade:] *= np.linspace(1, 0, fade)
+        out.append(g)
+        prev = sb
+    out.append(x[prev:])
+    return np.concatenate(out) if out else x
+
+
+def crossfade_join(a, b, ms=25):
+    """Do hisson ko chupchap jodo (abrupt cut nahi)."""
+    import numpy as np
+    n = int(ms / 1000 * SR)
+    if n <= 0 or len(a) < n or len(b) < n:
+        return np.concatenate([a, b])
+    fade_out = np.linspace(1, 0, n)
+    fade_in = np.linspace(0, 1, n)
+    mid = a[-n:] * fade_out + b[:n] * fade_in
+    return np.concatenate([a[:-n], mid, b[n:]])
