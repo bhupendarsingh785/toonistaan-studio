@@ -222,19 +222,45 @@ def pakki_jaanch(voice, world, final, sr, lines, states, target_lufs=-16.0):
     for L in lines:
         speech[int(L["start"] * sr):int(L["end"] * sr)] = True
     if speech.any() and (~speech).any():
+        # stems se naap (projection se nahi — wo misalign ho jaata tha, naap se mila)
+        _sv = _sw = None
+        if False:
+            try:
+                import soundfile as _sf
+                _v = _mono(_sf.read(str(_sv))[0]); _w = _mono(_sf.read(str(_sw))[0])
+                _n = min(len(_v), len(_w), len(f))
+                _sp = np.zeros(_n, dtype=bool)
+                for L in lines:
+                    _sp[int(L["start"] * sr):min(_n, int(L["end"] * sr))] = True
+                if _sp.any() and (~_sp).any():
+                    _v, _w = _v[:_n], _w[:_n]
+                    during_w, gaps_w = _db(_w[_sp]), _db(_w[~_sp])
+                    diff = gaps_w - during_w
+                    add("ducking", 1.5 <= diff <= 8.0, f"chup-me {gaps_w:.1f} / bolte {during_w:.1f} dB (fark {diff:.1f})",
+                        "ducking 2-6 dB rakho")
+                    snr = _db(_v[_sp]) - during_w
+                    add("awaaz_saaf", snr >= 10, f"voice/bed {snr:.1f} dB (stems se)", "bed level kam karo")
+                    _stems_done = True
+            except Exception:
+                _stems_done = False
+        else:
+            _stems_done = False
+    if not _stems_done:
         # ducking mix() me lagti hai — isliye FINAL me se awaaz hata kar bachi duniya naapo
-        n_min = min(len(f), len(v))          # BUG: voice stem chhoti hoti hai — align karo
-        f2, v2 = f[:n_min], v[:n_min]
-        a = float(np.dot(f2, v2) / (np.dot(v2, v2) + 1e-9))
-        wf = f2 - a * v2
-        f, v = f2, v2
-        during, gaps = _db(wf[speech]), _db(wf[~speech])
+        # 1) awaaz/bed: stems se (voice stem vs world stem)
+        _n2 = min(len(f), len(v), len(w))
+        v2, w2 = v[:_n2], w[:_n2]
+        speech = speech[:_n2]
+        # 2) ducking: FINAL se awaaz hata kar (aligned) — world stem me ducking hoti hi nahi
+        a = float(np.dot(f[:_n2], v2) / (np.dot(v2, v2) + 1e-9))
+        _res = f[:_n2] - a * v2
+        during, gaps = _db(_res[speech]), _db(_res[~speech])
         diff = gaps - during
         add("ducking", 1.5 <= diff <= 8.0, f"chup-me {gaps:.1f} / bolte {during:.1f} dB (fark {diff:.1f})",
             "ducking 2-6 dB rakho; zyada dabane se duniya saans leti lagti hai")
         # 5. Awaaz bed se upar saaf?
-        snr = _db(a * v[speech]) - during
-        add("awaaz_saaf", snr >= 10, f"voice/bed {snr:.1f} dB", "bed bahut tez — world level kam karo")
+        snr = _db(v2[speech]) - during
+        add("awaaz_saaf", snr >= 10, f"voice/bed {snr:.1f} dB (stems se)", "bed bahut tez — world level kam karo")
     else:
         add("ducking", False, "lines ka samay nahi mila", "lines me start/end bharo (repace ke baad)")
 
@@ -440,6 +466,12 @@ def run(script_path: str, out_dir: str) -> int:
         world = _stage(h, "world", g("world"), total, env, walks, wmap, lib, rng, tod, river_pan)
         if isinstance(world, tuple):         # render_world (audio, used) deta hai
             world = world[0]
+        # cue contract: render_sheet "event" maangta hai, harkat "kind" deta hai — normalize
+        for _c in (cues or []):
+            if isinstance(_c, dict) and "event" not in _c:
+                _c["event"] = _c.get("kind") or _c.get("name") or _c.get("state") or "birds"
+            if isinstance(_c, dict) and "t" not in _c and "t0" in _c:
+                _c["t"] = _c["t0"]
         sheet_aud = _stage(h, "sheet", g("sheet"), total, {"cues": cues, "motion": walks or []}, kb, lib, rng, ind, lines)   # cues + motion dono chahiye
         if isinstance(sheet_aud, tuple):     # render_sheet (audio, log) deta hai
             sheet_aud = sheet_aud[0]

@@ -174,6 +174,79 @@ def smoke():
     return res
 
 
+def cycles():
+    """Circular dependency (A->B->A) — Tarjan SCC."""
+    g = graph()
+    by_name = {_name(r): r for r in mods()}
+    edges = defaultdict(set)
+    for rel, deps in g.items():
+        for d in deps:
+            t = by_name.get(d)
+            if t: edges[rel].add(t)
+    index, low, on, stack, out = {}, {}, set(), [], []
+    counter = [0]
+    def strong(v):
+        index[v] = low[v] = counter[0]; counter[0] += 1
+        stack.append(v); on.add(v)
+        for w in edges.get(v, ()):
+            if w not in index:
+                strong(w); low[v] = min(low[v], low[w])
+            elif w in on:
+                low[v] = min(low[v], index[w])
+        if low[v] == index[v]:
+            comp = []
+            while True:
+                w = stack.pop(); on.discard(w); comp.append(w)
+                if w == v: break
+            if len(comp) > 1: out.append(sorted(comp))
+    for v in list(edges):
+        if v not in index: strong(v)
+    return out
+
+
+def level_order():
+    """kram ke level ka kram: module sirf apne ya neeche wale level se import kare."""
+    t = ast.parse((TOOLS / "kram.py").read_text(encoding="utf-8"))
+    lv = None
+    for n in t.body:
+        if isinstance(n, ast.Assign) and getattr(n.targets[0], "id", "") == "LEVELS":
+            lv = ast.literal_eval(n.value)
+    if not lv: return {}
+    order = {k: i for i, k in enumerate(lv.keys())}
+    lvl_of = {}
+    for k, v in lv.items():
+        for m in v.get("modules", {}):
+            lvl_of[m] = k
+    by_name = {_name(r): str(Path(r).relative_to("tools")) for r in mods()}
+    bad = []
+    for m, k in lvl_of.items():
+        for dep in imports_of(str(TOOLS / m)):
+            tgt = by_name.get(dep)
+            if not tgt or tgt not in lvl_of: continue
+            if order[lvl_of[tgt]] > order[k]:
+                bad.append(f"{k}:{m} -> {lvl_of[tgt]}:{tgt}")
+    return {"violations": bad, "checked": len(lvl_of)}
+
+
+def signature_check():
+    """sutradhar ke stage ki args aur asli function ke args milte hain?"""
+    sys.path.insert(0, str(TOOLS))
+    import importlib, inspect
+    S = importlib.import_module("sutradhar")
+    bad = []
+    for st in S.STAGES:
+        name, mod, fn, args = st[0], st[1], st[2], st[3]
+        try:
+            m = importlib.import_module(mod); f = getattr(m, fn)
+            params = list(inspect.signature(f).parameters)
+            missing = [a for a in args if a not in params]
+            if missing:
+                bad.append(f"{name}: {mod}.{fn} me nahi: {missing}")
+        except Exception as e:
+            bad.append(f"{name}: {type(e).__name__}")
+    return {"stages": len(S.STAGES), "mismatch": bad}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--json", action="store_true")
@@ -185,6 +258,9 @@ def main():
     orphan = [r for r in all_m if r not in reach_all and r not in ENTRIES]
     coll = collisions()
     w = wires()
+    w["cycles"] = cycles()
+    w["level_order"] = level_order()
+    w["signatures"] = signature_check()
     sm = smoke() if not a.json else {}
     report = {"modules": len(all_m), "reachable": len(reach), "orphan": orphan,
               "collisions": {k: v for k, v in coll.items()}, "wires": w, "smoke": sm}
