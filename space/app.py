@@ -1,53 +1,53 @@
-"""astra-audio — AppSail par chalne wala chhota server (sirf Python stdlib).
+"""astra-audio — Hugging Face Space (Gradio SDK + FastAPI routes).
 
-Port: X_ZOHO_CATALYST_LISTEN_PORT -> PORT -> 9000 (AppSail ka default).
+GET  /health   -> {"ok": true}
+POST /render   -> {"job": id, "state": "queued"}   (placeholder)
+GET  /job/{id} -> job ka haal
+/              -> chhota Gradio status page
 """
-import json
 import os
-import sys
-from http.server import BaseHTTPRequestHandler, HTTPServer
+import uuid
 
-PORT = int(os.environ.get("X_ZOHO_CATALYST_LISTEN_PORT")
-           or os.environ.get("PORT")
-           or 7860)
+import gradio as gr
+import uvicorn
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+
+API = FastAPI(title="astra-audio")
+JOBS = {}
 
 
-class H(BaseHTTPRequestHandler):
-    def _send(self, code, body, ctype="application/json"):
-        b = body if isinstance(body, bytes) else body.encode("utf-8")
-        self.send_response(code)
-        self.send_header("Content-Type", ctype)
-        self.send_header("Content-Length", str(len(b)))
-        self.end_headers()
-        self.wfile.write(b)
+@API.get("/health")
+def health():
+    return {"ok": True, "service": "astra-audio"}
 
-    def do_GET(self):
-        if self.path.startswith("/health"):
-            return self._send(200, json.dumps({"ok": True, "service": "astra-audio"}))
-        if self.path == "/" or self.path.startswith("/index"):
-            html = ("<!doctype html><meta name=viewport content='width=device-width,initial-scale=1'>"
-                    "<body style='font-family:system-ui;background:#0b1020;color:#e8ecf8;padding:24px'>"
-                    "<h2>astra-audio chal raha hai</h2>"
-                    "<p>/health theek hai. Engine jodne par /render chalega.</p></body>")
-            return self._send(200, html, "text/html; charset=utf-8")
-        return self._send(404, json.dumps({"error": "path nahi mila"}))
 
-    def do_POST(self):
-        n = int(self.headers.get("Content-Length") or 0)
-        try:
-            body = json.loads(self.rfile.read(n) or b"{}")
-        except Exception:
-            body = {}
-        if self.path.startswith("/render"):
-            return self._send(501, json.dumps({"error": "engine abhi juda nahi", "mila": bool(body)}))
-        return self._send(404, json.dumps({"error": "path nahi mila"}))
+@API.post("/render")
+def render(body: dict | None = None):
+    body = body or {}
+    script = str(body.get("script") or "")
+    if not script.strip():
+        return JSONResponse({"error": "script khaali hai"}, status_code=400)
+    job_id = uuid.uuid4().hex[:12]
+    JOBS[job_id] = {"state": "queued", "chars": len(script)}
+    return {"job": job_id, "state": "queued"}
 
-    def log_message(self, fmt, *a):
-        sys.stderr.write("astra: %s - %s\n" % (self.address_string(), fmt % a))
 
+@API.get("/job/{job_id}")
+def job(job_id: str):
+    return JOBS.get(job_id) or JSONResponse({"error": "job nahi mila"}, status_code=404)
+
+
+def status_text():
+    return f"astra-audio chal raha hai. Kul jobs: {len(JOBS)}"
+
+
+with gr.Blocks(title="astra-audio") as demo:
+    gr.Markdown("## astra-audio\nChhota API: `/health`, `/render`, `/job/{id}`")
+    out = gr.Textbox(label="Status", value=status_text())
+    gr.Button("Refresh").click(status_text, outputs=out)
+
+app = gr.mount_gradio_app(API, demo, path="/")
 
 if __name__ == "__main__":
-    print("astra-audio server shuru, port %d" % PORT, flush=True)
-    srv = HTTPServer(("0.0.0.0", PORT), H)
-    print("astra-audio listening on 0.0.0.0:%d" % PORT, flush=True)
-    srv.serve_forever()
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 7860)))
