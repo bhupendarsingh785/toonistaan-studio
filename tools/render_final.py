@@ -10,7 +10,8 @@ sys.path.insert(0, "/scratch/work/src/tools/local_story")
 import psola
 
 FF = get_ffmpeg_exe(); SR = 22050
-CAST = {"narrator": ("rohan", 1.00, 0.42), "bhediya": ("pratham", 1.05, 0.46), "stree": ("priyamvada", 1.02, 0.40)}
+CAST = {"narrator": ("rohan", 1.00, 0.42), "bhediya": ("pratham", 1.05, 0.46), "stree": ("priyamvada", 1.05, 0.40)}
+GAIN = {"narrator": 1.0, "bhediya": 1.0, "stree": 1.24}      # ladki ki awaaz 2 dB upar
 import os as _os
 _D = float(_os.environ.get("PSOLA_DEPTH", "0"))     # 0 = PSOLA band (samajh bani rahe)
 DEPTH = {k: _D for k in ("pyaar", "dukh", "dar", "hairani", "khushi", "gussa", "neutral")}
@@ -91,6 +92,11 @@ def main():
         if _dep > 0.05:
             y = psola.shift(y, SR, contour_for(y, _dep, rng))
         y = micro(y, rng)
+        y = y * GAIN.get(who, 1.0)
+        if who == "stree":                       # garam (low shelf) + halka air
+            S = np.fft.rfft(y); f = np.fft.rfftfreq(len(y), 1 / SR)
+            g = 1 + 0.55 * np.exp(-((f - 260) ** 2) / (2 * 180 ** 2)) + 0.18 * np.exp(-((f - 7000) ** 2) / (2 * 2500 ** 2))
+            y = np.fft.irfft(S * g, len(y)).astype(np.float32)
         pk = np.abs(y).max()
         if pk > 0: y = y / pk * 0.9
         parts.append(y); marks.append({"who": who, "text": txt, "bhaav": bhaav, "start": round(t, 2), "dur": round(len(y) / SR, 2)})
