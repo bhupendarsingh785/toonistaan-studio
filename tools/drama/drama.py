@@ -64,8 +64,19 @@ def trim(y):
 
 def main():
     src = Path(sys.argv[1]); out = sys.argv[2]
-    bed_db = float(sys.argv[sys.argv.index("--bed") + 1]) if "--bed" in sys.argv else -7.0
+    _fxp = {}
+    for _c in ("/scratch/work/fix_plan.json", "fix_plan.json"):
+        if Path(_c).exists():
+            try:
+                _fxp = json.loads(Path(_c).read_text(encoding="utf-8")).get("fix", {})
+            except Exception:
+                _fxp = {}
+            break
+    bed_db = float(sys.argv[sys.argv.index("--bed") + 1]) if "--bed" in sys.argv else float(_fxp.get("bed_level", -7.0))
     use_praat = ("--praat" in sys.argv) and (praat_pitch is not None)
+    fx = _fxp
+    if fx:
+        print("fix_plan mila:", fx)
     sc = script_parse.load(src)
     plans = prosody.plan_all(sc["lines"], CHARS)
     work = Path("/scratch/work/drama"); work.mkdir(exist_ok=True)
@@ -76,7 +87,7 @@ def main():
         y = trim(y)
         if use_praat:
             y = praat_pitch.apply_curve(y, SR, pl["curve"], max_st=2.5)
-        g = 10 ** (prof.get("gain_db", 0) / 20)
+        g = 10 ** ((prof.get("gain_db", 0) + float(fx.get("voice_gain", 0))) / 20)
         y = y * g
         pk = np.abs(y).max()
         if pk > 0: y = y / pk * 0.9
@@ -88,6 +99,16 @@ def main():
         parts.append(gap); t += (len(y) + len(gap)) / SR
     voice_track = np.concatenate(parts)
     Lb, Rb, used = scene_audio.build(sc.get("scene", "nadi_kinare"), len(voice_track))
+    _beq = float(fx.get("bed_eq", 0.0))
+    if _beq < -0.2:                      # background ka bright hissa neecha (voice saaf)
+        for _i in range(2):
+            _arr = Lb if _i == 0 else Rb
+            _n = len(_arr); _S = np.fft.rfft(_arr); _f = np.fft.rfftfreq(_n, 1 / SR)
+            # 2.5-4.5k ko kaato + 3.4k se upar dheela lowpass (background ki chamak hataye)
+            _g = 1 + (10 ** (_beq / 20) - 1) * np.exp(-((_f - 3300) ** 2) / (2 * 1100 ** 2))
+            _g = _g / (1 + (_f / 3600.0) ** 3)
+            _out = np.fft.irfft(_S * _g, _n).astype(np.float32)
+            _arr[:] = _out[:len(_arr)]
     vr = float(np.sqrt((voice_track ** 2).mean())) + 1e-9
     br = float(np.sqrt(((Lb ** 2).mean() + (Rb ** 2).mean()) / 2)) + 1e-9
     k = (vr * 10 ** (bed_db / 20)) / br
@@ -97,8 +118,13 @@ def main():
     tmp = work / "pre.wav"
     w = wave.open(str(tmp), "wb"); w.setnchannels(2); w.setsampwidth(2); w.setframerate(SR)
     w.writeframes((np.clip(np.stack([L, R], 1), -1, 1) * 32767).astype("<i2").tobytes()); w.close()
-    subprocess.run([_ff(), "-v", "error", "-y", "-i", str(tmp), "-af",
-                    "equalizer=f=3500:width_type=q:w=1.3:g=-1.8,loudnorm=I=-16:TP=-2.5:LRA=11,volume=0.85,alimiter=limit=0.80",
+    hc = float(fx.get("harsh_cut", -1.8)); wm = float(fx.get("warmth", 0.0))
+    mv = float(fx.get("master_vol", 0.85)); md = float(fx.get("mod_depth", 0.0))
+    af = f"equalizer=f=3200:width_type=q:w=1.3:g={hc:.2f},equalizer=f=6200:width_type=q:w=1.5:g={hc*0.6:.2f},"
+    if wm > 0.1: af += f"bass=g={wm:.1f}:f=250:w=0.7,"
+    if md > 0.5: af += f"tremolo=f=4.3:d={min(0.35, md/100):.2f},"
+    af += f"loudnorm=I=-16:TP=-2.5:LRA=11,volume={mv:.2f},alimiter=limit=0.80"
+    subprocess.run([_ff(), "-v", "error", "-y", "-i", str(tmp), "-af", af,
                     "-c:a", "libmp3lame", "-b:a", "160k", out], check=True)
     (work / "plan.json").write_text(json.dumps({"scene": sc["scene"], "dur": round(len(voice_track) / SR, 2),
                                                 "lines": marks, "bed": used, "praat": use_praat}, ensure_ascii=False, indent=1), encoding="utf-8")
