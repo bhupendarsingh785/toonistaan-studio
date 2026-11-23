@@ -12,8 +12,27 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, JSONResponse
 
+
+# --- ZeroGPU: HF Space ke ZeroGPU hardware ko ek @spaces.GPU function chahiye ---
+try:
+    import spaces  # ZeroGPU spaces par pehle se hota hai
+
+    @spaces.GPU
+    def gpu_ping():
+        """GPU warm-up / future audio render ke liye."""
+        return "gpu ok"
+except Exception:  # CPU par chal raha ho to normal function
+
+    def gpu_ping():
+        return "cpu ok"
+
 app = FastAPI(title="astra-audio")
 JOBS = {}
+
+
+@app.get("/gpu")
+def gpu():
+    return {"gpu": gpu_ping()}
 
 
 @app.get("/health")
