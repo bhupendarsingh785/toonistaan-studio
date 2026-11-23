@@ -24,10 +24,14 @@ jobs:
           HF_USER: ${{ secrets.HF_USERNAME }}
         run: |
           set -e
+          echo "--- whoami:"; curl -s -H "Authorization: Bearer $HF" https://huggingface.co/api/whoami-v2 | head -c 300; echo
           code=$(curl -s -o /tmp/create.json -w "%{http_code}" -X POST https://huggingface.co/api/repos/create \
             -H "Authorization: Bearer $HF" -H "Content-Type: application/json" \
             -d "{\"name\":\"astra-audio\",\"type\":\"space\",\"sdk\":\"docker\",\"private\":false}")
-          echo "create status: $code"; cat /tmp/create.json | head -5
+          echo "create status: $code"; cat /tmp/create.json | head -c 500; echo
+          if [ "$code" != "200" ] && [ "$code" != "201" ] && [ "$code" != "409" ]; then
+            echo "Space nahi bana — token me WRITE permission chahiye (ya Space pehle se manually banao)"
+          fi
 
       - name: Space me code push karo
         env:
