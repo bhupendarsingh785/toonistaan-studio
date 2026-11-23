@@ -70,6 +70,7 @@ STAGES = [
     ("master",    "world.duniya",        "master",         ["st", "out_path", "lufs", "tp"],        True,  "Loudness (LUFS) + true-peak"),
     # --- jaanch ---
     ("qa_world",  "world.world_qa",      "judge",          ["path"],                                True,  "Duniya ki QA"),
+    ("self_improve","self_improve",         "deep",           ["path"],                               False, "Render ka gehra naap + shakha diagnosis + fix plan"),
     ("manifest",  "render_manifest",     "build",          ["script", "audio", "out", "settings"],  False, "Hisaab-kitaab (kya bana, kaise)"),
 ]
 
@@ -467,6 +468,7 @@ def run(script_path: str, out_dir: str) -> int:
         target_lufs = lufs_target(_channels(st))
         _stage(h, "master", g("master"), st, str(final_p), target_lufs, -1.0)
         _stage(h, "qa_world", g("qa_world"), str(final_p))
+        _stage(h, "self_improve", g("self_improve"), str(final_p), required=False)
         _stage(h, "manifest", g("manifest"), script_path, str(final_p), str(out / "manifest.json"),
                {"lufs": target_lufs}, required=False)
 

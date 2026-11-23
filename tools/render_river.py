@@ -85,4 +85,5 @@ def main():
     (work / "marks.json").write_text(json.dumps({"dur": round(len(voice_track) / SR, 2), "marks": marks}, ensure_ascii=False, indent=1), encoding="utf-8")
     print(json.dumps({"out": out, "dur": round(len(voice_track) / SR, 2), "bed_db": bed_db}))
 
-main()
+if __name__ == "__main__":
+    main()

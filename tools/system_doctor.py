@@ -280,7 +280,18 @@ def c_agents():
         add("agents: sources", "FAIL", f"{type(e).__name__}")
 
 
-CHECKS = [c_agents, c_activate, c_shabd, c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
+def c_self_improve():
+    """Loop zinda hai? deep naap + selftest."""
+    try:
+        import subprocess, sys as _s
+        r = subprocess.run([_s.executable, str(ROOT / "tools" / "self_improve.py"), "selftest"],
+                           capture_output=True, text=True, timeout=120)
+        add("self_improve selftest", "PASS" if r.returncode == 0 else "WARN", (r.stdout or "").strip().split("\n")[-1][:60])
+    except Exception as e:
+        add("self_improve selftest", "WARN", type(e).__name__)
+
+
+CHECKS = [c_self_improve, c_agents, c_activate, c_shabd, c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
           c_engines, c_tools, c_qa_thresholds, c_judge_smoke, c_selftest]
 
 

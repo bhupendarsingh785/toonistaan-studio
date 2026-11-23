@@ -24,6 +24,7 @@ LEVELS = {
   "modules": {
    "kram.py": ["naksha", "jaanch", "purana", "maalik_report", "_modname"],
    "sutradhar.py": [
+    "Hisaab",
     "get_fn",
     "wire",
     "_db",
@@ -34,6 +35,7 @@ LEVELS = {
     "_lufs_approx",
     "pakki_jaanch",
     "_stage",
+    "StageFail",
     "space_voice",
     "time_of_day",
     "_wav",
@@ -83,7 +85,9 @@ LEVELS = {
     "c_bhaav_kaam",
     "c_shabd",
     "c_activate",
-    "main"
+    "c_agents",
+    "c_self_improve",
+    "main",
    ],
    "system_activate.py": [
     "modules",
@@ -146,6 +150,7 @@ LEVELS = {
     "main"
    ],
    "tts_guard.py": [
+    "BadAudio",
     "audio_ok",
     "render",
     "main",
@@ -192,6 +197,7 @@ LEVELS = {
     "matra_units"
    ],
    "realtime/sudhaar.py": [
+    "Lexicon",
     "_replace_first_akshar",
     "candidates",
     "order_by_learning",
@@ -205,6 +211,15 @@ LEVELS = {
  "2_bhaav": {
   "kaam": "Bhaav (emotion)",
   "modules": {
+   "local_story/prosody_plan.py": [
+    "_is_content",
+    "plan_line",
+    "plan_script",
+   ],
+   "drama/prosody.py": [
+    "plan",
+    "plan_all",
+   ],
    "bhavna.py": [
     "detect",
     "prosody",
@@ -226,6 +241,7 @@ LEVELS = {
     "correction",
     "sculpt",
     "end_contour",
+    "BhaavYaad",
     "analyse",
     "describe",
    ],
@@ -264,6 +280,8 @@ LEVELS = {
   "modules": {
    "engine_router.py": [
     "active_order",
+    "EngineState",
+    "Plan",
     "_ffmpeg",
     "_which",
     "engine_status",
@@ -362,6 +380,8 @@ LEVELS = {
    ],
    "voice_clone.py": [
     "_atomic_json",
+    "ConsentMissing",
+    "Voice",
     "backend_status",
     "pick_backend",
     "reference_quality",
@@ -452,11 +472,17 @@ LEVELS = {
    ],
    "realtime/live.py": [
     "log",
+    "EspeakTTS",
+    "PiperTTS",
     "post",
     "_bh_slim",
+    "LiveChecker",
     "main",
    ],
    "realtime/kaan.py": [
+    "FasterWhisperEar",
+    "CacheEar",
+    "SimulatedEar",
     "make_ear",
    ],
    "realtime/gates.py": [
@@ -474,11 +500,13 @@ LEVELS = {
    ],
    "realtime/nirantarta.py": [
     "features",
+    "Profiles",
    ],
    "realtime/bahi.py": [
     "Bahi"
    ],
    "llm_bridge.py": [
+    "ProviderState",
     "_spec",
     "_key",
     "_valid_base",
@@ -501,6 +529,10 @@ LEVELS = {
  "4_spotting": {
   "kaam": "Script se duniya ka plan: kya, kab, kahan, andar/bahar, mausam",
   "modules": {
+   "drama/script_parse.py": [
+    "parse",
+    "load",
+   ],
    "world/spotting.py": [
     "load_events",
     "_rx",
@@ -533,6 +565,13 @@ LEVELS = {
  "5_duniya": {
   "kaam": "Duniya ki awaazein: library, seekhna, naye roop, bed",
   "modules": {
+   "drama/scene_audio.py": [
+    "_ff",
+    "find",
+    "load",
+    "loop_to",
+    "build",
+   ],
    "world/duniya.py": [
     "db2a",
     "a2db",
@@ -559,6 +598,7 @@ LEVELS = {
     "syn_thunder",
     "syn_step",
     "decode",
+    "Library",
     "loop_to",
     "load_map",
     "detect",
@@ -695,7 +735,8 @@ LEVELS = {
     "load_mono",
     "loop_to",
     "band",
-    "make_bed"
+    "speech_like",
+    "make_bed",
    ],
    "sound_synth.py": [
     "ffmpeg",
@@ -804,11 +845,62 @@ LEVELS = {
  },
  "7_mix": {
   "kaam": "Mix + master (world/duniya.mix, .master yahin chalte hain)",
-  "modules": {}
+  "modules": {
+   "sarvam_story.py": [
+    "_ff",
+    "load",
+    "trim",
+    "piper_line",
+    "sarvam_line",
+    "river_bed",
+    "main",
+   ],
+   "render_river.py": [
+    "voice",
+    "load",
+    "trim",
+    "loop",
+    "river_bed",
+    "main",
+   ],
+   "render_final.py": [
+    "voice",
+    "load",
+    "synth",
+    "trim",
+    "contour_for",
+    "micro",
+    "river_bed",
+    "main",
+   ],
+   "drama/drama.py": [
+    "_ff",
+    "load",
+    "voice",
+    "say",
+    "trim",
+    "main",
+   ],}
  },
  "8_jaanch": {
   "kaam": "Pakki jaanch: suno, naapo, PASS/FAIL",
   "modules": {
+   "local_story/praat_pitch.py": [
+    "apply_curve",
+   ],
+   "self_improve.py": [
+    "load",
+    "_f0",
+    "_env",
+    "_speech_mask",
+    "deep",
+    "diagnose",
+    "log_run",
+    "learn",
+    "apply_learned",
+    "selftest",
+    "main",
+   ],
    "audio_judge.py": [
     "ffmpeg",
     "decode",
@@ -936,12 +1028,16 @@ LEVELS = {
     "wiki_extract",
     "search_news",
     "search_wiki_hi",
+    "search_ddg_lite",
+    "search_bing",
     "search_all",
+    "search_for_agent",
+    "health",
     "search",
     "fetch",
     "_relevant",
     "research",
-    "main"
+    "main",
    ],
    "browser_mesh.py": [
     "negotiate",
