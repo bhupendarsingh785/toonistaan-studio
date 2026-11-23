@@ -174,9 +174,33 @@ def smoke():
     return res
 
 
+def _toplevel_imports(rel):
+    """Sirf module body ke import (function ke andar wale lazy hain — unse cycle nahi banti)."""
+    t = parse(rel)
+    if t is None: return set()
+    out = set()
+    for n in t.body:
+        if isinstance(n, ast.Import):
+            for a in n.names: out.add(a.name.split(".")[-1])
+        elif isinstance(n, ast.ImportFrom):
+            if n.module: out.add(n.module.split(".")[-1])
+            for a in n.names: out.add(a.name)
+    return out
+
+
 def cycles():
-    """Circular dependency (A->B->A) — Tarjan SCC."""
-    g = graph()
+    """Import-time circular dependency (A->B->A). Lazy cycle alag se ginte hain."""
+    by_name = {_name(r): r for r in mods()}
+    g = defaultdict(set)
+    for rel in mods():
+        for dep in _toplevel_imports(rel):
+            t = by_name.get(dep)
+            if t: g[rel].add(t)
+    lazy = defaultdict(set)
+    for rel in mods():
+        for dep in imports_of(rel) - _toplevel_imports(rel):
+            t = by_name.get(dep)
+            if t: lazy[rel].add(t)
     by_name = {_name(r): r for r in mods()}
     edges = defaultdict(set)
     for rel, deps in g.items():
@@ -201,7 +225,7 @@ def cycles():
             if len(comp) > 1: out.append(sorted(comp))
     for v in list(edges):
         if v not in index: strong(v)
-    return out
+    return {"hard": out, "lazy_edges": sum(len(v) for v in lazy.values())}
 
 
 def level_order():
@@ -218,9 +242,11 @@ def level_order():
         for m in v.get("modules", {}):
             lvl_of[m] = k
     by_name = {_name(r): str(Path(r).relative_to("tools")) for r in mods()}
+    STORY = [k for k in lv if k[0].isdigit()]          # 0..8 (A_/T_/K_/P_ orchestrator hain)
     bad = []
     for m, k in lvl_of.items():
-        for dep in imports_of(str(TOOLS / m)):
+        if k not in STORY: continue
+        for dep in _toplevel_imports(str(TOOLS / m)):
             tgt = by_name.get(dep)
             if not tgt or tgt not in lvl_of: continue
             if order[lvl_of[tgt]] > order[k]:

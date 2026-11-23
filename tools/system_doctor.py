@@ -314,7 +314,20 @@ def c_sfx():
         add("sfx module", "WARN", type(e).__name__)
 
 
-CHECKS = [c_sfx, c_praat, c_self_improve, c_agents, c_activate, c_shabd, c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
+def c_sarvam():
+    """Sarvam expressive path taiyar hai? (key ho to render, warna local piper)."""
+    try:
+        import sys as _s
+        _s.path.insert(0, str(ROOT / "tools"))
+        import sarvam_story as SS
+        has_key = bool(__import__("os").environ.get("SARVAM_API_KEY"))
+        add("sarvam path", "PASS" if hasattr(SS, "main") else "WARN",
+            f"{'key mili — expressive render tayyar' if has_key else 'key nahi — piper fallback chalega'}")
+    except Exception as e:
+        add("sarvam path", "WARN", type(e).__name__)
+
+
+CHECKS = [c_sarvam, c_sfx, c_praat, c_self_improve, c_agents, c_activate, c_shabd, c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
           c_engines, c_tools, c_qa_thresholds, c_judge_smoke, c_selftest]
 
 

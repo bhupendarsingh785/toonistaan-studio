@@ -3,8 +3,8 @@
  "version": 1,
  "levels_db": {
   "_note": "Awaaz ke mukable dB. Bolte waqt bed itna neeche, ruke me duck hat jata hai.",
-  "bed_under_speech": -30,
-  "duck_db": 4,
+  "bed_under_speech": -16,
+  "duck_db": 6,
   "duck_attack_ms": 120,
   "duck_release_ms": 900,
   "never_below_dbfs": -46

@@ -694,6 +694,9 @@ def follow(x, att_ms, rel_ms):
         ys[i] = y
     return np.interp(np.arange(len(x)), np.arange(len(xs)) * step, ys)
 
+LAST_PARTS = {}          # mix() ke asli hisse — jaanch inhi se hoti hai (andaaze se nahi)
+
+
 def mix(voice, world, wmap, voice_pan=0.0, lines=None, fx=None, ind=None, phone_lines=()):
     Lv = wmap["levels_db"]
     n = max(len(voice), world.shape[1])
@@ -720,7 +723,7 @@ def mix(voice, world, wmap, voice_pan=0.0, lines=None, fx=None, ind=None, phone_
         vst = vst + outdoor_reverb(dry_part * 0.06, rt=0.7, seed=3)                # bahar khade hone ka ehsaas
     # world level: bolte waqt awaaz se bed_under_speech dB neeche
     wr = np.sqrt(np.mean(w ** 2)) + 1e-12
-    w = w / wr * db2a(-20 + Lv["bed_under_speech"] + Lv["duck_db"])
+    w = w / wr * db2a(-20 + Lv["bed_under_speech"])      # duck sirf envelope se (neeche)
     # ducking: awaaz chal rahi ho to duck_db tak neeche, ruke me wapas (kabhi band nahi)
     c = np.concatenate([[0], np.cumsum(v ** 2)]); k = 2400
     ve = np.sqrt(np.maximum(0, (c[np.minimum(np.arange(n) + k // 2, n)] - c[np.maximum(np.arange(n) - k // 2, 0)]) / k))
@@ -737,7 +740,19 @@ def mix(voice, world, wmap, voice_pan=0.0, lines=None, fx=None, ind=None, phone_
     if fx is not None:
         f = np.pad(fx, ((0, 0), (0, max(0, n - fx.shape[1]))))[:, :n]
         m = m + f * db2a(follow(-2.0 * act, 80, 500))          # FX sirf 2 dB duck — saaf sunai de
+    LAST_PARTS.clear()
+    LAST_PARTS["voice"] = vst[:n].copy() if hasattr(vst, "shape") else vst
+    LAST_PARTS["world_ducked"] = (w * gain)[:, :n].copy()
     return m
+
+def _lufs_of(path):
+    """ffmpeg se asli LUFS (integrated)."""
+    out = subprocess.run(["ffmpeg", "-hide_banner", "-i", str(path), "-af", "ebur128=peak=true", "-f", "null", "-"],
+                         capture_output=True, text=True).stderr
+    import re
+    m = re.findall(r"I:\s*(-?\d+\.\d+)\s*LUFS", out)
+    return float(m[-1]) if m else None
+
 
 def master(st, out_path, lufs=-16.0, tp=-1.5):
     tmp = Path(out_path).with_suffix(".pre.wav")
@@ -754,6 +769,15 @@ def master(st, out_path, lufs=-16.0, tp=-1.5):
     args = ["ffmpeg", "-v", "error", "-y", "-i", str(tmp), "-af", af, "-ar", str(SR), "-ac", "2"]
     args += (["-c:a", "libmp3lame", "-b:a", "192k"] if str(out_path).endswith(".mp3") else [])
     subprocess.run(args + [str(out_path)], check=True)
+    # 2nd pass: naap kar theek karo (ek hi baar me -16 nahi aata)
+    got = _lufs_of(out_path)
+    if got is not None and abs(got - lufs) > 0.7:
+        fix = lufs - got
+        args2 = ["ffmpeg", "-v", "error", "-y", "-i", str(out_path), "-af", f"volume={fix:.2f}dB,alimiter=limit={10 ** (tp / 20):.3f}"]
+        args2 += (["-c:a", "libmp3lame", "-b:a", "192k"] if str(out_path).endswith(".mp3") else [])
+        tmp2 = Path(str(out_path)).with_suffix(".fix" + Path(out_path).suffix)
+        subprocess.run(args2 + [str(tmp2)], check=True)
+        tmp2.replace(out_path)
     tmp.unlink(missing_ok=True)
 
 

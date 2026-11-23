@@ -33,9 +33,12 @@ LEVELS = {
     "collisions",
     "wires",
     "smoke",
+    "_toplevel_imports",
+    "cycles",
+    "level_order",
+    "signature_check",
     "main",
    ],
-   "kram.py": ["naksha", "jaanch", "purana", "maalik_report", "_modname"],
    "sutradhar.py": [
     "Hisaab",
     "get_fn",
@@ -43,6 +46,7 @@ LEVELS = {
     "_db",
     "_mono",
     "loop_score",
+    "_lufs_ffmpeg",
     "lufs_target",
     "_channels",
     "_lufs_approx",
@@ -55,6 +59,13 @@ LEVELS = {
     "run",
     "check",
     "selftest",
+   ],
+   "kram.py": [
+    "maalik_report",
+    "_modname",
+    "naksha",
+    "jaanch",
+    "purana",
    ],
    "worktmp.py": [
     "work_tmp",
@@ -100,6 +111,8 @@ LEVELS = {
     "c_activate",
     "c_agents",
     "c_self_improve",
+    "c_praat",
+    "c_sfx",
     "main",
    ],
    "system_activate.py": [
@@ -166,7 +179,7 @@ LEVELS = {
     "BadAudio",
     "audio_ok",
     "render",
-    "main",
+    "main"
    ]
   }
  },
@@ -214,7 +227,7 @@ LEVELS = {
     "_replace_first_akshar",
     "candidates",
     "order_by_learning",
-    "apply_word",
+    "apply_word"
    ],
    "pronounce_test.py": [
     "main",
@@ -256,7 +269,7 @@ LEVELS = {
     "end_contour",
     "BhaavYaad",
     "analyse",
-    "describe",
+    "describe"
    ],
    "emotion_read.py": [
     "ffmpeg",
@@ -281,47 +294,6 @@ LEVELS = {
     "engine_settings",
     "check",
     "main"
-   ],
-   "audio_learn.py": [
-    "advice",
-    "main"
-   ]
-  }
- },
- "3_awaaz": {
-  "kaam": "Kirdaar ki awaaz + line ki jaanch",
-  "modules": {
-   "local_story/nat_story.py": [
-    "voice",
-    "say",
-    "load",
-    "trim",
-    "bed",
-    "main",
-   ],
-   "engine_router.py": [
-    "active_order",
-    "EngineState",
-    "Plan",
-    "_ffmpeg",
-    "_which",
-    "engine_status",
-    "ready_engines",
-    "choose_engine",
-    "load_voices",
-    "parse_story",
-    "build_plan",
-    "_call_provider",
-    "_fix_format",
-    "_guarded",
-    "render_line",
-    "render_story_parallel",
-    "render_story",
-    "cmd_status",
-    "problems",
-    "cmd_problems",
-    "cmd_plan",
-    "main",
    ],
    "voice_provider.py": [
     "eleven_key",
@@ -425,7 +397,7 @@ LEVELS = {
     "cmd_backends",
     "cmd_audit",
     "cmd_voices",
-    "main",
+    "main"
    ],
    "voice_extract.py": [
     "_ff",
@@ -498,13 +470,13 @@ LEVELS = {
     "post",
     "_bh_slim",
     "LiveChecker",
-    "main",
+    "main"
    ],
    "realtime/kaan.py": [
     "FasterWhisperEar",
     "CacheEar",
     "SimulatedEar",
-    "make_ear",
+    "make_ear"
    ],
    "realtime/gates.py": [
     "_frames",
@@ -521,7 +493,7 @@ LEVELS = {
    ],
    "realtime/nirantarta.py": [
     "features",
-    "Profiles",
+    "Profiles"
    ],
    "realtime/bahi.py": [
     "Bahi"
@@ -543,7 +515,7 @@ LEVELS = {
     "remember",
     "cmd_status",
     "cmd_chat",
-    "main",
+    "main"
    ]
   }
  },
@@ -553,23 +525,6 @@ LEVELS = {
    "drama/script_parse.py": [
     "parse",
     "load",
-   ],
-   "world/spotting.py": [
-    "load_events",
-    "_rx",
-    "_pos",
-    "has",
-    "first_pos",
-    "t_at",
-    "find_stop",
-    "spot_rules",
-    "place_timeline",
-    "weather_timeline",
-    "spot_llm",
-    "parse_llm",
-    "merge",
-    "log_missing",
-    "spot"
    ],
    "story_scene.py": [
     "_has",
@@ -586,6 +541,58 @@ LEVELS = {
  "5_duniya": {
   "kaam": "Duniya ki awaazein: library, seekhna, naye roop, bed",
   "modules": {
+   "world/spotting.py": [
+    "load_events",
+    "_rx",
+    "_pos",
+    "has",
+    "first_pos",
+    "t_at",
+    "find_stop",
+    "spot_rules",
+    "place_timeline",
+    "weather_timeline",
+    "spot_llm",
+    "parse_llm",
+    "merge",
+    "log_missing",
+    "spot",
+   ],
+   "world/harkat.py": [
+    "_bp",
+    "_lp",
+    "_hp",
+    "F",
+    "norm",
+    "crackle",
+    "step",
+    "scuff",
+    "paw_cycle",
+    "twig",
+    "fall",
+    "jump",
+    "splash",
+    "wolf_howl",
+    "growl",
+    "thunder",
+    "heartbeat",
+    "panting",
+    "_pos",
+    "has",
+    "act",
+    "word_time",
+    "emotion_of",
+    "surface_of",
+    "plan_actions",
+   ],
+   "local_story/nat_story.py": [
+    "voice",
+    "say",
+    "load",
+    "trim",
+    "bed",
+    "main",
+   ],
    "drama/scene_audio.py": [
     "_ff",
     "find",
@@ -643,6 +650,7 @@ LEVELS = {
     "_peaking",
     "follow",
     "mix",
+    "_lufs_of",
     "master",
     "main",
    ],
@@ -740,16 +748,6 @@ LEVELS = {
     "steps_gravel",
     "leaves"
    ],
-   "local_story/shabd_live.py": [
-    "best",
-    "risky",
-    "variants",
-    "_model",
-    "_say",
-    "_hear",
-    "_cer",
-    "main",
-   ],
    "local_story/real_bed.py": [
     "find",
     "_ff",
@@ -835,47 +833,6 @@ LEVELS = {
  "6_harkat": {
   "kaam": "Harkat: kadam, daudna, jaanwar",
   "modules": {
-   "world/harkat.py": [
-    "_bp",
-    "_lp",
-    "_hp",
-    "F",
-    "norm",
-    "crackle",
-    "step",
-    "scuff",
-    "paw_cycle",
-    "twig",
-    "fall",
-    "jump",
-    "splash",
-    "wolf_howl",
-    "growl",
-    "thunder",
-    "heartbeat",
-    "panting",
-    "_pos",
-    "has",
-    "act",
-    "word_time",
-    "emotion_of",
-    "surface_of",
-    "plan_actions"
-   ]
-  }
- },
- "7_mix": {
-  "kaam": "Mix + master (world/duniya.mix, .master yahin chalte hain)",
-  "modules": {
-   "sarvam_story.py": [
-    "_ff",
-    "load",
-    "trim",
-    "piper_line",
-    "sarvam_line",
-    "river_bed",
-    "main",
-   ],
    "render_river.py": [
     "voice",
     "load",
@@ -894,6 +851,18 @@ LEVELS = {
     "river_bed",
     "main",
    ],
+   "local_story/psola.py": [
+    "f0_track",
+    "shift",
+   ],
+   "local_story/praat_pitch.py": [
+    "_praat",
+    "f0_track",
+    "measure",
+    "apply_curve",
+    "syllable_curve",
+    "selftest",
+   ],
    "drama/drama.py": [
     "_ff",
     "load",
@@ -906,12 +875,9 @@ LEVELS = {
  "8_jaanch": {
   "kaam": "Pakki jaanch: suno, naapo, PASS/FAIL",
   "modules": {
-   "local_story/psola.py": [
-    "f0_track",
-    "shift",
-   ],
-   "local_story/praat_pitch.py": [
-    "apply_curve",
+   "audio_learn.py": [
+    "advice",
+    "main",
    ],
    "self_improve.py": [
     "load",
@@ -919,11 +885,30 @@ LEVELS = {
     "_env",
     "_speech_mask",
     "deep",
+    "cpp",
+    "lra_db",
+    "flux",
+    "formant_track",
     "diagnose",
+    "_delta",
     "log_run",
     "learn",
+    "_vec",
+    "train_model",
+    "suggest",
+    "build_target",
     "apply_learned",
     "selftest",
+    "main",
+   ],
+   "local_story/shabd_live.py": [
+    "risky",
+    "variants",
+    "_model",
+    "_say",
+    "_hear",
+    "_cer",
+    "best",
     "main",
    ],
    "audio_judge.py": [

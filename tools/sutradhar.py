@@ -162,6 +162,19 @@ def loop_score(w, sr, hop_s=0.05, lo=5, hi=60):
     return {"score": best, "lag": lag_b}
 
 
+def _lufs_ffmpeg(path):
+    """Asli integrated LUFS (ffmpeg ebur128) — approx se nahi."""
+    import subprocess
+    try:
+        out = subprocess.run(["ffmpeg", "-hide_banner", "-i", str(path), "-af", "ebur128", "-f", "null", "-"],
+                             capture_output=True, text=True).stderr
+        import re
+        m = re.findall(r"I:\s*(-?\d+\.\d+)\s*LUFS", out)
+        return float(m[-1]) if m else None
+    except Exception:
+        return None
+
+
 def lufs_target(channels):
     """Stereo -16 LUFS, mono -19 LUFS (Apple/Google podcast niyam). Master aur jaanch dono yahi use karein."""
     return -16.0 if channels >= 2 else -19.0
@@ -180,7 +193,7 @@ def _lufs_approx(x, sr):
     return float(np.mean(vals)) - 0.691 if vals else -120.0
 
 
-def pakki_jaanch(voice, world, final, sr, lines, states, target_lufs=-16.0):
+def pakki_jaanch(voice, world, final, sr, lines, states, target_lufs=-16.0, final_path=None):
     """
     voice, world, final : numpy (mono ya stereo) — ALAG stems zaroori hain.
     lines  : [{start, end, text, who}]
@@ -251,10 +264,8 @@ def pakki_jaanch(voice, world, final, sr, lines, states, target_lufs=-16.0):
         _n2 = min(len(f), len(v), len(w))
         v2, w2 = v[:_n2], w[:_n2]
         speech = speech[:_n2]
-        # 2) ducking: FINAL se awaaz hata kar (aligned) — world stem me ducking hoti hi nahi
-        a = float(np.dot(f[:_n2], v2) / (np.dot(v2, v2) + 1e-9))
-        _res = f[:_n2] - a * v2
-        during, gaps = _db(_res[speech]), _db(_res[~speech])
+        # 2) ducking: duniya ke asli (ducked) stem se — residual se nahi
+        during, gaps = _db(w2[speech]), _db(w2[~speech])
         diff = gaps - during
         add("ducking", 1.5 <= diff <= 8.0, f"chup-me {gaps:.1f} / bolte {during:.1f} dB (fark {diff:.1f})",
             "ducking 2-6 dB rakho; zyada dabane se duniya saans leti lagti hai")
@@ -271,8 +282,10 @@ def pakki_jaanch(voice, world, final, sr, lines, states, target_lufs=-16.0):
         "bed se khaas awaazein (chidiya, kutta) nikaal kar alag random events banao; loop_to ki jagah parten")
 
     # 6. Loudness + clipping  (stereo -16, mono -19 LUFS; true-peak -1 dB) — target caller deta hai
-    L = _lufs_approx(f, sr)
-    add("loudness", abs(L - target_lufs) <= 2.5, f"~{L:.1f} LUFS (lakshya {target_lufs})", "master() nahi chala ya lufs galat")
+    L = _lufs_ffmpeg(final_path) if final_path else None
+    if L is None:
+        L = _lufs_approx(f, sr)
+    add("loudness", abs(L - target_lufs) <= 1.0, f"~{L:.1f} LUFS (lakshya {target_lufs})", "master() nahi chala ya lufs galat")
     peak = float(np.max(np.abs(f))) if n else 0
     add("clip_nahi", peak < 0.999, f"peak {peak:.3f}", "master me true-peak limit (tp=-1)")
 
@@ -496,6 +509,18 @@ def run(script_path: str, out_dir: str) -> int:
         if fx is not None:
             fx = fx * (10 ** (-6 / 20.0))
         st = _stage(h, "mix", g("mix"), voice, world, wmap, 0.0, lines, fx, ind, phone_lines)
+        try:
+            _parts = get_fn("world.duniya", "LAST_PARTS") if False else None
+        except Exception:
+            _parts = None
+        try:
+            import world.duniya as _D
+            if getattr(_D, "LAST_PARTS", None):
+                import soundfile as _sf
+                _sf.write(out / "stem_world_ducked.wav", _D.LAST_PARTS["world_ducked"].T if _D.LAST_PARTS["world_ducked"].ndim == 2 else _D.LAST_PARTS["world_ducked"], SR)
+                _sf.write(out / "stem_voice_used.wav", _D.LAST_PARTS["voice"] if _D.LAST_PARTS["voice"].ndim == 1 else _D.LAST_PARTS["voice"].T, SR)
+        except Exception:
+            pass
         final_p = out / "kahani.wav"
         target_lufs = lufs_target(_channels(st))
         _stage(h, "master", g("master"), st, str(final_p), target_lufs, -1.0)
@@ -526,8 +551,10 @@ def check(out_dir: str) -> int:
     out = Path(out_dir)
     target_lufs = lufs_target(sf.info(str(out / "kahani.wav")).channels)
     tl = json.load(open(out / "timeline.json", encoding="utf-8"))
-    res = pakki_jaanch(_wav(out / "stem_voice.wav"), _wav(out / "stem_world.wav"), _wav(out / "kahani.wav"),
-                       SR, tl["lines"], tl["states"], target_lufs)
+    _wp = out / "stem_world_ducked.wav"
+    _world = _wav(_wp) if _wp.exists() else _wav(out / "stem_world.wav")
+    res = pakki_jaanch(_wav(out / "stem_voice.wav"), _world, _wav(out / "kahani.wav"),
+                       SR, tl["lines"], tl["states"], target_lufs, final_path=str(out / "kahani.wav"))
     print("\nPakki jaanch (asli awaaz naap kar):")
     for r in res:
         print(f"  {'OK ' if r['ok'] else 'XX '} {r['jaanch']:<18} {r['value']}" + (f"\n        hal: {r['fix']}" if r["fix"] else ""))
