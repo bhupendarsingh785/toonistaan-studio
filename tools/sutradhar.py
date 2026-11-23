@@ -307,8 +307,8 @@ def _shape(x):
         import numpy as _np
         if isinstance(x, _np.ndarray):
             return f"np{tuple(x.shape)}:{x.dtype}"
-    except Exception:
-        pass
+    except Exception as _e:
+        print(f'[chhoti dikkat] {type(_e).__name__}: {_e}', file=__import__('sys').stderr)
     if isinstance(x, (list, tuple)):
         inner = _shape(x[0]) if len(x) else "khaali"
         return f"{type(x).__name__}[{len(x)}] of {inner}"
@@ -550,8 +550,8 @@ def run(script_path: str, out_dir: str) -> int:
                 import soundfile as _sf
                 _sf.write(out / "stem_world_ducked.wav", _D.LAST_PARTS["world_ducked"].T if _D.LAST_PARTS["world_ducked"].ndim == 2 else _D.LAST_PARTS["world_ducked"], SR)
                 _sf.write(out / "stem_voice_used.wav", _D.LAST_PARTS["voice"] if _D.LAST_PARTS["voice"].ndim == 1 else _D.LAST_PARTS["voice"].T, SR)
-        except Exception:
-            pass
+        except Exception as _e:
+            print(f'[chhoti dikkat] {type(_e).__name__}: {_e}', file=__import__('sys').stderr)
         final_p = out / "kahani.wav"
         target_lufs = lufs_target(_channels(st))
         _stage(h, "master", g("master"), st, str(final_p), target_lufs, -1.0)

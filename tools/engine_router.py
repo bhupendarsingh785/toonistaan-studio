@@ -109,8 +109,8 @@ def engine_status() -> list[EngineState]:
                 if _iu.find_spec("piper") is not None:
                     out.append(EngineState(name, True, "python piper module mila"))
                     continue
-            except Exception:
-                pass
+            except Exception as _e:
+                print(f'[chhoti dikkat] {type(_e).__name__}: {_e}', file=__import__('sys').stderr)
         if not folder.exists():
             problems.append(f"folder missing: engines/{spec['folder']}")
         if spec.get("bin") and not _which(spec["bin"]):
@@ -137,7 +137,8 @@ def load_voices() -> dict:
     if not path.exists():
         return {}
     try:
-        return json.load(open(path, encoding="utf-8"))
+        with open(path, encoding="utf-8") as _f:
+            return json.load(_f)
     except Exception:
         return {}
 
@@ -264,8 +265,8 @@ def render_line(text: str, character: str, out: Path,
         text = clean_text(text)          # control chars / kachra saaf
         if not has_words(text):
             return False, [{"engine": engine or "chain", "ok": False, "note": "text me asli shabd nahi"}]
-    except Exception:
-        pass
+    except Exception as _e:
+        print(f'[chhoti dikkat] {type(_e).__name__}: {_e}', file=__import__('sys').stderr)
     chain = [e for e in ([engine] if engine else []) + (fallbacks or []) if e]
     if not chain:
         chain = ready_engines()

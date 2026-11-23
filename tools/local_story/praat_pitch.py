@@ -81,15 +81,15 @@ def apply_curve(y, sr, points, max_st=MAX_ST):
     st_here = np.clip(np.interp(frac, xs, ss), -abs(max_st), abs(max_st))
     try:
         call(tier, "Remove points between", 0.0, dur)
-    except Exception:
-        pass
+    except Exception as _e:
+        print(f'[chhoti dikkat] {type(_e).__name__}: {_e}', file=__import__('sys').stderr)
     made = 0
     for t, v, st in zip(ts, vs, st_here):
         try:
             call(tier, "Add point", float(t), float(v) * (2 ** (float(st) / 12)))
             made += 1
-        except Exception:
-            pass
+        except Exception as _e:
+            print(f'[chhoti dikkat] {type(_e).__name__}: {_e}', file=__import__('sys').stderr)
     if not made:
         return np.asarray(y, dtype=np.float32)
     call([man, tier], "Replace pitch tier")

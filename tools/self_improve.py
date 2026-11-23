@@ -122,8 +122,8 @@ def deep(path, max_s=40, marks=None):
                 peaks = sorted(f2a[m2][idx])
                 if len(peaks) >= 2:
                     f1, f2 = float(peaks[0]), float(peaks[1])
-        except Exception:
-            pass
+        except Exception as _e:
+            print(f'[chhoti dikkat] {type(_e).__name__}: {_e}', file=__import__('sys').stderr)
     # pauses / rate
     thr = np.max(env) * 0.06
     gaps, run = [], 0

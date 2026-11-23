@@ -48,7 +48,7 @@ SCRIPT = [
 WORLD = {
  "नदी": "river", "पानी": "river", "लहर": "river", "बह": "river",
  "बारिश": "rain", "बूँद": "rain", "भीग": "rain", "बादल": "rain",
- "हवा": "wind", "ठंड": "wind", "हवा": "wind",
+ "हवा": "wind", "ठंड": "wind", "झोंका": "wind",
  "पेड़": "leaves", "पत्त": "leaves", "मिट्टी": "leaves",
  "चिड़िया": "birds", "पक्षी": "birds", "तारा": "crickets", "शाम": "crickets",
  "गाँव": "village", "छत": "village", "दादी": "village",
