@@ -45,7 +45,7 @@ SCRIPT = [
 WORLD = {
  "नदी": "river", "पानी": "river", "लहर": "river", "बह": "river",
  "बारिश": "rain", "बूँद": "rain", "भीग": "rain", "बादल": "rain",
- "हवा": "wind", "ठंड": "wind", "झोंका": "wind",
+ "हवा": "wind", "ठंड": "wind", "हवा": "wind",
  "पेड़": "leaves", "पत्त": "leaves", "मिट्टी": "leaves",
  "चिड़िया": "birds", "पक्षी": "birds", "तारा": "crickets", "शाम": "crickets",
  "गाँव": "village", "छत": "village", "दादी": "village",
@@ -270,8 +270,8 @@ def synth_line(text, cfg, out: Path):
     raw.unlink(missing_ok=True)
     try:
         line_check(y, SR, cfg.get("who", ""), text)      # realtime/gates + nirantarta — har line par
-    except Exception as _e:
-        print(f'[chhoti dikkat] {type(_e).__name__}: {_e}', file=__import__('sys').stderr)
+    except Exception:
+        pass
     return out
 
 
@@ -449,8 +449,8 @@ def build(out_mp3: Path):
         _all = [round(g/1000, 3) for g in _gaps]
         Path(str(out_mp3).rsplit(".", 1)[0] + ".pauses.json").write_text(
             json.dumps({"voice_gaps_s": _all}, ensure_ascii=False), encoding="utf-8")
-    except Exception as _e:
-        print(f'[chhoti dikkat] {type(_e).__name__}: {_e}', file=__import__('sys').stderr)
+    except Exception:
+        pass
     return info
 
 
