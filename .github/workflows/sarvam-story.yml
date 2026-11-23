@@ -1,0 +1,42 @@
+name: Sarvam expressive story
+
+on:
+  workflow_dispatch:
+    inputs:
+      script:
+        description: "script json ka path (repo me)"
+        default: "knowledge/bhediya_script.json"
+      bed_db:
+        description: "background level (voice se kitne dB neeche)"
+        default: "-7"
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - name: deps
+        run: |
+          pip install -q piper-tts numpy imageio-ffmpeg requests
+          python - <<'PY'
+          import subprocess, urllib.request, os
+          os.makedirs("voices", exist_ok=True)
+          base="https://huggingface.co/rhasspy/piper-voices/resolve/main/hi/hi_IN"
+          for v in ("rohan","pratham","priyamvada"):
+              for f in (f"hi_IN-{v}-medium.onnx", f"hi_IN-{v}-medium.onnx.json"):
+                  urllib.request.urlretrieve(f"{base}/{v}/medium/{f}", f"voices/{f}")
+          PY
+      - name: render
+        env:
+          SARVAM_API_KEY: ${{ secrets.SARVAM_API_KEY }}
+          SARVAM_NATURAL: "1"
+        run: |
+          mkdir -p out
+          python tools/sarvam_story.py out/kahani.mp3 "${{ inputs.script }}" --bed "${{ inputs.bed_db }}" || true
+          ls -lh out || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sarvam-story
+          path: out/**
