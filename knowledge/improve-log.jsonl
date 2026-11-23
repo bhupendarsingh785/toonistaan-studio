@@ -1,0 +1,3 @@
+{"kind": "reference", "file": "ref_china.wav", "naap": {"harsh": 0.43, "mod": 0.692, "f0_std": 4.53, "f0_med": 180, "peak": 1.0, "rms_db": -15.5}, "upay": []}
+{"kind": "ours", "file": "seetal-ladki-smooth-demo.mp3", "naap": {"harsh": 0.53, "mod": 0.584, "f0_std": 3.72, "f0_med": 205, "peak": 0.56, "rms_db": -15.8}, "upay": ["prosody curve depth 1.6x + Praat curve"]}
+{"kind": "ours", "file": "seetal-bhediya-drama-engine.mp3", "naap": {}, "upay": []}
