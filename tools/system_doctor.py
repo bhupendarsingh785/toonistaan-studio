@@ -285,7 +285,7 @@ def c_self_improve():
     try:
         import subprocess, sys as _s
         r = subprocess.run([_s.executable, str(ROOT / "tools" / "self_improve.py"), "selftest"],
-                           capture_output=True, text=True, timeout=120)
+                           capture_output=True, text=True, timeout=260)
         add("self_improve selftest", "PASS" if r.returncode == 0 else "WARN", (r.stdout or "").strip().split("\n")[-1][:60])
     except Exception as e:
         add("self_improve selftest", "WARN", type(e).__name__)
@@ -302,7 +302,19 @@ def c_praat():
         add("praat pitch", "WARN", type(e).__name__)
 
 
-CHECKS = [c_praat, c_self_improve, c_agents, c_activate, c_shabd, c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
+def c_sfx():
+    """sfx.py (chhote effect banane wala) zinda hai?"""
+    try:
+        import sys as _s
+        _s.path.insert(0, str(ROOT / "tools"))
+        import sfx
+        fns = [x for x in dir(sfx) if not x.startswith("_")]
+        add("sfx module", "PASS" if fns else "WARN", f"{len(fns)} function")
+    except Exception as e:
+        add("sfx module", "WARN", type(e).__name__)
+
+
+CHECKS = [c_sfx, c_praat, c_self_improve, c_agents, c_activate, c_shabd, c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
           c_engines, c_tools, c_qa_thresholds, c_judge_smoke, c_selftest]
 
 

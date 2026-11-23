@@ -22,6 +22,19 @@ LEVELS = {
  "0_neev": {
   "kaam": "Neev: jagah, keys, cache, sehat",
   "modules": {
+   "system_audit.py": [
+    "mods",
+    "_name",
+    "parse",
+    "imports_of",
+    "graph",
+    "referenced",
+    "reachable",
+    "collisions",
+    "wires",
+    "smoke",
+    "main",
+   ],
    "kram.py": ["naksha", "jaanch", "purana", "maalik_report", "_modname"],
    "sutradhar.py": [
     "Hisaab",
@@ -278,6 +291,14 @@ LEVELS = {
  "3_awaaz": {
   "kaam": "Kirdaar ki awaaz + line ki jaanch",
   "modules": {
+   "local_story/nat_story.py": [
+    "voice",
+    "say",
+    "load",
+    "trim",
+    "bed",
+    "main",
+   ],
    "engine_router.py": [
     "active_order",
     "EngineState",
@@ -885,6 +906,10 @@ LEVELS = {
  "8_jaanch": {
   "kaam": "Pakki jaanch: suno, naapo, PASS/FAIL",
   "modules": {
+   "local_story/psola.py": [
+    "f0_track",
+    "shift",
+   ],
    "local_story/praat_pitch.py": [
     "apply_curve",
    ],
