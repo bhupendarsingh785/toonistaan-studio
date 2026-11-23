@@ -82,7 +82,7 @@ def main() -> int:
         bg = np.pad(bg, (0, max(0, len(voice_track) - len(bg))))[: len(voice_track)]
         vr = float(np.sqrt((voice_track ** 2).mean())) + 1e-9
         br = float(np.sqrt((bg ** 2).mean())) + 1e-9
-        bg *= min(1.0, (vr * 10 ** (-18 / 20)) / br)      # bed awaaz se 18 dB neeche
+        bg *= (vr * 10 ** (-12 / 20)) / br                # RMS se theek 12 dB neeche (clamp nahi)
         mix = voice_track * 0.95 + bg
     else:
         mix = voice_track; used = []
