@@ -12,7 +12,7 @@ Layers:
  6 mixer/master  -> voice centre, bed -7 dB, de-harsh, loudnorm -16, limiter
 """
 from __future__ import annotations
-import json, subprocess, sys, wave
+import json, os, subprocess, sys, wave
 from pathlib import Path
 import numpy as np
 
@@ -25,7 +25,7 @@ except Exception:
     praat_pitch = None
 
 SR = 22050
-VOICE_DIR = Path("/scratch/work/voices")
+VOICE_DIR = Path(os.environ.get("ASTRA_VOICE_DIR") or "/scratch/work/voices")
 CHARS = json.loads((HERE / "characters.json").read_text(encoding="utf-8"))
 _cache = {}
 
