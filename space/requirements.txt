@@ -1,0 +1,1 @@
+# koi dependency nahi — Python standard library

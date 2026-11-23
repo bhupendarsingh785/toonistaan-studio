@@ -1,0 +1,47 @@
+name: Hugging Face Space par astra-audio deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: HF token check
+        env:
+          HF: ${{ secrets.HF_TOKEN }}
+          HF_USER: ${{ secrets.HF_USERNAME }}
+        run: |
+          if [ -z "$HF" ]; then echo "HF_TOKEN secret nahi mila"; exit 1; fi
+          if [ -z "$HF_USER" ]; then echo "HF_USERNAME secret nahi mila"; exit 1; fi
+          echo "token mila, user: $HF_USER"
+
+      - name: Space banao (agar pehle se nahi hai)
+        env:
+          HF: ${{ secrets.HF_TOKEN }}
+          HF_USER: ${{ secrets.HF_USERNAME }}
+        run: |
+          set -e
+          code=$(curl -s -o /tmp/create.json -w "%{http_code}" -X POST https://huggingface.co/api/repos/create \
+            -H "Authorization: Bearer $HF" -H "Content-Type: application/json" \
+            -d "{\"name\":\"astra-audio\",\"type\":\"space\",\"sdk\":\"docker\",\"private\":false}")
+          echo "create status: $code"; cat /tmp/create.json | head -5
+
+      - name: Space me code push karo
+        env:
+          HF: ${{ secrets.HF_TOKEN }}
+          HF_USER: ${{ secrets.HF_USERNAME }}
+        run: |
+          set -e
+          cd space
+          git init -q
+          git config user.email seetal@astra.local
+          git config user.name Seetal
+          git add -A
+          git commit -q -m "astra-audio space" || true
+          git remote add hf "https://user:$HF@huggingface.co/spaces/$HF_USER/astra-audio"
+          git push -f hf HEAD:main
+          echo "LIVE URL: https://huggingface.co/spaces/$HF_USER/astra-audio"
+          echo "APP URL : https://$HF_USER-astra-audio.hf.space/health"
