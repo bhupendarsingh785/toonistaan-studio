@@ -327,7 +327,21 @@ def c_sarvam():
         add("sarvam path", "WARN", type(e).__name__)
 
 
-CHECKS = [c_sarvam, c_sfx, c_praat, c_self_improve, c_agents, c_activate, c_shabd, c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
+def c_bug_hunt():
+    """P0 (asli bug) zero hone chahiye."""
+    try:
+        import subprocess, sys as _s, json
+        r = subprocess.run([_s.executable, str(ROOT / "tools" / "bug_hunt.py"), "--json"],
+                           capture_output=True, text=True, timeout=200)
+        j = json.loads(r.stdout or "{}")
+        p0 = (j.get("severity") or {}).get("P0", 0)
+        add("bug_hunt P0", "PASS" if p0 == 0 else "FAIL",
+            f"P0 {p0} | P1 {(j.get('severity') or {}).get('P1', 0)} | P2 {(j.get('severity') or {}).get('P2', 0)}")
+    except Exception as e:
+        add("bug_hunt P0", "WARN", type(e).__name__)
+
+
+CHECKS = [c_bug_hunt, c_sarvam, c_sfx, c_praat, c_self_improve, c_agents, c_activate, c_shabd, c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
           c_engines, c_tools, c_qa_thresholds, c_judge_smoke, c_selftest]
 
 

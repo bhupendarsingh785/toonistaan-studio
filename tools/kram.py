@@ -875,6 +875,16 @@ LEVELS = {
  "8_jaanch": {
   "kaam": "Pakki jaanch: suno, naapo, PASS/FAIL",
   "modules": {
+   "bug_hunt.py": [
+    "files",
+    "_inside_with",
+    "_depth",
+    "check",
+    "load_base",
+    "save_base",
+    "fix_file",
+    "main",
+   ],
    "audio_learn.py": [
     "advice",
     "main",
