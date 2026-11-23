@@ -291,7 +291,18 @@ def c_self_improve():
         add("self_improve selftest", "WARN", type(e).__name__)
 
 
-CHECKS = [c_self_improve, c_agents, c_activate, c_shabd, c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
+def c_praat():
+    """Praat pitch module (v2) zinda hai?"""
+    try:
+        import subprocess, sys as _s
+        r = subprocess.run([_s.executable, str(ROOT / "tools" / "local_story" / "praat_pitch.py"), "selftest"],
+                           capture_output=True, text=True, timeout=120)
+        add("praat pitch", "PASS" if r.returncode == 0 else "WARN", (r.stdout or "").strip().split("\n")[-1][:50])
+    except Exception as e:
+        add("praat pitch", "WARN", type(e).__name__)
+
+
+CHECKS = [c_praat, c_self_improve, c_agents, c_activate, c_shabd, c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
           c_engines, c_tools, c_qa_thresholds, c_judge_smoke, c_selftest]
 
 

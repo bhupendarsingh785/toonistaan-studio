@@ -153,7 +153,61 @@ def deep(path, max_s=40, marks=None):
             "mod_depth": round(mod_depth, 3), "mod_peak_hz": round(mod_peak, 1),
             "dyn_db": round(dyn, 1), "peak": round(peak, 2), "rms_db": round(20 * math.log10(rms + 1e-9), 1),
             "clip_pct": round(clip_pct, 2), "holes_pct": round(holes, 2),
-            "voice_only": bool(smask.any() and smask.sum() > SR // 2)}
+            "voice_only": bool(smask.any() and smask.sum() > SR // 2),
+            "cpp_db": cpp(xv), "lra_db": lra_db(env), "flux": flux(xv),
+            **formant_track(xv)}
+
+
+def cpp(x, sr=SR):
+    """Cepstral Peak Prominence — awaaz ki 'saaf/khurkhuri' ki asli naap (dB)."""
+    n = 1024
+    frames = [x[i:i + n] for i in range(0, max(1, len(x) - n), n // 2)]
+    vals = []
+    for fr in frames[:200]:
+        if len(fr) < n: break
+        w = fr * np.hanning(n)
+        spec = np.abs(np.fft.rfft(w)) + 1e-9
+        ceps = np.abs(np.fft.irfft(np.log(spec)))
+        q = int(sr / 450)
+        lo, hi = max(1, q - 3), min(len(ceps) - 1, q + 40)
+        if hi <= lo: continue
+        peak = ceps[lo:hi].max()
+        base = np.median(ceps[lo:hi])
+        vals.append(20 * np.log10((peak + 1e-9) / (base + 1e-9)))
+    return round(float(np.median(vals)) if vals else 0.0, 2)
+
+
+def lra_db(env):
+    """Loudness range: 10-95 percentile ka fark (insaan ~7-12 dB)."""
+    if not len(env): return 0.0
+    e = 20 * np.log10(env + 1e-9)
+    return round(float(np.percentile(e, 95) - np.percentile(e, 10)), 1)
+
+
+def flux(x):
+    """Spectral flux — awaaz kitni 'hil rahi' hai (flat TTS me kam)."""
+    n = 512
+    S = np.abs(np.fft.rfft(np.array([x[i:i + n] for i in range(0, max(1, len(x) - n), n // 2)][:300] or [x[:n]]), axis=1))
+    if len(S) < 3: return 0.0
+    d = np.diff(S, axis=0)
+    return round(float(np.mean(np.sqrt((d ** 2).sum(axis=1)))), 2)
+
+
+def formant_track(x, sr=SR, k=3):
+    """F1/F2 ka mean aur std (Praat se) — kirdaar ki pehchan ke liye."""
+    try:
+        import parselmouth
+        snd = parselmouth.Sound(np.asarray(x, dtype=np.float64), sampling_frequency=sr)
+        fm = snd.to_formant_burg(max_number_of_formants=5)
+        f1, f2 = [], []
+        for t in np.arange(0.05, snd.get_total_duration(), 0.05):
+            a = fm.get_value_at_time(1, t); b = fm.get_value_at_time(2, t)
+            if a and a == a and 150 < a < 1200: f1.append(a)
+            if b and b == b and 500 < b < 3500: f2.append(b)
+        return {"f1_mean": round(float(np.mean(f1))) if f1 else 0, "f1_std": round(float(np.std(f1)), 1) if f1 else 0,
+                "f2_mean": round(float(np.mean(f2))) if f2 else 0, "f2_std": round(float(np.std(f2)), 1) if f2 else 0}
+    except Exception:
+        return {"f1_mean": 0, "f1_std": 0, "f2_mean": 0, "f2_std": 0}
 
 
 # ---------------------------------------------------------------- shakha (branch)
@@ -212,8 +266,51 @@ def diagnose(m, ref=None):
 
 
 # ------------------------------------------------------------------- seekhna
+TARGET_METRIC = {   # fix kis naap ko sudharna chahiye, aur kis direction me (+ = bada behtar)
+    "harsh_cut": ("harsh", -1), "bed_eq": ("harsh", -1), "warmth": ("tilt", -1),
+    "mod_depth": ("mod_depth", +1), "praat_depth": ("f0_std", +1),
+    "voice_gain": ("rms_db", +1), "master_vol": ("peak", -1), "bed_level": ("harsh", -1),
+    "pace": ("flux", +1),
+}
+
+
+def _delta(prev, cur, fix):
+    """Pichhle run ke muqable is fix ka asar (jo metric wo sudharta hai)."""
+    out = {}
+    for k in fix:
+        tgt = TARGET_METRIC.get(k)
+        if not tgt: continue
+        metric, sign = tgt
+        if metric in prev and metric in cur:
+            out[k] = round(sign * (cur[metric] - prev[metric]), 4)   # + = behtar hua
+    return out
+
+
 def log_run(m, fix, delta=None, tag=""):
     KN.mkdir(parents=True, exist_ok=True)
+    prev = None
+    if LOG.exists():
+        for l in reversed(LOG.read_text(encoding="utf-8").splitlines()):
+            try:
+                r = json.loads(l)
+            except Exception:
+                continue
+            if r.get("tag") == tag:
+                prev = r; break
+    if delta is None and prev and prev.get("fix"):
+        delta = _delta(prev["naap"], m, prev["fix"])
+        # purani line me delta bhar do (seekhne ke liye)
+        lines = LOG.read_text(encoding="utf-8").splitlines()
+        for i in range(len(lines) - 1, -1, -1):
+            try:
+                r = json.loads(lines[i])
+            except Exception:
+                continue
+            if r.get("tag") == tag:
+                r["delta"] = delta
+                lines[i] = json.dumps(r, ensure_ascii=False)
+                break
+        LOG.write_text("\n".join(lines) + "\n", encoding="utf-8")
     row = {"tag": tag, "naap": m, "fix": fix, "delta": delta}
     with open(LOG, "a", encoding="utf-8") as f:
         f.write(json.dumps(row, ensure_ascii=False) + "\n")
@@ -239,6 +336,73 @@ def learn():
             out[k] = {"runs": v["n"], "win_rate": round(v["win"] / v["n"], 2),
                       "avg_delta": round(v["sum_delta"] / max(1, v["n"]), 3)}
     return {"runs": len(rows), "weights": out}
+
+
+FEATS = ("harsh", "mod_depth", "f0_std", "rms_db", "jitter", "shimmer", "cpp_db", "lra_db", "flux", "tilt")
+
+
+def _vec(m):
+    return np.array([float(m.get(k, 0.0)) for k in FEATS], dtype=float)
+
+
+def train_model():
+    """Log se seekho: kaunse feature par kaunsa fix jeeta (logistic regression, numpy)."""
+    if not LOG.exists():
+        return {"trained": False, "reason": "log khaali"}
+    rows = []
+    for l in LOG.read_text(encoding="utf-8").splitlines():
+        try: r = json.loads(l)
+        except Exception: continue
+        d = r.get("delta") or {}
+        for k, v in (r.get("fix") or {}).items():
+            dv = d.get(k)
+            if dv is None: continue
+            rows.append((_vec(r["naap"]), 1.0 if float(dv) > 0 else 0.0, k))
+    if len(rows) < 6:
+        return {"trained": False, "reason": f"sirf {len(rows)} sample (6+ chahiye)"}
+    out = {}
+    for fix in sorted({r[2] for r in rows}):
+        X = np.array([r[0] for r in rows if r[2] == fix]); y = np.array([r[1] for r in rows if r[2] == fix])
+        if len(X) < 4 or len(set(y)) < 2:
+            out[fix] = {"n": int(len(X)), "win_rate": round(float(y.mean()), 2) if len(y) else 0.0}
+            continue
+        mu, sd = X.mean(0), X.std(0) + 1e-9
+        Xn = (X - mu) / sd
+        w = np.zeros(Xn.shape[1]); b = 0.0; lr = 0.1
+        for _ in range(400):
+            p = 1 / (1 + np.exp(-(Xn @ w + b)))
+            w -= lr * (Xn.T @ (p - y)) / len(y); b -= lr * float((p - y).mean())
+        out[fix] = {"n": int(len(X)), "win_rate": round(float(y.mean()), 2),
+                    "w": {k: round(float(v), 3) for k, v in zip(FEATS, w)}, "b": round(float(b), 3)}
+    return {"trained": True, "fixes": out}
+
+
+def suggest(m, model=None):
+    """Model se sabse zyada jeetne wala fix (score ke saath)."""
+    model = model or train_model()
+    if not model.get("trained"):
+        return []
+    x = _vec(m)
+    out = []
+    for fix, d in model["fixes"].items():
+        if "w" not in d: continue
+        w = np.array([d["w"][k] for k in FEATS]); z = float(x @ w + d["b"])
+        out.append((fix, round(1 / (1 + np.exp(-z / (np.abs(w).sum() + 1e-9))), 3), d["n"]))
+    return sorted(out, key=lambda t: -t[1])[:4]
+
+
+def build_target(refs, out_path=None):
+    """Duniya se target profile: kai reference clips ka median (kirdaar/scene ke hisaab se)."""
+    rows = [deep(r) for r in refs if Path(r).exists()]
+    rows = [r for r in rows if "error" not in r]
+    if not rows:
+        return {}
+    keys = ("harsh", "mod_depth", "f0_std", "f0_med", "jitter", "shimmer", "cpp_db", "lra_db", "flux", "tilt")
+    prof = {k: round(float(np.median([r[k] for r in rows])), 4) for k in keys if k in rows[0]}
+    prof["n_refs"] = len(rows)
+    if out_path:
+        Path(out_path).write_text(json.dumps(prof, ensure_ascii=False, indent=1), encoding="utf-8")
+    return prof
 
 
 def apply_learned(fix):
@@ -272,16 +436,22 @@ def selftest():
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=["deep", "plan", "learn", "selftest"])
+    ap.add_argument("cmd", choices=["deep", "plan", "learn", "selftest", "model", "profile"])
     ap.add_argument("--audio", action="append", default=[])
     ap.add_argument("--ref", default=None)
     ap.add_argument("--out", default="fix_plan.json")
     ap.add_argument("--marks", default=None, help="plan.json / marks.json (bolne wale hisse)")
+    ap.add_argument("--tag", default="story", help="same tag = ek hi kahani ke runs (delta ke liye)")
     a = ap.parse_args()
     if a.cmd == "selftest":
         sys.exit(0 if selftest() else 1)
     if a.cmd == "learn":
         print(json.dumps(learn(), ensure_ascii=False, indent=1)); return
+    if a.cmd == "model":
+        print(json.dumps(train_model(), ensure_ascii=False, indent=1)); return
+    if a.cmd == "profile":
+        refs = a.audio or [str(x) for x in sorted(Path("/scratch/input").glob("*.mp3"))[:6]]
+        print(json.dumps(build_target(refs, str(KN / "target-profile.json")), ensure_ascii=False, indent=1)); return
     ref = deep(a.ref) if a.ref else None
     if ref: print("REF:", json.dumps(ref, ensure_ascii=False))
     mk = None
@@ -299,7 +469,7 @@ def main():
         print("  shakha:", d["branches"])
         print("  gap:", d.get("gap_vs_ref"))
         print("  fix:", fix, "|", d["why"])
-        log_run(m, fix, tag=Path(p).name)
+        log_run(m, fix, tag=a.tag)
         if a.cmd == "plan":
             Path(a.out).write_text(json.dumps({"audio": p, "fix": fix, "why": d["why"],
                                                "naap": m, "ref": ref}, ensure_ascii=False, indent=1), encoding="utf-8")
