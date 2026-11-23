@@ -298,11 +298,42 @@ def pakki_jaanch(voice, world, final, sr, lines, states, target_lufs=-16.0, fina
 # ---------------------------------------------------------------------------
 # 5) RUN — ek hi kram. Har stage hisaab me likha jaata hai.
 # ---------------------------------------------------------------------------
+TRACE = []          # har stage ka asli execution: input shapes, output shape, time
+
+
+def _shape(x):
+    """Kisi bhi value ka chhota sa chitra (trace ke liye)."""
+    try:
+        import numpy as _np
+        if isinstance(x, _np.ndarray):
+            return f"np{tuple(x.shape)}:{x.dtype}"
+    except Exception:
+        pass
+    if isinstance(x, (list, tuple)):
+        inner = _shape(x[0]) if len(x) else "khaali"
+        return f"{type(x).__name__}[{len(x)}] of {inner}"
+    if isinstance(x, dict):
+        return f"dict({len(x)}): {sorted(list(x))[:6]}"
+    if isinstance(x, str):
+        return f"str[{len(x)}]"
+    if x is None:
+        return "None"
+    if isinstance(x, (int, float, bool)):
+        return f"{type(x).__name__}={x}"
+    return type(x).__name__
+
+
 def _stage(h: Hisaab, name, fn, *a, required=True, **kw):
     t = time.time()
     try:
+        _t0 = time.time()
         r = fn(*a, **kw)
+        _dt = time.time() - _t0
         h.note(name, True, "", time.time() - t)
+        TRACE.append({"stage": name,
+                      "fn": f"{getattr(fn, '__module__', '')}.{getattr(fn, '__name__', '?')}",
+                      "in": [_shape(x) for x in a], "out": _shape(r),
+                      "secs": round(_dt, 2), "kw": sorted(kw) if kw else []})
         return r
     except Exception as e:  # noqa: BLE001
         h.note(name, not required, f"{type(e).__name__}: {e}", time.time() - t)
@@ -543,6 +574,7 @@ def run(script_path: str, out_dir: str) -> int:
 
     h.print()
     json.dump(h.rows, open(out / "hisaab.json", "w"), indent=1)
+    json.dump(TRACE, open(out / "trace.json", "w"), ensure_ascii=False, indent=1)
     return check(out_dir)
 
 
