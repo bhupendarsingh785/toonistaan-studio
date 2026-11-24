@@ -139,20 +139,59 @@ def profile_of(x, sr=SR):
 
 # ---------- conversion ----------
 def _pitch_shift(x, factor, sr=SR):
+    """Sur badlo, LAMBAI wahi rahe (rubberband se — asli, bina fast-forward).
+
+    Pehle resample_poly se karte the: wo awaaz ko chhota karke wapas pad karta tha,
+    isliye "fast forward / bacche jaisi tez" sunai deta tha. Ab ffmpeg rubberband:
+    sur badalta hai, bolne ki raftaar nahi.
+    """
     if abs(factor - 1.0) < 0.01:
-        return x
-    from scipy.signal import resample_poly
-    from math import gcd
-    # sur badalne ke liye lambai ulti taraf jaati hai: factor<1 (neeche) -> lambai badhti hai
-    up, down = 100, int(round(factor * 100))
-    g = gcd(up, down)
-    y = resample_poly(x, up // g, down // g)
-    # lambai wahi rakho
-    if len(y) > len(x):
-        y = y[: len(x)]
-    else:
-        y = np.pad(y, (0, len(x) - len(y)))
-    return y
+        return np.asarray(x, dtype=np.float64)
+    import subprocess
+    import tempfile
+    try:
+        import ffbin
+        ff = ffbin.ensure() or "ffmpeg"
+    except Exception:
+        ff = "ffmpeg"
+    x = np.asarray(x, dtype=np.float64)
+    with tempfile.TemporaryDirectory() as td:
+        src = Path(td) / "in.wav"
+        dst = Path(td) / "out.wav"
+        import soundfile as sf
+        sf.write(str(src), x.astype("float32"), sr)
+        r = subprocess.run([ff, "-v", "error", "-y", "-i", str(src),
+                            "-af", f"rubberband=pitch={factor:.4f}",
+                            "-ar", str(sr), str(dst)], capture_output=True, text=True)
+        if dst.exists() and dst.stat().st_size > 1000:
+            y, _ = sf.read(str(dst))
+            y = y.mean(1) if y.ndim > 1 else y
+            y = np.asarray(y, dtype=np.float64)
+            # lambai bilkul wahi
+            if len(y) > len(x):
+                y = y[: len(x)]
+            elif len(y) < len(x):
+                y = np.pad(y, (0, len(x) - len(y)))
+            return y
+    # fallback: asetrate + atempo (lambai bachta hai)
+    with tempfile.TemporaryDirectory() as td:
+        src = Path(td) / "in.wav"; dst = Path(td) / "out.wav"
+        import soundfile as sf
+        sf.write(str(src), x.astype("float32"), sr)
+        tempo = max(0.5, min(2.0, 1.0 / factor))
+        subprocess.run([ff, "-v", "error", "-y", "-i", str(src),
+                        "-af", f"asetrate={sr*factor:.2f},aresample={sr},atempo={tempo:.4f}",
+                        "-ar", str(sr), str(dst)], capture_output=True, text=True)
+        if dst.exists():
+            y, _ = sf.read(str(dst))
+            y = y.mean(1) if y.ndim > 1 else y
+            y = np.asarray(y, dtype=np.float64)
+            if len(y) > len(x):
+                y = y[: len(x)]
+            elif len(y) < len(x):
+                y = np.pad(y, (0, len(x) - len(y)))
+            return y
+    return x
 
 
 def _match_envelope(x, target_env, sr=SR, n_fft=1024):
