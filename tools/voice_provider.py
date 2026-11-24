@@ -356,8 +356,16 @@ def _piper_gender(kirdaar):
     """Kirdaar female hai ya male — awaaz chunne ke liye."""
     female = {"maa", "behen", "aurat", "meera", "sunita", "chachi", "bhabhi", "swara",
               "swara_dadi", "dadi", "chudail", "kavya", "ritu", "tanya", "priya",
-              "kavitha", "neha", "roopa", "swara_bachcha", "bachchi"}
-    return "female" if str(kirdaar).lower() in female else "male"
+              "kavitha", "neha", "roopa", "swara_bachcha", "bachchi",
+              "गौरी", "कमला", "माई", "बच्ची", "लड़की", "स्त्री", "बहन", "माँ"}
+    k = str(kirdaar)
+    v = (VOICES.get(k) or {})
+    kism = str(v.get("kism") or "")
+    if kism in ("female", "female_old", "bachchi"):
+        return "female"
+    if kism in ("child",) and k in ("मोहन", "बच्चा"):
+        return "male" if k == "मोहन" else "female"
+    return "female" if k.lower() in female else "male"
 
 
 

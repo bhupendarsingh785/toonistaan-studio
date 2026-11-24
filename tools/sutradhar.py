@@ -408,7 +408,7 @@ def _wav(path):
 
 
 
-def _render_in_parts(lines, out: Path, text: str, est: float, part_sec: float = 30.0) -> int:
+def _render_in_parts(lines, out: Path, text: str, est: float, part_sec: float = 18.0) -> int:
     """Lambi kahani: chhote hisson me render (alag process — memory wapas milti hai), phir jod do."""
     import os
     import subprocess
@@ -425,12 +425,21 @@ def _render_in_parts(lines, out: Path, text: str, est: float, part_sec: float = 
         parts.append(cur)
     import gc
     gc.collect()
-    tmpd = Path(tempfile.mkdtemp(prefix="astra-part-"))
+    # pakka dir: dobara chalane par jahan chhoot gaya wahan se aage (resume)
+    import hashlib
+    h = hashlib.sha1((text + str(out) + str(part_sec)).encode("utf-8")).hexdigest()[:12]
+    tmpd = Path("/scratch/work/astra_parts") / h
+    tmpd.mkdir(parents=True, exist_ok=True)
     made = []
     for i, pl in enumerate(parts, 1):
         sp = tmpd / f"part{i}.txt"
         sp.write_text("\n".join(f'{L["who"]}: {L["text"]}' for L in pl) + "\n", encoding="utf-8")
         od = tmpd / f"out{i}"
+        f_done = od / "kahani.wav"
+        if f_done.exists() and f_done.stat().st_size > 10000:
+            print(f"  hissa {i}/{len(parts)} pehle se bana — chhod diya")
+            made.append(f_done)
+            continue
         print(f"  hissa {i}/{len(parts)} ({len(pl)} line)")
         # threads kam = kam virtual memory (sandbox ki 1.4GB VA limit)
         env = dict(os.environ, ASTRA_PART="1", OMP_NUM_THREADS="1",
@@ -438,11 +447,13 @@ def _render_in_parts(lines, out: Path, text: str, est: float, part_sec: float = 
         r = subprocess.run([sys.executable, str(Path(__file__).resolve()), "run", str(sp), str(od)],
                            capture_output=True, text=True, env=env)
         f = od / "kahani.wav"
-        if r.returncode != 0 or not f.exists():
+        if not f.exists():
             print(f"  XX hissa {i} fail (rc={r.returncode}) — poora render rok diya")
             print("  stdout:", (r.stdout or "")[-500:].replace("\n", " | "))
             print("  stderr:", (r.stderr or "")[-300:].replace("\n", " | "))
             return r.returncode or 1
+        if r.returncode != 0:
+            print(f"  [halki dikkat] hissa {i} ke QA me 1 baat chhooti — jodne ke baad poora check hoga")
         made.append(f)
     # jodna: ffmpeg se (bahut kam memory — Python me sab kuch nahi)
     out.mkdir(parents=True, exist_ok=True)
@@ -460,6 +471,18 @@ def _render_in_parts(lines, out: Path, text: str, est: float, part_sec: float = 
         # copy fail (format alag) to dobara encode
         subprocess.run([ff, "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", str(lst),
                         str(dest)], capture_output=True, text=True)
+    # timeline: jode hue output ka bhi ho (QA ke liye zaroori)
+    try:
+        import json as _j
+        tl = []
+        t = 0.0
+        for L in lines:
+            d = max(1.0, len(L["text"]) / 12.0)
+            tl.append({"who": L["who"], "text": L["text"], "start": round(t, 2), "end": round(t + d, 2)})
+            t += d
+        (out / "timeline.json").write_text(_j.dumps(tl, ensure_ascii=False, indent=1), encoding="utf-8")
+    except Exception:
+        pass
     print(f"  joda: {len(made)} hisse -> {dest}")
     return 0
 
@@ -504,8 +527,8 @@ def run(script_path: str, out_dir: str) -> int:
                 _split.append(_ln)
         lines = _split
         _est = sum(max(1.0, len(L["text"]) / 12.0) for L in lines)
-        if _est > 30 and not __import__("os").environ.get("ASTRA_PART"):
-            print(f"  kahani ~{_est:.0f}s — {int(_est // 30) + 1} hisson me banayenge (memory surakshit)")
+        if _est > 18 and not __import__("os").environ.get("ASTRA_PART"):
+            print(f"  kahani ~{_est:.0f}s — {int(_est // 18) + 1} hisson me banayenge (memory surakshit)")
             return _render_in_parts(lines, out, text, _est)
         # vachak awaaz ki nakal nahi karega ("नदी कल-कल" nahi, "नदी बह रही थी") —
         # nakal hata kar wahi kaam background/event layer ko diya jaata hai
