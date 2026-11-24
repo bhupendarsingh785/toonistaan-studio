@@ -48,7 +48,7 @@ _CFG = {"गौरी": (205, "f"), "कमला": (186, "f"), "माई": (16
         "सरपंच": (118, "m"), "वाचक": (112, "m")}
 
 
-def _tts_fast(who: str, text: str, dst: Path, base_ls: float = 1.30) -> bool:
+def _tts_fast(who: str, text: str, dst: Path, base_ls: float = 1.38) -> bool:
     """piper se line banao aur sur target par le jao — ek hi resample (tez).
 
     Trick: piper ko f guna DHEEMA bolo, phir resample se f guna chhota karo —
@@ -80,6 +80,17 @@ def _tts_fast(who: str, text: str, dst: Path, base_ls: float = 1.30) -> bool:
         gg = gcd(up, down)
         z = resample_poly(y, up // gg, down // gg)
         z = z / (np.max(np.abs(z)) + 1e-9) * 0.95
+        # asli insaan ka rang: profile mile to convert (cloning-lite)
+        try:
+            import voice_clone_lite as VL
+            prof_p = Path("knowledge/voice-profiles") / f"{who}.json"
+            # default OFF: jo reference mili wo broadcast-quality thi — naap me behtar nahi aaya
+            if prof_p.exists() and __import__("os").environ.get("ASTRA_CLONE_LITE", "0") == "1":
+                prof = json.loads(prof_p.read_text(encoding="utf-8"))
+                z2, _info = VL.convert(z, prof, sr)
+                z = z2
+        except Exception as e:
+            print("  [halki dikkat] clone-lite nahi laga:", type(e).__name__)
         sf.write(str(dst), z.astype("float32"), sr)
         tmp.unlink(missing_ok=True)
         return True
@@ -144,6 +155,15 @@ def build(script: Path, out: Path, gap=0.28, scene_gap=0.55) -> dict:
         pieces.append(np.zeros(int(g * SR)))
         prev_loc = _loc(text)
     voice = np.concatenate(pieces)
+    # ek hi baar poore voice par: kharaash kam (jitter/shimmer) — per-line karne se dheema tha
+    if __import__("os").environ.get("ASTRA_FAST_CLEAN", "1") == "1":
+        try:
+            import harmonic_clean as HC
+            r0 = float(np.sqrt((voice ** 2).mean()) + 1e-9)
+            voice = HC.clean(voice, SR, 8.0, -9.0)
+            voice = voice * (r0 / (float(np.sqrt((voice ** 2).mean()) + 1e-9)))
+        except Exception as e:
+            print("  [halki dikkat] clean nahi laga:", type(e).__name__)
     total = len(voice) / SR
     # 3) background: jagah ke hisaab se ek loop
     import scene_env as SE
