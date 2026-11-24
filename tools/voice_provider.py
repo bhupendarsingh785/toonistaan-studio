@@ -750,6 +750,15 @@ def clean_text(text) -> str:
     t = str(text or "")
     t = "".join(ch if (ch >= " " or ch in "\n\t") else " " for ch in t)
     t = _re.sub(r"[ \t]{2,}", " ", t)
+    try:                                   # Hindi uchcharan: number/English/symbol theek
+        from tools import hindi_text as _ht
+        t = _ht.normalize(t)
+    except Exception:
+        try:
+            import hindi_text as _ht
+            t = _ht.normalize(t)
+        except Exception:
+            pass
     return t.strip()
 
 

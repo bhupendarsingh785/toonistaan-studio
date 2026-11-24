@@ -105,11 +105,28 @@ def convert(md_path: Path) -> list[tuple[str, str]]:
     return out
 
 
+def apply_pov(rows, pov: str):
+    """Vachak ki narration POV kirdaar ke muh se — bahar ka reader nahi.
+
+    Sunne wale ko lagta hai ki kahani usi kirdaar ne sunai hai (pehla purush),
+    isliye "screen ke upar wala aadmi" jaisa ehsaas nahi hota.
+    """
+    if not pov:
+        return rows
+    return [(pov if who == "वाचक" else who, text) for who, text in rows]
+
+
 def write_script(rows, out: Path) -> None:
     lines = []
+    try:
+        import hindi_text as HT
+    except Exception:
+        HT = None
     for who, text in rows:
         if not text:
             continue
+        if HT:
+            text = HT.normalize(text)
         lines.append(f"{who}: {text}")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -128,10 +145,12 @@ def main() -> int:
     ap.add_argument("src", nargs="?", default="")
     ap.add_argument("--out", default="/scratch/work/story-script.txt")
     ap.add_argument("--stats", default="")
+    ap.add_argument("--pov", default="", help="narration kis kirdaar ke muh se (jaise गौरी)")
     a = ap.parse_args()
     if a.stats:
         stats(Path(a.stats)); return 0
     rows = convert(Path(a.src))
+    rows = apply_pov(rows, a.pov)
     write_script(rows, Path(a.out))
     stats(Path(a.out))
     return 0
