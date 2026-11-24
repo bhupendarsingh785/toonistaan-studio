@@ -188,6 +188,20 @@ EXTRA = {
    "evidence",
    "decide",
    "main"
+  ],
+  "recognize.py": [
+   "_load",
+   "_decode",
+   "feats",
+   "_predict",
+   "rule_label",
+   "recognize",
+   "selftest",
+   "main"
+  ],
+  "private_train_clean.py": [
+   "anchors",
+   "main"
   ]
  },
  "6_harkat": {
@@ -279,6 +293,60 @@ EXTRA = {
    "test_adr",
    "test_stream",
    "test_spatial",
+   "main"
+  ]
+ },
+ "P_purana": {
+  "duniya.py": [
+   "db2a",
+   "a2db",
+   "sos_bp",
+   "sos_lp",
+   "sos_hp",
+   "filt",
+   "pink",
+   "smooth_rand",
+   "env_ar",
+   "add_at",
+   "pan_mono",
+   "place",
+   "place_wide",
+   "outdoor_reverb",
+   "syn_river",
+   "syn_wind",
+   "syn_leaves",
+   "syn_rain",
+   "syn_crickets",
+   "_tone",
+   "syn_bird",
+   "syn_koel",
+   "syn_thunder",
+   "syn_step",
+   "decode",
+   "loop_to",
+   "load_map",
+   "detect",
+   "plan_scene",
+   "render_world",
+   "apply_emotion",
+   "render_fx",
+   "smooth_env",
+   "place_env",
+   "indoor_muffle",
+   "apply_weather",
+   "sound_for",
+   "situation_at",
+   "render_sheet",
+   "phone_voice",
+   "pause_after",
+   "is_scene_start",
+   "repace_lines",
+   "auto_repace",
+   "voice_chain",
+   "_peaking",
+   "follow",
+   "mix",
+   "master",
    "main"
   ]
  }

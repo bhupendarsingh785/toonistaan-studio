@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """
+PURANA ENGINE (legacy) — naya engine tools/world/duniya.py hai. Ye file sirf record ke liye rakhi hai.
+
 Duniya engine (world sound) — Seetal / ASTRA ke liye, 100% local.
 
 Kya karta hai:
@@ -263,7 +265,7 @@ def decode(path, sr=SR):
     a = np.frombuffer(p.stdout, dtype=np.float32).reshape(-1, 2).T.astype(np.float64)
     return a
 
-class Library:
+class LegacyLibrary:   # purana engine — naam takraav se bachne ke liye (world/duniya.py ka Library naya hai)
     """astra/library me naam se file dhundho. Mile to asli recording, warna synth."""
     def __init__(self, root):
         self.files = []
@@ -774,7 +776,7 @@ def main():
 
     rng = np.random.default_rng(a.seed)
     wmap = load_map()
-    lib = Library(a.library)
+    lib = LegacyLibrary(a.library)
     voice = decode(a.voice).mean(0)
     scene = json.load(open(a.scene, encoding="utf-8")) if a.scene else {}
     tod = a.tod or scene.get("time_of_day", "day")

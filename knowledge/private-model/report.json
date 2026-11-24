@@ -1,7 +1,7 @@
 {
- "acc": 0.615,
- "train": 198,
- "test": 104,
+ "acc": 0.65,
+ "train": 242,
+ "test": 103,
  "labels": [
   "harkat",
   "insaan",
@@ -9,13 +9,12 @@
   "prakriti"
  ],
  "per_class": {
-  "harkat": 0.63,
-  "insaan": 0.75,
-  "prakriti": 0.57
+  "harkat": 0.54,
+  "insaan": 0.33,
+  "music": 1.0,
+  "prakriti": 0.77
  },
- "clips": 217,
- "windows": 302,
- "audio_minutes": 7.0,
- "seconds_taken": 119.1,
- "split": "file-level"
+ "windows": 345,
+ "split": "file-level",
+ "data": "anchors + audited"
 }

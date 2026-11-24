@@ -1,0 +1,22 @@
+{
+ "accepted": [],
+ "history": [
+  {
+   "counts": {
+    "P2-nested-deep": 76,
+    "P1-silent-swallow": 37,
+    "P2-marker": 10,
+    "P1-open-no-with": 36,
+    "P2-range-len": 8,
+    "P1-assert": 1,
+    "P1-global": 12,
+    "P0-dup-key": 1
+   },
+   "severity": {
+    "P2": 94,
+    "P1": 86,
+    "P0": 1
+   }
+  }
+ ]
+}

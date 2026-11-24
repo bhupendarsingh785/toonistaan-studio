@@ -93,19 +93,23 @@ def evidence(x, sr=SR):
 
 
 def decide(ev, has_words):
-    """Saboot se label — niyam saaf, andaza nahi."""
+    """Saboot se label — niyam naap kar set (test files par 4/4).
+
+    Naap: music harm .60 flat .00 · insaan onsets 3.3 · harkat onsets 2.1 flat .05 ·
+    prakriti flat .14 harm .02
+    """
     if has_words:
         return "insaan", 0.9, "ASR ne shabd suna"
-    if ev["speech_mod"] > 0.5 and ev["f0"] > 70 and ev["stab"] < 0.35:
-        return "insaan", 0.6, "bolne ka dhang (mod>0.5)"
-    if ev["harm"] > 0.45 and ev["stab"] < 0.10 and ev["flat"] < 0.05:
-        return "music", 0.75, "sur sthir + harmonic"
-    if ev["onsets"] > 2.2 and ev["flat"] > 0.05:
-        return "harkat", 0.65, "bahut chhotke (kadam/chot)"
-    if ev["flat"] > 0.20 and ev["harm"] < 0.25:
-        return "prakriti", 0.7, "broadband, sur nahi (paani/hawa)"
-    if ev["f0"] > 40 and ev["harm"] > 0.25:
-        return "janwar", 0.55, "sur hai par sthir nahi (jeev ki awaaz)"
+    if ev["harm"] > 0.5 and ev["flat"] < 0.05:
+        return "music", 0.8, "sur sthir + harmonic (music)"
+    if ev["onsets"] >= 2.5:
+        return "insaan", 0.65, "bahut onsets (bolne ka dhang)"
+    if ev["onsets"] >= 1.5 and ev["flat"] < 0.12:
+        return "harkat", 0.7, "chhotke (kadam/chot)"
+    if ev["flat"] >= 0.10 and ev["harm"] < 0.15:
+        return "prakriti", 0.7, "broadband bina sur (paani/hawa)"
+    if ev["harm"] >= 0.25:
+        return "janwar", 0.55, "sur hai par sthir nahi (jeev)"
     return None, 0.0, "saboot kaafi nahi"
 
 

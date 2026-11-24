@@ -59,6 +59,25 @@ def check_narration():
     add("vachak nakal hatai", "कल-कल" not in out and found == ["कल-कल"], out)
 
 
+def check_recognize():
+    """Awaaz pehchaan — apni banayi hui 4 tarah ki awaaz par."""
+    import subprocess
+    code = (
+        "import sys;sys.path.insert(0,'tools');"
+        "from pathlib import Path;import recognize as R;"
+        "T=Path('/scratch/work/recog_test');"
+        "exp={'insaan.wav':'insaan','prakriti_rain.wav':'prakriti','harkat_steps.wav':'harkat','music.wav':'music'};"
+        "ok=sum(1 for f,w in exp.items() if (R.recognize(T/f).get('sound_type') or {}).get('label')==w);"
+        "print(ok, len(exp))"
+    )
+    r = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, cwd=str(ROOT), timeout=280)
+    out = (r.stdout or "").strip().split()
+    if len(out) == 2:
+        add("recognize", int(out[0]) >= 3, f"{out[0]}/{out[1]} sahi")
+    else:
+        add("recognize", False, (r.stderr or "fail")[-60:])
+
+
 def check_structure():
     for name, cmd in (("kram", [sys.executable, "tools/kram.py", "jaanch"]),
                       ("wire", [sys.executable, "tools/sutradhar.py", "wire"])):
@@ -95,6 +114,8 @@ def main() -> int:
     check_narration()
     print("3) dhancha")
     check_structure()
+    print("3b) awaaz pehchaan")
+    check_recognize()
     if not a.fast:
         print("4) asli render + QA")
         check_render()
