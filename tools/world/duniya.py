@@ -33,7 +33,8 @@ except Exception:
     pass
 
 
-SR = 44100   # sutradhar/voice ke saath ek hi SR (warna stems misalign)
+SR = 44100
+BED_BOOST_DB = 7.0   # background ko awaaz ke 8-16 dB neeche rakho (bahut dheema bhi galat)   # sutradhar/voice ke saath ek hi SR (warna stems misalign)
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 MAP_PATH = ROOT / "knowledge" / "world-map.json"
@@ -305,6 +306,34 @@ def detect(text, words):
     """Poora shabd milao (spotting.has): 'आग' != 'आगे', 'बह' != 'बहुत'. Jad ke liye shabd ke ant me '*'."""
     return S.has(text, words)
 
+def _dist_for(text, base, wmap, layer_words=None):
+    """Doori ka shabd usi awaaz par lagao jo uske sabse kareeb hai.
+
+    'दूर कहीं भेड़िया चिल्लाया' -> doori sirf bhediya par, patton par nahi.
+    """
+    dw = wmap.get("dist_words", {})
+    d = float(base)
+    if not layer_words:
+        return d
+    # layer ke shabd kahan hain
+    pos = [text.find(w) for w in layer_words if w and text.find(w) >= 0]
+    if not pos:
+        return d
+    mine = min(pos)
+    best = None
+    for kind, words in dw.items():
+        for w in words:
+            i = text.find(w)
+            if i < 0:
+                continue
+            gap = abs(i - mine)
+            if best is None or gap < best[0]:
+                best = (gap, kind)
+    if best and best[0] <= 12:          # sirf jab doori ka shabd paas ho
+        d = max(d, 3.2) if best[1] == "far" else min(d, 0.8)
+    return d
+
+
 def plan_scene(lines, total, wmap, overrides=None):
     """
     lines: [{who, text, start, end}] (naye timeline par).
@@ -314,6 +343,7 @@ def plan_scene(lines, total, wmap, overrides=None):
     kw = wmap["keywords"]; layers = wmap["layers"]
     env = {k: np.zeros(n) for k, v in layers.items() if v["kind"] in ("bed", "event")}
     present = {k: False for k in env}
+    dists = {}          # har layer ki doori (shabdon se)
     walks = []
     ramp = int(1.2 * SR)  # 1.2 s smooth fade (aapke system ka niyam)
     for i, ln in enumerate(lines):
@@ -322,7 +352,11 @@ def plan_scene(lines, total, wmap, overrides=None):
         for k in env:
             if k in kw and detect(ln["text"], kw[k]):
                 present[k] = True
-                env[k][a:b] = np.maximum(env[k][a:b], 1.0)       # zikr par ubhro (+6 dB tak)
+                d = _dist_for(ln["text"], layers[k].get("dist", 1.5), wmap, kw[k])
+                dists[k] = d
+                # door awaaz halki aati hai (1/d rule), paas wali ubharti hai
+                lvl = min(1.0, 1.25 / max(0.8, d))
+                env[k][a:b] = np.maximum(env[k][a:b], lvl)
         if detect(ln["text"], kw.get("footsteps", [])):
             surf = "leaves"
             for s, words in wmap["surfaces"].items():
@@ -348,6 +382,7 @@ def plan_scene(lines, total, wmap, overrides=None):
         if env[k].any():
             env[k] = ss.fftconvolve(np.pad(env[k], ramp, mode="edge"), win, "valid")[:n]
     env["_mentioned"] = {k for k, v in present.items() if v}
+    env["_dist"] = dists
     return env, walks
 
 
@@ -364,6 +399,8 @@ def render_world(total, env, walks, wmap, lib, rng, tod="day", river_pass=True):
         if k in mentioned: mult = max(mult, 1.0)        # script me likha hai to din/raat se band mat karo
         if mult <= 0: continue
         g = db2a(L["base_db"]) * mult
+        if L["kind"] == "bed":
+            g *= db2a(BED_BOOST_DB)
         f = lib.find(L.get("lib", []), rng)
         if L["kind"] == "bed":
             if f is not None:
@@ -373,7 +410,7 @@ def render_world(total, env, walks, wmap, lib, rng, tod="day", river_pass=True):
             else:
                 used[k] = "MISSING (library me file daalo)"; continue
             l = l / (np.sqrt(np.mean(l ** 2)) + 1e-9) * 0.1; r = r / (np.sqrt(np.mean(r ** 2)) + 1e-9) * 0.1
-            pan, dist = 0.0, L.get("dist", 1.5)
+            pan, dist = 0.0, float(env.get("_dist", {}).get(k, L.get("dist", 1.5)))
             if k == "river" and river_pass and walks:
                 # nadi paas se guzarti hai: baayein door -> paas -> daayein door
                 on = np.flatnonzero(e > 0.05)

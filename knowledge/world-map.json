@@ -1,5 +1,5 @@
 {
- "_note": "Duniya engine ka gyaan. Script ke shabd -> kaunsi awaaz, kitni, kahan (pan), kitni door. Sab local. Naye shabd yahin jodo.",
+ "_note": "Duniya engine ka gyaan. Script ke shabd -> kaunsi awaaz, kitni, kahan (pan), kitni door. Sab local. Naye shabd yahin jodo. | wolf/owl event + dist_words (kahani ke shabdon se doori)",
  "version": 1,
  "levels_db": {
   "_note": "Awaaz ke mukable dB. Bolte waqt bed itna neeche, ruke me duck hat jata hai.",
@@ -137,6 +137,28 @@
    "lib": [
     "*footstep*",
     "*steps*"
+   ]
+  },
+  "wolf": {
+   "kind": "event",
+   "base_db": -26,
+   "width": 0.8,
+   "dist": 2.4,
+   "lib": [
+    "*wolf*",
+    "*howl*",
+    "*bhediya*",
+    "*coyote*"
+   ]
+  },
+  "owl": {
+   "kind": "event",
+   "base_db": -30,
+   "width": 0.7,
+   "dist": 2.8,
+   "lib": [
+    "*owl*",
+    "*ullu*"
    ]
   }
  },
@@ -299,6 +321,23 @@
    "andhera",
    "chaand",
    "jheengur"
+  ],
+  "wolf": [
+   "भेड़िया",
+   "भेड़िये",
+   "भेड़ियों",
+   "चिल्लाय",
+   "चिल्लाई",
+   "हुआ'",
+   "howl",
+   "wolf",
+   "गुर्रा",
+   "दहाड़"
+  ],
+  "owl": [
+   "उल्लू",
+   "owl",
+   "हू हू"
   ]
  },
  "time_of_day": {
@@ -321,5 +360,22 @@
    "crickets": 1.3,
    "wind": 1.1
   }
+ },
+ "dist_words": {
+  "far": [
+   "दूर",
+   "दूर कहीं",
+   "कहीं दूर",
+   "दूर से",
+   "फासले",
+   "पार"
+  ],
+  "near": [
+   "पास",
+   "करीब",
+   "सामने",
+   "पास ही",
+   "बिल्कुल पास"
+  ]
  }
 }
