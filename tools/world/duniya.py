@@ -34,6 +34,10 @@ except Exception:
 
 
 SR = 44100
+try:
+    import space as SP
+except Exception:
+    SP = None
 BED_BOOST_DB = 26.0   # background ko awaaz ke 8-16 dB neeche rakho (bahut dheema bhi galat)   # sutradhar/voice ke saath ek hi SR (warna stems misalign)
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
@@ -86,8 +90,12 @@ def pan_mono(x, pan):
     p = (np.clip(pan, -1, 1) + 1) * np.pi / 4
     return np.vstack([x * np.cos(p), x * np.sin(p)])
 
-def place(x, pan=0.0, dist=1.0):
-    """Mono awaaz ko jagah do: door = dheemi + upar ki frequency kam + zyada goonj (send)."""
+def place(x, pan=0.0, dist=1.0, space="khula"):
+    """Mono awaaz ko jagah do — asli acoustics (doori + disha + jagah ki goonj)."""
+    if SP is not None:
+        st = SP.place_acoustic(x, dist=float(np.mean(dist)), pan=float(pan), space=space, sr=SR)
+        send = st * 0.0                       # goonj ab andar hi lag chuki hai
+        return st, send
     d = np.maximum(np.asarray(dist, dtype=np.float64), 0.3)
     dm = float(np.mean(d))
     cut = 16000.0 / (1 + 0.45 * (dm - 1)) if dm > 1 else 18000.0
@@ -306,6 +314,24 @@ def detect(text, words):
     """Poora shabd milao (spotting.has): 'आग' != 'आगे', 'बह' != 'बहुत'. Jad ke liye shabd ke ant me '*'."""
     return S.has(text, words)
 
+SPACE_WORDS = {
+    "jungle": ["जंगल", "पेड़", "झाड़ी", "वन", "bhediya", "भेड़िया"],
+    "hall":   ["हॉल", "हाल", "बड़ा कमरा", "महल", "गुंबद", "hall"],
+    "gufa":   ["गुफा", "कंदरा", "सुरंग", "cave"],
+    "kamra":  ["कमरा", "घर", "दालान", "room"],
+    "khula":  ["मैदान", "खुला", "नदी", "समुद्र", "रास्ता", "field"],
+}
+
+
+def space_for(text, wmap=None):
+    """Kahani ke shabdon se jagah (goonj ka kism)."""
+    t = text or ""
+    for sp, words in SPACE_WORDS.items():
+        if detect(t, words):
+            return sp
+    return "khula"
+
+
 def _dist_for(text, base, wmap, layer_words=None):
     """Doori ka shabd usi awaaz par lagao jo uske sabse kareeb hai.
 
@@ -346,6 +372,7 @@ def plan_scene(lines, total, wmap, overrides=None):
     env = {k: np.zeros(n) for k, v in layers.items() if v["kind"] in ("bed", "event")}
     present = {k: False for k in env}
     dists = {}          # har layer ki doori (shabdon se)
+    space = "khula"
     walks = []
     ramp = int(1.2 * SR)  # 1.2 s smooth fade (aapke system ka niyam)
     for i, ln in enumerate(lines):
@@ -354,6 +381,7 @@ def plan_scene(lines, total, wmap, overrides=None):
         for k in env:
             if k in kw and detect(ln["text"], kw[k]):
                 present[k] = True
+                space = space_for(ln["text"], wmap)
                 d = _dist_for(ln["text"], layers[k].get("dist", 1.5), wmap, kw[k])
                 dists[k] = d
                 # door awaaz halki aati hai (1/d rule), paas wali ubharti hai
@@ -391,6 +419,7 @@ def plan_scene(lines, total, wmap, overrides=None):
             env[k] = ss.fftconvolve(np.pad(env[k], ramp, mode="edge"), win, "valid")[:n]
     env["_mentioned"] = {k for k, v in present.items() if v}
     env["_dist"] = dists
+    env["_space"] = space
     return env, walks
 
 
@@ -448,7 +477,7 @@ def render_world(total, env, walks, wmap, lib, rng, tod="day", river_pass=True):
                     _sd = env.get("_dist", {}).get(k)          # kahani ke shabdon se doori
                     d = float(_sd) if _sd else rng.uniform(*L["dist"])
                     p = rng.uniform(-0.9, 0.9)
-                    a1, a2 = place(x * 0.35, p, d)
+                    a1, a2 = place(x * 0.35, p, d, env.get("_space", "khula"))
                     add_at(dry, a1 * g * lvl, t); add_at(wet, a2 * g * lvl, t)
                     cnt += 1
                     if k == "birds" and rng.random() < 0.35:       # jawab deti doosri chidiya

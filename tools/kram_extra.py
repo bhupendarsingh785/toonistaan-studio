@@ -58,6 +58,14 @@ EXTRA = {
   ],
   "agent_intel.py": [
    "main"
+  ],
+  "space.py": [
+   "_lp",
+   "air_cutoff",
+   "_ir",
+   "place_acoustic",
+   "measure",
+   "_test"
   ]
  },
  "6_harkat": {
