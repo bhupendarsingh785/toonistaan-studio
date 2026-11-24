@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """scene_audio.py — layer 5: duniya ki layers (base + close + far + movement)."""
 from __future__ import annotations
+import json
 import subprocess
 from pathlib import Path
 import numpy as np
@@ -29,14 +30,53 @@ def _ff():
     return get_ffmpeg_exe()
 
 
+# content-index se kind -> tag ka rishta (naam se na mile to content se chuno)
+KIND_TAGS = {
+    "river": ["water"], "water": ["water"], "rain": ["water"],
+    "crickets": ["animals"], "birds": ["animals"], "jungle": ["animals", "ambience/drone"],
+    "animals": ["animals"], "wind": ["ambience/drone"], "room": ["ambience/drone"],
+    "leaves": ["footsteps"], "wood": ["footsteps"], "footsteps": ["footsteps"],
+    "door": ["door"], "music": ["music", "music/tonal"], "horror": ["horror"],
+}
+_CI = None
+
+
+def _content_index():
+    global _CI
+    if _CI is None:
+        f = Path("knowledge/audio-content-index.json")
+        try:
+            _CI = json.loads(f.read_text(encoding="utf-8")).get("tags", {})
+        except Exception:
+            _CI = {}
+    return _CI
+
+
 def find(kind, k=3):
+    """Pehle naam se (tez, saaf), phir CONTENT tag se (naam galat ho to bhi sahi awaaz)."""
     pats = PATS.get(kind, [kind])
-    out = []
+    out, seen = [], set()
     for p in LIB.glob("*"):
         if p.suffix.lower() not in (".mp3", ".wav", ".ogg", ".ogx"): continue
         n = p.name.lower()
-        if any(x in n for t in pats for x in (t,)) and p.stat().st_size > 40_000:
-            out.append(p)
+        if any(t in n for t in pats) and p.stat().st_size > 40_000:
+            out.append(p); seen.add(p.name)
+    if len(out) < k:
+        idx = _content_index()
+        speech = {r["file"] for r in idx.get("speech/voice", [])}
+        for tag in KIND_TAGS.get(kind, []):
+            for rec in idx.get(tag, []):
+                if rec["file"] in seen or rec["file"] in speech:
+                    continue
+                if not (3 <= rec.get("sec", 0) <= 600):
+                    continue
+                p = LIB / rec["file"]
+                if p.exists():
+                    out.append(p); seen.add(rec["file"])
+                if len(out) >= k:
+                    break
+            if len(out) >= k:
+                break
     return out[:k]
 
 
