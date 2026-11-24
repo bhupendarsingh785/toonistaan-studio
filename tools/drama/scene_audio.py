@@ -36,7 +36,7 @@ KIND_TAGS = {
     "river": ["water"], "water": ["water"], "rain": ["water"],
     "crickets": ["animals"], "birds": ["animals"], "jungle": ["animals", "ambience/drone"],
     "animals": ["animals"], "wind": ["ambience/drone"], "room": ["ambience/drone"],
-    "leaves": ["footsteps"], "wood": ["footsteps"], "footsteps": ["footsteps"],
+    "leaves": ["footsteps"], "wood": ["wood", "footsteps"], "footsteps": ["footsteps"],
     "door": ["door"], "music": ["music", "music/tonal"], "horror": ["horror"],
 }
 # fallback me in shabdon wali file ko pehle chuno (content tag ke saath naam ka hint)
@@ -69,37 +69,46 @@ def _content_index():
     return _CI
 
 
+def _from_content(kind, k, seen, only_manual=False):
+    idx = _content_index()
+    speech = {r["file"] for r in idx.get("speech/voice", [])}
+    out = []
+    for tag in KIND_TAGS.get(kind, []):
+        cands = [r for r in idx.get(tag, []) if r["file"] not in seen and r["file"] not in speech]
+        hints = HINTS.get(kind, [])
+        if hints:
+            cands.sort(key=lambda r: 0 if any(h in r["file"].lower() for h in hints) else 1)
+        if only_manual:
+            cands = [r for r in cands if r.get("tag_src") == "manual"]
+        for rec in cands:
+            if not (3 <= rec.get("sec", 0) <= 600):
+                continue
+            p = LIB / rec["file"]
+            if p.exists():
+                out.append(p); seen.add(rec["file"])
+            if len(out) >= k:
+                return out
+    return out
+
+
 def find(kind, k=3):
-    """Pehle naam se (tez, saaf), phir CONTENT tag se (naam galat ho to bhi sahi awaaz)."""
+    """Tarteeb: (1) haath se tag ki hui clip, (2) naam se, (3) auto-tag se."""
+    seen = set()
+    out = _from_content(kind, k, seen, only_manual=True)
+    if len(out) >= k:
+        return out[:k]
     pats = PATS.get(kind, [kind])
-    out, seen = [], set()
     for p in LIB.glob("*"):
-        if p.suffix.lower() not in (".mp3", ".wav", ".ogg", ".ogx"): continue
+        if p.suffix.lower() not in (".mp3", ".wav", ".ogg", ".ogx"):
+            continue
         n = p.name.lower()
-        if any(x in n for x in EXCLUDE.get(kind, [])):
+        if p.name in seen or any(x in n for x in EXCLUDE.get(kind, [])):
             continue
         if any(re.search(r"\b" + re.escape(t), n) for t in pats) and p.stat().st_size > 40_000:
             out.append(p); seen.add(p.name)
-    if len(out) < k:
-        idx = _content_index()
-        speech = {r["file"] for r in idx.get("speech/voice", [])}
-        for tag in KIND_TAGS.get(kind, []):
-            cands = idx.get(tag, [])
-            hints = HINTS.get(kind, [])
-            if hints:
-                cands = sorted(cands, key=lambda r: 0 if any(h in r["file"].lower() for h in hints) else 1)
-            for rec in cands:
-                if rec["file"] in seen or rec["file"] in speech:
-                    continue
-                if not (3 <= rec.get("sec", 0) <= 600):
-                    continue
-                p = LIB / rec["file"]
-                if p.exists():
-                    out.append(p); seen.add(rec["file"])
-                if len(out) >= k:
-                    break
-            if len(out) >= k:
-                break
+        if len(out) >= k:
+            return out[:k]
+    out += _from_content(kind, k - len(out), seen)
     return out[:k]
 
 

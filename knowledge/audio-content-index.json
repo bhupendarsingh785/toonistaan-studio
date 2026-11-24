@@ -2023,7 +2023,7 @@
    {
     "file": "freesound_community-footsteps-on-wooden-flooring-6878.mp3",
     "sec": 47.93,
-    "tag_src": "name"
+    "tag_src": "manual"
    },
    {
     "file": "BVKER_-_Footsteps_Metro_03.wav",
@@ -2213,7 +2213,7 @@
    {
     "file": "freesound_community-walking-on-a-wooden-floor-32056.mp3",
     "sec": 23.93,
-    "tag_src": "name"
+    "tag_src": "manual"
    },
    {
     "file": "BVKER_-_Footsteps_Urban_Static_Ambience_01.wav",
@@ -2353,7 +2353,7 @@
    {
     "file": "freesound_community-footsteps-rubber-shoes-concrete-empty-warehouse-66340.mp3",
     "sec": 15.65,
-    "tag_src": "name"
+    "tag_src": "manual"
    },
    {
     "file": "BVKER_-_Footsteps_Car_Engine_02.wav",
@@ -2563,7 +2563,7 @@
    {
     "file": "oxidvideos-creaking-wooden-floor-footsteps-410804.mp3",
     "sec": 6.58,
-    "tag_src": "name"
+    "tag_src": "manual"
    },
    {
     "file": "BVKER_-_Footsteps_Car_Blinker_02.wav",
@@ -11424,22 +11424,22 @@
    {
     "file": "freesound_community-footsteps-on-wooden-flooring-6878.mp3",
     "sec": 47.93,
-    "tag_src": "name"
+    "tag_src": "manual"
    },
    {
     "file": "freesound_community-walking-on-a-wooden-floor-32056.mp3",
     "sec": 23.93,
-    "tag_src": "name"
+    "tag_src": "manual"
    },
    {
     "file": "freesound_community-footsteps-rubber-shoes-concrete-empty-warehouse-66340.mp3",
     "sec": 15.65,
-    "tag_src": "name"
+    "tag_src": "manual"
    },
    {
     "file": "oxidvideos-creaking-wooden-floor-footsteps-410804.mp3",
     "sec": 6.58,
-    "tag_src": "name"
+    "tag_src": "manual"
    }
   ]
  },

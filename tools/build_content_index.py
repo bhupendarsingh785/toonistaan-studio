@@ -45,7 +45,8 @@ def main() -> int:
             elif g.get("guess") and g["guess"] not in tags:
                 tags = [g["guess"]]
         sec = durs.get(f) or 0
-        rec = {"file": f, "sec": round(float(sec), 2), "tag_src": "asr" if (g and g.get("asr")) else "name"}
+        src = r.get("tag_src") or ("asr" if (g and g.get("asr")) else "name")
+        rec = {"file": f, "sec": round(float(sec), 2), "tag_src": src}
         for t in tags:
             idx.setdefault(t, []).append(rec)
 
