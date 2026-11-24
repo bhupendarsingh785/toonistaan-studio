@@ -57,6 +57,19 @@ def denoise(x, sr=SR, strength=2.0, floor=0.06, nperseg=1024, smooth=0.92):
     y = y[: len(x)]
     if len(y) < len(x):
         y = np.pad(y, (0, len(x) - len(y)))
+    # bolne wale hisson ka level wahi rakho (shor dabne se awaaz dheemi na ho)
+    n = 1024
+    if len(x) > n * 4:
+        fr_x = np.lib.stride_tricks.sliding_window_view(x, n)[::512]
+        fr_y = np.lib.stride_tricks.sliding_window_view(y, n)[::512]
+        m = min(len(fr_x), len(fr_y))
+        e = np.sqrt((fr_x[:m] ** 2).mean(1))
+        loud = e > np.percentile(e, 60)
+        if loud.sum() > 4:
+            r_in = np.sqrt((fr_x[:m][loud] ** 2).mean())
+            r_out = np.sqrt((fr_y[:m][loud] ** 2).mean()) + 1e-9
+            gain = float(np.clip(r_in / r_out, 0.7, 2.5))
+            y = y * gain
     return y.astype(np.float32)
 
 

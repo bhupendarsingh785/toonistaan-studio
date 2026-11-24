@@ -1,0 +1,126 @@
+{
+ "denoise": {
+  "clip": "noise_street_Luilak_Delft_-_2024-05-18.mp3",
+  "floor_in": -21.4,
+  "floor_out": -34.9,
+  "floor_gain_db": -13.5,
+  "level_keep": 0.881,
+  "status": "OK"
+ },
+ "restore": {
+  "clip": "conv2_Practicing_Dialogue_Audio_Dialogue.wav",
+  "hum_in": 40.4,
+  "hum_out": -10.2,
+  "dc_in": 0.15,
+  "dc_out": 0.0,
+  "voice_corr": 0.943,
+  "status": "OK"
+ },
+ "occlude": {
+  "clip": "conv2_Practicing_Dialogue_Audio_Dialogue.wav",
+  "tl_db": {
+   "parda": {
+    "250Hz": -6.7,
+    "1kHz": -9.2,
+    "4kHz": -11.6
+   },
+   "deewar": {
+    "250Hz": -20.7,
+    "1kHz": -27.1,
+    "4kHz": -33.0
+   },
+   "loha": {
+    "250Hz": -29.5,
+    "1kHz": -40.1,
+    "4kHz": -50.0
+   }
+  },
+  "status": "OK"
+ },
+ "diarize": {
+  "clip": "conv2_Practicing_Dialogue_Audio_Dialogue.wav",
+  "speakers": 2,
+  "turns": 8,
+  "first": [
+   {
+    "speaker": 0,
+    "t0": 0.0,
+    "t1": 1.0
+   },
+   {
+    "speaker": 1,
+    "t0": 1.0,
+    "t1": 2.0
+   },
+   {
+    "speaker": 0,
+    "t0": 2.0,
+    "t1": 5.0
+   },
+   {
+    "speaker": 1,
+    "t0": 5.0,
+    "t1": 6.0
+   },
+   {
+    "speaker": 0,
+    "t0": 6.0,
+    "t1": 13.5
+   }
+  ],
+  "status": "OK",
+  "note": "asli clip par ground-truth nahi — sirf kitne speaker/turn mile"
+ },
+ "adr": {
+  "clip": "conv2_Practicing_Dialogue_Audio_Dialogue.wav",
+  "env_before": 0.007,
+  "env_after": 0.888,
+  "len_rec_s": 4.29,
+  "len_fit_s": 6.0,
+  "len_ref_s": 6.0,
+  "status": "OK"
+ },
+ "stream": {
+  "clip": "rain2_Rain_delay_Gravity_Sound.wav",
+  "chunks": 13,
+  "first_s": 40.0,
+  "last_t": 234.0,
+  "status": "OK"
+ },
+ "spatial": {
+  "clip": "conv2_Practicing_Dialogue_Audio_Dialogue.wav",
+  "1m": {
+   "level_db": -18.6,
+   "hf_lf": 0.2969
+  },
+  "5m": {
+   "level_db": -29.5,
+   "hf_lf": 0.2707
+  },
+  "20m": {
+   "level_db": -46.8,
+   "hf_lf": 0.2133
+  },
+  "jungle": {
+   "rt": [
+    0.22,
+    1.88,
+    1.86
+   ],
+   "iacc": 0.71
+  },
+  "hall": {
+   "rt": [
+    0.33,
+    1.74,
+    1.78
+   ],
+   "iacc": 0.57
+  },
+  "pan": {
+   "left": -0.72,
+   "right": 0.71
+  },
+  "status": "OK"
+ }
+}

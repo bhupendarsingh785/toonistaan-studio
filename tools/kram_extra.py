@@ -215,6 +215,27 @@ EXTRA = {
    "check_real",
    "check",
    "main"
+  ],
+  "fetch_real_audio.py": [
+   "_curl",
+   "_get",
+   "search",
+   "fetch",
+   "main"
+  ],
+  "test_real_audio.py": [
+   "load",
+   "pick",
+   "rms",
+   "floor_db",
+   "test_denoise",
+   "test_restore",
+   "test_occlude",
+   "test_diarize",
+   "test_adr",
+   "test_stream",
+   "test_spatial",
+   "main"
   ]
  }
 }
