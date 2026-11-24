@@ -61,13 +61,15 @@ def _tts_fast(who: str, text: str, dst: Path, base_ls: float = 1.30) -> bool:
     from piper import PiperVoice
     from piper.config import SynthesisConfig
     tgt, g = _CFG.get(who, (150, "m"))
-    model = Path("/scratch/work/voices") / ("hi_IN-pratham-medium.onnx")
-    v = _LOCAL.get("shared")          # ek hi model (memory bachao)
+    # female/child ke liye ASLI female model (priyamvada) — bada shift = robotic/bachcha lagta tha
+    use_female = g == "f" or who in ("मोहन", "बच्चा", "बच्ची")
+    model = Path("/scratch/work/voices") / ("hi_IN-priyamvada-medium.onnx" if use_female else "hi_IN-pratham-medium.onnx")
+    v = _LOCAL.get(str(model))        # har model ek baar (memory bachao)
     if v is None:
         v = PiperVoice.load(str(model), config_path=str(model) + ".json")
-        _LOCAL["shared"] = v
-    base_hz = 110.0 if g == "m" else 200.0
-    f = max(0.75, min(2.2, tgt / base_hz))
+        _LOCAL[str(model)] = v
+    base_hz = 200.0 if use_female else 110.0
+    f = max(0.85, min(1.45, tgt / base_hz))     # chhota shift = smooth awaaz
     tmp = dst.with_suffix(".raw.wav")
     try:
         with wave.open(str(tmp), "wb") as w:
