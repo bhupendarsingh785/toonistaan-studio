@@ -61,11 +61,19 @@ def f0_track(x, sr=SR, win=0.04, hop=0.02):
     return np.array(out) if out else np.array([0.0])
 
 
-def envelope(x, sr=SR, n_fft=1024):
-    """Awaaz ka rang: 24 band ka average magnitude (log)."""
+def envelope(x, sr=SR, n_fft=1024, voiced_only=True):
+    """Awaaz ka rang: 24 band ka average magnitude (log).
+
+    voiced_only: sirf bolne wale frames (chup/shwaas rang ko ganda na kare).
+    """
     if len(x) < n_fft * 2:
         return np.zeros(BANDS)
     fr = np.lib.stride_tricks.sliding_window_view(x, n_fft)[:: n_fft // 2]
+    if voiced_only:
+        e = np.sqrt((fr ** 2).mean(1))
+        keep = e > 0.25 * (np.percentile(e, 95) + 1e-9)
+        if keep.sum() >= 4:
+            fr = fr[keep]
     X = np.abs(np.fft.rfft(fr * np.hanning(n_fft), axis=1)) + 1e-9
     f = np.fft.rfftfreq(n_fft, 1 / sr)
     edges = np.geomspace(60, min(10000, sr / 2 - 200), BANDS + 1)
@@ -74,6 +82,41 @@ def envelope(x, sr=SR, n_fft=1024):
         m = (f >= edges[i]) & (f < edges[i + 1])
         out.append(float(np.log(X[:, m].mean() + 1e-9)) if m.any() else -20.0)
     return np.array(out)
+
+
+def hnr_db(x, sr=SR):
+    """Harmonic-to-noise: awaaz kitni saaf (kharaash) hai."""
+    n = 1024
+    if len(x) < n * 2:
+        return 0.0
+    fr = np.lib.stride_tricks.sliding_window_view(x, n)[:: n // 2]
+    X = np.abs(np.fft.rfft(fr * np.hanning(n), axis=1)) + 1e-12
+    f = np.fft.rfftfreq(n, 1 / sr)
+    harm = X[:, (f > 80) & (f < 4000)]
+    tot = X.sum(1)
+    h = harm.sum(1)
+    ratio = float(np.median(h / (tot + 1e-12)))
+    return float(np.clip(20 * np.log10(ratio + 1e-6) + 10, -5, 25))
+
+
+def mcd(a, b, sr=SR):
+    """Mel-cepstral distortion (kam = zyada milta-julta rang)."""
+    def mcep(x):
+        n = 1024
+        if len(x) < n * 2:
+            return np.zeros(13)
+        fr = np.lib.stride_tricks.sliding_window_view(x, n)[:: n // 2]
+        X = np.abs(np.fft.rfft(fr * np.hanning(n), axis=1)) + 1e-9
+        f = np.fft.rfftfreq(n, 1 / sr)
+        edges = np.geomspace(60, min(10000, sr / 2 - 200), 25)
+        mel = []
+        for i in range(24):
+            m = (f >= edges[i]) & (f < edges[i + 1])
+            mel.append(np.log(X[:, m].mean(1) + 1e-9) if m.any() else np.zeros(len(X)))
+        M = np.stack(mel, 1)
+        return np.abs(np.fft.rfft(M, axis=1))[:, :13].mean(0)
+    A, B = mcep(a), mcep(b)
+    return float(np.sqrt(((A - B) ** 2).mean()))
 
 
 def profile_of(x, sr=SR):
@@ -85,6 +128,7 @@ def profile_of(x, sr=SR):
     e = np.array([np.sqrt((x[i:i + n] ** 2).mean()) for i in range(0, len(x) - n, n)])
     active = float((e > 0.15 * (e.max() + 1e-9)).mean()) if len(e) else 0.0
     return {
+        "hnr_db": round(hnr_db(x, sr), 1),
         "f0_median": float(np.median(voiced)) if len(voiced) else 0.0,
         "f0_low": float(np.percentile(voiced, 15)) if len(voiced) else 0.0,
         "f0_high": float(np.percentile(voiced, 85)) if len(voiced) else 0.0,
@@ -134,6 +178,22 @@ def _match_envelope(x, target_env, sr=SR, n_fft=1024):
     return out
 
 
+def profile_quality(prof) -> tuple[bool, str]:
+    """Reference theek hai ya nahi — cloning se pehle saaf batao (jhooth nahi)."""
+    f0 = prof.get("f0_median", 0)
+    if f0 <= 0:
+        return False, "sur mila hi nahi (awaaz nahi hai?)"
+    if f0 > 420:
+        return False, f"sur bahut upar ({f0:.0f} Hz) — cheekh/rona cloning ke liye theek nahi"
+    if f0 < 65:
+        return False, f"sur bahut neeche ({f0:.0f} Hz) — awaaz saaf nahi"
+    if prof.get("active", 0) < 0.25:
+        return False, "bolne ka hissa bahut kam (recording me zyada chup)"
+    if prof.get("hnr_db", 0) < 2:
+        return False, "awaaz me kharaash/shor zyada — saaf recording chahiye"
+    return True, "theek"
+
+
 def convert(x, prof, sr=SR):
     """Awaaz ko profile ki taraf le jao: sur + rang."""
     target_f0 = prof.get("f0_median") or 0.0
@@ -152,9 +212,39 @@ def convert(x, prof, sr=SR):
             break
         y = _pitch_shift(y, float(np.clip(need, 0.6, 1.6)), sr)
     y = _match_envelope(y, prof["env"], sr)
+
+    # 3) kharaash (HNR) match: target ki awaaz me jitni hawa/kharaash hai utni daalo
+    tgt_hnr = prof.get("hnr_db")
+    if tgt_hnr is not None:
+        cur_hnr = hnr_db(y, sr)
+        diff = float(np.clip(tgt_hnr - cur_hnr, -12, 12))
+        if abs(diff) > 1.5:
+            rng = np.random.default_rng(5)
+            noise = rng.normal(0, 1, len(y))
+            # noise ko awaaz ke envelope ke hisaab se halka karo (chup jagah chup)
+            n_win = int(0.02 * sr)
+            env = np.array([np.sqrt((y[i:i + n_win] ** 2).mean()) for i in range(0, len(y) - n_win, n_win)])
+            env = np.interp(np.arange(len(y)), np.arange(0, len(y) - n_win, n_win), env)
+            noise = noise * (env / (env.max() + 1e-9))
+            amp = 10 ** (diff / 20.0) * 0.05
+            y = y + noise * amp
+            y = y / (np.max(np.abs(y)) + 1e-9) * 0.95
+
+    # (raftaar badalne ke liye resample theek nahi — wo sur bhi badal deta hai; abhi chhod diya)
+
+    # aakhri sur correction (envelope/HNR ke baad halka drift aa jaata hai)
+    if target_f0 > 60:
+        now2 = profile_of(y, sr)["f0_median"]
+        if now2 > 60:
+            need = target_f0 / now2
+            if abs(need - 1.0) > 0.04:
+                y = _pitch_shift(y, float(np.clip(need, 0.7, 1.4)), sr)
     y = y / (np.max(np.abs(y)) + 1e-9) * 0.95
+    after = profile_of(y, sr)
     return y, {"pitch_factor": round(factor, 3),
-               "f0_before": round(cur["f0_median"], 1), "f0_target": round(target_f0, 1)}
+               "f0_before": round(cur["f0_median"], 1), "f0_target": round(target_f0, 1),
+               "f0_after": round(after["f0_median"], 1),
+               "hnr_target": tgt_hnr, "hnr_after": after.get("hnr_db")}
 
 
 # ---------- speak ----------
@@ -178,6 +268,9 @@ def enroll(name: str, audio: str, consent: bool) -> dict:
     if x is None:
         raise ValueError("audio padhi nahi ja saki")
     prof = profile_of(x)
+    ok, why = profile_quality(prof)
+    prof["quality_ok"] = ok
+    prof["quality_note"] = why
     prof["name"] = name
     prof["consent"] = True
     PROF.mkdir(parents=True, exist_ok=True)
@@ -207,7 +300,7 @@ def test() -> int:
     """Apne aap jaanch: ek asli awaaz se profile, phir usi awaaz me line banao."""
     # asli awaaz: library se (purane render par depend nahi)
     src = None
-    for pat in ("man-talking", "woman-crying", "speech", "voice"):
+    for pat in ("man-talking", "speech", "voice"):
         got = sorted(Path("/scratch/input").glob(f"*{pat}*"))
         if got:
             src = got[0]; break

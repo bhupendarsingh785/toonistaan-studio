@@ -1,0 +1,10 @@
+{
+  "name": "demo_clone",
+  "audio": "/scratch/work/rE/voices/demo_clone/reference.wav",
+  "transcript": "jaanch",
+  "consent": true,
+  "backend": "lite",
+  "note": "consent: user ne di; quality: 78% bolna, 13.79s",
+  "emotion_refs": {},
+  "render_emotion": "neutral"
+}
