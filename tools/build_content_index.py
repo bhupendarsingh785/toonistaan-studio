@@ -46,7 +46,7 @@ def main() -> int:
                 tags = [g["guess"]]
         sec = durs.get(f) or 0
         src = r.get("tag_src") or ("asr" if (g and g.get("asr")) else "name")
-        rec = {"file": f, "sec": round(float(sec), 2), "tag_src": src}
+        rec = {"file": f, "sec": round(float(sec), 2), "tag_src": src, "tags": tags}
         for t in tags:
             idx.setdefault(t, []).append(rec)
 

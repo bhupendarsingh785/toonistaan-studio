@@ -55,6 +55,8 @@ EXCLUDE = {
     "room": ["story", "song", "music"],
     "river": ["rain"],
 }
+# kis kind ke liye kaunsa tag bilkul galat hai
+KIND_BAN = {"leaves": ["wood"], "wood": ["leaf", "grass"], "river": ["rain"], "crickets": ["bird"]}
 _CI = None
 
 
@@ -74,7 +76,10 @@ def _from_content(kind, k, seen, only_manual=False):
     speech = {r["file"] for r in idx.get("speech/voice", [])}
     out = []
     for tag in KIND_TAGS.get(kind, []):
-        cands = [r for r in idx.get(tag, []) if r["file"] not in seen and r["file"] not in speech]
+        ban = set(KIND_BAN.get(kind, []))
+        cands = [r for r in idx.get(tag, [])
+                 if r["file"] not in seen and r["file"] not in speech
+                 and not (ban & set(r.get("tags") or []))]
         hints = HINTS.get(kind, [])
         if hints:
             cands.sort(key=lambda r: 0 if any(h in r["file"].lower() for h in hints) else 1)
