@@ -69,6 +69,10 @@ def render(engine: str, voice: str, text: str, params: dict, fn,
     # purana tareeka: params me "out" ho to wahi manzil maano
     want = want or params.get("out")
     key_params = {k: v for k, v in (params or {}).items() if k != "out"}
+    # BUG tha: raftaar (pace) cache key me nahi thi — pace badalne par bhi purani awaaz aati thi
+    import os as _os
+    key_params["_pace"] = _os.environ.get("ASTRA_PACE", "0.78")
+    key_params["_ls"] = _os.environ.get("ASTRA_LS", "")
     key = rc.key_for(text, voice, engine, key_params)
     hit = rc.get(key)
     if hit:

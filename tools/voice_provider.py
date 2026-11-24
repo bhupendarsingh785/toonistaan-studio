@@ -469,7 +469,7 @@ def piper_tts(text, kirdaar="madhur", out="out.wav", bhaav=None):
     if not model:
         return False
     tmp = out + ".piper.wav"
-    pace = SARVAM_PACE.get(kirdaar, 1.0)
+    pace = SARVAM_PACE.get(kirdaar, 1.0) * float(os.environ.get("ASTRA_PACE", "0.83"))
     _st = _bhaav_style(bhaav)
     pace = pace * _st["pace"]                      # bhaav se raftaar
     ls = 1.0 / max(0.6, min(1.5, pace))

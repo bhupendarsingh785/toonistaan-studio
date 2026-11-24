@@ -34,7 +34,7 @@ except Exception:
 
 
 SR = 44100
-BED_BOOST_DB = 7.0   # background ko awaaz ke 8-16 dB neeche rakho (bahut dheema bhi galat)   # sutradhar/voice ke saath ek hi SR (warna stems misalign)
+BED_BOOST_DB = 26.0   # background ko awaaz ke 8-16 dB neeche rakho (bahut dheema bhi galat)   # sutradhar/voice ke saath ek hi SR (warna stems misalign)
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 MAP_PATH = ROOT / "knowledge" / "world-map.json"
@@ -312,6 +312,8 @@ def _dist_for(text, base, wmap, layer_words=None):
     'दूर कहीं भेड़िया चिल्लाया' -> doori sirf bhediya par, patton par nahi.
     """
     dw = wmap.get("dist_words", {})
+    if isinstance(base, (list, tuple)):        # event layers ki dist [min,max] hoti hai
+        base = sum(base) / len(base)
     d = float(base)
     if not layer_words:
         return d
@@ -370,6 +372,12 @@ def plan_scene(lines, total, wmap, overrides=None):
             env[k][first:] = np.maximum(env[k][first:], 0.5)
         if first is not None and layers[k]["kind"] == "event":
             env[k][first:] = np.maximum(env[k][first:], 0.6)
+    # bed kabhi poori tarah chup na ho — warna kahani me khaali gaddhe ban jaate hain
+    for k in env:
+        if k.startswith("_"):
+            continue
+        if layers[k]["kind"] == "bed" and present.get(k):
+            env[k] = np.maximum(env[k], 0.12)
     if overrides:
         for o in overrides.get("objects", []):
             k = o["sound"]; env.setdefault(k, np.zeros(n)); present[k] = True
@@ -437,7 +445,9 @@ def render_world(total, env, walks, wmap, lib, rng, tod="day", river_pass=True):
                         x = EVENT_SYNTH[k](rng); x /= (np.max(np.abs(x)) + 1e-9)
                     else:
                         break
-                    d = rng.uniform(*L["dist"]); p = rng.uniform(-0.9, 0.9)
+                    _sd = env.get("_dist", {}).get(k)          # kahani ke shabdon se doori
+                    d = float(_sd) if _sd else rng.uniform(*L["dist"])
+                    p = rng.uniform(-0.9, 0.9)
                     a1, a2 = place(x * 0.35, p, d)
                     add_at(dry, a1 * g * lvl, t); add_at(wet, a2 * g * lvl, t)
                     cnt += 1

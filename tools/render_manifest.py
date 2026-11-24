@@ -30,10 +30,16 @@ def sha(path: str | Path, limit: int = 0) -> str:
 
 
 def qa_audio(path: str) -> dict:
-    """tri-state QA — PASS / FAIL / SKIPPED (karan ke saath)."""
+    """tri-state QA — PASS / FAIL / SKIPPED (karan ke saath).
+
+    Raftaar (pace) sirf AWAZ se naapo — poori mix se nahi. Warna background
+    tez hone par pace jhootha gir jaata hai (metric ka bug tha).
+    """
     from tools import audio_read6 as ar
+    p = Path(path)
+    voice_only = p.parent / "stem_voice.wav"
     try:
-        rep = ar.read(path)
+        rep = ar.read(str(voice_only) if voice_only.exists() else path)
     except Exception as e:
         return {"decode": {"status": "FAIL", "why": str(e)[:80]}}
     if not rep.get("ok"):
@@ -47,6 +53,13 @@ def qa_audio(path: str) -> dict:
     std = round(float(np.median([t["f0_std"] for t in turns])), 1)
     pace = round(float(np.median([t["pace"] for t in turns])), 2)
     farq = rep["levels"]["farq_db"]
+    # levels (background) poori mix se — warna bed ka naap hi nahi milta
+    try:
+        if voice_only.exists():
+            mix_rep = ar.read(path)
+            farq = mix_rep["levels"]["farq_db"]
+    except Exception:
+        pass
     out = {"decode": {"status": "PASS"}}
     out["f0_std"] = {"status": "PASS" if std >= 12 else "FAIL", "value": std, "min": 12}
     out["pace"] = {"status": "PASS" if 3.0 <= pace <= 4.5 else "FAIL", "value": pace, "range": [3.0, 4.5]}
