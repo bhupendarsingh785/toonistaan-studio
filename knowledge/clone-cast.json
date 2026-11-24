@@ -1,0 +1,27 @@
+{
+ "गौरी": {
+  "ref": "50986408-heavy-vinyl-then-dj-pause-382134.mp",
+  "ref_f0": 208.7,
+  "target": 205
+ },
+ "कमला": {
+  "ref": "child_Catherine_Russell_speaks_on_child_marr",
+  "ref_f0": 176.5,
+  "target": 186
+ },
+ "माई": {
+  "ref": "woman_Courtney_Love_BBC_Radio_4_-_Womans_Hou",
+  "ref_f0": 171.4,
+  "target": 168
+ },
+ "सरपंच": {
+  "ref": "interview_Sextortionagent_interview.ogg",
+  "ref_f0": 117.6,
+  "target": 118
+ },
+ "वाचक": {
+  "ref": "interview_Sextortionagent_interview.ogg",
+  "ref_f0": 117.6,
+  "target": 112
+ }
+}

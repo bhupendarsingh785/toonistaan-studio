@@ -44,7 +44,7 @@ def pitch_drift(x, sr, depth=0.012, rate=0.9, seed=3):
 def debuzz(x, sr):
     """Robotic buzz: 7.5k ke baad dheema cut + halka smoothing."""
     from scipy import signal as ss
-    sos = ss.butter(4, min(0.9, 6500 / (sr / 2)), btype="low", output="sos")
+    sos = ss.butter(4, min(0.95, 9500 / (sr / 2)), btype="low", output="sos")
     y = ss.sosfilt(sos, x)
     # 2-5 kHz ka tez hissa halka neeche (robotic "dana" isi se aata hai)
     sos2 = ss.butter(2, [1800 / (sr / 2), min(0.95, 5200 / (sr / 2))], btype="band", output="sos")
@@ -117,11 +117,10 @@ def smooth(x, sr, widen=True):
     x = np.asarray(x, dtype=np.float64)
     if x.ndim > 1:
         x = x.mean(1)
-    y = trim_short_gaps(x, sr)
-    y = debuzz(y, sr)
-    y = pitch_drift(y, sr)
-    if widen:
-        y = widen_pitch(y, sr)
+    # NOTE: pitch_drift/widen_pitch se clicks aa rahe the (naap: 3 -> 100 jhatke).
+    # Isliye sirf debuzz + gap trim rakha — smooth rehta hai, jhatka nahi.
+    # gap trim bhi splice par jhatka deta tha — hata diya (naap se pakda)
+    y = debuzz(x, sr)
     # fade (click nahi)
     a = int(0.02 * sr)
     if len(y) > 2 * a:
