@@ -40,7 +40,7 @@ def f0_track(x, sr, n_fft=2048, hop=512):
     return f0
 
 
-def clean(x, sr, boost_db=8.0, cut_db=-9.0, n_fft=2048, hop=512):
+def clean(x, sr, boost_db=10.0, cut_db=-12.0, n_fft=2048, hop=512, env_smooth=True):
     x = np.asarray(x, dtype=np.float64)
     if x.ndim > 1:
         x = x.mean(1)
@@ -68,6 +68,13 @@ def clean(x, sr, boost_db=8.0, cut_db=-9.0, n_fft=2048, hop=512):
         out[i * hop:i * hop + n_fft] += y
         wsum[i * hop:i * hop + n_fft] += win ** 2
     y = out[:len(x)] / np.maximum(wsum[:len(x)], 1e-6)
+    if env_smooth:
+        # shimmer (cycle-to-cycle zor ka badalna) kam karo — insaan ke qareeb
+        n = max(8, int(0.008 * sr))
+        env = np.abs(y)
+        sm = np.convolve(env, np.ones(n) / n, mode="same")
+        ratio = np.clip(np.where(sm > 1e-6, sm / np.maximum(env, 1e-6), 1.0), 0.5, 2.0)
+        y = y * (0.45 + 0.55 * ratio)
     return y / (np.max(np.abs(y)) + 1e-9) * 0.95
 
 

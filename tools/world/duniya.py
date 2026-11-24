@@ -825,7 +825,7 @@ def mix(voice, world, wmap, voice_pan=0.0, lines=None, fx=None, ind=None, phone_
     n = max(len(voice), world.shape[1])
     v = np.pad(voice, (0, n - len(voice))); w = np.pad(world, ((0, 0), (0, n - world.shape[1])))
     v = voice_chain(v)
-    v = v / (np.sqrt(np.mean(v[np.abs(v) > 1e-4] ** 2)) + 1e-9) * db2a(-20)      # bolti awaaz ~ -20 dBFS RMS
+    v = v / (np.sqrt(np.mean(v[np.abs(v) > 1e-4] ** 2)) + 1e-9) * db2a(-16)   # awaaz bed se aage (QA 12 dB)      # bolti awaaz ~ -20 dBFS RMS
     ph = np.zeros(n)
     for i in phone_lines or ():
         ln = lines[i]; ph[int(ln["start"] * SR):int(ln["end"] * SR)] = 1.0
@@ -877,6 +877,15 @@ def mix(voice, world, wmap, voice_pan=0.0, lines=None, fx=None, ind=None, phone_
     act = np.clip((a2db(ve) + 45) / 15, 0, 1)                                    # 0 = chup, 1 = bol raha
     gain_db = -Lv["duck_db"] * act
     gain = db2a(follow(gain_db, Lv["duck_attack_ms"], Lv["duck_release_ms"]))
+    # awaaz hamesha bed se aage: naap kar zaroorat ho to awaaz ubhaaro (QA: voice/bed >= 12 dB)
+    try:
+        vr = float(np.sqrt(np.mean(vst ** 2)) + 1e-12)
+        br = float(np.sqrt(np.mean((w * gain) ** 2)) + 1e-12)
+        need_db = 12.0 - (a2db(vr) - a2db(br))
+        if need_db > 0:
+            vst = vst * db2a(min(9.0, need_db))
+    except Exception:
+        pass
     m = vst + w * gain
     # zameen (floor): duniya kabhi -55 dB se neeche nahi — bahar halki hawa, andar kamre ki 'room tone'
     rng0 = np.random.default_rng(99)

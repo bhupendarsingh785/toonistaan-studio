@@ -67,6 +67,12 @@ EXTRA = {
    "write_script",
    "stats",
    "main"
+  ],
+  "clone_cast.py": [
+   "_files",
+   "build",
+   "show",
+   "main"
   ]
  },
  "5_duniya": {

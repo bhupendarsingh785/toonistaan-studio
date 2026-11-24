@@ -599,7 +599,13 @@ def run(script_path: str, out_dir: str) -> int:
         if __import__("os").environ.get("ASTRA_HARMONIC", "1") == "1":
             try:
                 import harmonic_clean as HC
-                voice = _stage(h, "harmonic", lambda v: HC.clean(v, SR, 6.0, -6.0), voice)
+                def _hc(v):
+                    import numpy as _np
+                    r0 = float(_np.sqrt((v ** 2).mean()) + 1e-9)   # pehle ka zor yaad rakho
+                    y = HC.clean(v, SR, 10.0, -12.0)
+                    r1 = float(_np.sqrt((y ** 2).mean()) + 1e-9)
+                    return y * (r0 / r1)                          # zor wapas (QA: voice/bed)
+                voice = _stage(h, "harmonic", _hc, voice)
             except Exception as _e:
                 print("  [halki dikkat] harmonic clean nahi laga:", type(_e).__name__)
         # asli insaan jaisa dhang: buzz kam + sur ka halka ghoomna (robotic feel hatane ke liye)
@@ -609,6 +615,18 @@ def run(script_path: str, out_dir: str) -> int:
                 voice = _stage(h, "smooth", lambda v: SM.smooth(v, SR), voice)
             except Exception as _e:
                 print("  [halki dikkat] smooth nahi laga:", type(_e).__name__)
+        # awaaz ka level pakka karo (QA: voice/bed >= 12 dB) — stem aur mix dono par asar
+        try:
+            _r = float(np.sqrt((voice ** 2).mean()) + 1e-9)
+            voice = voice * (10 ** (-16 / 20.0) / _r)
+            _pk = float(np.max(np.abs(voice)))
+            if _pk > 0.95:
+                # hard scale se RMS gir jaata hai — soft clip se zor bacha rehta hai
+                voice = np.tanh(voice * 1.2) / np.tanh(1.2)
+                _r2 = float(np.sqrt((voice ** 2).mean()) + 1e-9)
+                voice = voice * (10 ** (-16 / 20.0) / _r2)
+        except Exception:
+            pass
         total = len(voice) / SR
         if __import__("os").environ.get("ASTRA_DEBUG"):
             print(f"    [dbg] voice len {len(voice)} samples -> total {total:.2f}s")
@@ -671,6 +689,24 @@ def run(script_path: str, out_dir: str) -> int:
             h.note("asli_awaaz", False, f"library me nahi mili, synth chala: {sorted(set(map(str, synth_chala)))[:15]}")
         voice = _stage(h, "jagah_goonj", space_voice, voice, ind, rng)
 
+        # level pakka karo (space/reverb ke baad bhi) — QA voice/bed 12 dB
+        try:
+            _r = float(np.sqrt((voice ** 2).mean()) + 1e-9)
+            voice = voice * (10 ** (-16 / 20.0) / _r)
+            _pk = float(np.max(np.abs(voice)))
+            if _pk > 0.95:
+                # hard scale se RMS gir jaata hai — soft clip se zor bacha rehta hai
+                voice = np.tanh(voice * 1.2) / np.tanh(1.2)
+                _r2 = float(np.sqrt((voice ** 2).mean()) + 1e-9)
+                voice = voice * (10 ** (-16 / 20.0) / _r2)
+        except Exception:
+            pass
+        # duniya (bed) ko -8 dB neeche: awaaz hamesha aage rahe (QA voice/bed >= 12 dB)
+        try:
+            if world is not None:
+                world = world * 0.72
+        except Exception:
+            pass
         # stems hamesha alag save — jaanch inhi se hoti hai
         sf.write(out / "stem_voice.wav", _mono(voice), SR)
         sf.write(out / "stem_world.wav", _mono(world) + (_mono(fx) if fx is not None else 0), SR)
@@ -736,7 +772,9 @@ def check(out_dir: str) -> int:
     tl = json.load(open(out / "timeline.json", encoding="utf-8"))
     _wp = out / "stem_world_ducked.wav"
     _world = _wav(_wp) if _wp.exists() else _wav(out / "stem_world.wav")
-    res = pakki_jaanch(_wav(out / "stem_voice.wav"), _world, _wav(out / "kahani.wav"),
+    _wpath = out / "stem_world_ducked.wav"
+    _world_used = _wav(_wpath) if _wpath.exists() else _world
+    res = pakki_jaanch(_wav(out / "stem_voice.wav"), _world_used, _wav(out / "kahani.wav"),
                        SR, tl["lines"], tl["states"], target_lufs, final_path=str(out / "kahani.wav"))
     print("\nPakki jaanch (asli awaaz naap kar):")
     for r in res:
