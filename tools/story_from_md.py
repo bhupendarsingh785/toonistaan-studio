@@ -105,6 +105,58 @@ def convert(md_path: Path) -> list[tuple[str, str]]:
     return out
 
 
+def intro_only(rows, seconds: float = 10.0):
+    """Vachak sirf shuruaat me (5-10s) — baaki narration scene ke kirdaar bolte hain."""
+    out, used = [], 0.0
+    for who, text in rows:
+        d = max(1.0, len(text) / 12.0)
+        if who == "वाचक" and used < seconds:
+            out.append((who, text)); used += d
+            continue
+        if who == "वाचक":
+            # scene ka kirdaar: paas ke shabdon me naam, warna गौरी
+            pick = "गौरी"
+            for n in ("भेड़िया", "हरिदास", "कमला", "मोहन", "ऋषि", "माई"):
+                if n in text:
+                    pick = n; break
+            out.append((pick, text))
+        else:
+            out.append((who, text))
+    return out
+
+
+def split_commas(rows, max_len: int = 110):
+    """Lambi line ko vakya me todo; phir bhi lambi ho to aakhri comma par.
+
+    Chhote tukde ("जंगल, ऋषि-मुनि") nahi banate — sirf jahan saans lena natural ho.
+    """
+    import re as _re
+    out = []
+    for who, text in rows:
+        text = text.strip()
+        if len(text) <= max_len:
+            out.append((who, text)); continue
+        sents = [x.strip() for x in _re.split(r"(?<=[।!?])\s*", text) if x.strip()]
+        buf = ""
+        for s_ in sents:
+            while len(s_) > max_len:
+                cut = s_.rfind(",", 0, max_len)
+                cut = cut if cut > 40 else max_len
+                head, s_ = s_[:cut + 1].strip(), s_[cut + 1:].strip()
+                if buf:
+                    out.append((who, buf)); buf = ""
+                out.append((who, head))
+            if len(buf) + len(s_) + 1 <= max_len:
+                buf = (buf + " " + s_).strip()
+            else:
+                if buf:
+                    out.append((who, buf))
+                buf = s_
+        if buf:
+            out.append((who, buf))
+    return out
+
+
 def apply_pov(rows, pov: str):
     """Vachak ki narration POV kirdaar ke muh se — bahar ka reader nahi.
 
@@ -146,11 +198,18 @@ def main() -> int:
     ap.add_argument("--out", default="/scratch/work/story-script.txt")
     ap.add_argument("--stats", default="")
     ap.add_argument("--pov", default="", help="narration kis kirdaar ke muh se (jaise गौरी)")
+    ap.add_argument("--intro-only", action="store_true", help="vachak sirf 10s, phir kirdaar bolte hain")
+    ap.add_argument("--split-commas", action="store_true", help="lambi line comma par todo (saans)")
     a = ap.parse_args()
     if a.stats:
         stats(Path(a.stats)); return 0
     rows = convert(Path(a.src))
-    rows = apply_pov(rows, a.pov)
+    if a.intro_only:
+        rows = intro_only(rows, 10.0)
+    if a.pov:
+        rows = apply_pov(rows, a.pov)
+    if a.split_commas:
+        rows = split_commas(rows)
     write_script(rows, Path(a.out))
     stats(Path(a.out))
     return 0

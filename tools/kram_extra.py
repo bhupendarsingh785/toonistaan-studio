@@ -47,6 +47,12 @@ EXTRA = {
    "speak",
    "test",
    "main"
+  ],
+  "hindi_text.py": [
+   "num_to_hindi",
+   "_year",
+   "normalize",
+   "main"
   ]
  },
  "5_duniya": {
@@ -380,6 +386,25 @@ EXTRA = {
    "apply_prosody",
    "_measure",
    "test",
+   "main"
+  ],
+  "prosody_real.py": [
+   "decode",
+   "stats",
+   "learn",
+   "show",
+   "test",
+   "main"
+  ],
+  "smooth_real.py": [
+   "_profile",
+   "pitch_drift",
+   "debuzz",
+   "widen_pitch",
+   "trim_short_gaps",
+   "smooth",
+   "_measure",
+   "selftest",
    "main"
   ]
  }

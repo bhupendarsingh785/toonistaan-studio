@@ -595,6 +595,13 @@ def run(script_path: str, out_dir: str) -> int:
             parts.append(np.zeros(int(gap * SR), np.float32))
             t = L["end"] + gap
         voice = _stage(h, "voice_eq", g("voice_eq"), np.concatenate(parts))
+        # asli insaan jaisa dhang: buzz kam + sur ka halka ghoomna (robotic feel hatane ke liye)
+        if __import__("os").environ.get("ASTRA_SMOOTH", "1") == "1":
+            try:
+                import smooth_real as SM
+                voice = _stage(h, "smooth", lambda v: SM.smooth(v, SR), voice)
+            except Exception as _e:
+                print("  [halki dikkat] smooth nahi laga:", type(_e).__name__)
         total = len(voice) / SR
         if __import__("os").environ.get("ASTRA_DEBUG"):
             print(f"    [dbg] voice len {len(voice)} samples -> total {total:.2f}s")
