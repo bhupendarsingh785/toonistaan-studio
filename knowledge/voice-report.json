@@ -1,0 +1,29 @@
+{
+ "acc": 0.409,
+ "train": 88,
+ "test": 44,
+ "labels": [
+  "aadmi",
+  "baby",
+  "bachcha",
+  "bheed",
+  "budha",
+  "budhi",
+  "cheekh",
+  "hansi",
+  "rona",
+  "stri"
+ ],
+ "per_class": {
+  "aadmi": 1.0,
+  "baby": 0.38,
+  "bachcha": 1.0,
+  "bheed": 0.83,
+  "budha": 0.0,
+  "budhi": 1.0,
+  "cheekh": 0.5,
+  "hansi": 0.14,
+  "rona": 0.0,
+  "stri": 0.0
+ }
+}

@@ -23,6 +23,16 @@ EXTRA = {
    "_frames",
    "adr_dtw",
    "_test"
+  ],
+  "voice_train.py": [
+   "_piper",
+   "_load",
+   "_shift",
+   "feats",
+   "tts_rows",
+   "real_rows",
+   "decide",
+   "main"
   ]
  },
  "5_duniya": {
