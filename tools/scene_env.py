@@ -139,6 +139,31 @@ def plan(lines):
     return rows
 
 
+def schedule(rows, min_gap: float = 8.0, max_layers: int = 4):
+    """Scheduler ke niyam: ek awaaz baar-baar nahi, ek saath bahut saari nahi.
+
+    rows: [{loc,time,beds,start,end,who,text}] (plan() se)
+    """
+    last_used, out = {}, []
+    for r in rows:
+        beds = dict(r["beds"])
+        t0 = float(r.get("start", 0.0))
+        # 1) jo abhi-abhi baja, use hata do (dohraav nahi)
+        for k in list(beds):
+            if k in last_used and t0 - last_used[k] < min_gap:
+                beds[k] *= 0.35
+        # 2) ek saath bahut saari layer nahi
+        if len(beds) > max_layers:
+            beds = dict(sorted(beds.items(), key=lambda kv: -kv[1])[:max_layers])
+        # 3) samvaad ke waqt background dheema (baat pehle)
+        if r.get("who") and r.get("who") != "" and r.get("text"):
+            beds = {k: round(v * 0.75, 2) for k, v in beds.items()}
+        for k in beds:
+            last_used[k] = t0
+        out.append({**r, "beds": beds})
+    return out
+
+
 def report(path: Path):
     lines = []
     for l in path.read_text(encoding="utf-8").splitlines():

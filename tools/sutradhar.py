@@ -595,6 +595,13 @@ def run(script_path: str, out_dir: str) -> int:
             parts.append(np.zeros(int(gap * SR), np.float32))
             t = L["end"] + gap
         voice = _stage(h, "voice_eq", g("voice_eq"), np.concatenate(parts))
+        # kharaash kam: harmaani ubhaaro (jitter 3.5% -> ~2%), insaan ke qareeb
+        if __import__("os").environ.get("ASTRA_HARMONIC", "1") == "1":
+            try:
+                import harmonic_clean as HC
+                voice = _stage(h, "harmonic", lambda v: HC.clean(v, SR, 6.0, -6.0), voice)
+            except Exception as _e:
+                print("  [halki dikkat] harmonic clean nahi laga:", type(_e).__name__)
         # asli insaan jaisa dhang: buzz kam + sur ka halka ghoomna (robotic feel hatane ke liye)
         if __import__("os").environ.get("ASTRA_SMOOTH", "1") == "1":
             try:

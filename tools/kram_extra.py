@@ -53,6 +53,20 @@ EXTRA = {
    "_year",
    "normalize",
    "main"
+  ],
+  "story_from_md.py": [
+   "clean",
+   "sentences",
+   "speaker_for",
+   "convert",
+   "intro_only",
+   "no_narrator",
+   "merge_same",
+   "split_commas",
+   "apply_pov",
+   "write_script",
+   "stats",
+   "main"
   ]
  },
  "5_duniya": {
@@ -412,6 +426,13 @@ EXTRA = {
    "trim_short_gaps",
    "smooth",
    "_measure",
+   "selftest",
+   "main"
+  ],
+  "harmonic_clean.py": [
+   "f0_track",
+   "clean",
+   "measure",
    "selftest",
    "main"
   ]
