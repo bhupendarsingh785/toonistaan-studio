@@ -84,6 +84,29 @@ def check_recognize():
         add("recognize", False, (r.stderr or "fail")[-60:])
 
 
+def check_clone():
+    """Cloning: enroll -> line banao -> sur kitna kareeb aaya."""
+    code = (
+        "import sys;sys.path.insert(0,'tools');"
+        "from pathlib import Path;import voice_clone as VC, voice_clone_lite as VL;"
+        "src=sorted(Path('/scratch/input').glob('*man-talking*'))[0];"
+        "v=VC.enroll('reg_test', str(src), 'jaanch', consent=True, backend='lite');"
+        "out=Path('/scratch/work/reg_clone.wav');"
+        "ok=VC._render_line('lite', v, 'नमस्ते, यह जाँच है।', out);"
+        "import soundfile as sf;"
+        "ref=VL.profile_of(VL.load(v.audio)); y,_=sf.read(str(out)) if out.exists() else (None,None);"
+        "now=VL.profile_of(y) if y is not None else {'f0_median':0};"
+        "err=abs(now['f0_median']-ref['f0_median'])/max(1,ref['f0_median']);"
+        "print(int(ok), round(err,3))"
+    )
+    r = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, cwd=str(ROOT), timeout=280)
+    out = (r.stdout or "").strip().split()
+    if len(out) == 2:
+        add("cloning", out[0] == "1" and float(out[1]) < 0.15, f"f0 error {float(out[1])*100:.0f}%")
+    else:
+        add("cloning", False, (r.stderr or "fail")[-60:])
+
+
 def check_structure():
     for name, cmd in (("kram", [sys.executable, "tools/kram.py", "jaanch"]),
                       ("wire", [sys.executable, "tools/sutradhar.py", "wire"])):
@@ -120,6 +143,8 @@ def main() -> int:
     check_narration()
     print("3) dhancha")
     check_structure()
+    print("3a) cloning")
+    check_clone()
     print("3b) awaaz pehchaan")
     check_recognize()
     if not a.fast:

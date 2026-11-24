@@ -59,6 +59,9 @@ def _atomic_json(path: Path, payload: dict) -> None:
         if os.path.exists(tmp): os.unlink(tmp)
 
 
+PROF_DIR = Path(__file__).resolve().parent.parent / "knowledge" / "voice-profiles"
+
+
 class ConsentMissing(PermissionError):
     pass
 
@@ -85,12 +88,19 @@ def backend_status() -> list[dict]:
         return [{"name":"indicf5","ready":False,"why":f"preflight failed: {exc}"},
                 {"name":"xtts","ready":False,"why":f"preflight failed: {exc}"},
                 {"name":"piper","ready":False,"why":"Piper is not a voice-cloning backend"}]
+    try:                                     # lite: bina GPU, profile-match (yahin chalta hai)
+        import voice_clone_lite as _VL
+        _lite_ok = True
+        _lite_why = "profile-match cloning (sur + rang) — piper + convert, GPU nahi chahiye"
+    except Exception as exc:
+        _lite_ok, _lite_why = False, f"lite load fail: {exc}"
     i=pre["backends"]["indicf5"]; x=pre["backends"]["xtts"]
     # 'ready' means enough local dependencies and credentials for an attempted render,
     # not that model access or audio quality has been verified.
     return [
       {"name":"indicf5","ready":bool(i["dependencies_present"] and i["token_present"]),"why":i["status"]+"; model download/access/inference still unverified"},
       {"name":"xtts","ready":bool(x["dependencies_present"]),"why":x["status"]+"; model download/Hindi inference still unverified"},
+      {"name":"lite","ready":_lite_ok,"why":_lite_why},
       {"name":"piper","ready":False,"why":"Piper does not perform voice cloning"}]
 
 
@@ -357,6 +367,39 @@ def _render_line(backend: str, voice: Voice, text: str, out: Path) -> bool:
             raise ValueError("Emotion reference path profile directory se bahar hai; blocked.") from exc
         if candidate.is_file() and emotion_ref.get("transcript", "").strip():
             selected_audio, selected_text = str(candidate), emotion_ref["transcript"]
+    if backend == "lite":
+        try:
+            import voice_clone_lite as VL
+            gender = "f"
+            try:
+                prof_path = PROF_DIR / f"{voice.name}.json"
+                import json as _j
+                if prof_path.exists():
+                    pr = _j.loads(prof_path.read_text(encoding="utf-8"))
+                    gender = "f" if pr.get("f0_median", 180) > 150 else "m"
+            except Exception:
+                pass
+            tmp = out.with_suffix(".lite_raw.wav")
+            if not VL._piper_line(text, tmp, gender):
+                return False
+            x = VL.load(tmp)
+            prof_path = PROF_DIR / f"{voice.name}.json"
+            if prof_path.exists():
+                prof = json.loads(prof_path.read_text(encoding="utf-8"))
+            else:                       # profile abhi nahi bana — enroll ki awaaz se bana lo
+                ref = VL.load(voice.audio)
+                if ref is None:
+                    return False
+                prof = VL.profile_of(ref)
+                PROF_DIR.mkdir(parents=True, exist_ok=True)
+                prof_path.write_text(json.dumps(prof, ensure_ascii=False, indent=1), encoding="utf-8")
+            y, _info = VL.convert(x, prof)
+            import soundfile as _sf
+            _sf.write(str(out), y.astype("float32"), VL.SR)
+            return out.exists() and out.stat().st_size > 2000
+        except Exception as exc:
+            print("  lite fail:", type(exc).__name__, str(exc)[:80])
+            return False
     if backend == "indicf5":
         cmd = [sys.executable, str(ROOT / "indicf5_fix_v1" / "indicf5_render.py"),
                "--text", text, "--ref-audio", selected_audio, "--ref-text", selected_text,

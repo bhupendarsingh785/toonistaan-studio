@@ -1,0 +1,10 @@
+{
+  "name": "test_man",
+  "audio": "/scratch/work/rE/voices/test_man/reference.wav",
+  "transcript": "यह एक जाँच है",
+  "consent": true,
+  "backend": "lite",
+  "note": "consent: user ne di; quality: 73% bolna, 11.76s",
+  "emotion_refs": {},
+  "render_emotion": "neutral"
+}

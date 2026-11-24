@@ -1,0 +1,10 @@
+{
+  "name": "reg_test",
+  "audio": "/scratch/work/rE/voices/reg_test/reference.wav",
+  "transcript": "jaanch",
+  "consent": true,
+  "backend": "lite",
+  "note": "consent: user ne di; quality: 73% bolna, 11.76s",
+  "emotion_refs": {},
+  "render_emotion": "neutral"
+}

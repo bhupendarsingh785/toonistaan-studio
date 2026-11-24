@@ -33,6 +33,20 @@ EXTRA = {
    "real_rows",
    "decide",
    "main"
+  ],
+  "voice_clone_lite.py": [
+   "load",
+   "f0_track",
+   "envelope",
+   "profile_of",
+   "_pitch_shift",
+   "_match_envelope",
+   "convert",
+   "_piper_line",
+   "enroll",
+   "speak",
+   "test",
+   "main"
   ]
  },
  "5_duniya": {
