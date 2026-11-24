@@ -1,0 +1,50 @@
+{
+ "rain": {
+  "slope_db_oct": -6.11,
+  "centroid_hz": 2308.0,
+  "mod_hz": 0.11,
+  "crest": 8.49,
+  "rms": 0.118,
+  "n": 3
+ },
+ "river": {
+  "slope_db_oct": -2.87,
+  "centroid_hz": 1354.0,
+  "mod_hz": 0.33,
+  "crest": 8.57,
+  "rms": 0.117,
+  "n": 3
+ },
+ "wind": {
+  "slope_db_oct": 0.03,
+  "centroid_hz": 1162.5,
+  "mod_hz": 0.266,
+  "crest": 7.335,
+  "rms": 0.148,
+  "n": 4
+ },
+ "wood_steps": {
+  "slope_db_oct": -6.0,
+  "centroid_hz": 1339.0,
+  "mod_hz": 1.53,
+  "crest": 25.49,
+  "rms": 0.039,
+  "n": 3
+ },
+ "crickets": {
+  "slope_db_oct": -6.39,
+  "centroid_hz": 4756.0,
+  "mod_hz": 0.164,
+  "crest": 7.42,
+  "rms": 0.135,
+  "n": 3
+ },
+ "leaves": {
+  "slope_db_oct": 3.87,
+  "centroid_hz": 6009.0,
+  "mod_hz": 0.683,
+  "crest": 11.645,
+  "rms": 0.103,
+  "n": 4
+ }
+}

@@ -2,6 +2,7 @@
 """scene_audio.py — layer 5: duniya ki layers (base + close + far + movement)."""
 from __future__ import annotations
 import json
+import sys
 import re
 import subprocess
 from pathlib import Path
@@ -136,9 +137,14 @@ def make_loop(kind, sec=25):
     LOOP_DIR.mkdir(parents=True, exist_ok=True)
     out = LOOP_DIR / ("%s_%ds.wav" % (name, int(sec)))
     if not out.exists():
-        x = loop_maker.make(name, sec=sec, seed=abs(hash(name)) % 9999)
+        # QA gate: naturalness paimana pass na ho to naya seed, warna REJECT
+        x, seed, why = loop_maker.make_checked(name, sec=sec)
+        if x is None:
+            sys.stderr.write("astra: %s ka loop reject (%s) — scene me jhoothi awaaz nahi jayegi\n" % (name, why))
+            return None
         import soundfile as sf
         sf.write(str(out), x, loop_maker.SR)
+        sys.stderr.write("astra: %s loop banaya (seed %d, %s)\n" % (name, seed, why))
     return out
 
 
