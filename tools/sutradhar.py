@@ -423,6 +423,8 @@ def _render_in_parts(lines, out: Path, text: str, est: float, part_sec: float = 
         cur.append(L); acc += d
     if cur:
         parts.append(cur)
+    import gc
+    gc.collect()
     tmpd = Path(tempfile.mkdtemp(prefix="astra-part-"))
     made = []
     for i, pl in enumerate(parts, 1):
@@ -430,7 +432,9 @@ def _render_in_parts(lines, out: Path, text: str, est: float, part_sec: float = 
         sp.write_text("\n".join(f'{L["who"]}: {L["text"]}' for L in pl) + "\n", encoding="utf-8")
         od = tmpd / f"out{i}"
         print(f"  hissa {i}/{len(parts)} ({len(pl)} line)")
-        env = dict(os.environ, ASTRA_PART="1")
+        # threads kam = kam virtual memory (sandbox ki 1.4GB VA limit)
+        env = dict(os.environ, ASTRA_PART="1", OMP_NUM_THREADS="1",
+                   OPENBLAS_NUM_THREADS="1", MKL_NUM_THREADS="1", NUMEXPR_NUM_THREADS="1")
         r = subprocess.run([sys.executable, str(Path(__file__).resolve()), "run", str(sp), str(od)],
                            capture_output=True, text=True, env=env)
         f = od / "kahani.wav"
@@ -440,17 +444,23 @@ def _render_in_parts(lines, out: Path, text: str, est: float, part_sec: float = 
             print("  stderr:", (r.stderr or "")[-300:].replace("\n", " | "))
             return r.returncode or 1
         made.append(f)
-    ys, sr = [], None
-    for f in made:
-        y, sr = sf.read(str(f), always_2d=True)
-        ys.append(y); ys.append(np.zeros((int(0.4 * sr), y.shape[1]), dtype=y.dtype))
-    joined = np.vstack(ys[:-1])
-    pk = float(np.abs(joined).max()) or 1.0
-    if pk > 0.99:
-        joined = joined / pk * 0.99
+    # jodna: ffmpeg se (bahut kam memory — Python me sab kuch nahi)
     out.mkdir(parents=True, exist_ok=True)
-    sf.write(str(out / "kahani.wav"), joined, sr)
-    print(f"  joda: {len(made)} hisse -> {out/'kahani.wav'} ({len(joined)/sr:.1f}s)")
+    dest = out / "kahani.wav"
+    lst = tmpd / "list.txt"
+    lst.write_text("\n".join(f"file '{f}'" for f in made) + "\n", encoding="utf-8")
+    try:
+        import ffbin
+        ff = ffbin.ensure() or "ffmpeg"
+    except Exception:
+        ff = "ffmpeg"
+    r = subprocess.run([ff, "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", str(lst),
+                        "-c", "copy", str(dest)], capture_output=True, text=True)
+    if not dest.exists() or dest.stat().st_size < 10000:
+        # copy fail (format alag) to dobara encode
+        subprocess.run([ff, "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", str(lst),
+                        str(dest)], capture_output=True, text=True)
+    print(f"  joda: {len(made)} hisse -> {dest}")
     return 0
 
 

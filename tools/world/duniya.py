@@ -282,7 +282,7 @@ def decode(path, sr=SR, max_sec: float = 30.0):
         cmd += ["-t", str(float(max_sec))]
     cmd += ["-i", str(path), "-f", "f32le", "-ac", "2", "-ar", str(sr), "-"]
     p = subprocess.run(cmd, capture_output=True, check=True)
-    a = np.frombuffer(p.stdout, dtype=np.float32).reshape(-1, 2).T.astype(np.float64)
+    a = np.frombuffer(p.stdout, dtype=np.float32).reshape(-1, 2).T.astype(np.float32)   # float32 = aadha memory
     return a
 
 class Library:
@@ -377,7 +377,7 @@ def plan_scene(lines, total, wmap, overrides=None):
     """
     n = int(total * SR)
     kw = wmap["keywords"]; layers = wmap["layers"]
-    env = {k: np.zeros(n) for k, v in layers.items() if v["kind"] in ("bed", "event")}
+    env = {k: np.zeros(n, dtype=np.float32) for k, v in layers.items() if v["kind"] in ("bed", "event")}
     present = {k: False for k in env}
     dists = {}          # har layer ki doori (shabdon se)
     space = "khula"
@@ -442,7 +442,7 @@ def plan_scene(lines, total, wmap, overrides=None):
 # ----------------------------------------------------------------- render world
 def render_world(total, env, walks, wmap, lib, rng, tod="day", river_pass=True):
     n = int(total * SR)
-    dry = np.zeros((2, n)); wet = np.zeros((2, n))
+    dry = np.zeros((2, n), dtype=np.float32); wet = np.zeros((2, n), dtype=np.float32)   # float32 = aadha memory
     layers = wmap["layers"]; todm = wmap["time_of_day"].get(tod, {})
     used = {}
     mentioned = env.get("_mentioned", set())
