@@ -1,0 +1,73 @@
+[
+ {
+  "measure": {
+   "file": "nai-kahani-v5.mp3",
+   "ok": true,
+   "sec": 61.0,
+   "peak": 0.741,
+   "jitter": 1.71,
+   "shimmer": 7.34,
+   "hnr": 13.8,
+   "f0": 233.5,
+   "voiced": 0.7,
+   "rate": 4.11,
+   "pause_per_min": 38.4,
+   "max_pause": 0.78,
+   "clicks": 0
+  },
+  "judge": {
+   "rows": [
+    {
+     "naam": "jitter",
+     "value": 1.71,
+     "insaan": "1.21-2.83%",
+     "verdict": "theek"
+    },
+    {
+     "naam": "shimmer",
+     "value": 7.34,
+     "insaan": "5.74-13.39%",
+     "verdict": "theek"
+    },
+    {
+     "naam": "hnr",
+     "value": 13.8,
+     "insaan": "11.0-16.8 dB",
+     "verdict": "theek"
+    },
+    {
+     "naam": "rate",
+     "value": 4.11,
+     "insaan": "2.8-4.5/s",
+     "verdict": "theek"
+    },
+    {
+     "naam": "pause_per_min",
+     "value": 38.4,
+     "insaan": "15-60/min",
+     "verdict": "theek"
+    },
+    {
+     "naam": "max_pause",
+     "value": 0.78,
+     "insaan": "0.0-1.5s",
+     "verdict": "theek"
+    },
+    {
+     "naam": "clicks",
+     "value": 0,
+     "insaan": "0-5",
+     "verdict": "theek"
+    },
+    {
+     "naam": "peak",
+     "value": 0.741,
+     "insaan": "0.0-0.99",
+     "verdict": "theek"
+    }
+   ],
+   "score": 100,
+   "verdict": "PASS"
+  }
+ }
+]

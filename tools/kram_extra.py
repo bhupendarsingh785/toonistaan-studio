@@ -450,6 +450,14 @@ EXTRA = {
    "measure",
    "selftest",
    "main"
+  ],
+  "voice_checker.py": [
+   "load",
+   "measure",
+   "judge",
+   "show",
+   "learn_baseline",
+   "main"
   ]
  }
 }

@@ -160,7 +160,7 @@ def build(script: Path, out: Path, gap=0.28, scene_gap=0.55) -> dict:
         try:
             import harmonic_clean as HC
             r0 = float(np.sqrt((voice ** 2).mean()) + 1e-9)
-            voice = HC.clean(voice, SR, 8.0, -9.0)
+            voice = HC.clean(voice, SR, 10.0, -12.0)
             voice = voice * (r0 / (float(np.sqrt((voice ** 2).mean()) + 1e-9)))
         except Exception as e:
             print("  [halki dikkat] clean nahi laga:", type(e).__name__)
