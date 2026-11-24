@@ -2,7 +2,7 @@
   "schema_version": 2,
   "voice_profile": "reg_test",
   "consent_status": "active",
-  "attested_at_utc": "2026-11-24T17:16:05.115490+00:00",
+  "attested_at_utc": "2026-11-24T17:21:21.283526+00:00",
   "speaker_name": "",
   "attestation": "Operator confirms the speaker is the operator or has explicitly authorized this voice use.",
   "scope": "speech_generation",

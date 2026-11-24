@@ -24,11 +24,13 @@ from pathlib import Path
 
 import numpy as np
 
-ROOT = Path(__file__).resolve().parent.parent
+# ALAG TOOL — system ka hissa nahi (na kram me, na pipeline me). Sirf jaanch ke liye.
+ROOT = Path(__file__).resolve().parent.parent          # repo root
 sys.path.insert(0, str(ROOT))
-sys.path.insert(0, str(ROOT / "tools"))
-K = ROOT / "knowledge"
+sys.path.insert(0, str(ROOT / "tools"))                 # ffbin ke liye
+K = ROOT / "checker"                                    # apna alag ghar
 REPORT = K / "voice-check-report.json"
+BASELINE = K / "voice-baseline.json"
 BASELINE = K / "voice-baseline.json"
 
 NORM = {

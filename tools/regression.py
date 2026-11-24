@@ -107,23 +107,6 @@ def check_clone():
         add("cloning", False, (r.stderr or "fail")[-60:])
 
 
-def check_voice_quality():
-    """Awaaz ka apna checker: insaan ke baseline par kitna utarta hai."""
-    code = (
-        "import sys;sys.path.insert(0,'tools');"
-        "from pathlib import Path;import voice_checker as VC;"
-        "fs=[p for p in Path('/scratch/output').glob('*.mp3')];"
-        "print('0 0') if not fs else None;"
-        "m=VC.measure(fs[-1]);j=VC.judge(m);print(j['score'], j['verdict'])"
-    )
-    r = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, cwd=str(ROOT), timeout=280)
-    out = (r.stdout or "").strip().split()
-    if len(out) >= 2:
-        add("voice_quality", int(out[0]) >= 70, f"score {out[0]} ({out[1]})")
-    else:
-        add("voice_quality", False, (r.stderr or "fail")[-60:])
-
-
 def check_structure():
     for name, cmd in (("kram", [sys.executable, "tools/kram.py", "jaanch"]),
                       ("wire", [sys.executable, "tools/sutradhar.py", "wire"])):
