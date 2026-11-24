@@ -29,6 +29,13 @@ K = ROOT / "knowledge"
 INP = Path("/scratch/input")
 LOG = K / "sound-resolver-log.jsonl"
 
+# poora jeev/jantu/pakshi/keeda/vanspati/prakriti — data file se (108 entry)
+LEXICON = {}
+_lx = K / "jeev-lexicon.json"
+if _lx.exists():
+    for _h, _v in json.loads(_lx.read_text(encoding="utf-8")).items():
+        LEXICON[_h] = (_v["group"], _v["lib"], _v.get("synth"), _v.get("query") or _v["english"])
+
 # shabd -> (kism, library patterns, synth naam, web query)
 WORDS = {
     "भेड़िया": ("jeev", ["wolf", "howl", "bhediya"], None, "wolf howling"),
@@ -68,7 +75,9 @@ def _tag_for(kind: str) -> list[str]:
 
 def from_library(patterns: list[str], kind: str, k: int = 3):
     """Asli recording — pehle naam se, phir content tag se."""
-    files = [p for p in INP.glob("*") if p.suffix.lower() in (".mp3", ".wav", ".ogg", ".ogx")]
+    extra = Path("/scratch/work/library_extra")     # web se laayi hui awaazein yahan jama hoti hain
+    src = list(INP.glob("*")) + (list(extra.glob("*")) if extra.exists() else [])
+    files = [p for p in src if p.suffix.lower() in (".mp3", ".wav", ".ogg", ".ogx", ".oga")]
     hits = [p for p in files if any(x in p.name.lower() for x in patterns)]
     if hits:
         return hits[0], "naam se mili"
@@ -104,20 +113,76 @@ def from_synth(synth: str, kind: str, sec: float = 3.0):
     return None, ""
 
 
+def verify_audio(path: Path) -> tuple[bool, str]:
+    """Laayi hui awaaz sach me jeev/prakriti ki hai ya music/speech? (naam par bharosa nahi)
+
+    - bahut chhoti clip (>0.4s) reject
+    - music: sur bahut sthir + harmonic (flatness kam) -> reject
+    - speech: 4-8 Hz modulation bahut tez -> reject
+    """
+    try:
+        import subprocess, sys as _s
+        import numpy as np
+        import ffbin
+        ff = ffbin.ensure() or "ffmpeg"
+        raw = subprocess.run([ff, "-v", "quiet", "-t", "6", "-i", str(path), "-f", "f32le",
+                              "-ac", "1", "-ar", "22050", "-"], capture_output=True).stdout
+        if len(raw) < 22050 // 2:
+            return False, "bahut chhoti"
+        x = np.frombuffer(raw, dtype=np.float32).astype(np.float64)
+        n = 1024
+        fr = np.lib.stride_tricks.sliding_window_view(x, n)[::512]
+        X = np.abs(np.fft.rfft(fr * np.hanning(n), axis=1)) + 1e-12
+        spec = X.mean(0)
+        flat = float(np.exp(np.log(spec).mean()) / spec.mean())      # 0 = tonal, 1 = noise
+        # sur ki sthirti
+        f = np.fft.rfftfreq(n, 1 / 22050)
+        peak_bins = np.argmax(X[:, (f > 80) & (f < 2000)], axis=1)
+        stability = float(np.std(peak_bins) / (np.mean(peak_bins) + 1e-9))
+        e = np.sqrt((fr ** 2).mean(1))
+        mod = np.abs(np.fft.rfft(e - e.mean()))
+        mf = np.fft.rfftfreq(len(e), 512 / 22050)
+        speech_mod = float(mod[(mf > 3.5) & (mf < 9)].sum() / (mod.sum() + 1e-12))
+        if flat < 0.02 and stability < 0.06:
+            return False, f"music jaisa (flat {flat:.3f}, sur sthir {stability:.3f})"
+        if speech_mod > 0.45:
+            return False, f"insaan ki awaaz jaisa (mod {speech_mod:.2f})"
+        return True, f"theek (flat {flat:.2f}, mod {speech_mod:.2f})"
+    except Exception as e:
+        return True, f"verify nahi hua ({type(e).__name__})"
+
+
 def from_web(query: str, tag: str):
     """Internet se laao (Wikimedia), aur library me jod do."""
     try:
         import fetch_real_audio as F
-        rows = F.fetch(query, 1, tag)
+        eng = ""
+        try:
+            eng = LEXICON.get(word, ("", [], None, ""))[3].split()[0].lower()
+        except Exception:
+            eng = query.split()[0].lower()
+        rows = F.fetch(query, 1, tag, must_have=[eng] if eng else None)
         if rows:
-            return Path(rows[0]["file"]), rows[0].get("license", "?")
+            src = Path(rows[0]["file"])
+            dest_dir = Path("/scratch/work/library_extra"); dest_dir.mkdir(parents=True, exist_ok=True)
+            dest = dest_dir / src.name
+            if not dest.exists():
+                import shutil
+                shutil.copy2(src, dest)
+            ok, why = verify_audio(dest)
+            if not ok:
+                dest.unlink(missing_ok=True)
+                return None, f"web se aayi par reject: {why}"
+            return dest, f"{rows[0].get('license','?')} · {why}"
     except Exception as e:
         return None, f"web fail: {type(e).__name__}"
     return None, "web khali"
 
 
 def resolve(word: str, allow_web: bool = True) -> dict:
-    kind, patterns, synth, webq = WORDS.get(word, ("cheez", [word], None, word))
+    table = dict(LEXICON)
+    table.update(WORDS)
+    kind, patterns, synth, webq = table.get(word, ("cheez", [word], None, word))
     out = {"word": word, "kind": kind, "routes": []}
 
     p, why = from_library(patterns, kind)

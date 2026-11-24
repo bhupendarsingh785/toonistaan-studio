@@ -169,6 +169,7 @@ EXTRA = {
    "_tag_for",
    "from_library",
    "from_synth",
+   "verify_audio",
    "from_web",
    "resolve",
    "demo",

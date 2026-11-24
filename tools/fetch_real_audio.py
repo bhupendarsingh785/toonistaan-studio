@@ -43,7 +43,11 @@ def _get(url: str, timeout=40, tries: int = 3):
     raise last
 
 
-def search(query: str, n: int = 3, ext=("ogg", "oga", "wav", "mp3", "flac", "opus")):
+MUSIC_WORDS = ("march", "band", "orchestra", "song", "music", "waltz", "polka", "choir", "anthem",
+               "rag", "ragtime", "piano", "jazz", "blues", "tune", "melody", "instrumental", "quartet")
+
+
+def search(query: str, n: int = 3, ext=("ogg", "oga", "wav", "mp3", "flac", "opus"), must_have=None):
     q = urllib.parse.urlencode({
         "action": "query", "format": "json", "generator": "search",
         "gsrsearch": f"filetype:audio {query}", "gsrnamespace": 6, "gsrlimit": n * 3,
@@ -62,6 +66,12 @@ def search(query: str, n: int = 3, ext=("ogg", "oga", "wav", "mp3", "flac", "opu
         # "En-us-giraffe.ogg" jaisi uchcharan files chhodo — wo jeev ki awaaz nahi, insaan ka shabd hai
         if any(b.lower() in title.lower() for b in BAD) or _re.match(r"^File:(En|De|Fr|Es|It|Nl|Pl|Ru|Ja|Zh|Pt|Sv|Fi|Cs|Ko|Ar|Hi)-", title):
             continue
+        # music ko chhodo (jaisa 'Mr. Rooster March' 1910 band)
+        if any(w in title.lower() for w in MUSIC_WORDS):
+            continue
+        # naam me wahi jeev ho (warna 'porcupine' ke naam par thrush aa jaata hai)
+        if must_have and not any(k in title.lower() for k in must_have):
+            continue
         ii = (p.get("imageinfo") or [{}])[0]
         url = (ii.get("url") or "").split("?")[0]     # Wikimedia URL me ?utm... juda hota hai
         if not url or not url.lower().endswith(ext):
@@ -77,10 +87,10 @@ def search(query: str, n: int = 3, ext=("ogg", "oga", "wav", "mp3", "flac", "opu
     return out
 
 
-def fetch(query: str, n: int = 2, tag: str = "") -> list[dict]:
+def fetch(query: str, n: int = 2, tag: str = "", must_have=None) -> list[dict]:
     OUT.mkdir(parents=True, exist_ok=True)
     got = []
-    for row in search(query, n):
+    for row in search(query, n, must_have=must_have or [query.split()[0].lower()]):
         name = (tag or "clip") + "_" + Path(urllib.parse.unquote(row["url"])).name
         name = "".join(ch for ch in name if ch.isalnum() or ch in "._-")[:80]
         dest = OUT / name
