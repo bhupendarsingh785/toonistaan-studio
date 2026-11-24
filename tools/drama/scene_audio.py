@@ -2,6 +2,7 @@
 """scene_audio.py — layer 5: duniya ki layers (base + close + far + movement)."""
 from __future__ import annotations
 import json
+import re
 import subprocess
 from pathlib import Path
 import numpy as np
@@ -69,7 +70,7 @@ def find(kind, k=3):
     for p in LIB.glob("*"):
         if p.suffix.lower() not in (".mp3", ".wav", ".ogg", ".ogx"): continue
         n = p.name.lower()
-        if any(t in n for t in pats) and p.stat().st_size > 40_000:
+        if any(re.search(r"\b" + re.escape(t), n) for t in pats) and p.stat().st_size > 40_000:
             out.append(p); seen.add(p.name)
     if len(out) < k:
         idx = _content_index()
