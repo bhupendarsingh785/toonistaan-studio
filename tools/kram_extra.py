@@ -20,6 +20,8 @@ EXTRA = {
    "stream_chunks",
    "diarize",
    "adr",
+   "_frames",
+   "adr_dtw",
    "_test"
   ]
  },
