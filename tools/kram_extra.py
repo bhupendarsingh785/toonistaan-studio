@@ -144,6 +144,15 @@ EXTRA = {
    "_lufs_of",
    "master",
    "main"
+  ],
+  "creature_train.py": [
+   "keywords",
+   "decode",
+   "features_multi",
+   "features",
+   "build",
+   "train",
+   "main"
   ]
  },
  "6_harkat": {

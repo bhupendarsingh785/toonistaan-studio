@@ -1,0 +1,66 @@
+{
+ "topic": "bird species identification from audio features",
+ "created_at": "2026-11-24T06:08:38Z",
+ "seconds_total": 4.2,
+ "agents": {
+  "ASTRA": {
+   "agent": "ASTRA",
+   "browser": "KRIYA",
+   "research": "KARMA",
+   "queries": [
+    "bird species identification from audio features comparison benchmark",
+    "bird species identification from audio features quality review"
+   ],
+   "tried": 4,
+   "collected": 4,
+   "seconds": 4.0,
+   "error": ""
+  }
+ },
+ "evidence_count": 3,
+ "unique_domains": [
+  "arxiv.org"
+ ],
+ "domain_count": 1,
+ "evidence": [
+  {
+   "url": "http://arxiv.org/abs/1703.02317v1",
+   "domain": "arxiv.org",
+   "title": "Convolutional Recurrent Neural Networks for Bird Audio Detection",
+   "text": "Bird sounds possess distinctive spectral structure which may exhibit small shifts in spectrum depending on the bird species and environmental conditions. In this paper, we propose using convolutional recurrent neural networks on the task of automated bird audio detection in real-life environments. In the proposed method, convolutional layers extract high dimensional, local frequency shift invariant features, while recurrent layers capture longer term dependencies between the features extracted from short time frames. This method achieves 88.5% Area Under ROC Curve (AUC) score on the unseen evaluation data and obtains the second place in the Bird Audio Detection challenge.",
+   "sha256": "be77cbf7af8d28dff26eb5e616cad3ba8b692785837e1987f8e27eddf3552b0d",
+   "relevance": "search_match",
+   "fetched_at": "2026-11-24T06:08:36Z",
+   "status": "collected",
+   "reason": "",
+   "agent": "ELEVENLABS",
+   "query": "bird species identification from audio features comparison benchmark"
+  },
+  {
+   "url": "http://arxiv.org/abs/2503.15576v2",
+   "domain": "arxiv.org",
+   "title": "A Bird Song Detector for improving bird identification through Deep Learning: a case study from Doñana",
+   "text": "Passive Acoustic Monitoring is a key tool for biodiversity conservation, but the large volumes of unsupervised audio it generates present major challenges for extracting meaningful information. Deep Learning offers promising solutions. BirdNET, a widely used bird identification model, has shown success in many study systems but is limited at local scale due to biases in its training data, which focus on specific locations and target sounds rather than entire soundscapes. A key challenge in bird species identification is that many recordings either lack target species or contain overlapping vocalizations, complicating automatic identification. To address these problems, we developed a multi-stage pipeline for automatic bird vocalization identification in Doñana National Park (SW Spain), a wetland of high conservation concern. We deployed AudioMoth recorders in three main habitats across nine locations and manually annotated 461 minutes of audio, resulting in 3749 labeled segments spanning 34 classes. We first applied a Bird Song Detector to isolate bird vocalizations using spectrogram-based image processing. Then, species were classified using custom models trained at the local scale. Applying the Bird Song Detector before classification improved species identification, as all models performed better when analyzing only the segments where birds were detected. Specifically, the combination of detector and fine-tuned BirdNET outperformed the baseline without detection. This approach demonstrates the effectiveness of integrating a Bird Song Detector with local classification models. These findings highlight the need to adapt general-purpose tools to specific ecological challenges. Automatically detecting bird species helps track the health of this threatened ecosystem, given birds sensitivity to environmental change, and supports conservation planning to reduce biodiversity loss.",
+   "sha256": "c8b37b2156b9e9ee9a6ebb3162cb43b6379e874b8ba4df07f02205c0e64d2896",
+   "relevance": "search_match",
+   "fetched_at": "2026-11-24T06:08:36Z",
+   "status": "collected",
+   "reason": "",
+   "agent": "ELEVENLABS",
+   "query": "bird species identification from audio features comparison benchmark"
+  },
+  {
+   "url": "http://arxiv.org/abs/2411.18222v1",
+   "domain": "arxiv.org",
+   "title": "Towards Improved Objective Perceptual Audio Quality Assessment -- Part 1: A Novel Data-Driven Cognitive Model",
+   "text": "Efficient audio quality assessment is vital for streamlining audio codec development. Objective assessment tools have been developed over time to algorithmically predict quality ratings from subjective assessments, the gold standard for quality judgment. Many of these tools use perceptual auditory models to extract audio features that are mapped to a basic audio quality score prediction using machine learning algorithms and subjective scores as training data. However, existing tools struggle with generalization in quality prediction, especially when faced with unknown signal and distortion types. This is particularly evident in the presence of signals coded using non-waveform-preserving parametric techniques. Addressing these challenges, this two-part work proposes extensions to the Perceptual Evaluation of Audio Quality (PEAQ - ITU-R BS.1387-1) recommendation. Part 1 focuses on increasing generalization, while Part 2 targets accurate spatial audio quality measurement in audio coding. To enhance prediction generalization, this paper (Part 1) introduces a novel machine learning approach that uses subjective data to model cognitive aspects of audio quality perception. The proposed method models the perceived severity of audible distortions by adaptively weighting different distortion metrics. The weights are determined using an interaction cost function that captures relationships between distortion salience and cognitive effects. Compared to other machine learning methods and established tools, the proposed architecture achieves higher prediction accuracy on large databases of previously unseen subjective quality scores. The perceptually-motivated model offers a more manageable alternative to general-purpose machine learning algorithms, allowing potential extensions and improvements to multi-dimensional quality measurement without complete retraining.",
+   "sha256": "1da2d98a2ae94358b6538e6362cf8bd6862b7244531ad6b7ff58039cd01f3f68",
+   "relevance": "search_match",
+   "fetched_at": "2026-11-24T06:08:38Z",
+   "status": "collected",
+   "reason": "",
+   "agent": "ELEVENLABS",
+   "query": "bird species identification from audio features quality review"
+  }
+ ]
+}

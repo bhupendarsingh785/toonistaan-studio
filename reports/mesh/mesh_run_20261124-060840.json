@@ -1,0 +1,53 @@
+{
+ "topic": "wild animal vocalization synthesis procedural audio",
+ "created_at": "2026-11-24T06:08:40Z",
+ "seconds_total": 6.4,
+ "agents": {
+  "AGNI": {
+   "agent": "AGNI",
+   "browser": "ANVESH",
+   "research": "KHOJ",
+   "queries": [
+    "wild animal vocalization synthesis procedural audio tutorial implementation",
+    "wild animal vocalization synthesis procedural audio github example"
+   ],
+   "tried": 3,
+   "collected": 3,
+   "seconds": 6.4,
+   "error": ""
+  }
+ },
+ "evidence_count": 2,
+ "unique_domains": [
+  "arxiv.org"
+ ],
+ "domain_count": 1,
+ "evidence": [
+  {
+   "url": "http://arxiv.org/abs/2206.06811v2",
+   "domain": "arxiv.org",
+   "title": "Adversarial Audio Synthesis with Complex-valued Polynomial Networks",
+   "text": "Time-frequency (TF) representations in audio synthesis have been increasingly modeled with real-valued networks. However, overlooking the complex-valued nature of TF representations can result in suboptimal performance and require additional modules (e.g., for modeling the phase). To this end, we introduce complex-valued polynomial networks, called APOLLO, that integrate such complex-valued representations in a natural way. Concretely, APOLLO captures high-order correlations of the input elements using high-order tensors as scaling parameters. By leveraging standard tensor decompositions, we derive different architectures and enable modeling richer correlations. We outline such architectures and showcase their performance in audio generation across four benchmarks. As a highlight, APOLLO results in $17.5\\%$ improvement over adversarial methods and $8.2\\%$ over the state-of-the-art diffusion models on SC09 dataset in audio generation. Our models can encourage the systematic design of other efficient architectures on the complex field.",
+   "sha256": "292dbd6b894062aa832a252aa05440e6a3c97cc9f655879cdd8c09f7d4a19eef",
+   "relevance": "search_match",
+   "fetched_at": "2026-11-24T06:08:37Z",
+   "status": "collected",
+   "reason": "",
+   "agent": "PIPER",
+   "query": "wild animal vocalization synthesis procedural audio tutorial implementation"
+  },
+  {
+   "url": "http://arxiv.org/abs/2302.08841v1",
+   "domain": "arxiv.org",
+   "title": "Lip-to-Speech Synthesis in the Wild with Multi-task Learning",
+   "text": "Recent studies have shown impressive performance in Lip-to-speech synthesis that aims to reconstruct speech from visual information alone. However, they have been suffering from synthesizing accurate speech in the wild, due to insufficient supervision for guiding the model to infer the correct content. Distinct from the previous methods, in this paper, we develop a powerful Lip2Speech method that can reconstruct speech with correct contents from the input lip movements, even in a wild environment. To this end, we design multi-task learning that guides the model using multimodal supervision, i.e., text and audio, to complement the insufficient word representations of acoustic feature reconstruction loss. Thus, the proposed framework brings the advantage of synthesizing speech containing the right content of multiple speakers with unconstrained sentences. We verify the effectiveness of the proposed method using LRS2, LRS3, and LRW datasets.",
+   "sha256": "98265c3c930aa96257f7d19f3f3075c1ea894ce7ce65dd137ba5af506d751cfc",
+   "relevance": "search_match",
+   "fetched_at": "2026-11-24T06:08:37Z",
+   "status": "collected",
+   "reason": "",
+   "agent": "PIPER",
+   "query": "wild animal vocalization synthesis procedural audio tutorial implementation"
+  }
+ ]
+}

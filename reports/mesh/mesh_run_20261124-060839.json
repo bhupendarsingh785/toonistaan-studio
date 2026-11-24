@@ -1,0 +1,40 @@
+{
+ "topic": "insect cricket frog call acoustic identification",
+ "created_at": "2026-11-24T06:08:39Z",
+ "seconds_total": 5.0,
+ "agents": {
+  "VAYU": {
+   "agent": "VAYU",
+   "browser": "PARAKH",
+   "research": "SATYA",
+   "queries": [
+    "insect cricket frog call acoustic identification criticism limitation",
+    "insect cricket frog call acoustic identification problems"
+   ],
+   "tried": 1,
+   "collected": 1,
+   "seconds": 5.0,
+   "error": ""
+  }
+ },
+ "evidence_count": 1,
+ "unique_domains": [
+  "arxiv.org"
+ ],
+ "domain_count": 1,
+ "evidence": [
+  {
+   "url": "http://arxiv.org/abs/2502.13893v1",
+   "domain": "arxiv.org",
+   "title": "Audio-Based Classification of Insect Species Using Machine Learning Models: Cicada, Beetle, Termite, and Cricket",
+   "text": "This project addresses the challenge of classifying insect species: Cicada, Beetle, Termite, and Cricket using sound recordings. Accurate species identification is crucial for ecological monitoring and pest management. We employ machine learning models such as XGBoost, Random Forest, and K Nearest Neighbors (KNN) to analyze audio features, including Mel Frequency Cepstral Coefficients (MFCC). The potential novelty of this work lies in the combination of diverse audio features and machine learning models to tackle insect classification, specifically focusing on capturing subtle acoustic variations between species that have not been fully leveraged in previous research. The dataset is compiled from various open sources, and we anticipate achieving high classification accuracy, contributing to improved automated insect detection systems.",
+   "sha256": "51b532a655b8a3aeffffb965179d133d8ab7375255ffc931fb14cf8659c61d32",
+   "relevance": "search_match",
+   "fetched_at": "2026-11-24T06:08:37Z",
+   "status": "collected",
+   "reason": "",
+   "agent": "ESPEAK",
+   "query": "insect cricket frog call acoustic identification criticism limitation"
+  }
+ ]
+}
