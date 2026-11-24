@@ -755,11 +755,19 @@ def _bhaav_style(bhaav) -> dict:
     """Style ka sach: pehle **seekha hua (naapa hua)**, warna bhavna.py ka default."""
     emo = str(bhaav or "neutral")
     base = {"emotion": "neutral", "pitch": 1.0, "pace": 1.0, "energy": 1.0, "gap_ms": 220}
-    try:
-        from tools import bhavna
-        base = dict(bhavna.style(emo))
+    try:                                  # naya: 12-knob bhaav (bhaav_v2), purana fallback
+        from tools import bhaav_v2
+        st = bhaav_v2.style(emo, "vachak")
+        base = {"emotion": emo, "pitch": st["sur_med"], "pace": st["raftaar"],
+                "energy": st["zor"], "gap_ms": int(220 * st["rukna"]),
+                "saans": st["saans"], "kaanp": st["kaanp"], "prosody": st["tts"]}
+        base["source"] = "bhaav_v2"
     except Exception:
-        pass
+        try:
+            from tools import bhavna
+            base = dict(bhavna.style(emo))
+        except Exception:
+            pass
     learned = _learned_style().get(emo)
     if learned:
         base.update({k: learned[k] for k in ("pitch", "pace", "energy", "gap_ms") if k in learned})

@@ -216,6 +216,15 @@ EXTRA = {
   "private_train_clean.py": [
    "anchors",
    "main"
+  ],
+  "harvest_voices.py": [
+   "_ff",
+   "decode",
+   "quality",
+   "group_of",
+   "harvest",
+   "report",
+   "main"
   ]
  },
  "6_harkat": {
@@ -361,6 +370,16 @@ EXTRA = {
    "follow",
    "mix",
    "master",
+   "main"
+  ]
+ },
+ "2_bhaav": {
+  "bhaav_v2.py": [
+   "style",
+   "_piper",
+   "apply_prosody",
+   "_measure",
+   "test",
    "main"
   ]
  }
