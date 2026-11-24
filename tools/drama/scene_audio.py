@@ -117,6 +117,40 @@ def find(kind, k=3):
     return out[:k]
 
 
+LOOP_DIR = Path("/scratch/work/loops")
+# library me na mile to ye loop KHUD banao
+KIND_LOOP = {
+    "river": "river", "water": "river", "rain": "rain", "wind": "wind",
+    "crickets": "crickets", "birds": "birds", "leaves": "leaves",
+    "wood": "wood_steps", "wood_steps": "wood_steps", "room": "room",
+    "fire": "fire", "jungle": "crickets", "footsteps": "wood_steps",
+}
+
+
+def make_loop(kind, sec=25):
+    """Awaaz library me nahi mili to khud banate hain (seamless, realistic-ish)."""
+    import loop_maker
+    name = KIND_LOOP.get(kind)
+    if not name:
+        return None
+    LOOP_DIR.mkdir(parents=True, exist_ok=True)
+    out = LOOP_DIR / ("%s_%ds.wav" % (name, int(sec)))
+    if not out.exists():
+        x = loop_maker.make(name, sec=sec, seed=abs(hash(name)) % 9999)
+        import soundfile as sf
+        sf.write(str(out), x, loop_maker.SR)
+    return out
+
+
+def find_or_make(kind, k=3):
+    """Pehle asli recording, warna khud banaya loop — kahin kami nahi."""
+    got = find(kind, k)
+    if got:
+        return got
+    made = make_loop(kind)
+    return [made] if made else []
+
+
 def load(p, t=25):
     raw = subprocess.run([_ff(), "-v", "quiet", "-t", str(t), "-i", str(p), "-f", "f32le",
                           "-ac", "1", "-ar", str(SR), "-"], capture_output=True).stdout
