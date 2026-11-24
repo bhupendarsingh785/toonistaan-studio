@@ -379,6 +379,7 @@ def plan_scene(lines, total, wmap, overrides=None):
     kw = wmap["keywords"]; layers = wmap["layers"]
     env = {k: np.zeros(n, dtype=np.float32) for k, v in layers.items() if v["kind"] in ("bed", "event")}
     present = {k: False for k in env}
+    allow_env = {k: np.zeros(n, dtype=np.float32) for k in env}   # jagah ke hisaab se ijazat
     dists = {}          # har layer ki doori (shabdon se)
     space = "khula"
     space_seq = []      # (t0, t1, jagah) — kahani chalti hai to jagah badalti hai
@@ -394,13 +395,29 @@ def plan_scene(lines, total, wmap, overrides=None):
                 space_seq[-1] = (_o[0], ln["start"], _o[2])
             space_seq.append((ln["start"], total, _sp_line))
             space = _sp_line
+        # jagah/samay/mosam se: kaun si awaaz is scene me chalegi (aur kaun band)
+        try:
+            import scene_env as _SE
+            _st = _SE.analyse(ln["text"])
+            _beds = _SE.beds_for(_st)
+        except Exception:
+            _beds = {}
         for k in env:
+            if _beds:
+                _allow = float(_beds.get(k, 0.0))
+                if _allow <= 0.01:          # is jagah par ye awaaz bilkul nahi
+                    env[k][a:b] = 0.0       # pehle se chalu ho to bhi band
+                    continue
+            else:
+                _allow = 1.0
+            if _beds:
+                allow_env[k][a:b] = np.maximum(allow_env[k][a:b], _allow)
             if k in kw and detect(ln["text"], kw[k]):
                 present[k] = True
                 d = _dist_for(ln["text"], layers[k].get("dist", 1.5), wmap, kw[k])
                 dists[k] = d
                 # door awaaz halki aati hai (1/d rule), paas wali ubharti hai
-                lvl = min(1.0, 1.25 / max(0.8, d))
+                lvl = min(1.0, 1.25 / max(0.8, d)) * _allow
                 env[k][a:b] = np.maximum(env[k][a:b], lvl)
         if detect(ln["text"], kw.get("footsteps", [])):
             surf = "leaves"
@@ -415,12 +432,17 @@ def plan_scene(lines, total, wmap, overrides=None):
             env[k][first:] = np.maximum(env[k][first:], 0.5)
         if first is not None and layers[k]["kind"] == "event":
             env[k][first:] = np.maximum(env[k][first:], 0.6)
+    # jagah ka niyam sabse upar: jahan ijazat nahi, wahan awaaz band
+    for k in env:
+        if allow_env[k].any():
+            env[k] = env[k] * np.clip(allow_env[k] * 2.0, 0, 1)
     # bed kabhi poori tarah chup na ho — warna kahani me khaali gaddhe ban jaate hain
     for k in env:
         if k.startswith("_"):
             continue
         if layers[k]["kind"] == "bed" and present.get(k):
-            env[k] = np.maximum(env[k], 0.12)
+            _fl = np.where(allow_env[k] > 0.01, 0.12, 0.0).astype(np.float32)
+            env[k] = np.maximum(env[k], _fl)
     if overrides:
         for o in overrides.get("objects", []):
             k = o["sound"]; env.setdefault(k, np.zeros(n)); present[k] = True

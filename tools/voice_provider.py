@@ -424,6 +424,26 @@ def _piper_inprocess(text, model, out_path, length_scale=1.0):
         return False
 
 
+def _shift_to_target(path, kirdaar, base_hz=110.0):
+    """Female: male model ki awaaz ko target sur tak le jao (smooth rehta hai)."""
+    try:
+        import numpy as np
+        import soundfile as sf
+        import voice_clone_lite as VL
+        target = float(SARVAM_TARGET_HZ.get(kirdaar) or 0)
+        if target <= 0:
+            target = 195.0
+        factor = max(0.70, min(2.0, target / base_hz))
+        y, sr = sf.read(str(path), always_2d=True)
+        mono = y.mean(1).astype(np.float64)
+        out = VL._pitch_shift(mono, factor, sr)
+        out = out / (np.max(np.abs(out)) + 1e-9) * 0.95
+        sf.write(str(path), out.astype("float32"), sr)
+        return True
+    except Exception:
+        return False
+
+
 def _piper_parallel_long(text, model, out_path, length_scale=1.0, workers=2):
     """Lamba text: vakya tod kar parallel synthesize, phir jodo (tez)."""
     import re, subprocess, tempfile
@@ -473,7 +493,11 @@ def piper_tts(text, kirdaar="madhur", out="out.wav", bhaav=None):
         return False
     if not have_piper():
         return False
-    model = _piper_model(_piper_gender(kirdaar))
+    _gender = _piper_gender(kirdaar)
+    # Female ki awaaz priyamvada se "ruk-ruk ke" aati hai (naapa: 12 dip/line vs 4).
+    # Isliye female bhi pratham (male) se banate hain, phir sur upar — smooth + female rang.
+    _via_male = (_gender == "female" and os.environ.get("ASTRA_FEMALE_VIA_MALE", "1") == "1")
+    model = _piper_model("male" if _via_male else _gender)
     if not model:
         return False
     tmp = out + ".piper.wav"
@@ -500,8 +524,14 @@ def piper_tts(text, kirdaar="madhur", out="out.wav", bhaav=None):
             # chup-chaap fail (caller ko False milta hai; log me traceback ka dher nahi)
             return False
 
-    # kirdaar ka pitch (baaki engines jaisa hi)
-    pitch = SARVAM_PITCH.get(kirdaar, 1.0) * _st["pitch"]   # bhaav se sur
+    # har kirdaar ko uske target sur par le jao (bachcha upar, budha neeche)
+    _shifted = _shift_to_target(tmp, kirdaar)
+
+    # kirdaar ka pitch — shift ho chuka hai to dobara nahi (warna sur dugna bigdega)
+    if _shifted:
+        pitch = 1.0 * (0.75 + 0.25 * _st["pitch"])   # bhaav ka halka asar
+    else:
+        pitch = SARVAM_PITCH.get(kirdaar, 1.0) * _st["pitch"]
     ff = None
     try:
         import shutil

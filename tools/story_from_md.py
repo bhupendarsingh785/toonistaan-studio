@@ -125,6 +125,38 @@ def intro_only(rows, seconds: float = 10.0):
     return out
 
 
+def no_narrator(rows):
+    """Vachak bilkul nahi — narration scene ke kirdaar ke muh se.
+
+    Sunne wale ko lagta hai ki kirdaar khud apna kaam-kaj bata raha hai
+    ("main nadi kinare gayi"), bahar ka reader nahi.
+    """
+    out = []
+    for who, text in rows:
+        if who != "वाचक":
+            out.append((who, text)); continue
+        pick = "गौरी"
+        if len(text) > 40:                     # title/chhoti line par naam-match nahi
+            txt2 = text.replace("ऋषि-मुनि", "").replace("ऋषियों", "")
+            for n in ("हरिदास", "कमला", "मोहन", "ऋषि", "माई"):
+                if n in txt2:
+                    pick = n; break
+        out.append((pick, text))
+    return out
+
+
+def merge_same(rows, max_len: int = 150):
+    """Ek hi kirdaar ki lagataar lines jodo — beech me rukna kam (smooth)."""
+    out = []
+    for who, text in rows:
+        if out and out[-1][0] == who and len(out[-1][1]) + len(text) + 1 <= max_len:
+            prev = out[-1][1].rstrip("।, ")
+            out[-1] = (who, prev + "। " + text.lstrip())
+        else:
+            out.append((who, text))
+    return out
+
+
 def split_commas(rows, max_len: int = 110):
     """Lambi line ko vakya me todo; phir bhi lambi ho to aakhri comma par.
 
@@ -199,17 +231,23 @@ def main() -> int:
     ap.add_argument("--stats", default="")
     ap.add_argument("--pov", default="", help="narration kis kirdaar ke muh se (jaise गौरी)")
     ap.add_argument("--intro-only", action="store_true", help="vachak sirf 10s, phir kirdaar bolte hain")
+    ap.add_argument("--no-narrator", action="store_true", help="vachak bilkul nahi — kirdaar khud bolte hain")
+    ap.add_argument("--merge-same", action="store_true", help="ek kirdaar ki lines jodo (smooth)")
     ap.add_argument("--split-commas", action="store_true", help="lambi line comma par todo (saans)")
     a = ap.parse_args()
     if a.stats:
         stats(Path(a.stats)); return 0
     rows = convert(Path(a.src))
+    if a.no_narrator:
+        rows = no_narrator(rows)
     if a.intro_only:
         rows = intro_only(rows, 10.0)
     if a.pov:
         rows = apply_pov(rows, a.pov)
     if a.split_commas:
         rows = split_commas(rows)
+    if a.merge_same:
+        rows = merge_same(rows)
     write_script(rows, Path(a.out))
     stats(Path(a.out))
     return 0

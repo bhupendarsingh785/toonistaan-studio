@@ -231,6 +231,14 @@ EXTRA = {
    "harvest",
    "report",
    "main"
+  ],
+  "scene_env.py": [
+   "_hits",
+   "analyse",
+   "beds_for",
+   "plan",
+   "report",
+   "main"
   ]
  },
  "6_harkat": {
