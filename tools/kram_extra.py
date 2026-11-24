@@ -48,6 +48,16 @@ EXTRA = {
    "_from_content",
    "find_or_make",
    "make_loop"
+  ],
+  "agent_brief.py": [
+   "_run",
+   "_last_manifest",
+   "build",
+   "queries",
+   "main"
+  ],
+  "agent_intel.py": [
+   "main"
   ]
  },
  "6_harkat": {
