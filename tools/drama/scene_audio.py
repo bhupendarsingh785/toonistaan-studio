@@ -38,6 +38,16 @@ KIND_TAGS = {
     "leaves": ["footsteps"], "wood": ["footsteps"], "footsteps": ["footsteps"],
     "door": ["door"], "music": ["music", "music/tonal"], "horror": ["horror"],
 }
+# fallback me in shabdon wali file ko pehle chuno (content tag ke saath naam ka hint)
+HINTS = {
+    "wood": ["wood", "floor", "stairs", "parquet"],
+    "room": ["room", "ambience", "indoor"],
+    "leaves": ["leaves", "grass", "rustl"],
+    "wind": ["wind", "breeze", "gust"],
+    "river": ["river", "water", "stream"],
+    "crickets": ["cricket", "insect", "night"],
+    "birds": ["bird", "chirp"],
+}
 _CI = None
 
 
@@ -65,7 +75,11 @@ def find(kind, k=3):
         idx = _content_index()
         speech = {r["file"] for r in idx.get("speech/voice", [])}
         for tag in KIND_TAGS.get(kind, []):
-            for rec in idx.get(tag, []):
+            cands = idx.get(tag, [])
+            hints = HINTS.get(kind, [])
+            if hints:
+                cands = sorted(cands, key=lambda r: 0 if any(h in r["file"].lower() for h in hints) else 1)
+            for rec in cands:
                 if rec["file"] in seen or rec["file"] in speech:
                     continue
                 if not (3 <= rec.get("sec", 0) <= 600):
