@@ -1,26 +1,21 @@
 {
- "acc": 0.376,
- "train": 679,
- "test": 306,
+ "acc": 0.615,
+ "train": 198,
+ "test": 104,
  "labels": [
-  "darwaza",
   "harkat",
   "insaan",
-  "janwar",
   "music",
   "prakriti"
  ],
  "per_class": {
-  "darwaza": 0.26,
-  "harkat": 0.35,
-  "insaan": 0.45,
-  "janwar": 0.33,
-  "music": 0.17,
-  "prakriti": 0.54
+  "harkat": 0.63,
+  "insaan": 0.75,
+  "prakriti": 0.57
  },
- "clips": 0,
- "windows": 985,
- "audio_minutes": 0.0,
- "seconds_taken": 1.2,
+ "clips": 217,
+ "windows": 302,
+ "audio_minutes": 7.0,
+ "seconds_taken": 119.1,
  "split": "file-level"
 }

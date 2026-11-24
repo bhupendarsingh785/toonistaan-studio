@@ -181,6 +181,13 @@ EXTRA = {
    "feats",
    "train",
    "main"
+  ],
+  "auto_label.py": [
+   "decode",
+   "asr_has_words",
+   "evidence",
+   "decide",
+   "main"
   ]
  },
  "6_harkat": {

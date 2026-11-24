@@ -37,6 +37,29 @@ CLASSES = {
 }
 
 
+def load_audited(min_conf=0.6):
+    """Sun kar lagaye gaye label (auto_label.py) — naam par bharosa nahi."""
+    p = K / "labels-audited.jsonl"
+    if not p.exists():
+        return []
+    rows, seen = [], set()
+    for line in p.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        r = json.loads(line)
+        if not r.get("label") or r.get("conf", 0) < min_conf or r["file"] in seen:
+            continue
+        f = INP / r["file"]
+        if not f.exists():
+            f2 = EXTRA / r["file"]
+            if not f2.exists():
+                continue
+            f = f2
+        seen.add(r["file"])
+        rows.append((r["label"], f))
+    return rows
+
+
 def load_clips(max_clips=300, per_tag=60):
     idx = json.loads((K / "audio-content-index.json").read_text(encoding="utf-8")).get("tags", {})
     picked = {}
@@ -149,12 +172,20 @@ def main() -> int:
     ap.add_argument("--clips", type=int, default=300)
     ap.add_argument("--offset", type=int, default=0, help="batch me chalane ke liye")
     ap.add_argument("--train-only", action="store_true", help="cache se sirf train karo")
+    ap.add_argument("--audited", action="store_true", help="sun kar lagaye gaye label se train")
     a = ap.parse_args()
     t0 = time.time()
     OUT.mkdir(parents=True, exist_ok=True)
     cache = OUT / "features.npz"
-    rows, per_label = load_clips(a.clips + a.offset)
-    rows = rows[a.offset:]
+    if a.audited:
+        rows = load_audited()
+        per_label = {}
+        for lab, _ in rows:
+            per_label[lab] = per_label.get(lab, 0) + 1
+        cache = OUT / "features-audited.npz"
+    else:
+        rows, per_label = load_clips(a.clips + a.offset)
+        rows = rows[a.offset:]
     if a.train_only:
         rows = []
     print("clips:", len(rows), "| per class:", per_label)
