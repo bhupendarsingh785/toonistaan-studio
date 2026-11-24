@@ -71,6 +71,8 @@ EXTRA = {
    "_late_reverb",
    "_early",
    "place_acoustic",
+   "place_acoustic_3d",
+   "place_moving",
    "measure",
    "_burst",
    "_test",
@@ -186,6 +188,14 @@ EXTRA = {
    "_bundled",
    "_make_shim",
    "ensure"
+  ],
+  "regression.py": [
+   "add",
+   "check_space",
+   "check_narration",
+   "check_structure",
+   "check_render",
+   "main"
   ]
  }
 }

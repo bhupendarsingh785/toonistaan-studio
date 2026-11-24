@@ -323,13 +323,13 @@ SPACE_WORDS = {
 }
 
 
-def space_for(text, wmap=None):
-    """Kahani ke shabdon se jagah (goonj ka kism)."""
+def space_for(text, wmap=None, default=None):
+    """Kahani ke shabdon se jagah. Koi shabd na ho to None (jagah wahi rehti hai)."""
     t = text or ""
     for sp, words in SPACE_WORDS.items():
         if detect(t, words):
             return sp
-    return "khula"
+    return default
 
 
 def _dist_for(text, base, wmap, layer_words=None):
@@ -373,15 +373,22 @@ def plan_scene(lines, total, wmap, overrides=None):
     present = {k: False for k in env}
     dists = {}          # har layer ki doori (shabdon se)
     space = "khula"
+    space_seq = []      # (t0, t1, jagah) — kahani chalti hai to jagah badalti hai
     walks = []
     ramp = int(1.2 * SR)  # 1.2 s smooth fade (aapke system ka niyam)
     for i, ln in enumerate(lines):
         nxt = lines[i + 1]["start"] if i + 1 < len(lines) else total
         a, b = int(max(0, ln["start"] - 0.6) * SR), int(min(total, nxt + 1.5) * SR)
+        _sp_line = space_for(ln["text"], wmap)
+        if _sp_line and (not space_seq or space_seq[-1][2] != _sp_line):
+            if space_seq:
+                _o = space_seq[-1]
+                space_seq[-1] = (_o[0], ln["start"], _o[2])
+            space_seq.append((ln["start"], total, _sp_line))
+            space = _sp_line
         for k in env:
             if k in kw and detect(ln["text"], kw[k]):
                 present[k] = True
-                space = space_for(ln["text"], wmap)
                 d = _dist_for(ln["text"], layers[k].get("dist", 1.5), wmap, kw[k])
                 dists[k] = d
                 # door awaaz halki aati hai (1/d rule), paas wali ubharti hai
@@ -420,6 +427,7 @@ def plan_scene(lines, total, wmap, overrides=None):
     env["_mentioned"] = {k for k, v in present.items() if v}
     env["_dist"] = dists
     env["_space"] = space
+    env["_space_seq"] = space_seq or [(0.0, total, space)]
     return env, walks
 
 
@@ -477,7 +485,11 @@ def render_world(total, env, walks, wmap, lib, rng, tod="day", river_pass=True):
                     _sd = env.get("_dist", {}).get(k)          # kahani ke shabdon se doori
                     d = float(_sd) if _sd else rng.uniform(*L["dist"])
                     p = rng.uniform(-0.9, 0.9)
-                    a1, a2 = place(x * 0.35, p, d, env.get("_space", "khula"))
+                    _sp = env.get("_space", "khula")
+                    for (_t0, _t1, _s) in env.get("_space_seq", []):
+                        if _t0 <= t <= _t1:
+                            _sp = _s
+                    a1, a2 = place(x * 0.35, p, d, _sp)
                     add_at(dry, a1 * g * lvl, t); add_at(wet, a2 * g * lvl, t)
                     cnt += 1
                     if k == "birds" and rng.random() < 0.35:       # jawab deti doosri chidiya

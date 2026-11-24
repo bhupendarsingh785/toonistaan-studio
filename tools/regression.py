@@ -1,0 +1,107 @@
+#!/usr/bin/env python3
+"""regression.py — ek command me poori jaanch (kuch bhi chhoota na rahe).
+
+  python tools/regression.py            # sab
+  python tools/regression.py --fast     # render chhod kar baaki
+
+Har check naap se PASS/FAIL deta hai; koi check chup-chaap skip nahi hota.
+"""
+from __future__ import annotations
+import argparse
+import json
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "tools"))
+sys.path.insert(0, str(ROOT / "tools" / "world"))
+
+RESULTS = []
+
+
+def add(name, ok, detail=""):
+    RESULTS.append((name, bool(ok), detail))
+    print(f"  {'OK ' if ok else 'XX '} {name:22s} {detail}")
+
+
+def check_space():
+    import numpy as np
+    import space as SP
+    sr = SP.SR
+    t = np.arange(int(1.0 * sr)) / sr
+    voice = sum((0.6 / k) * np.sin(2 * np.pi * 140 * k * t) for k in range(1, 20)) * np.exp(-t / 0.3)
+    near = SP.measure(SP.place_acoustic(voice, dist=1, space="khula"))["level_db"]
+    far = SP.measure(SP.place_acoustic(voice, dist=20, space="khula"))["level_db"]
+    add("doori level", far < near - 8, f"1m {near} dB -> 20m {far} dB")
+    hf_near = SP.measure(SP.place_acoustic(voice, dist=1, space="khula"))["hf_lf"]
+    hf_far = SP.measure(SP.place_acoustic(voice, dist=20, space="khula"))["hf_lf"]
+    add("doori dhundhli", hf_far <= hf_near, f"HF/LF {hf_near} -> {hf_far}")
+    pl = SP.measure(SP.place_acoustic(voice, dist=4, pan=-0.8, space="jungle"))["pan"]
+    pr = SP.measure(SP.place_acoustic(voice, dist=4, pan=+0.8, space="jungle"))["pan"]
+    add("disha pan", pl < -0.4 and pr > 0.4, f"pan {pl} / {pr}")
+    burst = np.random.default_rng(1).normal(0, 1, int(1.0 * sr)) * np.exp(-t / 0.05)
+    rts = {s: SP.measure(SP.place_acoustic(burst, dist=6, space=s))["rt_bass_mid_high"][0] for s in ("khula", "jungle", "hall")}
+    add("jagah goonj", rts["khula"] < rts["jungle"] < rts["hall"], str(rts))
+    t2 = np.arange(int(2.5 * sr)) / sr
+    long_voice = sum((0.6 / k) * np.sin(2 * np.pi * 140 * k * t2) for k in range(1, 20)) * np.exp(-t2 / 1.2)
+    mv = SP.place_moving(long_voice, dist0=1.0, dist1=40.0, space="khula", pass_by=True, speed=14)
+    a = SP.measure(mv[:, : int(0.5 * sr)])["level_db"]
+    b = SP.measure(mv[:, int(1.2 * sr):int(1.7 * sr)])["level_db"]
+    add("chalti awaaz", b > a + 3, f"shuru {a} dB -> paas {b} dB")
+
+
+def check_narration():
+    import narration_clean as NC
+    out, found = NC.strip_sounds("शाम ढल रही थी और नदी कल-कल बह रही थी।")
+    add("vachak nakal hatai", "कल-कल" not in out and found == ["कल-कल"], out)
+
+
+def check_structure():
+    for name, cmd in (("kram", [sys.executable, "tools/kram.py", "jaanch"]),
+                      ("wire", [sys.executable, "tools/sutradhar.py", "wire"])):
+        r = subprocess.run(cmd, capture_output=True, text=True, cwd=str(ROOT), timeout=300)
+        txt = (r.stdout or "") + (r.stderr or "")
+        add(name, ("SAB THEEK" in txt) or ("SAB JUDA HAI" in txt), txt.strip().splitlines()[-1][:70])
+
+
+def check_render():
+    story = ROOT / "knowledge" / "regression-kahani.txt"
+    story.write_text("वाचक: जंगल में शाम ढल रही थी और नदी बह रही थी।\n"
+                     "लड़की: यहाँ अंधेरा है, कोई है क्या?\n"
+                     "वाचक: दूर कहीं भेड़िया चिल्लाया।\n", encoding="utf-8")
+    out = Path(tempfile.mkdtemp(prefix="astra-reg-"))
+    r = subprocess.run([sys.executable, "tools/sutradhar.py", "run", str(story), str(out)],
+                       capture_output=True, text=True, cwd=str(ROOT), timeout=600)
+    txt = (r.stdout or "") + (r.stderr or "")
+    add("render", "PASS — kahani poori hai" in txt, txt.strip().splitlines()[-1][:70])
+    mf = out / "manifest.json"
+    if mf.exists():
+        qa = json.loads(mf.read_text())["qa"]
+        for k in ("pace", "background"):
+            add("qa " + k, qa.get(k, {}).get("status") == "PASS", str(qa.get(k, {}).get("value")))
+        add("verdict", json.loads(mf.read_text()).get("verdict") == "PASS", "")
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--fast", action="store_true")
+    a = ap.parse_args()
+    print("1) jagah/doori/disha")
+    check_space()
+    print("2) vachak ka andaaz")
+    check_narration()
+    print("3) dhancha")
+    check_structure()
+    if not a.fast:
+        print("4) asli render + QA")
+        check_render()
+    bad = [n for n, ok, _ in RESULTS if not ok]
+    print(f"\n{'SAB PASS' if not bad else 'FAIL: ' + ', '.join(bad)}  ({len(RESULTS)} check)")
+    return 0 if not bad else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

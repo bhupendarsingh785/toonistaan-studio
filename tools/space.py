@@ -161,6 +161,68 @@ def place_acoustic(x, dist: float = 1.0, pan: float = 0.0, space: str = "khula",
     return st
 
 
+def place_acoustic_3d(x, dist=1.0, pan=0.0, elev=0.0, space="khula", sr=SR):
+    """Upar/neeche (elev) bhi: upar ki awaaz thodi tez-upar sunai deti hai."""
+    st = place_acoustic(x, dist=dist, pan=pan, space=space, sr=sr)
+    if abs(elev) < 0.05:
+        return st
+    # upar (elev>0): upar ki frequency thodi badhti hai; neeche: thodi kam
+    g = 1.0 + 0.25 * float(np.clip(elev, -1, 1))
+    X = np.fft.rfft(st, axis=1)
+    f = np.fft.rfftfreq(st.shape[1], 1 / sr)
+    tilt = 10 ** ((np.log2(np.maximum(f, 1) / 1000.0) * (g - 1.0) * 6.0) / 20)
+    st = np.fft.irfft(X * tilt[None, :], n=st.shape[1])
+    return st
+
+
+def place_moving(x, dist0=1.0, dist1=20.0, pan0=-0.9, pan1=0.9,
+                 space="khula", sr=SR, doppler=True, pass_by=False, speed=12.0):
+    """Chalti awaaz: paas aati-door jaati (Doppler + level + disha badalti hai).
+
+    x: awaaz (mono). Awaaz shuru se ant tak chalti hai — dist/pan shuru se ant tak badalte hain.
+    """
+    x = np.asarray(x, dtype=np.float64)
+    if x.ndim > 1:
+        x = x.mean(axis=0)
+    n = len(x)
+    t = np.linspace(0, 1, n)
+    if pass_by:
+        # paas se guzarti awaaz: d = sqrt((v*t')^2 + dmin^2) — pehle paas, phir door
+        dur = n / sr
+        tt = (t - 0.5) * dur
+        dmin = max(0.8, min(dist0, dist1))
+        d = np.sqrt((speed * tt) ** 2 + dmin ** 2)
+        d = np.clip(d, dmin, max(dist0, dist1, speed * dur))
+        p = np.clip(tt / (dur / 2), -1, 1)
+    else:
+        d = dist0 + (dist1 - dist0) * t
+        p = pan0 + (pan1 - pan0) * t
+    # Doppler: paas aate waqt pitch upar, door jaate waqt neeche (velocity se)
+    if doppler:
+        v = np.gradient(d) * sr                      # m/s (d badal rahi hai per sample)
+        c = C_AIR
+        rate = np.clip(c / (c + v), 0.90, 1.12)      # paas aati awaaz upar, door jaati neeche
+        # input par kaunsi jagah padhni hai: paas aate waqt dheere padho (pitch upar)
+        pos = np.cumsum(rate)      # paas aati awaaz tez padhi jaati hai = pitch upar
+        pos = pos[pos < n - 1]
+        if len(pos) > 32:
+            x = np.interp(pos, np.arange(n), x)
+            x = np.pad(x, (0, max(0, n - len(x))))[:n]
+    # chhote tukdon me place karo (har tukde ki apni doori/disha)
+    blk = max(256, int(0.10 * sr))
+    out = np.zeros((2, n))
+    for i in range(0, n, blk):
+        j = min(n, i + blk)
+        seg = x[i:j]
+        st = place_acoustic(seg, dist=float(d[i]), pan=float(p[i]), space=space, sr=sr)
+        m = min(st.shape[1], n - i)
+        out[:, i:i + m] += st[:, :m]
+    peak = float(np.max(np.abs(out))) or 1.0
+    if peak > 0.98:
+        out = out / peak * 0.98
+    return out
+
+
 # ---------- naap ----------
 def measure(st, sr: int = SR) -> dict:
     st = np.asarray(st)

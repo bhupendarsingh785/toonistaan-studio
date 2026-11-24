@@ -8,6 +8,14 @@
    "count": 1,
    "last_story": "/tmp/kahani-nadi.txt",
    "added": "2026-11-24"
+  },
+  {
+   "key": "यहाँ आवाज़ बहुत गूंजती है।",
+   "example": "यहाँ आवाज़ बहुत गूंजती है।",
+   "suggest": null,
+   "count": 4,
+   "last_story": "/tmp/kahani-jagah.txt",
+   "added": "2026-11-24"
   }
  ]
 }
