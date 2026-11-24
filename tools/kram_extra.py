@@ -174,6 +174,13 @@ EXTRA = {
    "resolve",
    "demo",
    "main"
+  ],
+  "private_train.py": [
+   "load_clips",
+   "decode",
+   "feats",
+   "train",
+   "main"
   ]
  },
  "6_harkat": {

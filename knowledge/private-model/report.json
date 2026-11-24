@@ -1,0 +1,26 @@
+{
+ "acc": 0.376,
+ "train": 679,
+ "test": 306,
+ "labels": [
+  "darwaza",
+  "harkat",
+  "insaan",
+  "janwar",
+  "music",
+  "prakriti"
+ ],
+ "per_class": {
+  "darwaza": 0.26,
+  "harkat": 0.35,
+  "insaan": 0.45,
+  "janwar": 0.33,
+  "music": 0.17,
+  "prakriti": 0.54
+ },
+ "clips": 0,
+ "windows": 985,
+ "audio_minutes": 0.0,
+ "seconds_taken": 1.2,
+ "split": "file-level"
+}

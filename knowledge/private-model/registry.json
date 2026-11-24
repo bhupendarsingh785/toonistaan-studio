@@ -1,0 +1,50 @@
+{
+ "models": {
+  "sound_type": {
+   "file": "private-model/sound-type-model.json",
+   "classes": [
+    "darwaza",
+    "harkat",
+    "insaan",
+    "janwar",
+    "music",
+    "prakriti"
+   ],
+   "acc": 0.376,
+   "windows": 985,
+   "clips": 0,
+   "split": "file-level"
+  },
+  "creature": {
+   "file": "creature-model.json",
+   "fine_acc": 0.267,
+   "coarse_acc": 0.482,
+   "classes": 20,
+   "windows": 252
+  },
+  "voice": {
+   "file": "voice-model.json",
+   "acc": 0.409,
+   "classes": [
+    "aadmi",
+    "baby",
+    "bachcha",
+    "bheed",
+    "budha",
+    "budhi",
+    "cheekh",
+    "hansi",
+    "rona",
+    "stri"
+   ],
+   "windows": 132
+  }
+ },
+ "data": {
+  "library_clips": 2275,
+  "library_hours": 25.45,
+  "content_index_entries": 2275,
+  "web_clips_verified": "knowledge/jeev-coverage.json"
+ },
+ "note": "Sab kuch local — koi data bahar nahi jaata."
+}
