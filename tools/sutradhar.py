@@ -407,6 +407,53 @@ def _wav(path):
     return _mono(y)
 
 
+
+def _render_in_parts(lines, out: Path, text: str, est: float, part_sec: float = 30.0) -> int:
+    """Lambi kahani: chhote hisson me render (alag process — memory wapas milti hai), phir jod do."""
+    import os
+    import subprocess
+    import tempfile
+    import numpy as np
+    import soundfile as sf
+    parts, cur, acc = [], [], 0.0
+    for L in lines:
+        d = max(1.0, len(L["text"]) / 12.0)
+        if cur and acc + d > part_sec:
+            parts.append(cur); cur, acc = [], 0.0
+        cur.append(L); acc += d
+    if cur:
+        parts.append(cur)
+    tmpd = Path(tempfile.mkdtemp(prefix="astra-part-"))
+    made = []
+    for i, pl in enumerate(parts, 1):
+        sp = tmpd / f"part{i}.txt"
+        sp.write_text("\n".join(f'{L["who"]}: {L["text"]}' for L in pl) + "\n", encoding="utf-8")
+        od = tmpd / f"out{i}"
+        print(f"  hissa {i}/{len(parts)} ({len(pl)} line)")
+        env = dict(os.environ, ASTRA_PART="1")
+        r = subprocess.run([sys.executable, str(Path(__file__).resolve()), "run", str(sp), str(od)],
+                           capture_output=True, text=True, env=env)
+        f = od / "kahani.wav"
+        if r.returncode != 0 or not f.exists():
+            print(f"  XX hissa {i} fail (rc={r.returncode}) — poora render rok diya")
+            print("  stdout:", (r.stdout or "")[-500:].replace("\n", " | "))
+            print("  stderr:", (r.stderr or "")[-300:].replace("\n", " | "))
+            return r.returncode or 1
+        made.append(f)
+    ys, sr = [], None
+    for f in made:
+        y, sr = sf.read(str(f), always_2d=True)
+        ys.append(y); ys.append(np.zeros((int(0.4 * sr), y.shape[1]), dtype=y.dtype))
+    joined = np.vstack(ys[:-1])
+    pk = float(np.abs(joined).max()) or 1.0
+    if pk > 0.99:
+        joined = joined / pk * 0.99
+    out.mkdir(parents=True, exist_ok=True)
+    sf.write(str(out / "kahani.wav"), joined, sr)
+    print(f"  joda: {len(made)} hisse -> {out/'kahani.wav'} ({len(joined)/sr:.1f}s)")
+    return 0
+
+
 def run(script_path: str, out_dir: str) -> int:
     import soundfile as sf
     out = Path(out_dir); (out / "lines").mkdir(parents=True, exist_ok=True)
@@ -418,8 +465,38 @@ def run(script_path: str, out_dir: str) -> int:
     try:
         # --- 1. script ---
         items = _stage(h, "script", g("script"), text, 400, "vachak")
+        if not items:
+            print("  XX script khaali hai — kuch likho (kam se kam ek line)")
+            return 2
         lines = [{"who": it.get("speaker") or it.get("who", "vachak"),
                   "text": it.get("text", ""), "bhaav": it.get("emotion") or it.get("bhaav")} for it in items]
+        # bahut lambi line ko vakya me todo (memory blow se bachav)
+        _split = []
+        for _ln in lines:
+            _t = _ln["text"]
+            if len(_t) > 150:            # ek line 150 akshar se lambi na ho (memory + natural pause)
+                import re as _re
+                _parts = [x.strip() for x in _re.split(r"(?<=[।!?,])\s*", _t) if x.strip()]
+                # phir bhi lambi ho to shabd se kaato
+                _fix = []
+                for _pt in _parts:
+                    while len(_pt) > 150:
+                        _cut = _pt.rfind(" ", 0, 150)
+                        _cut = _cut if _cut > 60 else 150
+                        _fix.append(_pt[:_cut].strip()); _pt = _pt[_cut:].strip()
+                    if _pt:
+                        _fix.append(_pt)
+                _parts = _fix
+                for _pt in _parts:
+                    _split.append({**_ln, "text": _pt})
+                print(f"  lambi line {len(_t)} akshar -> {len(_parts)} tukde")
+            else:
+                _split.append(_ln)
+        lines = _split
+        _est = sum(max(1.0, len(L["text"]) / 12.0) for L in lines)
+        if _est > 30 and not __import__("os").environ.get("ASTRA_PART"):
+            print(f"  kahani ~{_est:.0f}s — {int(_est // 30) + 1} hisson me banayenge (memory surakshit)")
+            return _render_in_parts(lines, out, text, _est)
         # vachak awaaz ki nakal nahi karega ("नदी कल-कल" nahi, "नदी बह रही थी") —
         # nakal hata kar wahi kaam background/event layer ko diya jaata hai
         try:
@@ -480,10 +557,14 @@ def run(script_path: str, out_dir: str) -> int:
             gap = _stage(h, "ruke", g("ruke"), L["text"], nxt, L["who"],
                          get_fn("world.duniya", "is_scene_start")(lines[i + 1]["text"]) if nxt else False, wmap, rng)
             gap = float(gap or 0.4)
+            if __import__("os").environ.get("ASTRA_DEBUG"):
+                print(f"    [dbg] line{i} {L['who']}: wav {len(y)/SR:.2f}s gap {gap:.2f}s")
             parts.append(np.zeros(int(gap * SR), np.float32))
             t = L["end"] + gap
         voice = _stage(h, "voice_eq", g("voice_eq"), np.concatenate(parts))
         total = len(voice) / SR
+        if __import__("os").environ.get("ASTRA_DEBUG"):
+            print(f"    [dbg] voice len {len(voice)} samples -> total {total:.2f}s")
 
         # --- 4. duniya: SAB stage, ek ke baad ek, koi skip nahi ---
         _kb = HERE.parent / "knowledge" / "sound-events.json"
@@ -569,6 +650,15 @@ def run(script_path: str, out_dir: str) -> int:
         final_p = out / "kahani.wav"
         target_lufs = lufs_target(_channels(st))
         _stage(h, "master", g("master"), st, str(final_p), target_lufs, -1.0)
+        try:                                  # aakhri suraksha: peak 0.99 se upar na jaaye
+            import soundfile as _sf
+            _y, _sr = _sf.read(str(final_p), always_2d=True)
+            _pk = float(abs(_y).max()) if _y.size else 0.0
+            if _pk >= 0.995:
+                _sf.write(str(final_p), (_y / _pk * 0.99).astype("float32"), _sr)
+                print(f"  peak suraksha: {_pk:.3f} -> 0.99")
+        except Exception:
+            pass
         _stage(h, "qa_world", g("qa_world"), str(final_p))
         _stage(h, "self_improve", g("self_improve"), str(final_p), required=False)
         _stage(h, "manifest", g("manifest"), script_path, str(final_p), str(out / "manifest.json"),

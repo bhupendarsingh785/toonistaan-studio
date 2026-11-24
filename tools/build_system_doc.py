@@ -181,5 +181,12 @@ doc.add_heading("12. Ek line me", 1)
 doc.add_paragraph("System ka maksad: **kisi par depend na karna** — apna offline engine, apna gyaan file me, "
                   "apna QA, aur har cheez naap kar, andaza nahi.")
 
-out = "/scratch/output/seetal-audio-system-document.docx"
-doc.save(out); print("saved:", out)
+def _save():
+    """File sirf chalane par bane — import karne par nahi (side effect bug tha)."""
+    out = "/scratch/output/seetal-audio-system-document.docx"
+    doc.save(out)
+    print("saved:", out)
+
+
+if __name__ == "__main__":
+    _save()

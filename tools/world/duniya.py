@@ -271,9 +271,17 @@ EVENT_SYNTH = {"birds": syn_bird, "koel": syn_koel, "thunder": syn_thunder}
 
 
 # ----------------------------------------------------------------- library (asli recordings)
-def decode(path, sr=SR):
-    p = subprocess.run(["ffmpeg", "-v", "error", "-i", str(path), "-f", "f32le", "-ac", "2", "-ar", str(sr), "-"],
-                       capture_output=True, check=True)
+def decode(path, sr=SR, max_sec: float = 30.0):
+    """Clip padho — par zyada se zyada max_sec (30s) tak.
+
+    BUG tha: poori file memory me aati thi (10 min ki ambience = 28M samples = 429 MB) —
+    isliye lambe clip par render MemoryError se gir jaata tha. Loop me 30s kaafi hai.
+    """
+    cmd = ["ffmpeg", "-v", "error"]
+    if max_sec:
+        cmd += ["-t", str(float(max_sec))]
+    cmd += ["-i", str(path), "-f", "f32le", "-ac", "2", "-ar", str(sr), "-"]
+    p = subprocess.run(cmd, capture_output=True, check=True)
     a = np.frombuffer(p.stdout, dtype=np.float32).reshape(-1, 2).T.astype(np.float64)
     return a
 
