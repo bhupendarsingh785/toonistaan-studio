@@ -163,6 +163,16 @@ EXTRA = {
    "build",
    "train",
    "main"
+  ],
+  "sound_resolver.py": [
+   "_index",
+   "_tag_for",
+   "from_library",
+   "from_synth",
+   "from_web",
+   "resolve",
+   "demo",
+   "main"
   ]
  },
  "6_harkat": {

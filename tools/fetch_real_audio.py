@@ -55,7 +55,13 @@ def search(query: str, n: int = 3, ext=("ogg", "oga", "wav", "mp3", "flac", "opu
     data = json.loads(raw)
     pages = (data.get("query") or {}).get("pages") or {}
     out = []
+    BAD = ("pronunciation", "LL-Q", "-article", "wiktionary", "voice of america")
+    import re as _re
     for p in pages.values():
+        title = (p.get("title") or "")
+        # "En-us-giraffe.ogg" jaisi uchcharan files chhodo — wo jeev ki awaaz nahi, insaan ka shabd hai
+        if any(b.lower() in title.lower() for b in BAD) or _re.match(r"^File:(En|De|Fr|Es|It|Nl|Pl|Ru|Ja|Zh|Pt|Sv|Fi|Cs|Ko|Ar|Hi)-", title):
+            continue
         ii = (p.get("imageinfo") or [{}])[0]
         url = (ii.get("url") or "").split("?")[0]     # Wikimedia URL me ?utm... juda hota hai
         if not url or not url.lower().endswith(ext):
