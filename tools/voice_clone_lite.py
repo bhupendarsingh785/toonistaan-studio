@@ -138,6 +138,39 @@ def profile_of(x, sr=SR):
 
 
 # ---------- conversion ----------
+def _pitch_shift_fast(x, factor, sr=SR):
+    """Sur badlo, lambai same — pure numpy (SOLA). ffmpeg se ~20x tez.
+
+    1) resample se sur badla (lambai bhi badal jaati hai)
+    2) SOLA overlap-add se lambai wapas (sur wahi rehta hai)
+    """
+    from scipy.signal import resample_poly
+    from math import gcd
+    x = np.asarray(x, dtype=np.float64)
+    if abs(factor - 1.0) < 0.01:
+        return x
+    up, down = 100, int(round(factor * 100))
+    g = gcd(up, down)
+    y = resample_poly(x, up // g, down // g)          # sur upar/neeche
+    target_len = len(x)
+    if len(y) < 64 or target_len < 64:
+        return np.pad(y, (0, max(0, target_len - len(y))))[:target_len]
+    win, hop = 1024, 256
+    stretch = target_len / len(y)                     # lambai ka guna
+    out = np.zeros(target_len + win)
+    wsum = np.zeros(target_len + win)
+    hann = np.hanning(win)
+    pos_in, pos_out = 0, 0
+    while pos_out < target_len and pos_in + win < len(y):
+        seg = y[pos_in:pos_in + win]
+        out[pos_out:pos_out + win] += seg * hann
+        wsum[pos_out:pos_out + win] += hann
+        pos_in += int(round(hop / max(1e-6, stretch)))
+        pos_out += hop
+    y2 = out[:target_len] / np.maximum(wsum[:target_len], 1e-3)
+    return y2
+
+
 def _pitch_shift(x, factor, sr=SR):
     """Sur badlo, LAMBAI wahi rahe (rubberband se — asli, bina fast-forward).
 

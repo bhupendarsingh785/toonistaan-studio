@@ -259,6 +259,15 @@ EXTRA = {
    "plan",
    "report",
    "main"
+  ],
+  "fast_story.py": [
+   "_lines",
+   "_tts_fast",
+   "_voice",
+   "_bed",
+   "build",
+   "_loc",
+   "main"
   ]
  },
  "6_harkat": {
