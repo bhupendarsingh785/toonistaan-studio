@@ -60,12 +60,22 @@ EXTRA = {
    "main"
   ],
   "space.py": [
-   "_lp",
+   "_band",
    "air_cutoff",
-   "_ir",
+   "_air_absorb",
+   "_late_reverb",
+   "_early",
    "place_acoustic",
    "measure",
-   "_test"
+   "_burst",
+   "_test",
+   "_demo",
+   "main"
+  ],
+  "world/duniya.py": [
+   "_dist_for",
+   "space_for",
+   "_space_words"
   ]
  },
  "6_harkat": {
