@@ -50,8 +50,10 @@ def main() -> int:
             if not p.exists():
                 continue
             x = decode(str(p), secs=a.secs)
-            if x is None or len(x) < 8000:
+            if x is None:
                 rec = {"file": r["file"], "asr": "decode_fail"}
+            elif len(x) < 2000:
+                rec = {"file": r["file"], "asr": "too_short", "samples": len(x)}
             else:
                 try:
                     segs, info = m.transcribe(x, beam_size=1, vad_filter=True)
