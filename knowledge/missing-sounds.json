@@ -1,0 +1,13 @@
+{
+ "_note": "Kahaniyon me aayi awaazein jo system ke paas nahi thi. Inhe sound-events.json + awaazein.py me jodo.",
+ "items": [
+  {
+   "key": "यहाँ पानी की आवाज़ बहुत पास है।",
+   "example": "यहाँ पानी की आवाज़ बहुत पास है।",
+   "suggest": null,
+   "count": 1,
+   "last_story": "/tmp/kahani-nadi.txt",
+   "added": "2026-11-24"
+  }
+ ]
+}

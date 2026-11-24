@@ -420,6 +420,15 @@ def run(script_path: str, out_dir: str) -> int:
         items = _stage(h, "script", g("script"), text, 400, "vachak")
         lines = [{"who": it.get("speaker") or it.get("who", "vachak"),
                   "text": it.get("text", ""), "bhaav": it.get("emotion") or it.get("bhaav")} for it in items]
+        # vachak awaaz ki nakal nahi karega ("नदी कल-कल" nahi, "नदी बह रही थी") —
+        # nakal hata kar wahi kaam background/event layer ko diya jaata hai
+        try:
+            from tools import narration_clean as NC
+        except ModuleNotFoundError:
+            import narration_clean as NC
+        lines, _nc_notes = NC.clean_script(lines)
+        for _n in _nc_notes:
+            print("  vachak saaf:", _n["hataya"], "->", _n["saaf"])
 
         # --- 2. har line: shabd -> bhaav -> awaaz -> gates ---
         wavs, lock = [], {}          # lock: kirdaar -> engine (poori kahani ek hi awaaz)

@@ -7,6 +7,11 @@ EXTRA = {
   ],
   "audio_decode.py": [
    "decode"
+  ],
+  "narration_clean.py": [
+   "strip_sounds",
+   "clean_script",
+   "main"
   ]
  },
  "5_duniya": {
