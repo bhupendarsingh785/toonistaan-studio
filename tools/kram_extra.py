@@ -12,6 +12,15 @@ EXTRA = {
    "strip_sounds",
    "clean_script",
    "main"
+  ],
+  "audio_pro.py": [
+   "denoise",
+   "restore",
+   "occlude",
+   "stream_chunks",
+   "diarize",
+   "adr",
+   "_test"
   ]
  },
  "5_duniya": {
@@ -195,6 +204,14 @@ EXTRA = {
    "check_narration",
    "check_structure",
    "check_render",
+   "main"
+  ],
+  "coverage_audio.py": [
+   "sources",
+   "funcs_of",
+   "has_func",
+   "check_real",
+   "check",
    "main"
   ]
  }
