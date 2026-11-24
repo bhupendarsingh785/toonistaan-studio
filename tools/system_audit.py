@@ -148,6 +148,18 @@ def wires():
                 lv = ast.literal_eval(n.value)
         mapped = {m for v in lv.values() for m in v.get("modules", {})}
         disk = {str(Path(r).relative_to("tools")) for r in mods()}
+        try:  # naye module bhi ginte jao (kram_extra)
+            import kram_extra as _kx
+            for _lvl, _mods in _kx.EXTRA.items():
+                bucket = lv.setdefault(_lvl, {"modules": {}}).setdefault("modules", {})
+                for _m, _fns in _mods.items():
+                    if _m in bucket:
+                        bucket[_m] = list(bucket[_m]) + [f for f in _fns if f not in bucket[_m]]
+                    else:
+                        bucket[_m] = list(_fns)
+            mapped = {m for v in lv.values() for m in v.get("modules", {})}
+        except Exception:
+            pass
         out["kram"] = {"levels": len(lv), "mapped": len(mapped),
                        "bina_level": sorted(disk - mapped)[:8]}
     except Exception as e:

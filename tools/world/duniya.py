@@ -27,6 +27,11 @@ import harkat as H
 import awaazein as AW
 import spotting as S
 import rachna as RC
+try:
+    import ffbin; ffbin.ensure()   # ffmpeg PATH par pakka ho
+except Exception:
+    pass
+
 
 SR = 44100   # sutradhar/voice ke saath ek hi SR (warna stems misalign)
 HERE = Path(__file__).resolve().parent

@@ -36,6 +36,11 @@ if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
 SR = 44100
+try:
+    import ffbin; ffbin.ensure()   # ffmpeg PATH par pakka ho
+except Exception:
+    pass
+
 
 # ---------------------------------------------------------------------------
 # 1) KAAM KA NAKSHA — har kaam ka EK maalik. Duplicate files yahan nahi aate.

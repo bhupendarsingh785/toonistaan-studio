@@ -17,6 +17,23 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+
+def _merge_extra():
+    """Naye module apne level par jodo — bada LEVELS literal chhede bina."""
+    try:
+        from kram_extra import EXTRA
+    except Exception:
+        return
+    for lvl, mods in EXTRA.items():
+        LEVELS.setdefault(lvl, {"kaam": "naye module", "modules": {}})
+        bucket = LEVELS[lvl].setdefault("modules", {})
+        for mod, fns in mods.items():
+            if mod in bucket:                      # pehle se mapped — sirf nayi functions jodo
+                have = list(bucket[mod])
+                bucket[mod] = have + [f for f in fns if f not in have]
+            else:
+                bucket[mod] = list(fns)
+
 # Kram: kahani isi order me banti hai. A_ (agents) Level 5 ko khilate hain. T_, K_, P_ kahani ke raaste me nahi.
 LEVELS = {
  "0_neev": {
@@ -1353,7 +1370,11 @@ def naksha():
     print(f"\nKul: {tot_m} module, {tot_f} function")
 
 
+_merge_extra()   # import karte hi naye module apne level par jud jaayein
+
+
 def jaanch():
+    _merge_extra()
     bad = 0; t0 = time.time(); seen = set()
     for k, v in LEVELS.items():
         for m, fs in v["modules"].items():
@@ -1377,7 +1398,7 @@ def jaanch():
             print(msg)
     # disk par aise .py jo naksha me hi nahi
     loose = [str(p.relative_to(HERE)) for p in HERE.rglob("*.py")
-             if "purana" not in p.parts and p.name not in ("kram.py", "sutradhar.py", "__init__.py")
+             if "purana" not in p.parts and p.name not in ("kram.py", "sutradhar.py", "kram_extra.py", "__init__.py")
              and str(p.relative_to(HERE)) not in seen]
     if loose:
         print("\nNaksha se bahar ki files (inka level tay karo):"); [print("   ", x) for x in loose]

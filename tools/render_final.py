@@ -6,7 +6,7 @@ import numpy as np
 from piper import PiperVoice
 from piper.config import SynthesisConfig
 from imageio_ffmpeg import get_ffmpeg_exe
-sys.path.insert(0, "/scratch/work/src/tools/local_story")
+sys.path.insert(0, str(Path(__file__).resolve().parent / "local_story"))
 import psola
 
 FF = get_ffmpeg_exe(); SR = 22050
