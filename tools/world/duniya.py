@@ -796,6 +796,30 @@ def mix(voice, world, wmap, voice_pan=0.0, lines=None, fx=None, ind=None, phone_
     if lines:
         k = int(0.05 * SR); pan = ss.fftconvolve(np.pad(pan, k, mode="edge"), np.hanning(2 * k + 1) / np.hanning(2 * k + 1).sum(), "valid")[:n]
     vst = pan_mono(v, pan) * math.sqrt(2)
+
+    # ---- kirdaar ki apni awaaz bhi doori/disha/jagah se aaye ----
+    if SP is not None and lines:
+        sp_name = space_for(" ".join((l.get("text") or "") for l in lines))
+        FAR_W = ["दूर से", "दूर की", "दूर बोली", "दूर बोला", "पीछे से", "ऊपर से", "far away"]
+        NEAR_W = ["पास आकर", "कान में", "धीरे से पास"]
+        for ln in lines:
+            txt = (ln.get("text") or "")
+            d = 1.0
+            if any(w in txt for w in FAR_W):
+                d = 6.0
+            if any(w in txt for w in NEAR_W):
+                d = 0.7
+            if d <= 1.2:
+                continue
+            a, b = int(ln["start"] * SR), int(min(n, ln["end"] * SR))
+            if b - a < 200:
+                continue
+            seg = vst[:, a:b]
+            mono = seg.mean(axis=0)
+            placed = SP.place_acoustic(mono, dist=d, pan=float(ln.get("pan", 0.0)), space=sp_name, sr=SR)
+            m = min(placed.shape[1], b - a)
+            # door ki awaaz par goonj bhi judti hai
+            vst[:, a:a + m] = placed[:, :m]
     dry_part = vst * (1 - ph)[None, :] if ph.any() else vst                        # phone ki awaaz par goonj nahi
     if ind is not None and len(ind) and ind.any():
         I = np.pad(ind, (0, max(0, n - len(ind))))[:n][None, :]
