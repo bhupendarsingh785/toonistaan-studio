@@ -48,6 +48,57 @@ _CFG = {"गौरी": (205, "f"), "कमला": (186, "f"), "माई": (16
         "सरपंच": (118, "m"), "वाचक": (112, "m")}
 
 
+_MMS = {}
+
+
+def _mms_line(text: str, dst: Path) -> bool:
+    """MMS-VITS (Hindi) — piper se kam robotic (naap: buzz 0.145 vs 0.227)."""
+    try:
+        import torch
+        from transformers import VitsModel, AutoTokenizer
+        if not _MMS:
+            name = "facebook/mms-tts-hin"
+            _MMS["tok"] = AutoTokenizer.from_pretrained(name)
+            _MMS["model"] = VitsModel.from_pretrained(name)
+        tok, model = _MMS["tok"], _MMS["model"]
+        inputs = tok(text, return_tensors="pt")
+        with torch.no_grad():
+            w = model(**inputs).waveform[0].numpy()
+        sr = model.config.sampling_rate
+        from scipy.signal import resample_poly
+        from math import gcd
+        up, down = 24000, sr
+        g = gcd(up, down)
+        y = resample_poly(w, up // g, down // g)
+        y = y / (np.max(np.abs(y)) + 1e-9) * 0.95
+        sf.write(str(dst), y.astype("float32"), 24000)
+        return True
+    except Exception as e:
+        print("  [MMS fail]", type(e).__name__, str(e)[:60])
+        return False
+
+
+def _pitch_to(y, sr, factor):
+    """rubberband se sur badlo, lambai wahi (MMS/piper dono ke liye)."""
+    if abs(factor - 1.0) < 0.02:
+        return y
+    import subprocess, tempfile
+    import ffbin
+    ff = ffbin.ensure() or "ffmpeg"
+    td = tempfile.mkdtemp()
+    a = Path(td) / "i.wav"; b = Path(td) / "o.wav"
+    sf.write(str(a), y.astype("float32"), sr)
+    subprocess.run([ff, "-v", "error", "-y", "-i", str(a), "-af", f"rubberband=pitch={factor:.4f}",
+                    "-ar", str(sr), str(b)], capture_output=True)
+    if b.exists():
+        z, _ = sf.read(str(b))
+        z = z.mean(1) if z.ndim > 1 else z
+        if len(z) < len(y):
+            z = np.pad(z, (0, len(y) - len(z)))
+        return z[: len(y)]
+    return y
+
+
 def _tts_fast(who: str, text: str, dst: Path, base_ls: float = 1.38) -> bool:
     """piper se line banao aur sur target par le jao — ek hi resample (tez).
 
@@ -61,6 +112,16 @@ def _tts_fast(who: str, text: str, dst: Path, base_ls: float = 1.38) -> bool:
     from piper import PiperVoice
     from piper.config import SynthesisConfig
     tgt, g = _CFG.get(who, (150, "m"))
+    if __import__("os").environ.get("ASTRA_TTS", "mms") == "mms":
+        if _mms_line(text, dst):
+            y, sr = sf.read(str(dst))
+            y = y.mean(1) if y.ndim > 1 else y
+            base_hz = 190.0                       # MMS hindi ~ female-ish
+            f = max(0.75, min(1.6, tgt / base_hz))
+            y = _pitch_to(y, sr, f)
+            y = y / (np.max(np.abs(y)) + 1e-9) * 0.95
+            sf.write(str(dst), y.astype("float32"), sr)
+            return True
     # female/child ke liye ASLI female model (priyamvada) — bada shift = robotic/bachcha lagta tha
     use_female = g == "f" or who in ("मोहन", "बच्चा", "बच्ची")
     model = Path("/scratch/work/voices") / ("hi_IN-priyamvada-medium.onnx" if use_female else "hi_IN-pratham-medium.onnx")
@@ -94,7 +155,9 @@ def _tts_fast(who: str, text: str, dst: Path, base_ls: float = 1.38) -> bool:
         sf.write(str(dst), z.astype("float32"), sr)
         tmp.unlink(missing_ok=True)
         return True
-    except Exception:
+    except Exception as _e:
+        if __import__("os").environ.get("ASTRA_DEBUG_TTS"):
+            import traceback; traceback.print_exc()
         return False
 
 
@@ -135,8 +198,11 @@ def build(script: Path, out: Path, gap=0.28, scene_gap=0.55) -> dict:
     if not lines:
         raise SystemExit("script khaali hai")
     # 1) saari lines parallel
-    with ThreadPoolExecutor(max_workers=1) as ex:
-        wavs = list(ex.map(lambda wl: _voice(wl[0], wl[1]), lines))
+    if __import__("os").environ.get("ASTRA_TTS", "mms") == "mms":
+        wavs = [_voice(w, t) for w, t in lines]          # MMS thread me theek nahi chalta
+    else:
+        with ThreadPoolExecutor(max_workers=1) as ex:
+            wavs = list(ex.map(lambda wl: _voice(wl[0], wl[1]), lines))
     t_voice = time.time() - t0
     # 2) jodo
     pieces, times = [], []

@@ -1,0 +1,134 @@
+#!/usr/bin/env python3
+"""mms_story.py — MMS-VITS (Hindi) se kahani: piper se kam robotic.
+
+Naap (checker se): buzz 0.145 (insaan 0.11-0.19) vs piper 0.227 — yaani metallic hissa kam.
+Har kirdaar ka apna sur (rubberband, lambai same), ek background loop, loudness, peak guard.
+"""
+from __future__ import annotations
+import argparse, json, subprocess, sys, time
+from pathlib import Path
+import os
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+os.environ.setdefault("MKL_NUM_THREADS", "1")
+import numpy as np
+import soundfile as sf
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "tools"))
+SR = 24000
+CACHE = Path("/scratch/work/mms_cache"); CACHE.mkdir(parents=True, exist_ok=True)
+CFG = {"गौरी": 205, "कमला": 186, "माई": 168, "मोहन": 275, "हरिदास": 104, "ऋषि": 96,
+       "भेड़िया": 88, "सरपंच": 118, "वाचक": 112}
+_M = {}
+
+
+def model():
+    if not _M:
+        from transformers import VitsModel, AutoTokenizer
+        name = "facebook/mms-tts-hin"
+        _M["tok"] = AutoTokenizer.from_pretrained(name)
+        _M["model"] = VitsModel.from_pretrained(name)
+    return _M["tok"], _M["model"]
+
+
+def _ff():
+    import ffbin
+    return ffbin.ensure() or "ffmpeg"
+
+
+def line_audio(who: str, text: str) -> Path:
+    import hashlib
+    key = hashlib.sha1(f"mms|{who}|{text}".encode("utf-8")).hexdigest()[:16]
+    dst = CACHE / f"{key}.wav"
+    if dst.exists() and dst.stat().st_size > 2000:
+        return dst
+    import torch
+    torch.set_num_threads(1)
+    from scipy.signal import resample_poly
+    from math import gcd
+    tok, mdl = model()
+    inputs = tok(text, return_tensors="pt")
+    with torch.no_grad():
+        w = mdl(**inputs).waveform[0].numpy()
+    sr0 = mdl.config.sampling_rate
+    up, down = SR, sr0
+    g = gcd(up, down)
+    y = resample_poly(w, up // g, down // g).astype(np.float64)
+    # sur: kirdaar ke hisaab se (MMS ~190 Hz)
+    tgt = CFG.get(who, 150)
+    f = float(np.clip(tgt / 190.0, 0.7, 1.6))
+    if abs(f - 1.0) > 0.02:
+        tmp = CACHE / f"{key}_raw.wav"; out = CACHE / f"{key}_p.wav"
+        sf.write(str(tmp), y.astype("float32"), SR)
+        subprocess.run([_ff(), "-v", "error", "-y", "-i", str(tmp), "-af", f"rubberband=pitch={f:.4f}",
+                        "-ar", str(SR), str(out)], capture_output=True)
+        if out.exists():
+            z, _ = sf.read(str(out)); z = z.mean(1) if z.ndim > 1 else z
+            if len(z) < len(y): z = np.pad(z, (0, len(y) - len(z)))
+            y = z[: len(y)]
+        tmp.unlink(missing_ok=True); out.unlink(missing_ok=True)
+    y = y / (np.max(np.abs(y)) + 1e-9) * 0.95
+    sf.write(str(dst), y.astype("float32"), SR)
+    return dst
+
+
+def build(script: Path, out: Path, gap=0.30, scene_gap=0.55) -> dict:
+    t0 = time.time()
+    lines = []
+    for l in script.read_text(encoding="utf-8").splitlines():
+        if ":" in l:
+            who, t = l.split(":", 1)
+            if t.strip():
+                lines.append((who.strip(), t.strip()))
+    pieces, t = [], 0.0
+    prev = None
+    for who, text in lines:
+        y, sr = sf.read(str(line_audio(who, text)))
+        y = y.mean(1) if y.ndim > 1 else y
+        g = scene_gap if (prev and prev != who) else gap
+        pieces.append(y.astype(np.float64)); pieces.append(np.zeros(int(g * SR)))
+        t += len(y) / SR + g
+        prev = who
+    voice = np.concatenate(pieces)
+    # background
+    try:
+        import loop_maker as LM
+        bed = LM.make("birds", sec=20).astype(np.float64)
+        reps = int(np.ceil(len(voice) / len(bed)))
+        bed = np.tile(bed, reps)[: len(voice)]
+        k = int(0.06 * SR)
+        env = np.convolve(np.abs(voice), np.ones(k) / k, mode="same")
+        act = np.clip(env / (np.percentile(env, 95) + 1e-9), 0, 1)
+        bed = bed / (np.sqrt((bed ** 2).mean()) + 1e-9) * (10 ** (-30 / 20))
+        mixd = voice + bed * (1 - 0.6 * act)
+    except Exception:
+        mixd = voice
+    try:
+        import pyloudnorm as ln
+        meter = ln.Meter(SR)
+        mixd = ln.normalize.loudness(mixd, meter.integrated_loudness(mixd), -16.0)
+    except Exception:
+        mixd = mixd / (np.sqrt((mixd ** 2).mean()) + 1e-9) * 10 ** (-16 / 20)
+    pk = float(np.max(np.abs(mixd)))
+    if pk > 0.95:
+        mixd = mixd * (0.95 / pk)
+    wav = out.with_suffix(".wav")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    sf.write(str(wav), mixd.astype("float32"), SR)
+    subprocess.run([_ff(), "-v", "error", "-y", "-i", str(wav), "-b:a", "160k", str(out)], capture_output=True)
+    info = {"engine": "mms-tts-hin", "lines": len(lines), "dur": round(len(mixd) / SR, 1),
+            "secs": round(time.time() - t0, 1), "peak": round(pk, 3), "out": str(out)}
+    (out.parent / "mms_info.json").write_text(json.dumps(info, ensure_ascii=False, indent=1), encoding="utf-8")
+    return info
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("script"); ap.add_argument("out")
+    a = ap.parse_args()
+    print(json.dumps(build(Path(a.script), Path(a.out)), ensure_ascii=False))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
