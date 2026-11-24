@@ -1,5 +1,5 @@
 {
- "count": 2275,
+ "count": 2283,
  "tags": {
   "ambience/drone": [
    {
@@ -2021,6 +2021,11 @@
     "tag_src": "name"
    },
    {
+    "file": "freesound_community-footsteps-on-wooden-flooring-6878.mp3",
+    "sec": 47.93,
+    "tag_src": "name"
+   },
+   {
     "file": "BVKER_-_Footsteps_Metro_03.wav",
     "sec": 44.15,
     "tag_src": "name"
@@ -2206,6 +2211,11 @@
     "tag_src": "name"
    },
    {
+    "file": "freesound_community-walking-on-a-wooden-floor-32056.mp3",
+    "sec": 23.93,
+    "tag_src": "name"
+   },
+   {
     "file": "BVKER_-_Footsteps_Urban_Static_Ambience_01.wav",
     "sec": 23.63,
     "tag_src": "name"
@@ -2338,6 +2348,11 @@
    {
     "file": "BVKER_-_Footsteps_Urban_Footsteps_01.wav",
     "sec": 15.82,
+    "tag_src": "name"
+   },
+   {
+    "file": "freesound_community-footsteps-rubber-shoes-concrete-empty-warehouse-66340.mp3",
+    "sec": 15.65,
     "tag_src": "name"
    },
    {
@@ -2543,6 +2558,11 @@
    {
     "file": "nematoki-coming-down-old-wooden-stairs-steps-317573.mp3",
     "sec": 6.86,
+    "tag_src": "name"
+   },
+   {
+    "file": "oxidvideos-creaking-wooden-floor-footsteps-410804.mp3",
+    "sec": 6.58,
     "tag_src": "name"
    },
    {
@@ -11397,6 +11417,28 @@
    {
     "file": "BVKER_-_Footsteps_Splash_03.wav",
     "sec": 0.85,
+    "tag_src": "name"
+   }
+  ],
+  "wood": [
+   {
+    "file": "freesound_community-footsteps-on-wooden-flooring-6878.mp3",
+    "sec": 47.93,
+    "tag_src": "name"
+   },
+   {
+    "file": "freesound_community-walking-on-a-wooden-floor-32056.mp3",
+    "sec": 23.93,
+    "tag_src": "name"
+   },
+   {
+    "file": "freesound_community-footsteps-rubber-shoes-concrete-empty-warehouse-66340.mp3",
+    "sec": 15.65,
+    "tag_src": "name"
+   },
+   {
+    "file": "oxidvideos-creaking-wooden-floor-footsteps-410804.mp3",
+    "sec": 6.58,
     "tag_src": "name"
    }
   ]

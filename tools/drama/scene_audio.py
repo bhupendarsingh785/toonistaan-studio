@@ -49,6 +49,12 @@ HINTS = {
     "crickets": ["cricket", "insect", "night"],
     "birds": ["bird", "chirp"],
 }
+# kis kind ke liye kaunse shabd wali file galat hai (naam dhokha de sakta hai)
+EXCLUDE = {
+    "wood": ["door", "steel", "creaky", "gate"],
+    "room": ["story", "song", "music"],
+    "river": ["rain"],
+}
 _CI = None
 
 
@@ -70,6 +76,8 @@ def find(kind, k=3):
     for p in LIB.glob("*"):
         if p.suffix.lower() not in (".mp3", ".wav", ".ogg", ".ogx"): continue
         n = p.name.lower()
+        if any(x in n for x in EXCLUDE.get(kind, [])):
+            continue
         if any(re.search(r"\b" + re.escape(t), n) for t in pats) and p.stat().st_size > 40_000:
             out.append(p); seen.add(p.name)
     if len(out) < k:
