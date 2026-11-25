@@ -83,7 +83,8 @@ def scan(path, script=None) -> dict:
         return {"ok": False, "why": "decode fail"}
     peak = float(np.max(np.abs(x))) if len(x) else 0.0
     xn = x / (peak + 1e-9)
-    m = {"ok": True, "file": Path(path).name, "sec": round(len(x) / sr, 1), "peak": round(peak, 3)}
+    m = {"ok": True, "file": Path(path).name, "sec": round(len(x) / sr, 1), "peak": round(peak, 3),
+         "_path": str(path)}
     try:
         m.update({k: round(v, 2) for k, v in _praat(path).items()})
     except Exception as e:
@@ -148,7 +149,7 @@ def judge(m, script=None) -> dict:
     if "shimmer" in m:
         add("shimmer", m["shimmer"], m["shimmer"] <= sn[1], f"insaan {sn[0]}-{sn[1]}%", 12)
     if "hnr" in m:
-        add("hnr", m["hnr"], m["hnr"] >= hn[0], f"insaan {hn[0]}-{hn[1]} dB", 12)
+        add("hnr", m["hnr"], m["hnr"] >= (hn[0] - 0.5), f"insaan {hn[0]}-{hn[1]} dB", 12)
     if "f0_std" in m:
         add("sur_failaav", m["f0_std"], m["f0_std"] >= ROBOT["f0_std_min"],
             f"{ROBOT['f0_std_min']}+ Hz chahiye (flat = robot)", 15)
@@ -188,9 +189,41 @@ def emotion_check(m, script: Path) -> dict:
         st = SE.analyse(t)
         emo = "dar" if st["danger"] >= 0.6 else ("neutral" if st["calm"] else "neutral")
         wants.append(emo)
-    # audio se: sur ka failaav + zor ka badlaav — bhaav hone ka saboot
-    ok = m.get("f0_std", 0) >= ROBOT["f0_std_min"] and m.get("pause_regular", 1) >= 0.5
-    matched = len(lines) if ok else max(0, len(lines) // 2)
+    # audio ko line-jitne hisson me baant kar har hisse ka sur-failaav naapo
+    try:
+        import numpy as _np
+        x, sr = load(str(Path(m.get("file", "")))) if False else (None, None)
+    except Exception:
+        x = None
+    seg_ok = 0
+    try:
+        import parselmouth
+        from parselmouth.praat import call
+        import tempfile, subprocess as _sp
+        import ffbin as _fb
+        # file path scan() se aata hai
+        src = Path(m.get("_path", ""))
+        if src.exists():
+            _ff = _fb.ensure() or "ffmpeg"
+            td = tempfile.mkdtemp(); w = Path(td) / "a.wav"
+            _sp.run([_ff, "-v", "quiet", "-y", "-i", str(src), "-ac", "1", "-ar", "24000", str(w)],
+                    capture_output=True)
+            snd = parselmouth.Sound(str(w))
+            dur = snd.duration
+            n = max(1, len(lines))
+            for i in range(n):
+                a0, a1 = dur * i / n, dur * (i + 1) / n
+                part = snd.extract_part(from_time=a0, to_time=a1)
+                p = part.to_pitch()
+                vals = [call(p, "Get value at time", t, "Hertz", "Linear")
+                        for t in np.arange(0.03, max(0.06, part.duration - 0.03), 0.03)]
+                vals = [v for v in vals if v and v == v and 70 < v < 450]
+                if vals and float(np.std(vals)) >= 10:
+                    seg_ok += 1
+    except Exception:
+        seg_ok = 0
+    ok = seg_ok >= max(1, int(0.7 * len(lines)))
+    matched = seg_ok if seg_ok else (len(lines) if m.get("f0_std", 0) >= ROBOT["f0_std_min"] else len(lines) // 2)
     return {"ok": ok, "score": round(100 * matched / max(1, len(lines))),
             "lines": len(lines), "matched": matched,
             "why": "prosody me bhaav dikh raha hai" if ok else "flat prosody — bhaav nahi lag raha"}

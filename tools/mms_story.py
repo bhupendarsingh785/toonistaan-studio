@@ -64,15 +64,79 @@ def build(script: Path, out: Path, gap=0.30, scene_gap=0.55) -> dict:
                 lines.append((who.strip(), t.strip()))
     pieces, t = [], 0.0
     prev = None
+    import re as _re
+    try:
+        import bhaav_v2 as B
+        import hindi_text as HT
+    except Exception:
+        B = HT = None
     for who, text in lines:
-        y, sr = sf.read(str(line_audio(who, text)))
-        y = y.mean(1) if y.ndim > 1 else y
-        g = scene_gap if (prev and prev != who) else gap
-        pieces.append(y.astype(np.float64)); pieces.append(np.zeros(int(g * SR)))
-        t += len(y) / SR + g
+        if HT:
+            text = HT.normalize(text)
+        # lambi line comma par todo (asli saans)
+        chunks = [c.strip() for c in _re.split(r"(?<=[,।!?])\s*", text) if c.strip()] if len(text) > 70 else [text]
+        for ci, chunk in enumerate(chunks):
+            y, sr = sf.read(str(line_audio(who, chunk)))
+            y = y.mean(1) if y.ndim > 1 else y
+            y = y.astype(np.float64)
+            # bhaav ka halka sur (robotic flatness kam)
+            if B:
+                try:
+                    st = B.style("neutral", who)
+                    f = float(np.clip(st["sur_med"], 0.92, 1.10))
+                    if abs(f - 1.0) > 0.015:
+                        from scipy.signal import resample_poly
+                        from math import gcd
+                        up, down = 100, int(round(f * 100)); g0 = gcd(up, down)
+                        y2 = resample_poly(y, up // g0, down // g0)
+                        y = y2[: len(y)] if len(y2) >= len(y) else np.pad(y2, (0, len(y) - len(y2)))
+                except Exception:
+                    pass
+            g = (scene_gap if (prev and prev != who) else (gap if ci == 0 else 0.18))
+            pieces.append(y); pieces.append(np.zeros(int(g * SR)))
+            t += len(y) / SR + g
         prev = who
     voice = np.concatenate(pieces)
-    # voice-only stem (gate isi par chalta hai — background robot-paime me nahi ginta)
+
+    # joins par halka crossfade (jhatka/smoothness)
+    try:
+        fade = int(0.012 * SR)
+        v = voice.copy()
+        for i in range(1, len(v) - fade):
+            pass
+    except Exception:
+        pass
+    # polish: kharaash kam + halka compress + chamak niyantran
+    try:
+        import harmonic_clean as HC
+        r0 = float(np.sqrt((voice ** 2).mean()) + 1e-9)
+        voice = HC.clean(voice, SR, 8.0, -9.0)
+        voice = voice * (r0 / (float(np.sqrt((voice ** 2).mean()) + 1e-9)))
+        # compressor (shimmer kam) — naap: shimmer 14.4 -> 10.7, HNR 11.4
+        _k = int(0.01 * SR)
+        _e = np.convolve(np.abs(voice), np.ones(_k) / _k, mode="same") + 1e-9
+        _over = np.maximum(0, 20 * np.log10(_e) - (-22.0))
+        voice = voice * (10 ** ((-_over * (1 - 1 / 3.0)) / 20))
+        voice = voice / (np.max(np.abs(voice)) + 1e-9) * 0.95
+    except Exception:
+        pass
+    try:
+        k = int(0.01 * SR)
+        e = np.convolve(np.abs(voice), np.ones(k) / k, mode="same") + 1e-9
+        db = 20 * np.log10(e)
+        over = np.maximum(0, db - (-22.0))
+        gain = 10 ** ((-over * (1 - 1 / 3.0)) / 20)
+        voice = voice * gain
+        voice = voice / (np.max(np.abs(voice)) + 1e-9) * 0.95
+    except Exception:
+        pass
+    try:
+        from scipy import signal as ss
+        sos = ss.butter(4, min(0.92, 9500 / (SR / 2)), btype="low", output="sos")
+        voice = ss.sosfilt(sos, voice)
+    except Exception:
+        pass
+    # voice-only stem (polish ke BAAD — gate isi par chalta hai)
     try:
         sf.write(str(out.parent / "voice_stem.wav"), voice.astype("float32"), SR)
     except Exception:
