@@ -222,12 +222,16 @@ def line_audio(who, text, extra=None):
     return dst
 
 
-def _trim(y, sr, keep=0.04):
-    """Chunk ke shuru/ant ki khaali awaaz kaato (warna piper ki silence + hamara gap = lambi chupp)."""
+def _trim(y, sr, keep=0.05):
+    """Chunk ke shuru/ant ki khaali awaaz kaato — par shabd ka aakhri hissa na kate.
+
+    Pehle threshold 6% tha: dheeme akshar (जैसे 'खेत' ka 'त') kat jaate the aur shabd aadha sunai deta tha.
+    Ab 2.5% + 90ms tail.
+    """
     env = np.abs(y)
     k = int(0.01 * sr)
     e = np.convolve(env, np.ones(k) / k, mode="same")
-    thr = 0.06 * (np.percentile(e, 95) + 1e-9)
+    thr = 0.030 * (np.percentile(e, 95) + 1e-9)
     idx = np.flatnonzero(e > thr)
     if len(idx) < 10:
         return y
@@ -236,7 +240,7 @@ def _trim(y, sr, keep=0.04):
     return y[a:b]
 
 
-def _legato(y, sr, ms=110):
+def _legato(y, sr, ms=130):
     """Chupp aur bolne ke jod par narmi (60ms) — 'ruk-ruk' ki jhatke wali cut khatam."""
     env = np.abs(y)
     k = max(3, int(0.008 * sr))
@@ -296,7 +300,7 @@ def _bhaav_of(tag: str, text: str) -> str:
     return "normal"
 
 
-def build(script: Path, out: Path, gap=0.05, scene_gap=0.14):
+def build(script: Path, out: Path, gap=0.03, scene_gap=0.12):
     lines = []
     for l in script.read_text(encoding="utf-8").splitlines():
         if l.strip().startswith(("#", "[", "(", "{")):
