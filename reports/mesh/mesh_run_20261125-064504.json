@@ -1,0 +1,105 @@
+{
+ "topic": "hindi tts prosody",
+ "created_at": "2026-11-25T06:45:04Z",
+ "seconds_total": 3.2,
+ "agents": {
+  "ASTRA": {
+   "agent": "ASTRA",
+   "browser": "KRIYA",
+   "research": "KARMA",
+   "queries": [
+    "hindi tts prosody comparison benchmark",
+    "hindi tts prosody quality review"
+   ],
+   "tried": 2,
+   "collected": 2,
+   "seconds": 0.2,
+   "error": ""
+  },
+  "VAJRA": {
+   "agent": "VAJRA",
+   "browser": "DRISHTI",
+   "research": "NETRA",
+   "queries": [
+    "hindi tts prosody official site",
+    "hindi tts prosody documentation"
+   ],
+   "tried": 1,
+   "collected": 1,
+   "seconds": 3.0,
+   "error": ""
+  },
+  "VAYU": {
+   "agent": "VAYU",
+   "browser": "PARAKH",
+   "research": "SATYA",
+   "queries": [
+    "hindi tts prosody criticism limitation",
+    "hindi tts prosody problems"
+   ],
+   "tried": 1,
+   "collected": 1,
+   "seconds": 3.1,
+   "error": ""
+  },
+  "AGNI": {
+   "agent": "AGNI",
+   "browser": "ANVESH",
+   "research": "KHOJ",
+   "queries": [
+    "hindi tts prosody tutorial implementation",
+    "hindi tts prosody github example"
+   ],
+   "tried": 2,
+   "collected": 2,
+   "seconds": 3.2,
+   "error": ""
+  }
+ },
+ "evidence_count": 3,
+ "unique_domains": [
+  "arxiv.org"
+ ],
+ "domain_count": 1,
+ "evidence": [
+  {
+   "url": "http://arxiv.org/abs/2607.18662v1",
+   "domain": "arxiv.org",
+   "title": "Staged Depth-Pruning Distillation of a Flow-Matching Text-to-Speech Teacher: A Compact Hindi Speech Synthesizer",
+   "text": "We present a practical recipe for building a compact Hindi text-to-speech (TTS) model by distilling a large flow-matching teacher (IndicF5, 337M-parameter DiT) under a severe data budget (~17.6 hours). Training a small model from scratch on this much data fails outright. Instead we warm-start the student from the teacher by pruning depth only: keeping the teacher's width, text dimension, attention heads, and mel/text I/O fixed so all non-block tensors copy one-to-one, and retaining an evenly-spaced subset of transformer blocks. We first measure how much depth the teacher tolerates (it remains near-functional at -27% blocks but collapses past -50%), then descend gradually (22 -> 16 -> 12 -> 8 -> 6 blocks), re-fine-tuning after each prune, with each step gated by an objective ASR word-error-rate (WER) check. The resulting students reach WER 0.00 on unseen sentences at 249M and 190M parameters, and remain robust down to 131M; at 102M we observe a clear capacity cliff that we attribute to the data budget rather than the recipe. We also document two train/inference feature- and library-parity failures (mel filterbank and rotary-embedding library versions) that silently degrade audio, and a version-independent fix. The method yields a high-quality Hindi voice that runs in real time on a 6 GB laptop GPU. An independent 50-sentence FLEURS benchmark compares the released 190M student against its teacher and MMS-TTS-hin.",
+   "sha256": "afd51253a740c088fc1955fcb9d63e21641aab36be7d07307595705a40bfb670",
+   "relevance": "search_match",
+   "fetched_at": "2026-11-25T06:45:01Z",
+   "status": "collected",
+   "reason": "",
+   "agent": "ELEVENLABS",
+   "query": "hindi tts prosody comparison benchmark"
+  },
+  {
+   "url": "http://arxiv.org/abs/1705.03247v1",
+   "domain": "arxiv.org",
+   "title": "A Systematic Review of Hindi Prosody",
+   "text": "Prosody describes both form and function of a sentence using the suprasegmental features of speech. Prosody phenomena are explored in the domain of higher phonological constituents such as word, phonological phrase and intonational phrase. The study of prosody at the word level is called word prosody and above word level is called sentence prosody. Word Prosody describes stress pattern by comparing the prosodic features of its constituent syllables. Sentence Prosody involves the study on phrasing pattern and intonatonal pattern of a language. The aim of this study is to summarize the existing works on Hindi prosody carried out in different domain of language and speech processing. The review is presented in a systematic fashion so that it could be a useful resource for one who wants to build on the existing works.",
+   "sha256": "4514af9264fbb061841996707d966c339ebb0b2c419918e97e9327fbb7cd0787",
+   "relevance": "search_match",
+   "fetched_at": "2026-11-25T06:45:01Z",
+   "status": "collected",
+   "reason": "",
+   "agent": "ELEVENLABS",
+   "query": "hindi tts prosody quality review"
+  },
+  {
+   "url": "http://arxiv.org/abs/2112.05973v1",
+   "domain": "arxiv.org",
+   "title": "Prosody Labelled Dataset for Hindi using Semi-Automated Approach",
+   "text": "This study aims to develop a semi-automatically labelled prosody database for Hindi, for enhancing the intonation component in ASR and TTS systems, which is also helpful for building Speech to Speech Machine Translation systems. Although no single standard for prosody labelling exists in Hindi, researchers in the past have employed perceptual and statistical methods in literature to draw inferences about the behaviour of prosody patterns in Hindi. Based on such existing research and largely agreed upon theories of intonation in Hindi, this study attempts to first develop a manually annotated prosodic corpus of Hindi speech data, which is then used for training prediction models for generating automatic prosodic labels. A total of 5,000 sentences (23,500 words) for declarative and interrogative types have been labelled. The accuracy of the trained models for pitch accent, intermediate phrase boundaries and accentual phrase boundaries is 73.40%, 93.20%, and 43% respectively.",
+   "sha256": "a1f268193b21747f538feb4ca4494fd12b5514a99a820a17938421883ee76e99",
+   "relevance": "search_match",
+   "fetched_at": "2026-11-25T06:45:04Z",
+   "status": "collected",
+   "reason": "",
+   "agent": "EDGE",
+   "query": "hindi tts prosody documentation"
+  }
+ ]
+}
