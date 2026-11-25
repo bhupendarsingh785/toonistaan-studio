@@ -24,3 +24,18 @@ script.txt  →  cast_build.py  →  out.mp3
 - 1.5x+ pitch shift (patli awaaz)
 - harmonic clean 8/-9 + compressor 3:1 (shabd kat-te hain)
 - background pehle — pehle awaaz, phir bed
+
+
+## ZERO point (permanent)
+`baseline/zero/` = jahan se aage badhna hai.
+- `zero.json` — cast/clarity/joins ki exact settings + naap
+- `kahani-zero.mp3` — wahi audio jo "zero" hai
+- `script.txt` — wahi script
+
+Commands:
+```
+python tools/zero_baseline.py --show
+python tools/zero_baseline.py --check naya.mp3     # zero se neeche gaya to FAIL
+python tools/zero_baseline.py --restore            # settings zero par wapas
+```
+"zero" bolne par: naya kaam band, settings zero par, aur zero se **neeche kabhi nahi**.

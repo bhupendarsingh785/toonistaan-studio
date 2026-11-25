@@ -472,6 +472,14 @@ EXTRA = {
   ],
   "mms_worker.py": [
    "main"
+  ],
+  "zero_baseline.py": [
+   "load",
+   "show",
+   "metrics",
+   "check",
+   "restore",
+   "main"
   ]
  }
 }
