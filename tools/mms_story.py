@@ -37,38 +37,20 @@ def _ff():
 
 
 def line_audio(who: str, text: str) -> Path:
+    """Ek line MMS se (alag process — memory saaf), sur kirdaar ke hisaab se."""
     import hashlib
+    import subprocess as sp
     key = hashlib.sha1(f"mms|{who}|{text}".encode("utf-8")).hexdigest()[:16]
     dst = CACHE / f"{key}.wav"
     if dst.exists() and dst.stat().st_size > 2000:
         return dst
-    import torch
-    torch.set_num_threads(1)
-    from scipy.signal import resample_poly
-    from math import gcd
-    tok, mdl = model()
-    inputs = tok(text, return_tensors="pt")
-    with torch.no_grad():
-        w = mdl(**inputs).waveform[0].numpy()
-    sr0 = mdl.config.sampling_rate
-    up, down = SR, sr0
-    g = gcd(up, down)
-    y = resample_poly(w, up // g, down // g).astype(np.float64)
-    # sur: kirdaar ke hisaab se (MMS ~190 Hz)
     tgt = CFG.get(who, 150)
     f = float(np.clip(tgt / 190.0, 0.7, 1.6))
-    if abs(f - 1.0) > 0.02:
-        tmp = CACHE / f"{key}_raw.wav"; out = CACHE / f"{key}_p.wav"
-        sf.write(str(tmp), y.astype("float32"), SR)
-        subprocess.run([_ff(), "-v", "error", "-y", "-i", str(tmp), "-af", f"rubberband=pitch={f:.4f}",
-                        "-ar", str(SR), str(out)], capture_output=True)
-        if out.exists():
-            z, _ = sf.read(str(out)); z = z.mean(1) if z.ndim > 1 else z
-            if len(z) < len(y): z = np.pad(z, (0, len(y) - len(z)))
-            y = z[: len(y)]
-        tmp.unlink(missing_ok=True); out.unlink(missing_ok=True)
-    y = y / (np.max(np.abs(y)) + 1e-9) * 0.95
-    sf.write(str(dst), y.astype("float32"), SR)
+    cmd = [sys.executable, str(Path(__file__).with_name("mms_worker.py")),
+           "--text", text, "--out", str(dst), "--pitch", f"{f:.4f}"]
+    r = sp.run(cmd, capture_output=True, text=True)
+    if not dst.exists() or dst.stat().st_size < 2000:
+        raise RuntimeError(f"mms worker fail ({who}): {(r.stderr or r.stdout or '')[-160:]}")
     return dst
 
 
@@ -90,6 +72,11 @@ def build(script: Path, out: Path, gap=0.30, scene_gap=0.55) -> dict:
         t += len(y) / SR + g
         prev = who
     voice = np.concatenate(pieces)
+    # voice-only stem (gate isi par chalta hai — background robot-paime me nahi ginta)
+    try:
+        sf.write(str(out.parent / "voice_stem.wav"), voice.astype("float32"), SR)
+    except Exception:
+        pass
     # background
     try:
         import loop_maker as LM
@@ -99,7 +86,7 @@ def build(script: Path, out: Path, gap=0.30, scene_gap=0.55) -> dict:
         k = int(0.06 * SR)
         env = np.convolve(np.abs(voice), np.ones(k) / k, mode="same")
         act = np.clip(env / (np.percentile(env, 95) + 1e-9), 0, 1)
-        bed = bed / (np.sqrt((bed ** 2).mean()) + 1e-9) * (10 ** (-30 / 20))
+        bed = bed / (np.sqrt((bed ** 2).mean()) + 1e-9) * (10 ** (-34 / 20))
         mixd = voice + bed * (1 - 0.6 * act)
     except Exception:
         mixd = voice
@@ -109,9 +96,11 @@ def build(script: Path, out: Path, gap=0.30, scene_gap=0.55) -> dict:
         mixd = ln.normalize.loudness(mixd, meter.integrated_loudness(mixd), -16.0)
     except Exception:
         mixd = mixd / (np.sqrt((mixd ** 2).mean()) + 1e-9) * 10 ** (-16 / 20)
+    # loudness ke baad peak guard (pehle 1.17 ho gaya tha — clipping)
     pk = float(np.max(np.abs(mixd)))
     if pk > 0.95:
         mixd = mixd * (0.95 / pk)
+    pk = float(np.max(np.abs(mixd)))
     wav = out.with_suffix(".wav")
     out.parent.mkdir(parents=True, exist_ok=True)
     sf.write(str(wav), mixd.astype("float32"), SR)
