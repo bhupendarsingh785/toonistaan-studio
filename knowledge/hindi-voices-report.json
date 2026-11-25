@@ -1,0 +1,16 @@
+{
+ "kya": "archive.org (LibriVox Hindi, public domain) se asli Hindi insaan ki awaaz",
+ "clips": 14,
+ "kul_second": 350.0,
+ "storage_mb": 16.8,
+ "f0_range": [
+  188.6,
+  224.3
+ ],
+ "license": "public domain (LibriVox / CC0)",
+ "asr_transcript": "tiny model se — abhi bharosemand nahi (Latin me likh raha hai), isliye awaaz bank me nahi daala",
+ "agle_kadam": [
+  "LibriVox ke asli text se transcript milao (phir awaaz bank me daalna theek)",
+  "model training ke liye GPU machine chahiye (yahan nahi)"
+ ]
+}
