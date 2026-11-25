@@ -451,5 +451,27 @@ EXTRA = {
    "selftest",
    "main"
   ]
+ },
+ "6_awaaz": {
+  "cast_build.py": [
+   "_ff",
+   "_rubber",
+   "_tilt",
+   "_life",
+   "_piper_line",
+   "line_audio",
+   "_trim",
+   "_legato",
+   "_breath",
+   "build",
+   "main"
+  ],
+  "clarity.py": [
+   "clarity",
+   "main"
+  ],
+  "mms_worker.py": [
+   "main"
+  ]
  }
 }

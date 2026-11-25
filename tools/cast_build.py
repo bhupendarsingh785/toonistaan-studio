@@ -121,26 +121,87 @@ def line_audio(who, text):
     return dst
 
 
-def build(script: Path, out: Path, gap=0.30, scene_gap=0.55):
+def _trim(y, sr, keep=0.04):
+    """Chunk ke shuru/ant ki khaali awaaz kaato (warna piper ki silence + hamara gap = lambi chupp)."""
+    env = np.abs(y)
+    k = int(0.01 * sr)
+    e = np.convolve(env, np.ones(k) / k, mode="same")
+    thr = 0.06 * (np.percentile(e, 95) + 1e-9)
+    idx = np.flatnonzero(e > thr)
+    if len(idx) < 10:
+        return y
+    a = max(0, idx[0] - int(keep * sr))
+    b = min(len(y), idx[-1] + int(keep * sr))
+    return y[a:b]
+
+
+def _legato(y, sr, ms=55):
+    """Chupp aur bolne ke jod par narmi (60ms) — 'ruk-ruk' ki jhatke wali cut khatam."""
+    env = np.abs(y)
+    k = max(3, int(0.008 * sr))
+    e = np.convolve(env, np.ones(k) / k, mode="same")
+    thr = 0.07 * (np.percentile(e, 95) + 1e-9)
+    soft = np.clip(e / (thr * 2.0 + 1e-12), 0.0, 1.0)      # 0 = chupp, 1 = bol raha
+    n = max(8, int(ms / 1000 * sr))
+    sm = np.convolve(soft, np.hanning(n) / np.hanning(n).sum(), mode="same")
+    gain = 0.35 + 0.65 * sm                                  # chupp me bhi 35% rehne do (cut na lage)
+    return y * gain
+
+
+def _breath(sr, dur=0.22, level=0.012):
+    """Saans lene ki halki awaaz (chupp ki jagah) — insaan jaisa."""
+    n = int(dur * sr)
+    rng = np.random.default_rng(11)
+    nz = rng.normal(0, 1, n)
+    from scipy import signal as ss
+    sos = ss.butter(4, [400 / (sr / 2), 3000 / (sr / 2)], btype="band", output="sos")
+    nz = ss.sosfilt(sos, nz)
+    env = np.hanning(n) ** 1.5
+    return level * nz * env / (np.max(np.abs(nz * env)) + 1e-9)
+
+
+def build(script: Path, out: Path, gap=0.12, scene_gap=0.34):
     lines = []
     for l in script.read_text(encoding="utf-8").splitlines():
         if ":" in l:
             w, t = l.split(":", 1)
             if t.strip():
                 lines.append((w.strip(), t.strip()))
+    import re as _re
     pieces, prev = [], None
     for who, text in lines:
-        y, sr = sf.read(str(line_audio(who, text)))
-        y = y.mean(1) if y.ndim > 1 else y
-        y = y.astype(np.float64)
-        # halka fade in/out — seams par click na ho (smoothness)
-        f = int(0.012 * sr)
+        text = text.replace(",", " ")      # piper comma par lamba pause deta hai -> ruk-ruk
+        # line ko danda par todkar chhote gap se jodo — piper ke lambe pause ki jagah
+        parts = [c.strip() for c in _re.split(r"(?<=[।!?])\s*", text) if c.strip()]
+        if len(parts) > 1:
+            ys = []
+            for pi_, part in enumerate(parts):
+                yy, sr_ = sf.read(str(line_audio(who, part)))
+                yy = yy.mean(1) if yy.ndim > 1 else yy
+                yy = _trim(yy.astype(np.float64), sr_)
+                ys.append(yy)
+                if pi_ < len(parts) - 1:
+                    ys.append(np.zeros(int(0.11 * SR)))
+            y = np.concatenate(ys); sr = SR
+        else:
+            y, sr = sf.read(str(line_audio(who, text)))
+            y = y.mean(1) if y.ndim > 1 else y
+            y = y.astype(np.float64)
+        y = _trim(y, sr)                       # khaali hissa kaato
+        # bahut chhota fade (click na ho, par ruk-ruk na lage)
+        f = int(0.006 * sr)
         if len(y) > 3 * f:
             y[:f] *= np.linspace(0, 1, f); y[-f:] *= np.linspace(1, 0, f)
         g = scene_gap if (prev and prev != who) else gap
-        pieces.append(y); pieces.append(np.zeros(int(g * SR)))
+        pieces.append(y)
+        if g > 0.2:
+            pieces.append(_breath(SR, min(0.24, g * 0.7)))   # chupp ki jagah saans
+            pieces.append(np.zeros(int(max(0.0, g - min(0.24, g * 0.7)) * SR)))
+        else:
+            pieces.append(np.zeros(int(g * SR)))
         prev = who
     voice = np.concatenate(pieces)
+    voice = _legato(voice, SR)
     # clarity chain
     try:
         import clarity as CL
