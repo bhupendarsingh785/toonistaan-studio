@@ -1,0 +1,6 @@
+requests>=2.31.0
+
+# System dependency for final WAV assembly: FFmpeg (optional)
+
+# Optional richer browser runtime
+# Optional desktop Chromium browser: install playwright>=1.45.0, then run: playwright install chromium

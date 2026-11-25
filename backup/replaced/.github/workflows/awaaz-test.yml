@@ -1,0 +1,84 @@
+name: Awaaz test
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "studio/series/user/story_demo.json"
+      - ".render-trigger"
+
+permissions:
+  contents: read
+
+jobs:
+  awaaz:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Packages
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          pip install -q --upgrade pip
+          pip install -q numpy edge-tts scipy soundfile
+          pip install -q piper-tts || echo "piper install fail (edge chalega)"
+
+      - name: Piper model (offline engine, free)
+        run: |
+          python - <<'PY'
+          import os, urllib.request
+          d = os.path.expanduser("~/.cache/astra_piper"); os.makedirs(d, exist_ok=True)
+          base = "https://huggingface.co/rhasspy/piper-voices/resolve/main/hi/hi_IN/pratham/medium"
+          for f in ["hi_IN-pratham-medium.onnx", "hi_IN-pratham-medium.onnx.json"]:
+              p = os.path.join(d, f)
+              if not os.path.exists(p):
+                  try:
+                      urllib.request.urlretrieve(f"{base}/{f}", p); print("PIPER_MODEL", f, "ok")
+                  except Exception as e:
+                      print("PIPER_MODEL_FAIL", f, str(e)[:40])
+          PY
+
+      - name: Keys + voice probe
+        env:
+          SARVAM_API_KEY: ${{ secrets.SARVAM_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          FREESOUND_API_KEY: ${{ secrets.FREESOUND_API_KEY }}
+        run: |
+          [ -z "$SARVAM_API_KEY" ] && echo "SARVAM_KEY: nahi" || echo "SARVAM_KEY: mili (${#SARVAM_API_KEY})"
+          [ -z "$ELEVENLABS_API_KEY" ] && echo "ELEVEN_KEY: nahi" || echo "ELEVEN_KEY: mili (${#ELEVENLABS_API_KEY})"
+          [ -z "$FREESOUND_API_KEY" ] && echo "FREESOUND_KEY: nahi" || echo "FREESOUND_KEY: mili (${#FREESOUND_API_KEY})"
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, "tools")
+          import voice_provider as V
+          print("sarvam:", V.have_sarvam(), "| eleven:", V.have_eleven())
+          for k in ["madhur", "swara_bachcha", "swara_dadi"]:
+              ok = V.sarvam_tts("नमस्ते, यह जाँच है।", k, f"/tmp/{k}.wav") if V.have_sarvam() else False
+              print("SARVAM_PROBE", k, "OK" if ok else "skip/fail", flush=True)
+          PY
+
+      - name: Cinema (kahani se audio drama)
+        env:
+          PYTHONUNBUFFERED: "1"
+          SARVAM_API_KEY: ${{ secrets.SARVAM_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          FREESOUND_API_KEY: ${{ secrets.FREESOUND_API_KEY }}
+          # engine chunne ke liye: repo variable ASTRA_VOICE_ENGINE = auto|sarvam|eleven|piper|edge
+          ASTRA_VOICE_ENGINE: "auto"   # auto | sarvam | eleven | piper | edge
+        run: |
+          echo "VOICE_ENGINE_MODE=$ASTRA_VOICE_ENGINE"
+          python astra/cinema.py banao studio/series/user/story_demo.json -o cinema-demo.mp3
+
+      - name: Upload
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: awaaz
+          path: |
+            cinema-demo.mp3
+            cinema-demo.cues.json
+          if-no-files-found: warn
+          retention-days: 14

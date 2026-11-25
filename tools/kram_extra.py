@@ -455,6 +455,10 @@ EXTRA = {
  "6_awaaz": {
   "cast_build.py": [
    "_ff",
+   "_has_rubberband",
+   "_praat_shift",
+   "_resample",
+   "_find_voice",
    "_rubber",
    "_tilt",
    "_life",
@@ -480,6 +484,21 @@ EXTRA = {
    "check",
    "restore",
    "main"
+  ]
+ },
+ "7_dimaag": {
+  "saaf_jaanch.py": ["load", "_frames", "fingerprint", "same", "_pure_tones", "_speech_like", "_whisper_text", "_sim", "jaanch", "main"],
+  "awaaz_khoj.py": ["yaad", "save_yaad", "rules", "save_rules", "samjho", "_kism", "sikhao", "_key", "_search", "_download",
+                    "_lib_fps", "khoj", "_rel", "_report", "raay", "weight", "bharo", "dikhao", "main"],
+  "awaaz_dataset.py": ["_pick", "_rows", "_find_audio", "ling_umar", "chuno", "_write_report", "main"],
+  "awaaz_bank.py": [
+   "_load", "jaanch", "group", "_index", "_save_index", "_clean", "jodo", "reference_for", "dikhao",
+   "IndicF5Engine", "engine", "cast_entries", "ui", "_bank_md", "main"
+  ],
+  "kahani_dimaag.py": [
+   "norm", "tokens", "has_word", "best_match", "all_matches", "parse_script", "guess_ling",
+   "load_cast", "ensure_character", "save_cast", "plan", "_text_bhaav", "_is_narration",
+   "load", "reverb", "place", "loop_to", "duck", "scan", "grow", "build", "auto_khoj", "write_cue", "main"
   ]
  }
 }

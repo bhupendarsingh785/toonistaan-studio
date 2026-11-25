@@ -1,0 +1,387 @@
+{
+ "_note": "Duniya engine ka gyaan. Script ke shabd -> kaunsi awaaz, kitni, kahan (pan), kitni door. Sab local. Naye shabd yahin jodo. | wolf/owl event + dist_words (kahani ke shabdon se doori)",
+ "version": 1,
+ "levels_db": {
+  "_note": "Awaaz ke mukable dB. Bolte waqt bed itna neeche, ruke me duck hat jata hai.",
+  "bed_under_speech": -2.6,
+  "duck_db": 10,
+  "duck_attack_ms": 120,
+  "duck_release_ms": 900,
+  "never_below_dbfs": -34
+ },
+ "pauses_s": {
+  "_note": "Insaan kahani sunate waqt yahan rukta hai. Gap compression (28ms) isi ko maar raha tha.",
+  "comma": [
+   0.16,
+   0.26
+  ],
+  "sentence": [
+   0.45,
+   0.7
+  ],
+  "question_exclaim": [
+   0.55,
+   0.85
+  ],
+  "speaker_change": [
+   0.35,
+   0.6
+  ],
+  "scene_change": [
+   1.4,
+   2.6
+  ],
+  "inside_line_max_gap": 0.35,
+  "inside_line_min_gap": 0.1
+ },
+ "layers": {
+  "river": {
+   "kind": "bed",
+   "base_db": -24,
+   "width": 0.7,
+   "dist": 1.5,
+   "lib": [
+    "*river*",
+    "*stream*",
+    "*nadi*",
+    "*brook*",
+    "*water_flow*"
+   ]
+  },
+  "wind": {
+   "kind": "bed",
+   "base_db": -30,
+   "width": 0.9,
+   "dist": 2.0,
+   "lib": [
+    "*wind*",
+    "*hawa*"
+   ]
+  },
+  "leaves": {
+   "kind": "bed",
+   "base_db": -29,
+   "width": 0.9,
+   "dist": 1.2,
+   "lib": [
+    "*leaves*",
+    "*rustle*",
+    "*forest*"
+   ]
+  },
+  "rain": {
+   "kind": "bed",
+   "base_db": -24,
+   "width": 1.0,
+   "dist": 1.0,
+   "lib": [
+    "*rain*",
+    "*barish*"
+   ]
+  },
+  "crickets": {
+   "kind": "bed",
+   "base_db": -32,
+   "width": 1.0,
+   "dist": 3.0,
+   "lib": [
+    "*cricket*",
+    "*insect*",
+    "*night*"
+   ]
+  },
+  "birds": {
+   "kind": "event",
+   "base_db": -22,
+   "rate_per_min": 14,
+   "dist": [
+    1.0,
+    5.0
+   ],
+   "lib": [
+    "*bird*",
+    "*chirp*",
+    "*chidiya*"
+   ]
+  },
+  "koel": {
+   "kind": "event",
+   "base_db": -24,
+   "rate_per_min": 2,
+   "dist": [
+    3.0,
+    7.0
+   ],
+   "lib": [
+    "*koel*",
+    "*cuckoo*"
+   ]
+  },
+  "thunder": {
+   "kind": "event",
+   "base_db": -16,
+   "rate_per_min": 1,
+   "dist": [
+    6.0,
+    9.0
+   ],
+   "lib": [
+    "*thunder*",
+    "*garaj*"
+   ]
+  },
+  "footsteps": {
+   "kind": "walk",
+   "base_db": -17,
+   "step_s": 0.52,
+   "lib": [
+    "*footstep*",
+    "*steps*"
+   ]
+  },
+  "wolf": {
+   "kind": "event",
+   "base_db": -26,
+   "width": 0.8,
+   "dist": [
+    1.8,
+    3.2
+   ],
+   "lib": [
+    "*wolf*",
+    "*howl*",
+    "*bhediya*",
+    "*coyote*"
+   ]
+  },
+  "owl": {
+   "kind": "event",
+   "base_db": -30,
+   "width": 0.7,
+   "dist": [
+    2.0,
+    3.4
+   ],
+   "lib": [
+    "*owl*",
+    "*ullu*"
+   ]
+  }
+ },
+ "surfaces": {
+  "_note": "Kadam kis cheez par pad rahe hain. Default = leaves (jungle).",
+  "leaves": [
+   "पत्ते",
+   "पत्तों",
+   "पत्तियों",
+   "झाड़ी",
+   "झाड़ियों",
+   "जंगल",
+   "पगडंडी",
+   "patte",
+   "jhaadi",
+   "jungle"
+  ],
+  "soil": [
+   "मिट्टी",
+   "रास्ता",
+   "रास्ते",
+   "खेत",
+   "गाँव",
+   "mitti",
+   "raasta",
+   "khet"
+  ],
+  "stone": [
+   "पत्थर",
+   "चट्टान",
+   "पहाड़",
+   "सीढ़ी",
+   "patthar",
+   "chattan",
+   "pahad"
+  ],
+  "water": [
+   "पानी में",
+   "नदी में",
+   "कीचड़",
+   "उथला",
+   "paani me",
+   "keechad"
+  ]
+ },
+ "keywords": {
+  "river": [
+   "नदी",
+   "नदिया",
+   "नदियों",
+   "लहर",
+   "लहरें",
+   "बहती",
+   "बहता",
+   "बह रही",
+   "बह रहा",
+   "धारा",
+   "झरना",
+   "किनारा",
+   "किनारे",
+   "घाट",
+   "पुल",
+   "nadi",
+   "lahar",
+   "behti",
+   "dhara",
+   "jharna",
+   "kinara",
+   "ghaat"
+  ],
+  "wind": [
+   "हवा",
+   "आँधी",
+   "ठंड",
+   "ठंडी",
+   "सर्द",
+   "तूफ़ान",
+   "तूफान",
+   "hawa",
+   "aandhi",
+   "thand",
+   "toofan"
+  ],
+  "leaves": [
+   "पेड़",
+   "पेड़ों",
+   "पत्ते",
+   "पत्तों",
+   "पत्तियाँ",
+   "डाल",
+   "डाली",
+   "टहनी",
+   "जंगल",
+   "झाड़ी",
+   "झाड़ियों",
+   "घास",
+   "बरगद",
+   "पीपल",
+   "ped",
+   "patte",
+   "jungle",
+   "ghaas",
+   "bargad",
+   "peepal"
+  ],
+  "rain": [
+   "बारिश*",
+   "बरसात*",
+   "बूँद",
+   "बूँदें",
+   "बूंदें",
+   "बादल",
+   "भीग*",
+   "मानसून",
+   "baarish*",
+   "barsaat*",
+   "boond",
+   "baadal",
+   "bheeg*"
+  ],
+  "thunder": [
+   "गरज",
+   "बिजली",
+   "कड़क",
+   "garaj",
+   "bijli",
+   "kadak"
+  ],
+  "birds": [
+   "चिड़िया",
+   "चिड़ियाँ",
+   "पक्षी",
+   "पंछी",
+   "तोता",
+   "मैना",
+   "गौरैया",
+   "चहक*",
+   "chidiya",
+   "pakshi",
+   "panchhi",
+   "tota",
+   "maina",
+   "chahak*"
+  ],
+  "koel": [
+   "कोयल",
+   "koyal",
+   "koel"
+  ],
+  "crickets": [
+   "रात",
+   "तारा",
+   "तारे",
+   "अँधेरा",
+   "अंधेरा",
+   "चाँद",
+   "झींगुर",
+   "raat",
+   "taare",
+   "andhera",
+   "chaand",
+   "jheengur"
+  ],
+  "wolf": [
+   "भेड़िया",
+   "भेड़िये",
+   "भेड़ियों",
+   "चिल्लाय",
+   "चिल्लाई",
+   "हुआ'",
+   "howl",
+   "wolf",
+   "गुर्रा",
+   "दहाड़"
+  ],
+  "owl": [
+   "उल्लू",
+   "owl",
+   "हू हू"
+  ]
+ },
+ "time_of_day": {
+  "morning": {
+   "birds": 1.4,
+   "koel": 1.2,
+   "crickets": 0.0
+  },
+  "day": {
+   "birds": 1.0,
+   "crickets": 0.0
+  },
+  "evening": {
+   "birds": 0.6,
+   "crickets": 0.6
+  },
+  "night": {
+   "birds": 0.0,
+   "koel": 0.0,
+   "crickets": 1.3,
+   "wind": 1.1
+  }
+ },
+ "dist_words": {
+  "far": [
+   "दूर",
+   "दूर कहीं",
+   "कहीं दूर",
+   "दूर से",
+   "फासले",
+   "पार"
+  ],
+  "near": [
+   "पास",
+   "करीब",
+   "सामने",
+   "पास ही",
+   "बिल्कुल पास"
+  ]
+ }
+}

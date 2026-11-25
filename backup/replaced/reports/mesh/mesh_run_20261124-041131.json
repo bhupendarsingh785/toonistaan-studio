@@ -1,0 +1,53 @@
+{
+ "topic": "speech rate natural hindi narration words per minute",
+ "created_at": "2026-11-24T04:11:31Z",
+ "seconds_total": 0.3,
+ "agents": {
+  "ASTRA": {
+   "agent": "ASTRA",
+   "browser": "KRIYA",
+   "research": "KARMA",
+   "queries": [
+    "speech rate natural hindi narration words per minute comparison benchmark",
+    "speech rate natural hindi narration words per minute quality review"
+   ],
+   "tried": 4,
+   "collected": 4,
+   "seconds": 0.3,
+   "error": ""
+  }
+ },
+ "evidence_count": 2,
+ "unique_domains": [
+  "arxiv.org"
+ ],
+ "domain_count": 1,
+ "evidence": [
+  {
+   "url": "http://arxiv.org/abs/2607.18662v1",
+   "domain": "arxiv.org",
+   "title": "Staged Depth-Pruning Distillation of a Flow-Matching Text-to-Speech Teacher: A Compact Hindi Speech Synthesizer",
+   "text": "We present a practical recipe for building a compact Hindi text-to-speech (TTS) model by distilling a large flow-matching teacher (IndicF5, 337M-parameter DiT) under a severe data budget (~17.6 hours). Training a small model from scratch on this much data fails outright. Instead we warm-start the student from the teacher by pruning depth only: keeping the teacher's width, text dimension, attention heads, and mel/text I/O fixed so all non-block tensors copy one-to-one, and retaining an evenly-spaced subset of transformer blocks. We first measure how much depth the teacher tolerates (it remains near-functional at -27% blocks but collapses past -50%), then descend gradually (22 -> 16 -> 12 -> 8 -> 6 blocks), re-fine-tuning after each prune, with each step gated by an objective ASR word-error-rate (WER) check. The resulting students reach WER 0.00 on unseen sentences at 249M and 190M parameters, and remain robust down to 131M; at 102M we observe a clear capacity cliff that we attribute to the data budget rather than the recipe. We also document two train/inference feature- and library-parity failures (mel filterbank and rotary-embedding library versions) that silently degrade audio, and a version-independent fix. The method yields a high-quality Hindi voice that runs in real time on a 6 GB laptop GPU. An independent 50-sentence FLEURS benchmark compares the released 190M student against its teacher and MMS-TTS-hin.",
+   "sha256": "afd51253a740c088fc1955fcb9d63e21641aab36be7d07307595705a40bfb670",
+   "relevance": "search_match",
+   "fetched_at": "2026-11-24T04:11:31Z",
+   "status": "collected",
+   "reason": "",
+   "agent": "ELEVENLABS",
+   "query": "speech rate natural hindi narration words per minute comparison benchmark"
+  },
+  {
+   "url": "http://arxiv.org/abs/2508.02112v1",
+   "domain": "arxiv.org",
+   "title": "Word Error Rate Definitions and Algorithms for Long-Form Multi-talker Speech Recognition",
+   "text": "The predominant metric for evaluating speech recognizers, the Word Error Rate (WER) has been extended in different ways to handle transcripts produced by long-form multi-talker speech recognizers. These systems process long transcripts containing multiple speakers and complex speaking patterns so that the classical WER cannot be applied. There are speaker-attributed approaches that count speaker confusion errors, such as the concatenated minimum-permutation WER cpWER and the time-constrained cpWER (tcpWER), and speaker-agnostic approaches, which aim to ignore speaker confusion errors, such as the Optimal Reference Combination WER (ORC-WER) and the MIMO-WER. These WERs evaluate different aspects and error types (e.g., temporal misalignment). A detailed comparison has not been made. We therefore present a unified description of the existing WERs and highlight when to use which metric. To further analyze how many errors are caused by speaker confusion, we propose the Diarization-invariant cpWER (DI-cpWER). It ignores speaker attribution errors and its difference to cpWER reflects the impact of speaker confusions on the WER. Since error types cannot reliably be classified automatically, we discuss ways to visualize sequence alignments between the reference and hypothesis transcripts to facilitate the spotting of errors by a human judge. Since some WER definitions have high computational complexity, we introduce a greedy algorithm to approximate the ORC-WER and DI-cpWER with high precision ($<0.1\\%$ deviation in our experiments) and polynomial complexity instead of exponential. To improve the plausibility of the metrics, we also incorporate the time constraint from the tcpWER into ORC-WER and MIMO-WER, also significantly reducing the computational complexity.",
+   "sha256": "5ee04158d187036c43edc8e72d8b88ec870ddf37d1e0f31a9195fd0515d229b2",
+   "relevance": "search_match",
+   "fetched_at": "2026-11-24T04:11:31Z",
+   "status": "collected",
+   "reason": "",
+   "agent": "ELEVENLABS",
+   "query": "speech rate natural hindi narration words per minute comparison benchmark"
+  }
+ ]
+}

@@ -1,0 +1,52 @@
+{
+ "kya_hai": "SMOOTH reference — Swag ke banwaye hue jungle-nadi-safar v5/v8 (Sarvam) ka naap. Local engines ko isi ke kareeb laana hai.",
+ "files": {
+  "v5": "/scratch/input/jungle-nadi-safar-v5.mp3",
+  "v8": "/scratch/input/jungle-nadi-safar-v8.mp3"
+ },
+ "targets": {
+  "speech_pct": [
+   82,
+   95
+  ],
+  "inner_gaps": "40–115 (mean 104–180 ms, max 300–580 ms)",
+  "f0_clusters": [
+   120,
+   320
+  ],
+  "low_pct": [
+   15,
+   17
+  ],
+  "mid_pct": [
+   55,
+   57
+  ],
+  "high_pct": [
+   27,
+   30
+  ],
+  "brightness_hz": [
+   2086,
+   2187
+  ],
+  "rms_dbfs": [
+   -18.6,
+   -18.5
+  ],
+  "peak": [
+   0.79,
+   0.8
+  ],
+  "spectral_flux": [
+   57.5,
+   58.3
+  ]
+ },
+ "sabak": [
+  "smooth reference KAALI/dull nahi hai — bright 2086–2187 Hz (mera local 1157 tha)",
+  "mid 55–57%, high 27–30% — yahi 'khula, clear' sunai deta hai",
+  "gaps reference me bhi hain (mean 104–180 ms) — matlab 'ruk-ruk' gaps se nahi, DULLNESS se lagta hai",
+  "local ko match karne ke liye: presence +2.3 dB @3.2k, air +1.45 dB @6.2k, de-ess @7.5k, air bed layer"
+ ]
+}

@@ -14,6 +14,11 @@ import json
 import subprocess
 import sys
 from pathlib import Path
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 K = ROOT / "knowledge"
@@ -30,7 +35,7 @@ def _run(cmd, timeout=180):
 
 def _last_manifest():
     best = None
-    for p in sorted(Path("/scratch/work").glob("out-*/manifest.json")):
+    for p in sorted(_AP.WORK.glob("out-*/manifest.json")):
         try:
             m = json.loads(p.read_text(encoding="utf-8"))
         except Exception:

@@ -1,0 +1,76 @@
+{
+ "system": {
+  "kram_theek": true,
+  "wire_theek": true,
+  "modules": 128,
+  "last_qa": {
+   "decode": {
+    "status": "PASS"
+   },
+   "f0_std": {
+    "status": "PASS",
+    "value": 19.2,
+    "min": 12
+   },
+   "pace": {
+    "status": "FAIL",
+    "value": 5.73,
+    "range": [
+     3.0,
+     4.5
+    ]
+   },
+   "background": {
+    "status": "FAIL",
+    "value": 23.7,
+    "range": [
+     8,
+     16
+    ]
+   },
+   "f0_band": {
+    "status": "PASS",
+    "value": 107
+   }
+  },
+  "qa_fail": [
+   "pace",
+   "background"
+  ]
+ },
+ "gaps": [
+  {
+   "kaam": "pace",
+   "naap": 5.73,
+   "chahiye": [
+    3.0,
+    4.5
+   ],
+   "kaise": "engine me theek karo, chhupao mat"
+  },
+  {
+   "kaam": "background",
+   "naap": 23.7,
+   "chahiye": [
+    8,
+    16
+   ],
+   "kaise": "engine me theek karo, chhupao mat"
+  },
+  {
+   "kaam": "library patli",
+   "naap": [
+    "foley/impact",
+    "wood"
+   ],
+   "chahiye": ">=6 clip har tag me",
+   "kaise": "loop_maker se banao ya asli recording maango"
+  }
+ ],
+ "rules": [
+  "kuch delete nahi",
+  "kuch bahar nahi — sab kram ke andar",
+  "naap ke bina 'behtar hua' nahi kehna",
+  "jhoothi awaaz scene me nahi"
+ ]
+}

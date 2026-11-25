@@ -1,0 +1,40 @@
+name: Clean sound library
+
+on:
+  push:
+    paths:
+      - "astra/library/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Library saaf karo (noise hatao)
+        run: python astra/clean_library.py
+      - name: Duplicate (do baar bheji) hatao
+        run: python astra/dedupe_library.py --apply
+      - name: Commit saaf files
+        run: |
+          git config user.name "astra-bot"
+          git config user.email "astra-bot@users.noreply.github.com"
+          git add -A astra/library astra/library.py
+          if git diff --cached --quiet; then
+            echo "kuch naya nahi — sab saaf hai"
+            exit 0
+          fi
+          git commit -m "library: auto-clean + dedupe"
+          for i in 1 2 3 4; do
+            git pull --rebase --autostash origin main && git push && echo "PUSH_OK" && exit 0
+            echo "push retry $i"; sleep 6
+          done
+          echo "push fail — agli baar"; exit 0

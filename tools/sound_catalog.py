@@ -9,6 +9,11 @@ CLI: python tools/sound_catalog.py --dir /scratch/input --out catalog.json [--li
 from __future__ import annotations
 import argparse, json, re, subprocess, sys
 from pathlib import Path
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -83,7 +88,7 @@ def quality(f: dict) -> float:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dir", default="/scratch/input")
+    ap.add_argument("--dir", default=str(_AP.INPUT))
     ap.add_argument("--out", default="catalog.json")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--only", default="")

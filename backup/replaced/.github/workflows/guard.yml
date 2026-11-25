@@ -1,0 +1,42 @@
+name: Guard (delete se bachao)
+
+# Har push par dekhta hai: kya galti se kuch delete hua?
+# Badi deletion mile to file wapas laata hai aur revert commit karta hai.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Purani files wapas laao (agar mass delete hua)
+        run: |
+          python3 astra/guard.py check || {
+            echo "GUARD: badi deletion mili — wapas laa raha hoon"
+            python3 astra/guard.py restore
+            git config user.email "guard@astra.local"
+            git config user.name "ASTRA Guard"
+            git add -A
+            git commit -m "guard: deleted files wapas laaye (galti se delete hua tha)" || echo "kuch restore nahi hua"
+            git push || echo "push fail"
+          }
+      - name: Snapshot update
+        run: |
+          python3 astra/guard.py snapshot
+          git config user.email "guard@astra.local"
+          git config user.name "ASTRA Guard"
+          git add astra/library-snapshot.json
+          git diff --cached --quiet || git commit -m "guard: library snapshot update"
+          git push || echo "push skip"

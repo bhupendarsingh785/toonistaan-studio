@@ -1,0 +1,1094 @@
+{
+  "_note": "Seetal ka sound gyaan-kosh. Har event: shabd (kw), awaaz (synth ya library), level (peak dBFS jab awaaz -20 RMS), kahan (pan/dist), aur halat (state: kab tak chale, kis shabd par ruke). Naya event = yahan ek entry + awaazein.py me synth (ya library me file). missing-sounds.json me jo shabd aate hain, unhe yahan jodo — system khud badhta hai.",
+  "version": 1,
+  "events": {
+    "phone_ring": {
+      "kw": [
+        "फ़ोन बज*",
+        "फोन बज*",
+        "फ़ोन आया",
+        "फोन आया",
+        "phone baj*",
+        "phone aaya",
+        "phone ki ghanti"
+      ],
+      "synth": "mobile_ring",
+      "lib": [
+        "*ringtone*",
+        "*phone*ring*"
+      ],
+      "level": -14,
+      "pan": 0.35,
+      "dist": 1.6,
+      "at": "word",
+      "state": {
+        "loop": true,
+        "stop": [
+          "उठाया",
+          "उठा लिया",
+          "उठाकर",
+          "हेलो",
+          "हैलो",
+          "हाँ बोलो",
+          "hello",
+          "uthaya",
+          "काट दिया",
+          "kaat diya"
+        ],
+        "max_s": 20
+      },
+      "then": "phone_pickup"
+    },
+    "landline_ring": {
+      "kw": [
+        "टेलीफ़ोन",
+        "टेलीफोन",
+        "लैंडलाइन",
+        "telephone",
+        "landline"
+      ],
+      "synth": "phone_ring_old",
+      "lib": [
+        "*old*phone*",
+        "*telephone*"
+      ],
+      "level": -13,
+      "pan": 0.4,
+      "dist": 2.0,
+      "at": "word",
+      "state": {
+        "loop": true,
+        "stop": [
+          "उठाया",
+          "उठा लिया",
+          "हेलो",
+          "हैलो",
+          "hello"
+        ],
+        "max_s": 20
+      },
+      "then": "phone_pickup"
+    },
+    "phone_vibrate": {
+      "kw": [
+        "वाइब्रेट",
+        "थरथराया फ़ोन",
+        "vibrate"
+      ],
+      "synth": "phone_vibrate",
+      "level": -18,
+      "pan": 0.2,
+      "dist": 1.0,
+      "at": "word"
+    },
+    "phone_pickup": {
+      "kw": [],
+      "synth": "phone_pickup",
+      "level": -16,
+      "pan": 0.3,
+      "dist": 1.0
+    },
+    "phone_hangup": {
+      "kw": [
+        "फ़ोन रख*",
+        "फोन रख*",
+        "फ़ोन काट*",
+        "फोन काट*",
+        "phone rakh*",
+        "phone kaat*"
+      ],
+      "synth": "phone_hangup",
+      "level": -17,
+      "pan": 0.3,
+      "dist": 1.0,
+      "at": "word"
+    },
+    "message_tone": {
+      "kw": [
+        "मैसेज आया",
+        "संदेश आया",
+        "message aaya",
+        "notification"
+      ],
+      "synth": "message_tone",
+      "level": -18,
+      "pan": 0.3,
+      "dist": 1.0,
+      "at": "word"
+    },
+    "door_knock": {
+      "kw": [
+        "खटखट*",
+        "दस्तक",
+        "दरवाज़ा खटखटा*",
+        "दरवाजा खटखटा*",
+        "khatkhat*",
+        "dastak"
+      ],
+      "synth": "door_knock",
+      "lib": [
+        "*knock*"
+      ],
+      "level": -10,
+      "pan": -0.4,
+      "dist": 2.5,
+      "at": "word"
+    },
+    "door_open": {
+      "kw": [
+        "दरवाज़ा खोला",
+        "दरवाजा खोला",
+        "दरवाज़ा खुला",
+        "दरवाजा खुला",
+        "darwaza khola",
+        "darwaza khula"
+      ],
+      "synth": "door_open",
+      "lib": [
+        "*door*open*"
+      ],
+      "level": -12,
+      "pan": -0.3,
+      "dist": 1.8,
+      "at": "word"
+    },
+    "door_creak": {
+      "kw": [
+        "चरमराया",
+        "चर्र",
+        "किवाड़",
+        "charr"
+      ],
+      "synth": "door_creak",
+      "lib": [
+        "*creak*"
+      ],
+      "level": -13,
+      "pan": -0.3,
+      "dist": 2.0,
+      "at": "word"
+    },
+    "door_close": {
+      "kw": [
+        "दरवाज़ा बंद",
+        "दरवाजा बंद",
+        "दरवाज़ा भेड़*",
+        "darwaza band"
+      ],
+      "synth": "door_close",
+      "lib": [
+        "*door*close*",
+        "*door*slam*"
+      ],
+      "level": -9,
+      "pan": -0.3,
+      "dist": 1.8,
+      "at": "word"
+    },
+    "clock_tick": {
+      "kw": [
+        "घड़ी की टिक",
+        "टिक-टिक",
+        "टिक टिक",
+        "tik tik"
+      ],
+      "synth": "clock_tick",
+      "lib": [
+        "*clock*tick*"
+      ],
+      "level": -24,
+      "pan": 0.5,
+      "dist": 2.0,
+      "at": "line"
+    },
+    "clock_chime": {
+      "kw": [
+        "घड़ी ने बजाए",
+        "घंटे बजे",
+        "बारह बजे",
+        "clock baji"
+      ],
+      "synth": "wall_clock_chime",
+      "level": -14,
+      "pan": 0.5,
+      "dist": 3.0,
+      "at": "word"
+    },
+    "utensils": {
+      "kw": [
+        "बर्तन",
+        "थाली",
+        "कटोरी",
+        "चम्मच",
+        "रसोई",
+        "खाना बना*",
+        "bartan",
+        "thaali",
+        "rasoi"
+      ],
+      "synth": "utensils",
+      "lib": [
+        "*utensil*",
+        "*dishes*",
+        "*kitchen*"
+      ],
+      "level": -19,
+      "pan": 0.5,
+      "dist": 3.0,
+      "at": "line"
+    },
+    "pressure_cooker": {
+      "kw": [
+        "कुकर",
+        "सीटी बजी",
+        "cooker"
+      ],
+      "synth": "pressure_cooker",
+      "lib": [
+        "*cooker*"
+      ],
+      "level": -16,
+      "pan": 0.55,
+      "dist": 3.5,
+      "at": "word"
+    },
+    "water_pour": {
+      "kw": [
+        "पानी डाला",
+        "गिलास में",
+        "लोटा",
+        "paani daala",
+        "gilaas"
+      ],
+      "synth": "water_pour",
+      "lib": [
+        "*pour*"
+      ],
+      "level": -16,
+      "pan": 0.2,
+      "dist": 1.0,
+      "at": "word"
+    },
+    "tap_water": {
+      "kw": [
+        "नल",
+        "नहा",
+        "हाथ धो",
+        "nal",
+        "naha",
+        "haath dho"
+      ],
+      "synth": "tap_water",
+      "lib": [
+        "*tap*",
+        "*faucet*"
+      ],
+      "level": -19,
+      "pan": 0.4,
+      "dist": 2.0,
+      "at": "word"
+    },
+    "drip": {
+      "kw": [
+        "टपक",
+        "बूँद-बूँद",
+        "tapak"
+      ],
+      "synth": "drip",
+      "lib": [
+        "*drip*"
+      ],
+      "level": -20,
+      "pan": -0.3,
+      "dist": 2.0,
+      "at": "line"
+    },
+    "paper_page": {
+      "kw": [
+        "पन्ना",
+        "पन्ने",
+        "किताब खोली",
+        "चिट्ठी",
+        "कागज़",
+        "कागज",
+        "panna",
+        "kitaab",
+        "chitthi",
+        "kaagaz"
+      ],
+      "synth": "paper_page",
+      "lib": [
+        "*page*",
+        "*paper*"
+      ],
+      "level": -18,
+      "pan": 0.1,
+      "dist": 0.8,
+      "at": "word"
+    },
+    "cloth_rustle": {
+      "kw": [
+        "कपड़े",
+        "चादर",
+        "कंबल",
+        "ओढ़",
+        "kapde",
+        "chaadar",
+        "kambal"
+      ],
+      "synth": "cloth_rustle",
+      "lib": [
+        "*cloth*"
+      ],
+      "level": -21,
+      "pan": 0.0,
+      "dist": 0.8,
+      "at": "word"
+    },
+    "typing": {
+      "kw": [
+        "टाइप",
+        "कंप्यूटर",
+        "लैपटॉप",
+        "type",
+        "computer",
+        "laptop"
+      ],
+      "synth": "typing",
+      "lib": [
+        "*typing*",
+        "*keyboard*"
+      ],
+      "level": -20,
+      "pan": 0.2,
+      "dist": 1.0,
+      "at": "line"
+    },
+    "glass_break": {
+      "kw": [
+        "शीशा टूटा",
+        "काँच टूटा",
+        "गिलास टूटा",
+        "chhan",
+        "छन्न",
+        "sheesha toota"
+      ],
+      "synth": "glass_break",
+      "lib": [
+        "*glass*break*",
+        "*shatter*"
+      ],
+      "level": -6,
+      "pan": 0.3,
+      "dist": 1.5,
+      "at": "word"
+    },
+    "fire_crackle": {
+      "kw": [
+        "आग",
+        "अलाव",
+        "चूल्हा",
+        "लकड़ियाँ जल",
+        "aag",
+        "alaav",
+        "chulha"
+      ],
+      "synth": "fire_crackle",
+      "lib": [
+        "*fire*",
+        "*campfire*"
+      ],
+      "level": -15,
+      "pan": 0.0,
+      "dist": 1.2,
+      "at": "line",
+      "state": {
+        "loop": true,
+        "stop": [
+          "बुझ*",
+          "bujh*"
+        ],
+        "max_s": 120
+      }
+    },
+    "wood_chop": {
+      "kw": [
+        "कुल्हाड़ी",
+        "लकड़ी काट",
+        "kulhaadi",
+        "lakdi kaat"
+      ],
+      "synth": "wood_chop",
+      "lib": [
+        "*chop*",
+        "*axe*"
+      ],
+      "level": -10,
+      "pan": 0.4,
+      "dist": 2.5,
+      "at": "word",
+      "repeat": [
+        3,
+        1.1
+      ]
+    },
+    "chair_drag": {
+      "kw": [
+        "कुर्सी खींची",
+        "कुर्सी सरका",
+        "kursi"
+      ],
+      "synth": "chair_drag",
+      "lib": [
+        "*chair*"
+      ],
+      "level": -15,
+      "pan": 0.1,
+      "dist": 1.2,
+      "at": "word"
+    },
+    "clap": {
+      "kw": [
+        "ताली",
+        "तालियाँ",
+        "taali"
+      ],
+      "synth": "clap",
+      "lib": [
+        "*clap*",
+        "*applause*"
+      ],
+      "level": -12,
+      "pan": 0.0,
+      "dist": 2.0,
+      "at": "word",
+      "prefer": [
+        "applause"
+      ]
+    },
+    "temple_bell": {
+      "kw": [
+        "मंदिर",
+        "घंटा",
+        "आरती",
+        "mandir",
+        "aarti"
+      ],
+      "synth": "temple_bell",
+      "lib": [
+        "*temple*bell*",
+        "*ghanta*"
+      ],
+      "level": -14,
+      "pan": -0.5,
+      "dist": 4.0,
+      "at": "word",
+      "prefer": [
+        "gong"
+      ]
+    },
+    "school_bell": {
+      "kw": [
+        "स्कूल की घंटी",
+        "छुट्टी की घंटी",
+        "school ki ghanti"
+      ],
+      "synth": "school_bell",
+      "lib": [
+        "*school*bell*"
+      ],
+      "level": -15,
+      "pan": 0.5,
+      "dist": 5.0,
+      "at": "word"
+    },
+    "cycle_bell": {
+      "kw": [
+        "साइकिल",
+        "cycle"
+      ],
+      "synth": "cycle_bell",
+      "lib": [
+        "*bicycle*bell*"
+      ],
+      "level": -15,
+      "pan": 0.4,
+      "dist": 2.5,
+      "at": "word"
+    },
+    "car_horn": {
+      "kw": [
+        "हॉर्न",
+        "पोंपों",
+        "horn"
+      ],
+      "synth": "car_horn",
+      "lib": [
+        "*horn*"
+      ],
+      "level": -13,
+      "pan": 0.5,
+      "dist": 4.0,
+      "at": "word"
+    },
+    "vehicle_pass": {
+      "kw": [
+        "गाड़ी",
+        "कार",
+        "बस",
+        "ट्रक",
+        "सड़क",
+        "gaadi",
+        "car",
+        "bus",
+        "truck",
+        "sadak"
+      ],
+      "synth": "vehicle_pass",
+      "lib": [
+        "*car*pass*",
+        "*traffic*"
+      ],
+      "level": -13,
+      "pan": -0.6,
+      "dist": 3.0,
+      "at": "word"
+    },
+    "bike_engine": {
+      "kw": [
+        "मोटरसाइकिल",
+        "बाइक",
+        "स्कूटर",
+        "bike",
+        "scooter"
+      ],
+      "synth": "bike_engine",
+      "lib": [
+        "*motorbike*",
+        "*scooter*"
+      ],
+      "level": -13,
+      "pan": 0.6,
+      "dist": 3.0,
+      "at": "word"
+    },
+    "dog_bark": {
+      "kw": [
+        "कुत्ता",
+        "कुत्ते",
+        "भौंक*",
+        "kutta",
+        "bhaunk*"
+      ],
+      "synth": "dog_bark",
+      "lib": [
+        "*dog*bark*",
+        "*dog*"
+      ],
+      "level": -12,
+      "pan": -0.5,
+      "dist": 4.0,
+      "at": "word",
+      "synth_quality": "low"
+    },
+    "rooster": {
+      "kw": [
+        "मुर्गा",
+        "मुर्गे",
+        "कुकड़ूँ",
+        "murga"
+      ],
+      "synth": "rooster",
+      "lib": [
+        "*rooster*"
+      ],
+      "level": -14,
+      "pan": 0.6,
+      "dist": 5.0,
+      "at": "word",
+      "synth_quality": "low"
+    },
+    "frog": {
+      "kw": [
+        "मेंढक",
+        "तालाब",
+        "mendhak",
+        "taalaab"
+      ],
+      "synth": "frog",
+      "lib": [
+        "*frog*"
+      ],
+      "level": -20,
+      "pan": -0.4,
+      "dist": 4.0,
+      "at": "line"
+    },
+    "cow": {
+      "kw": [
+        "gaay",
+        "गाय",
+        "बछड़ा",
+        "रंभा",
+        "रंभा*"
+      ],
+      "synth": null,
+      "lib": [
+        "*cow*",
+        "*moo*"
+      ],
+      "level": -14,
+      "pan": 0.5,
+      "dist": 5.0,
+      "at": "line",
+      "learned": "learned/cow",
+      "category": "learned"
+    },
+    "goat": {
+      "kw": [
+        "बकरी",
+        "मिमिया",
+        "bakri"
+      ],
+      "synth": null,
+      "lib": [
+        "*goat*"
+      ],
+      "level": -15,
+      "pan": 0.5,
+      "dist": 4.0,
+      "at": "word"
+    },
+    "elephant": {
+      "kw": [
+        "हाथी",
+        "चिंघाड़",
+        "haathi"
+      ],
+      "synth": null,
+      "lib": [
+        "*elephant*"
+      ],
+      "level": -10,
+      "pan": -0.4,
+      "dist": 6.0,
+      "at": "word"
+    },
+    "lion": {
+      "kw": [
+        "शेर",
+        "दहाड़",
+        "sher",
+        "dahaad"
+      ],
+      "synth": null,
+      "lib": [
+        "*lion*roar*",
+        "*roar*"
+      ],
+      "level": -8,
+      "pan": 0.4,
+      "dist": 6.0,
+      "at": "word"
+    },
+    "crowd": {
+      "kw": [
+        "भीड़",
+        "मेला",
+        "बाज़ार",
+        "बाजार",
+        "लोग शोर",
+        "bheed",
+        "mela",
+        "bazaar"
+      ],
+      "synth": null,
+      "lib": [
+        "*crowd*",
+        "*market*",
+        "*walla*"
+      ],
+      "level": -18,
+      "pan": 0.0,
+      "dist": 4.0,
+      "at": "line",
+      "state": {
+        "loop": true,
+        "stop": [
+          "सन्नाटा",
+          "चुप",
+          "खाली"
+        ],
+        "max_s": 90
+      }
+    },
+    "child_laugh": {
+      "kw": [
+        "बच्चे हँस",
+        "किलकारी",
+        "bacche hans"
+      ],
+      "synth": null,
+      "lib": [
+        "*kids*laugh*",
+        "*children*"
+      ],
+      "level": -16,
+      "pan": 0.4,
+      "dist": 3.0,
+      "at": "word"
+    },
+    "horse": {
+      "learned": "learned/horse",
+      "level": -14,
+      "pan": -0.4,
+      "dist": 4.0,
+      "at": "line",
+      "category": "learned",
+      "kw": [
+        "ghoda",
+        "घोड़ा",
+        "घोड़े",
+        "हिनहिना*"
+      ]
+    },
+    "glass_clink": {
+      "learned": "learned/glass_clink",
+      "level": -15.0,
+      "pan": 0.2,
+      "dist": 1.5,
+      "at": "word",
+      "category": "learned",
+      "kw": [
+        "खनक*",
+        "गिलास टकरा*",
+        "चियर्स"
+      ]
+    },
+    "applause": {
+      "learned": "learned/applause",
+      "level": -14.0,
+      "pan": 0.0,
+      "dist": 3.0,
+      "at": "line",
+      "category": "learned",
+      "kw": [
+        "taaliyan",
+        "तालियाँ",
+        "तालियों"
+      ]
+    },
+    "gong": {
+      "learned": "learned/gong",
+      "level": -14,
+      "pan": -0.3,
+      "dist": 4.0,
+      "at": "line",
+      "category": "learned",
+      "kw": [
+        "गोंग",
+        "घंटा बजा",
+        "घंटा",
+        "gong"
+      ]
+    },
+    "train": {
+      "learned": "learned/train",
+      "level": -12.0,
+      "pan": -0.5,
+      "dist": 5.0,
+      "at": "line",
+      "category": "learned",
+      "kw": [
+        "rail",
+        "ट्रेन",
+        "रेलगाड़ी"
+      ]
+    }
+  },
+  "motion": {
+    "_note": "Kirdaar ki aawa-jaahi: aaya = kadam door se paas (pan side -> centre), gaya = paas se door. Darwaza ho to saath me khulna/band.",
+    "approach": [
+      "आया",
+      "आई",
+      "आए",
+      "पास आ*",
+      "लौट आ*",
+      "aaya",
+      "aayi",
+      "paas aa*"
+    ],
+    "leave": [
+      "चला गया",
+      "चली गई",
+      "चले गए",
+      "निकल गया",
+      "निकल गई",
+      "दूर चला*",
+      "chala gaya",
+      "chali gayi",
+      "nikal gaya"
+    ],
+    "enter": [
+      "अंदर आ*",
+      "घर में आ*",
+      "कमरे में आ*",
+      "घुस*",
+      "andar aa*",
+      "ghar me aa*"
+    ],
+    "exit": [
+      "बाहर निकल*",
+      "बाहर गया",
+      "बाहर गई",
+      "बाहर चला",
+      "बाहर चली",
+      "baahar nikal*"
+    ],
+    "sit": [
+      "बैठ*"
+    ],
+    "stand": [
+      "उठ खड़ा",
+      "खड़ा हुआ",
+      "खड़ी हुई",
+      "खड़े हुए",
+      "khada hua"
+    ]
+  },
+  "places": {
+    "_note": "Andar/bahar se goonj aur bahar ki awaaz badalti hai: andar = chhoti goonj (0.45 s), bahar ka mausam deewar ke peeche (dabba, 900 Hz se upar kam).",
+    "indoor": [
+      "घर में",
+      "घर के अंदर",
+      "कमरे",
+      "कमरा",
+      "रसोई",
+      "अंदर",
+      "दफ़्तर",
+      "दफ्तर",
+      "स्कूल में",
+      "कक्षा",
+      "झोपड़ी",
+      "खिड़की",
+      "ghar me",
+      "kamre",
+      "andar",
+      "rasoi",
+      "office"
+    ],
+    "outdoor": [
+      "बाहर",
+      "आँगन",
+      "जंगल",
+      "खेत",
+      "सड़क",
+      "नदी",
+      "पहाड़",
+      "बाग़",
+      "बाग",
+      "गाँव की गली",
+      "baahar",
+      "aangan",
+      "jungle",
+      "khet",
+      "sadak",
+      "nadi",
+      "pahad",
+      "baag"
+    ],
+    "surfaces_indoor": {
+      "tile": [
+        "फ़र्श",
+        "फर्श",
+        "farsh",
+        "tile"
+      ],
+      "wood": [
+        "लकड़ी का फ़र्श",
+        "सीढ़ियाँ",
+        "seedhiyan"
+      ],
+      "carpet": [
+        "दरी",
+        "कालीन",
+        "dari"
+      ]
+    }
+  },
+  "weather": {
+    "_note": "Mausam ek halat hai (state), shabd se shuru, shabd se khatm. Barish ke baad 'after_rain' apne aap: tapakti boondein + chidiyan wapas.",
+    "states": {
+      "rain": {
+        "start": [
+          "बारिश*",
+          "बरसात*",
+          "बरसने*",
+          "बूँदें गिर",
+          "baarish*",
+          "barsaat*"
+        ],
+        "stop": [
+          "बारिश रुकी",
+          "बारिश थमी",
+          "बरसात रुकी",
+          "धूप निकली",
+          "baarish ruki"
+        ],
+        "beds": {
+          "rain": 1.0,
+          "wind": 0.7
+        },
+        "birds": 0.1,
+        "after": "after_rain"
+      },
+      "storm": {
+        "start": [
+          "तूफ़ान",
+          "तूफान",
+          "आँधी",
+          "toofan",
+          "aandhi"
+        ],
+        "stop": [
+          "तूफ़ान थमा",
+          "तूफान थमा",
+          "शांत हुआ",
+          "thama"
+        ],
+        "beds": {
+          "rain": 1.3,
+          "wind": 1.8
+        },
+        "birds": 0.0,
+        "thunder_every_s": [
+          6,
+          14
+        ],
+        "after": "after_rain"
+      },
+      "after_rain": {
+        "beds": {},
+        "events": [
+          "drip"
+        ],
+        "birds": 1.3,
+        "dur_s": 12
+      },
+      "night": {
+        "start": [
+          "रात",
+          "अँधेरा",
+          "अंधेरा",
+          "raat",
+          "andhera"
+        ],
+        "stop": [
+          "सुबह",
+          "भोर",
+          "subah"
+        ],
+        "beds": {
+          "crickets": 1.0
+        },
+        "birds": 0.0
+      },
+      "morning": {
+        "start": [
+          "सुबह",
+          "भोर",
+          "सवेरा",
+          "subah",
+          "bhor"
+        ],
+        "stop": [
+          "दोपहर",
+          "शाम",
+          "रात"
+        ],
+        "beds": {},
+        "birds": 1.4,
+        "events_once": [
+          "rooster"
+        ]
+      },
+      "windy": {
+        "start": [
+          "तेज़ हवा",
+          "तेज हवा",
+          "हवा चल",
+          "tez hawa"
+        ],
+        "stop": [
+          "हवा रुकी",
+          "हवा थमी"
+        ],
+        "beds": {
+          "wind": 1.6,
+          "leaves": 1.3
+        },
+        "max_s": 25
+      }
+    }
+  },
+  "emotion_world": {
+    "_note": "Bhaav ke saath duniya: sunne wale ko ehsaas hota hai, bina bataye.",
+    "dar": {
+      "birds": 0.08,
+      "wind": 1.6,
+      "crickets": 0.4,
+      "heartbeat": true,
+      "music_hint": "low drone"
+    },
+    "gussa": {
+      "birds": 0.3,
+      "wind": 1.3
+    },
+    "dukh": {
+      "birds": 0.5,
+      "wind": 0.7,
+      "rain_ok": true
+    },
+    "khushi": {
+      "birds": 1.5,
+      "koel": 1.3
+    },
+    "shanti": {
+      "birds": 1.0,
+      "wind": 0.6,
+      "river": 1.2
+    }
+  },
+  "sound_verbs": {
+    "_note": "Yeh shabd line me ho par koi event na mile to line missing-sounds.json me jaati hai (system ko sikhane ke liye).",
+    "words": [
+      "बजा",
+      "बजी",
+      "बज रहा",
+      "बज रही",
+      "आवाज़",
+      "आवाज",
+      "गूँज",
+      "गूंज",
+      "खनक",
+      "खटक",
+      "टकरा",
+      "टूट",
+      "धड़ाम",
+      "धम",
+      "चीख",
+      "चिल्ला",
+      "सीटी",
+      "भिनभिना",
+      "गुनगुना",
+      "फुसफुसा",
+      "शोर",
+      "awaaz",
+      "baja",
+      "goonj",
+      "dhadaam",
+      "seeti"
+    ]
+  },
+  "_note_prefer": "'prefer': [..] = in me se koi event usi line me ho to yeh wala nahi bajega (ek hi cheez ki do awaazein nahi)."
+}

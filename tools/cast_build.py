@@ -18,7 +18,13 @@ from scipy import signal as ss
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "tools"))
 SR = 24000
-CACHE = Path("/scratch/work/cast_cache"); CACHE.mkdir(parents=True, exist_ok=True)
+import os
+import astra_paths as _AP                                            # noqa: E402
+WORK = _AP.WORK                                                      # pehle /scratch/work pakka likha tha
+CACHE = WORK / "cast_cache"; CACHE.mkdir(parents=True, exist_ok=True)
+VOICE_DIRS = [Path(p) for p in (os.environ.get("ASTRA_VOICES"),) if p] + [ROOT / "voices", Path("/scratch/work/voices")]
+LENGTH_SCALE = 1.21   # pehle 1.32 + galat 24k likhai (9% tez) — ab sahi SR, raftaar wahi
+CACHE_VER = "v2-sr"
 
 # kirdaar -> (pitch, tempo, tilt_db, saans, vibrato)
 # ASLI sur par banao (bada shift = patli/robotic "bhrrr" awaaz)
@@ -39,8 +45,54 @@ def _ff():
     return ffbin.ensure() or "ffmpeg"
 
 
+_RB = None
+
+
+def _has_rubberband():
+    """ffmpeg me rubberband filter hai ya nahi (Windows ke bundled ffmpeg me aksar NAHI hota)."""
+    global _RB
+    if _RB is None:
+        try:
+            r = subprocess.run([_ff(), "-hide_banner", "-filters"], capture_output=True, text=True)
+            _RB = "rubberband" in r.stdout
+        except Exception:
+            _RB = False
+        if not _RB:
+            print("[cast_build] ffmpeg me rubberband nahi — Praat se sur badlega (formant bacha rahega)", file=sys.stderr)
+    return _RB
+
+
+def _praat_shift(x, sr, pitch, tempo):
+    """rubberband na ho to: Praat 'Change gender' — sur * pitch, formant same (1.0), lambai / tempo."""
+    import parselmouth
+    from parselmouth.praat import call
+    snd = parselmouth.Sound(x.astype(np.float64), sampling_frequency=sr)
+    pt = call(snd, "To Pitch", 0.0, 75, 600)
+    med = call(pt, "Get quantile", 0, 0, 0.5, "Hertz")
+    if not med or med != med:
+        med = 150.0
+    out = call(snd, "Change gender", 75, 600, 1.0, med * pitch, 1.0, 1.0 / max(0.5, tempo))
+    return np.asarray(out.values[0], dtype=np.float64)
+
+
+def _resample(x, sr_in, sr_out):
+    if sr_in == sr_out:
+        return x
+    from math import gcd
+    g = gcd(int(sr_in), int(sr_out))
+    return ss.resample_poly(x, sr_out // g, sr_in // g)
+
+
 def _rubber(x, sr, pitch, tempo, form="preserved"):
     """rubberband: sur + raftaar, lambai control, formant preserved (smooth)."""
+    if abs(pitch - 1) < 1e-4 and abs(tempo - 1) < 1e-4:
+        return x
+    if not _has_rubberband():
+        try:
+            return _praat_shift(x, sr, pitch, tempo)
+        except Exception as e:
+            print(f"[cast_build] sur badal nahi paya ({e}) — awaaz bina badlav", file=sys.stderr)
+            return x
     import tempfile
     td = Path(tempfile.mkdtemp()); i0, o0 = td / "i.wav", td / "o.wav"
     sf.write(str(i0), x.astype("float32"), sr)
@@ -80,6 +132,21 @@ def _life(x, sr, breath, vib):
 _PV = {}
 
 
+def _find_voice(model_name):
+    """voices/ me model dhoondho; na mile to khud download karo (ek baar, ~60 MB)."""
+    for d in VOICE_DIRS:
+        if (d / model_name).exists() and (d / (model_name + ".json")).exists():
+            return d / model_name
+    dest = ROOT / "voices"; dest.mkdir(exist_ok=True)
+    print(f"[cast_build] {model_name} nahi mila — download kar raha hoon ({dest}) ...", file=sys.stderr)
+    subprocess.run([sys.executable, "-m", "piper.download_voices", "--download-dir", str(dest),
+                    model_name.replace(".onnx", "")])
+    if (dest / model_name).exists() and (dest / (model_name + ".json")).exists():
+        return dest / model_name
+    raise SystemExit(f"Awaaz model nahi mila: {model_name}\n"
+                     f"Haath se: python -m piper.download_voices --download-dir voices {model_name.replace('.onnx', '')}")
+
+
 def _piper_line(text, dst, model_name):
     """piper se line — asli sur par (koi bada shift nahi)."""
     import wave
@@ -87,23 +154,53 @@ def _piper_line(text, dst, model_name):
     from piper.config import SynthesisConfig
     v = _PV.get(model_name)
     if v is None:
-        mp = Path("/scratch/work/voices") / model_name
+        mp = _find_voice(model_name)
         v = PiperVoice.load(str(mp), config_path=str(mp) + ".json")
         _PV[model_name] = v
     with wave.open(str(dst), "wb") as w:
-        v.synthesize_wav(text, w, syn_config=SynthesisConfig(length_scale=1.32))
+        v.synthesize_wav(text, w, syn_config=SynthesisConfig(length_scale=LENGTH_SCALE))
     return dst.exists()
 
 
-def line_audio(who, text):
+_WARNED = set()
+_WARNED_F5 = set()
+
+
+def line_audio(who, text, extra=None):
+    """extra = bhaav/doori ke liye halka badlav: {"pitch": x, "tempo": y} (CAST par guna hota hai)."""
     import hashlib
-    key = hashlib.sha1(f"cast|{who}|{text}".encode()).hexdigest()[:16]
+    if who not in CAST and who not in _WARNED:
+        _WARNED.add(who)
+        print(f"[cast_build] '{who}' CAST me nahi — saadhaaran female awaaz di. tools/cast_build.py CAST me jodo.", file=sys.stderr)
+    cfg = dict(CAST.get(who, dict(engine="piper-f", pitch=1.0, tempo=1.0, tilt=0.0, breath=0.012, vib=0.15)))
+    if extra:
+        if cfg.get("engine") == "indicf5" and extra.get("bhaav"):
+            cfg["bhaav"] = ",".join(extra["bhaav"])          # asli awaaz: bhaav recording se aata hai, sur-badlav se nahi
+        else:
+            cfg["pitch"] = cfg["pitch"] * extra.get("pitch", 1.0)
+            cfg["tempo"] = cfg["tempo"] * extra.get("tempo", 1.0)
+    # settings bhi key me — pehle CAST badalne par purani (galat) awaaz cache se aa jaati thi
+    key = hashlib.sha1(f"cast|{CACHE_VER}|{who}|{text}|{sorted(cfg.items())}".encode()).hexdigest()[:16]
     dst = CACHE / f"{key}.wav"
     if dst.exists() and dst.stat().st_size > 2000:
         return dst
-    cfg = CAST.get(who, dict(engine="piper-f", pitch=1.0, tempo=1.0, tilt=0.0, breath=0.012, vib=0.15))
     raw = CACHE / f"{key}_raw.wav"
     eng = cfg.get("engine", "piper-f")
+    if eng == "indicf5":                                   # awaaz_bank: aapki apni recording se clone
+        try:
+            import awaaz_bank as AB
+            ref, rtxt, _ = AB.reference_for(cfg.get("bank", who), [b for b in cfg.get("bhaav", "").split(",") if b])
+            AB.engine().say(text, ref, rtxt, raw)
+        except Exception as e:
+            fb = "piper-m" if cfg.get("ling") in ("purush", "budha") else "piper-f"
+            if who not in _WARNED_F5:
+                _WARNED_F5.add(who)
+                print(f"[cast_build] IndicF5 nahi chala ({e}) — '{who}' ke liye abhi {fb}", file=sys.stderr)
+            eng = fb
+            cfg.update(pitch=1.0, tempo=1.0)
+            dst = CACHE / f"{key}_piper.wav"           # alag naam: IndicF5 chalne par asli awaaz bane, ye nahi
+            if dst.exists() and dst.stat().st_size > 2000:
+                return dst
     if eng.startswith("piper"):
         _piper_line(text, raw, "hi_IN-priyamvada-medium.onnx" if eng.endswith("f") else "hi_IN-pratham-medium.onnx")
     else:
@@ -112,6 +209,7 @@ def line_audio(who, text):
     if not raw.exists():
         raise RuntimeError(f"tts fail {who}")
     y, sr = sf.read(str(raw)); y = y.mean(1) if y.ndim > 1 else y
+    y = _resample(y.astype(np.float64), sr, SR); sr = SR      # piper 22050 -> 24000 (pehle bina badle likha jaata tha)
     y = _rubber(y.astype(np.float64), sr, cfg["pitch"], cfg["tempo"], cfg.get("form", "preserved"))
     y = _tilt(y, sr, cfg["tilt"])
     y = _life(y, sr, cfg["breath"], cfg["vib"])
@@ -148,12 +246,16 @@ def _legato(y, sr, ms=55):
     return y * gain
 
 
+_BREATH_N = 0
+
+
 def _breath(sr, dur=0.22, level=0.012):
     """Saans lene ki halki awaaz (chupp ki jagah) — insaan jaisa."""
     n = int(dur * sr)
-    rng = np.random.default_rng(11)
+    global _BREATH_N
+    _BREATH_N += 1
+    rng = np.random.default_rng(11 + _BREATH_N)     # har saans thodi alag (pehle har baar ek jaisi)
     nz = rng.normal(0, 1, n)
-    from scipy import signal as ss
     sos = ss.butter(4, [400 / (sr / 2), 3000 / (sr / 2)], btype="band", output="sos")
     nz = ss.sosfilt(sos, nz)
     env = np.hanning(n) ** 1.5
@@ -163,6 +265,8 @@ def _breath(sr, dur=0.22, level=0.012):
 def build(script: Path, out: Path, gap=0.12, scene_gap=0.34):
     lines = []
     for l in script.read_text(encoding="utf-8").splitlines():
+        if l.strip().startswith(("#", "[", "(", "{")):
+            continue                                   # comment / dṛśya / awaaz cue — awaaz nahi
         if ":" in l:
             w, t = l.split(":", 1)
             if t.strip():

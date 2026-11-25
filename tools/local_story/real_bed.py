@@ -9,9 +9,14 @@ from __future__ import annotations
 import subprocess, wave
 from pathlib import Path
 import numpy as np
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent.parent)); import astra_paths as _AP
 
-LIB = Path("/scratch/input")
-CACHE = Path("/scratch/work/bedcache")
+LIB = _AP.INPUT
+CACHE = (_AP.WORK / "bedcache")
 
 # shabd -> file me dhoondhne wale patterns (pehla match jeetta hai)
 PATTERNS = {

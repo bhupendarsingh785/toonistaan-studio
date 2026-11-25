@@ -24,6 +24,11 @@ import sys
 from pathlib import Path
 
 import numpy as np
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -95,7 +100,7 @@ def stats(x, sr=SR):
 
 def learn(limit=40):
     files = []
-    for d in (Path("/scratch/work/voice_harvest"), Path("/scratch/input")):
+    for d in ((_AP.WORK / "voice_harvest"), _AP.INPUT):
         if not d.exists():
             continue
         for p in sorted(d.glob("*")):

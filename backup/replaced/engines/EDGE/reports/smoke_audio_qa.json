@@ -1,0 +1,30 @@
+{
+  "schema": "astra-audio-quality-report/v1",
+  "file": "/mnt/data/ASTRA-Hindi-Story-Demo.mp3",
+  "decoder": "ffmpeg",
+  "duration_seconds": 42.076,
+  "sample_rate": 48000,
+  "channels": 2,
+  "sample_peak_dbfs": -2.7,
+  "estimated_true_peak_dbtp": -2.68,
+  "integrated_rms_dbfs": -20.76,
+  "dc_offset_dbfs_by_channel": [
+    -65.44,
+    -65.17
+  ],
+  "near_silence_percent": 4.94,
+  "near_full_scale_sample_count": 0,
+  "channel_rms_dbfs": [
+    -20.73,
+    -20.79
+  ],
+  "stereo_correlation": 0.9821,
+  "warnings": [],
+  "status": "PASS",
+  "limitations": [
+    "True peak is a chunked 4x oversampled estimate, not a certified BS.1770 measurement.",
+    "No perceptual listening test or speech intelligibility test is performed.",
+    "Silence may be intentional; review warnings in story context."
+  ],
+  "source_modified": false
+}

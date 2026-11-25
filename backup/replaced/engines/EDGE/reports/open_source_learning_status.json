@@ -1,0 +1,11 @@
+{
+  "schema": "open-source-learning-status/v1",
+  "engine": "edge",
+  "state": "queued_background",
+  "sources_collected": 0,
+  "sources_failed": 0,
+  "latest_record": null,
+  "review_state": "PENDING_REVIEW",
+  "runtime_dependency": false,
+  "message": "Detached documentation worker starting; Browser Agent does not wait."
+}

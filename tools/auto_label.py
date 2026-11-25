@@ -20,12 +20,17 @@ import sys
 from pathlib import Path
 
 import numpy as np
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 K = ROOT / "knowledge"
-INP = Path("/scratch/input")
-EXTRA = Path("/scratch/work/library_extra")
+INP = _AP.INPUT
+EXTRA = (_AP.WORK / "library_extra")
 OUT = K / "labels-audited.jsonl"
 SR = 16000
 

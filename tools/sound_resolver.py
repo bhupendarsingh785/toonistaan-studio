@@ -16,9 +16,15 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import os
 from pathlib import Path
 
 import numpy as np
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -26,7 +32,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT / "tools" / "world"))
 
 K = ROOT / "knowledge"
-INP = Path("/scratch/input")
+INP = _AP.INPUT
 LOG = K / "sound-resolver-log.jsonl"
 
 # poora jeev/jantu/pakshi/keeda/vanspati/prakriti — data file se (108 entry)
@@ -75,7 +81,7 @@ def _tag_for(kind: str) -> list[str]:
 
 def from_library(patterns: list[str], kind: str, k: int = 3):
     """Asli recording — pehle naam se, phir content tag se."""
-    extra = Path("/scratch/work/library_extra")     # web se laayi hui awaazein yahan jama hoti hain
+    extra = (_AP.WORK / "library_extra")     # web se laayi hui awaazein yahan jama hoti hain
     src = list(INP.glob("*")) + (list(extra.glob("*")) if extra.exists() else [])
     files = [p for p in src if p.suffix.lower() in (".mp3", ".wav", ".ogg", ".ogx", ".oga")]
     hits = [p for p in files if any(x in p.name.lower() for x in patterns)]
@@ -158,13 +164,13 @@ def from_web(query: str, tag: str):
         import fetch_real_audio as F
         eng = ""
         try:
-            eng = LEXICON.get(word, ("", [], None, ""))[3].split()[0].lower()
+            eng = LEXICON.get(query, ("", [], None, ""))[3].split()[0].lower()   # pehle 'word' (bana hi nahi tha) -> LEXICON kabhi use nahi hota tha
         except Exception:
             eng = query.split()[0].lower()
         rows = F.fetch(query, 1, tag, must_have=[eng] if eng else None)
         if rows:
             src = Path(rows[0]["file"])
-            dest_dir = Path("/scratch/work/library_extra"); dest_dir.mkdir(parents=True, exist_ok=True)
+            dest_dir = Path(os.environ.get("ASTRA_WORK") or (Path(__file__).resolve().parent.parent / ".work")) / "library_extra"; dest_dir.mkdir(parents=True, exist_ok=True)
             dest = dest_dir / src.name
             if not dest.exists():
                 import shutil

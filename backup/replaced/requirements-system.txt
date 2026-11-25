@@ -1,0 +1,11 @@
+# ASTRA/Seetal system ke liye — sandbox me yahi chahiye (test kiya hua)
+numpy
+soundfile
+imageio-ffmpeg
+miniaudio
+faster-whisper
+scipy
+librosa
+piper-tts
+praat-parselmouth
+gradio

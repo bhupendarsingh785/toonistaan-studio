@@ -1,0 +1,42 @@
+{
+ "_note": "TEST-ONLY nakli kamzori. Asli kaam me faster-whisper.",
+ "rules": [
+  {
+   "pattern": "ज़",
+   "heard": "ज",
+   "why": "precomposed ज़ ka nukta G2P nahi padhta"
+  },
+  {
+   "pattern": "ढ़",
+   "heard": "ड",
+   "why": "precomposed ढ़ -> ड"
+  },
+  {
+   "pattern": "ख(?=ा)",
+   "heard": "क",
+   "min_speed": 1.0,
+   "why": "tez bolne me 'खा' ki saans gayab"
+  },
+  {
+   "pattern": "ी(?=\\s|$|[।,!?])",
+   "heard": "ि",
+   "min_speed": 1.0,
+   "why": "tez bolne me aakhri 'ी' chhoti"
+  },
+  {
+   "pattern": "क्ष",
+   "heard": "छ",
+   "why": "क्ष -> छ"
+  },
+  {
+   "pattern": "क्श",
+   "heard": "क्ष",
+   "why": "क्श bola = क्ष suna (sahi)"
+  },
+  {
+   "pattern": "ष",
+   "heard": "श",
+   "why": "ष aur श me fark nahi kar pata (koi respelling kaam nahi aayegi)"
+  }
+ ]
+}

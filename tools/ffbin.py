@@ -16,7 +16,7 @@ import stat
 import sys
 from pathlib import Path
 
-SHIM_DIR = Path(os.environ.get("ASTRA_BIN_DIR") or "/scratch/work/bin")
+SHIM_DIR = Path(os.environ.get("ASTRA_BIN_DIR") or (Path(__file__).resolve().parent.parent / ".work" / "bin"))
 _done = False
 
 
@@ -56,7 +56,7 @@ def ensure(verbose: bool = False) -> str | None:
     """ffmpeg ka raasta taiyar karo aur PATH me daal do. Ek hi baar chalta hai."""
     global _done
     if _done:
-        return shutil.which("ffmpeg")
+        return shutil.which("ffmpeg") or _bundled()
     _done = True
     ff = shutil.which("ffmpeg") or _bundled()
     if ff and not shutil.which("ffmpeg"):
@@ -70,7 +70,7 @@ def ensure(verbose: bool = False) -> str | None:
         cand = Path(str(ff)).with_name("ffprobe") if ff else None
         if cand and cand.exists():
             _make_shim("ffprobe", str(cand))
-    got = shutil.which("ffmpeg")
+    got = shutil.which("ffmpeg") or ff        # Windows: shim (sh script) nahi chalta -> seedha bundled raasta
     if verbose:
         print("ffmpeg:", got or "NAHI MILA", file=sys.stderr)
     return got

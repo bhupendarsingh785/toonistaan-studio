@@ -30,6 +30,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 import numpy as np
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 HERE = Path(__file__).resolve().parent
 if str(HERE) not in sys.path:
@@ -428,7 +433,7 @@ def _render_in_parts(lines, out: Path, text: str, est: float, part_sec: float = 
     # pakka dir: dobara chalane par jahan chhoot gaya wahan se aage (resume)
     import hashlib
     h = hashlib.sha1((text + str(out) + str(part_sec)).encode("utf-8")).hexdigest()[:12]
-    tmpd = Path("/scratch/work/astra_parts") / h
+    tmpd = (_AP.WORK / "astra_parts") / h
     tmpd.mkdir(parents=True, exist_ok=True)
     made = []
     for i, pl in enumerate(parts, 1):
@@ -656,7 +661,7 @@ def run(script_path: str, out_dir: str) -> int:
         env = _stage(h, "mausam_env", g("mausam_env"), env, wspans, kb, total, events, cues, rng) or env
         _libroot = HERE.parent / "library"
         if not _libroot.exists():
-            _libroot = Path("/scratch/input")          # Swag ki 2000+ recordings
+            _libroot = _AP.INPUT          # Swag ki 2000+ recordings
         lib = get_fn("world.duniya", "Library")(str(_libroot))
         synth_chala = []
         _find = lib.find

@@ -7,6 +7,11 @@ import re
 import subprocess
 from pathlib import Path
 import numpy as np
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent.parent)); import astra_paths as _AP
 
 SR = 22050
 SCENES = {
@@ -24,7 +29,7 @@ PATS = {
     "room": ["room-tone", "room-ambience"],
     "wood": ["wood", "wooden"],
 }
-LIB = Path("/scratch/input")
+LIB = _AP.INPUT
 
 
 def _ff():
@@ -118,7 +123,7 @@ def find(kind, k=3):
     return out[:k]
 
 
-LOOP_DIR = Path("/scratch/work/loops")
+LOOP_DIR = (_AP.WORK / "loops")
 # library me na mile to ye loop KHUD banao
 KIND_LOOP = {
     "river": "river", "water": "river", "rain": "rain", "wind": "wind",

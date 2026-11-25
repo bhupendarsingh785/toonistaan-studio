@@ -8,3 +8,5 @@ imageio-ffmpeg
 piper-tts
 onnxruntime
 python-docx
+# optional (pronounce_test / kaan.py ke liye): faster-whisper
+# optional: awaaz bank ka form -> gradio ; asli clone (IndicF5) -> indicf5_fix_v1/INSTALL_HI.md

@@ -1,0 +1,416 @@
+#!/usr/bin/env python3
+"""voice_clone_lite.py — bina GPU, bina bhaari model: apni awaaz ki nakal (profile match).
+
+Kaam (asli, naap ke saath):
+  1) **enroll**  — 5-15s recording se profile: sur (F0), awaaz ka rang (24 band envelope),
+                   raftaar, chamak. Ijazat (consent) lazmi.
+  2) **speak**   — piper se line banao (profile ke gender/umar se), phir **convert**:
+                   sur ko target par le jao + spectral envelope target se milao.
+  3) **naap**    — F0 kitna kareeb aaya, rang (spectral cosine) kitna mila.
+
+XTTS/indicf5 jaisa "asli" cloning nahi (wo GPU maangta hai) — par yahi 1.43GB sandbox me
+chalta hai, aur naap se batata hai kitna kareeb aaya.
+
+  python tools/voice_clone_lite.py enroll --name dadi --audio x.wav --consent
+  python tools/voice_clone_lite.py speak --name dadi --text "नमस्ते, मैं दादी हूँ।" --out a.wav
+  python tools/voice_clone_lite.py test
+"""
+from __future__ import annotations
+import argparse
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+import numpy as np
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "tools"))
+K = ROOT / "knowledge"
+PROF = K / "voice-profiles"
+SR = 24000          # piper ka sample rate
+BANDS = 24
+
+
+# ---------- audio ----------
+def load(path, sr=SR, sec=20.0):
+    import ffbin
+    ff = ffbin.ensure() or "ffmpeg"
+    raw = subprocess.run([ff, "-v", "quiet", "-t", str(sec), "-i", str(path),
+                          "-f", "f32le", "-ac", "1", "-ar", str(sr), "-"], capture_output=True).stdout
+    if len(raw) < sr // 2:
+        return None
+    x = np.frombuffer(raw, dtype=np.float32).astype(np.float64)
+    return x / (np.max(np.abs(x)) + 1e-9)
+
+
+def f0_track(x, sr=SR, win=0.04, hop=0.02):
+    w, h = int(win * sr), int(hop * sr)
+    out = []
+    for i in range(0, len(x) - w, h):
+        seg = x[i:i + w]
+        if np.sqrt((seg ** 2).mean()) < 0.01:
+            continue
+        ac = np.correlate(seg, seg, "full")[len(seg) - 1:]
+        lo, hi = int(sr / 500), min(int(sr / 60), len(ac) - 1)
+        if hi <= lo:
+            continue
+        lag = np.argmax(ac[lo:hi]) + lo
+        out.append(sr / (lag + 1e-9))
+    return np.array(out) if out else np.array([0.0])
+
+
+def envelope(x, sr=SR, n_fft=1024, voiced_only=True):
+    """Awaaz ka rang: 24 band ka average magnitude (log).
+
+    voiced_only: sirf bolne wale frames (chup/shwaas rang ko ganda na kare).
+    """
+    if len(x) < n_fft * 2:
+        return np.zeros(BANDS)
+    fr = np.lib.stride_tricks.sliding_window_view(x, n_fft)[:: n_fft // 2]
+    if voiced_only:
+        e = np.sqrt((fr ** 2).mean(1))
+        keep = e > 0.25 * (np.percentile(e, 95) + 1e-9)
+        if keep.sum() >= 4:
+            fr = fr[keep]
+    X = np.abs(np.fft.rfft(fr * np.hanning(n_fft), axis=1)) + 1e-9
+    f = np.fft.rfftfreq(n_fft, 1 / sr)
+    edges = np.geomspace(60, min(10000, sr / 2 - 200), BANDS + 1)
+    out = []
+    for i in range(BANDS):
+        m = (f >= edges[i]) & (f < edges[i + 1])
+        out.append(float(np.log(X[:, m].mean() + 1e-9)) if m.any() else -20.0)
+    return np.array(out)
+
+
+def hnr_db(x, sr=SR):
+    """Harmonic-to-noise: awaaz kitni saaf (kharaash) hai."""
+    n = 1024
+    if len(x) < n * 2:
+        return 0.0
+    fr = np.lib.stride_tricks.sliding_window_view(x, n)[:: n // 2]
+    X = np.abs(np.fft.rfft(fr * np.hanning(n), axis=1)) + 1e-12
+    f = np.fft.rfftfreq(n, 1 / sr)
+    harm = X[:, (f > 80) & (f < 4000)]
+    tot = X.sum(1)
+    h = harm.sum(1)
+    ratio = float(np.median(h / (tot + 1e-12)))
+    return float(np.clip(20 * np.log10(ratio + 1e-6) + 10, -5, 25))
+
+
+def mcd(a, b, sr=SR):
+    """Mel-cepstral distortion (kam = zyada milta-julta rang)."""
+    def mcep(x):
+        n = 1024
+        if len(x) < n * 2:
+            return np.zeros(13)
+        fr = np.lib.stride_tricks.sliding_window_view(x, n)[:: n // 2]
+        X = np.abs(np.fft.rfft(fr * np.hanning(n), axis=1)) + 1e-9
+        f = np.fft.rfftfreq(n, 1 / sr)
+        edges = np.geomspace(60, min(10000, sr / 2 - 200), 25)
+        mel = []
+        for i in range(24):
+            m = (f >= edges[i]) & (f < edges[i + 1])
+            mel.append(np.log(X[:, m].mean(1) + 1e-9) if m.any() else np.zeros(len(X)))
+        M = np.stack(mel, 1)
+        return np.abs(np.fft.rfft(M, axis=1))[:, :13].mean(0)
+    A, B = mcep(a), mcep(b)
+    return float(np.sqrt(((A - B) ** 2).mean()))
+
+
+def profile_of(x, sr=SR):
+    f0 = f0_track(x, sr)
+    voiced = f0[(f0 > 60) & (f0 < 500)]
+    env = envelope(x, sr)
+    # raftaar: bolne ke hisse ka % (rough)
+    n = int(0.02 * sr)
+    e = np.array([np.sqrt((x[i:i + n] ** 2).mean()) for i in range(0, len(x) - n, n)])
+    active = float((e > 0.15 * (e.max() + 1e-9)).mean()) if len(e) else 0.0
+    return {
+        "hnr_db": round(hnr_db(x, sr), 1),
+        "f0_median": float(np.median(voiced)) if len(voiced) else 0.0,
+        "f0_low": float(np.percentile(voiced, 15)) if len(voiced) else 0.0,
+        "f0_high": float(np.percentile(voiced, 85)) if len(voiced) else 0.0,
+        "env": [round(float(v), 2) for v in env],
+        "active": round(active, 3),
+    }
+
+
+# ---------- conversion ----------
+def _pitch_shift_fast(x, factor, sr=SR):
+    """Sur badlo, lambai same — pure numpy (SOLA). ffmpeg se ~20x tez.
+
+    1) resample se sur badla (lambai bhi badal jaati hai)
+    2) SOLA overlap-add se lambai wapas (sur wahi rehta hai)
+    """
+    from scipy.signal import resample_poly
+    from math import gcd
+    x = np.asarray(x, dtype=np.float64)
+    if abs(factor - 1.0) < 0.01:
+        return x
+    up, down = 100, int(round(factor * 100))
+    g = gcd(up, down)
+    y = resample_poly(x, up // g, down // g)          # sur upar/neeche
+    target_len = len(x)
+    if len(y) < 64 or target_len < 64:
+        return np.pad(y, (0, max(0, target_len - len(y))))[:target_len]
+    win, hop = 1024, 256
+    stretch = target_len / len(y)                     # lambai ka guna
+    out = np.zeros(target_len + win)
+    wsum = np.zeros(target_len + win)
+    hann = np.hanning(win)
+    pos_in, pos_out = 0, 0
+    while pos_out < target_len and pos_in + win < len(y):
+        seg = y[pos_in:pos_in + win]
+        out[pos_out:pos_out + win] += seg * hann
+        wsum[pos_out:pos_out + win] += hann
+        pos_in += int(round(hop / max(1e-6, stretch)))
+        pos_out += hop
+    y2 = out[:target_len] / np.maximum(wsum[:target_len], 1e-3)
+    return y2
+
+
+def _pitch_shift(x, factor, sr=SR):
+    """Sur badlo, LAMBAI wahi rahe (rubberband se — asli, bina fast-forward).
+
+    Pehle resample_poly se karte the: wo awaaz ko chhota karke wapas pad karta tha,
+    isliye "fast forward / bacche jaisi tez" sunai deta tha. Ab ffmpeg rubberband:
+    sur badalta hai, bolne ki raftaar nahi.
+    """
+    if abs(factor - 1.0) < 0.01:
+        return np.asarray(x, dtype=np.float64)
+    import subprocess
+    import tempfile
+    try:
+        import ffbin
+        ff = ffbin.ensure() or "ffmpeg"
+    except Exception:
+        ff = "ffmpeg"
+    x = np.asarray(x, dtype=np.float64)
+    with tempfile.TemporaryDirectory() as td:
+        src = Path(td) / "in.wav"
+        dst = Path(td) / "out.wav"
+        import soundfile as sf
+        sf.write(str(src), x.astype("float32"), sr)
+        r = subprocess.run([ff, "-v", "error", "-y", "-i", str(src),
+                            "-af", f"rubberband=pitch={factor:.4f}",
+                            "-ar", str(sr), str(dst)], capture_output=True, text=True)
+        if dst.exists() and dst.stat().st_size > 1000:
+            y, _ = sf.read(str(dst))
+            y = y.mean(1) if y.ndim > 1 else y
+            y = np.asarray(y, dtype=np.float64)
+            # lambai bilkul wahi
+            if len(y) > len(x):
+                y = y[: len(x)]
+            elif len(y) < len(x):
+                y = np.pad(y, (0, len(x) - len(y)))
+            return y
+    # fallback: asetrate + atempo (lambai bachta hai)
+    with tempfile.TemporaryDirectory() as td:
+        src = Path(td) / "in.wav"; dst = Path(td) / "out.wav"
+        import soundfile as sf
+        sf.write(str(src), x.astype("float32"), sr)
+        tempo = max(0.5, min(2.0, 1.0 / factor))
+        subprocess.run([ff, "-v", "error", "-y", "-i", str(src),
+                        "-af", f"asetrate={sr*factor:.2f},aresample={sr},atempo={tempo:.4f}",
+                        "-ar", str(sr), str(dst)], capture_output=True, text=True)
+        if dst.exists():
+            y, _ = sf.read(str(dst))
+            y = y.mean(1) if y.ndim > 1 else y
+            y = np.asarray(y, dtype=np.float64)
+            if len(y) > len(x):
+                y = y[: len(x)]
+            elif len(y) < len(x):
+                y = np.pad(y, (0, len(x) - len(y)))
+            return y
+    return x
+
+
+def _match_envelope(x, target_env, sr=SR, n_fft=1024):
+    """Spectral envelope ko target se milao (band-wise gain) — awaaz ka rang badalta hai."""
+    cur = envelope(x, sr, n_fft)
+    gain_db = np.clip(np.array(target_env) - cur, -18.0, 18.0)
+    fr = np.lib.stride_tricks.sliding_window_view(x, n_fft)[:: n_fft // 2]
+    win = np.hanning(n_fft)
+    f = np.fft.rfftfreq(n_fft, 1 / sr)
+    edges = np.geomspace(60, min(10000, sr / 2 - 200), BANDS + 1)
+    g = np.ones(len(f))
+    for i in range(BANDS):
+        m = (f >= edges[i]) & (f < edges[i + 1])
+        g[m] = 10 ** (gain_db[i] / 20.0)
+    out = np.zeros(len(x) + n_fft)
+    wsum = np.zeros(len(x) + n_fft)
+    hop = n_fft // 2
+    for i in range(len(fr)):
+        seg = np.fft.irfft(np.fft.rfft(fr[i] * win) * g, n=n_fft) * win
+        out[i * hop:i * hop + n_fft] += seg
+        wsum[i * hop:i * hop + n_fft] += win ** 2
+    out = out[:len(x)] / np.maximum(wsum[:len(x)], 1e-6)
+    return out
+
+
+def profile_quality(prof) -> tuple[bool, str]:
+    """Reference theek hai ya nahi — cloning se pehle saaf batao (jhooth nahi)."""
+    f0 = prof.get("f0_median", 0)
+    if f0 <= 0:
+        return False, "sur mila hi nahi (awaaz nahi hai?)"
+    if f0 > 420:
+        return False, f"sur bahut upar ({f0:.0f} Hz) — cheekh/rona cloning ke liye theek nahi"
+    if f0 < 65:
+        return False, f"sur bahut neeche ({f0:.0f} Hz) — awaaz saaf nahi"
+    if prof.get("active", 0) < 0.25:
+        return False, "bolne ka hissa bahut kam (recording me zyada chup)"
+    if prof.get("hnr_db", 0) < 2:
+        return False, "awaaz me kharaash/shor zyada — saaf recording chahiye"
+    return True, "theek"
+
+
+def convert(x, prof, sr=SR):
+    """Awaaz ko profile ki taraf le jao: sur + rang."""
+    target_f0 = prof.get("f0_median") or 0.0
+    cur = profile_of(x, sr)
+    factor = 1.0
+    if target_f0 > 60 and cur["f0_median"] > 60:
+        factor = float(np.clip(target_f0 / cur["f0_median"], 0.5, 1.8))
+    y = _pitch_shift(x, factor, sr)
+    # doosra daur: naap kar bacha hua fark theek karo (ek hi baar me poora nahi milta)
+    for _ in range(2):
+        now = profile_of(y, sr)["f0_median"]
+        if now < 60 or target_f0 < 60:
+            break
+        need = target_f0 / now
+        if abs(need - 1.0) < 0.03:
+            break
+        y = _pitch_shift(y, float(np.clip(need, 0.6, 1.6)), sr)
+    y = _match_envelope(y, prof["env"], sr)
+
+    # 3) kharaash (HNR) match: target ki awaaz me jitni hawa/kharaash hai utni daalo
+    tgt_hnr = prof.get("hnr_db")
+    if tgt_hnr is not None:
+        cur_hnr = hnr_db(y, sr)
+        diff = float(np.clip(tgt_hnr - cur_hnr, -12, 12))
+        if abs(diff) > 1.5:
+            rng = np.random.default_rng(5)
+            noise = rng.normal(0, 1, len(y))
+            # noise ko awaaz ke envelope ke hisaab se halka karo (chup jagah chup)
+            n_win = int(0.02 * sr)
+            env = np.array([np.sqrt((y[i:i + n_win] ** 2).mean()) for i in range(0, len(y) - n_win, n_win)])
+            env = np.interp(np.arange(len(y)), np.arange(0, len(y) - n_win, n_win), env)
+            noise = noise * (env / (env.max() + 1e-9))
+            amp = 10 ** (diff / 20.0) * 0.05
+            y = y + noise * amp
+            y = y / (np.max(np.abs(y)) + 1e-9) * 0.95
+
+    # (raftaar badalne ke liye resample theek nahi — wo sur bhi badal deta hai; abhi chhod diya)
+
+    # aakhri sur correction (envelope/HNR ke baad halka drift aa jaata hai)
+    if target_f0 > 60:
+        now2 = profile_of(y, sr)["f0_median"]
+        if now2 > 60:
+            need = target_f0 / now2
+            if abs(need - 1.0) > 0.04:
+                y = _pitch_shift(y, float(np.clip(need, 0.7, 1.4)), sr)
+    y = y / (np.max(np.abs(y)) + 1e-9) * 0.95
+    after = profile_of(y, sr)
+    return y, {"pitch_factor": round(factor, 3),
+               "f0_before": round(cur["f0_median"], 1), "f0_target": round(target_f0, 1),
+               "f0_after": round(after["f0_median"], 1),
+               "hnr_target": tgt_hnr, "hnr_after": after.get("hnr_db")}
+
+
+# ---------- speak ----------
+def _piper_line(text, out: Path, gender="f"):
+    from piper import PiperVoice
+    from piper.config import SynthesisConfig
+    import wave
+    model = Path("/scratch/work/voices") / ("hi_IN-priyamvada-medium.onnx" if gender == "f" else "hi_IN-pratham-medium.onnx")
+    if not model.exists():
+        return False
+    v = PiperVoice.load(str(model), config_path=str(model) + ".json")
+    with wave.open(str(out), "wb") as w:
+        v.synthesize_wav(text, w, syn_config=SynthesisConfig(length_scale=1.0, noise_scale=0.667, noise_w_scale=0.8))
+    return out.exists() and out.stat().st_size > 2000
+
+
+def enroll(name: str, audio: str, consent: bool) -> dict:
+    if not consent:
+        raise PermissionError("ijazat (consent) ke bina enroll nahi hota")
+    x = load(audio)
+    if x is None:
+        raise ValueError("audio padhi nahi ja saki")
+    prof = profile_of(x)
+    ok, why = profile_quality(prof)
+    prof["quality_ok"] = ok
+    prof["quality_note"] = why
+    prof["name"] = name
+    prof["consent"] = True
+    PROF.mkdir(parents=True, exist_ok=True)
+    (PROF / f"{name}.json").write_text(json.dumps(prof, ensure_ascii=False, indent=1), encoding="utf-8")
+    return prof
+
+
+def speak(name: str, text: str, out: Path, gender="f") -> dict:
+    p = PROF / f"{name}.json"
+    if not p.exists():
+        raise FileNotFoundError(f"profile nahi: {name} (pehle enroll karo)")
+    prof = json.loads(p.read_text(encoding="utf-8"))
+    tmp = out.with_suffix(".raw.wav")
+    if not _piper_line(text, tmp, gender):
+        raise RuntimeError("piper se line nahi bani")
+    x = load(tmp)
+    y, info = convert(x, prof)
+    import soundfile as sf
+    sf.write(str(out), y.astype(np.float32), SR)
+    after = profile_of(y)
+    return {**info, "f0_after": round(after["f0_median"], 1),
+            "env_cos": round(float(np.dot(np.array(prof["env"]), np.array(after["env"])) /
+                                   ((np.linalg.norm(prof["env"]) * np.linalg.norm(after["env"])) + 1e-9)), 3)}
+
+
+def test() -> int:
+    """Apne aap jaanch: ek asli awaaz se profile, phir usi awaaz me line banao."""
+    # asli awaaz: library se (purane render par depend nahi)
+    src = None
+    for pat in ("man-talking", "speech", "voice"):
+        got = sorted(Path("/scratch/input").glob(f"*{pat}*"))
+        if got:
+            src = got[0]; break
+    if src is None:
+        print("test ke liye awaaz nahi mili"); return 1
+    print("test awaaz:", src.name[:50])
+    prof = enroll("test_voice", str(src), consent=True)
+    print("profile: f0", round(prof["f0_median"], 1), "Hz | active", prof["active"])
+    out = Path("/scratch/work/clone_test.wav")
+    r = speak("test_voice", "नमस्ते, यह आवाज़ की जाँच है।", out)
+    print("convert:", r)
+    return 0
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("cmd", choices=["enroll", "speak", "test", "profiles"])
+    ap.add_argument("--name", default="")
+    ap.add_argument("--audio", default="")
+    ap.add_argument("--text", default="")
+    ap.add_argument("--out", default="/scratch/work/clone-out.wav")
+    ap.add_argument("--consent", action="store_true")
+    a = ap.parse_args()
+    if a.cmd == "test":
+        return test()
+    if a.cmd == "profiles":
+        for p in sorted(PROF.glob("*.json")):
+            d = json.loads(p.read_text(encoding="utf-8"))
+            print(f"{d['name']}: f0 {round(d['f0_median'],1)} Hz")
+        return 0
+    if a.cmd == "enroll":
+        prof = enroll(a.name, a.audio, a.consent)
+        print(json.dumps({k: v for k, v in prof.items() if k != "env"}, ensure_ascii=False, indent=1))
+        return 0
+    r = speak(a.name, a.text or "नमस्ते।", Path(a.out))
+    print(json.dumps(r, ensure_ascii=False, indent=1))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

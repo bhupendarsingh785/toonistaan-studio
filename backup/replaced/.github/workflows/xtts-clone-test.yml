@@ -1,0 +1,60 @@
+name: xtts-clone-test
+
+on:
+  push:
+    paths:
+      - ".xtts-trigger"
+  workflow_dispatch:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: deps
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -q --index-url https://download.pytorch.org/whl/cpu torch torchaudio
+          pip install -q "coqui-tts" soundfile numpy 2>&1 | tail -3
+      - name: clone + render (XTTS v2)
+        env:
+          COQUI_TOS_AGREED: "1"
+        run: |
+          python - <<'PY' 2>&1 | tee xtts_log.txt
+          import glob, os, traceback
+          refs = sorted(glob.glob("indicf5/user_refs/*ref8s.wav"))
+          print("references:", refs, flush=True)
+          if not refs:
+              raise SystemExit("koi reference nahi mila")
+          ref = refs[0]
+          lines = [
+              ("neutral", "बेटा, आ जा पास। खाना ठंडा हो रहा है।"),
+              ("dukh",    "मुझे आज बहुत तकलीफ़ हो रही है, बेटा।"),
+              ("khushi",  "देखो ना, आज बगीचे में कितनी सुंदर तितली आई है!"),
+          ]
+          try:
+              from TTS.api import TTS
+              print("loading xtts_v2 (cpu)…", flush=True)
+              tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to("cpu")
+              print("MODEL_LOADED", flush=True)
+              os.makedirs("xtts_out", exist_ok=True)
+              for i, (emo, text) in enumerate(lines, 1):
+                  out = f"xtts_out/{i:02d}_{emo}.wav"
+                  tts.tts_to_file(text=text, speaker_wav=ref, language="hi", file_path=out)
+                  print("RENDER_OK", out, os.path.getsize(out), flush=True)
+          except Exception as e:
+              print("RENDER_FAIL", type(e).__name__, str(e)[:300], flush=True)
+              traceback.print_exc()
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: xtts-clone
+          path: |
+            xtts_out/*
+            xtts_log.txt
+          retention-days: 7

@@ -14,6 +14,11 @@ Chalao:
 from __future__ import annotations
 import argparse, json, re, subprocess, sys, wave
 from pathlib import Path
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent.parent)); import astra_paths as _AP
 
 HERE = Path(__file__).resolve().parent
 KN = HERE.parent.parent / "knowledge"
@@ -63,7 +68,7 @@ def _model():
     global _MODEL
     if _MODEL is None:
         from faster_whisper import WhisperModel
-        _MODEL = WhisperModel("small", device="cpu", compute_type="int8", download_root="/scratch/work/models")
+        _MODEL = WhisperModel("small", device="cpu", compute_type="int8", download_root=str(_AP.WORK / "models"))
     return _MODEL
 
 
@@ -71,7 +76,7 @@ def _say(text: str, voice: str, out: Path, ls: float = 1.0) -> bool:
     try:
         from piper import PiperVoice
         from piper.config import SynthesisConfig
-        p = Path(f"/scratch/work/voices/hi_IN-{voice}-medium.onnx")
+        p = Path(f"{_AP.VOICES}/hi_IN-{voice}-medium.onnx")
         v = PiperVoice.load(str(p), config_path=str(p) + ".json")
         with wave.open(str(out), "wb") as w:
             v.synthesize_wav(text, w, syn_config=SynthesisConfig(length_scale=ls, noise_scale=0.62, noise_w_scale=0.75))
@@ -100,7 +105,7 @@ def best(text: str, voice: str = "rohan", tries_limit: int = 4, model=None, keep
     import tempfile
     m = model or _model()
     results = []
-    tmpd = Path(tempfile.mkdtemp(dir="/scratch/work"))
+    tmpd = Path(tempfile.mkdtemp(dir=str(_AP.WORK)))
     for name, txt in variants(text)[:tries_limit]:
         p = tmpd / f"{name}.wav"
         if not _say(txt, voice, p):

@@ -1,0 +1,63 @@
+{
+  "model": "ai4bharat/IndicF5",
+  "sample_rate": 24000,
+  "characters": {
+    "narrator": {
+      "description": "Narrator voice; use a licensed/consented reference recording.",
+      "references": {
+        "neutral": {
+          "audio": "references/narrator_neutral.wav",
+          "text": "यहाँ reference audio में बोले गए ठीक वही हिंदी शब्द लिखें।"
+        },
+        "sad": {
+          "audio": "references/narrator_sad.wav",
+          "text": "यहाँ दुखी reference audio का बिल्कुल सही transcript लिखें।"
+        },
+        "happy": {
+          "audio": "references/narrator_happy.wav",
+          "text": "यहाँ खुश reference audio का बिल्कुल सही transcript लिखें।"
+        }
+      },
+      "pronunciation_overrides": {}
+    },
+    "arav": {
+      "description": "Young male character; record a distinct reference voice with permission.",
+      "references": {
+        "neutral": {
+          "audio": "references/arav_neutral.wav",
+          "text": "यहाँ आरव के neutral sample का exact transcript लिखें।"
+        },
+        "fear": {
+          "audio": "references/arav_fear.wav",
+          "text": "यहाँ आरव के डर वाले sample का exact transcript लिखें।"
+        }
+      }
+    },
+    "mother": {
+      "description": "Adult female character; distinct reference recording.",
+      "references": {
+        "neutral": {
+          "audio": "references/mother_neutral.wav",
+          "text": "यहाँ माँ के sample का exact transcript लिखें।"
+        },
+        "pain": {
+          "audio": "references/mother_pain.wav",
+          "text": "यहाँ पीड़ा वाले sample का exact transcript लिखें।"
+        }
+      }
+    },
+    "grandmother": {
+      "description": "Elderly female character; distinct reference recording.",
+      "references": {
+        "neutral": {
+          "audio": "references/grandmother_neutral.wav",
+          "text": "यहाँ दादी के sample का exact transcript लिखें।"
+        },
+        "sad": {
+          "audio": "references/grandmother_sad.wav",
+          "text": "यहाँ दादी के दुख वाले sample का exact transcript लिखें।"
+        }
+      }
+    }
+  }
+}

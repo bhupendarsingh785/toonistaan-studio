@@ -1,0 +1,23 @@
+{
+ "compare": {
+  "naam-tag model": {
+   "classes": 6,
+   "acc": 0.376,
+   "windows": 985
+  },
+  "sun-kar label model": {
+   "classes": 4,
+   "acc": 0.615,
+   "windows": 302
+  }
+ },
+ "audited_rows": 247,
+ "audited_labels": {
+  "harkat": 92,
+  "insaan": 21,
+  "prakriti": 103,
+  "janwar": 6,
+  "music": 1
+ },
+ "note": "labels acoustic saboot (ASR + modulation + harmonic + onsets) se bane hain, isliye accuracy thodi inflated ho sakti hai — asli test haath se sune hue labels par hoga"
+}

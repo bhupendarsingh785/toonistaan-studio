@@ -17,6 +17,11 @@ from __future__ import annotations
 import argparse, json, math, subprocess, sys
 from pathlib import Path
 import numpy as np
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 KN = Path(__file__).resolve().parent.parent / "knowledge"
 LOG = KN / "improve-log.jsonl"
@@ -421,7 +426,7 @@ def apply_learned(fix):
 def selftest():
     """Apne aap ko jaancho: naap sahi aate hain?"""
     ok = []
-    p = Path("/scratch/work/ref_china.wav")
+    p = (_AP.WORK / "ref_china.wav")
     if p.exists():
         m = deep(p)
         ok.append(("ref naap", m["f0_med"] > 80 and m["dur_s"] > 5))
@@ -450,7 +455,7 @@ def main():
     if a.cmd == "model":
         print(json.dumps(train_model(), ensure_ascii=False, indent=1)); return
     if a.cmd == "profile":
-        refs = a.audio or [str(x) for x in sorted(Path("/scratch/input").glob("*.mp3"))[:6]]
+        refs = a.audio or [str(x) for x in sorted(_AP.INPUT.glob("*.mp3"))[:6]]
         print(json.dumps(build_target(refs, str(KN / "target-profile.json")), ensure_ascii=False, indent=1)); return
     ref = deep(a.ref) if a.ref else None
     if ref: print("REF:", json.dumps(ref, ensure_ascii=False))

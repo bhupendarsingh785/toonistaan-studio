@@ -1,0 +1,355 @@
+{
+ "title": "जंगल, नदी और आखिरी सफर",
+ "lines": [
+  {
+   "who": "narrator",
+   "bhaav": "neutral",
+   "text": "सुबह के लगभग छह बजे थे। गांव के छोटे-छोटे घरों की छतों से धुआं उठ रहा था।",
+   "sfx": [
+    {
+     "at": -0.3,
+     "file": "ambience/bird_chirp_3.mp3",
+     "gain": -20,
+     "dur": 3.0
+    }
+   ]
+  },
+  {
+   "who": "narrator",
+   "bhaav": "pyaar",
+   "text": "गांव के आखिरी छोर पर एक पुराना मकान था। नीम के पेड़ के नीचे बेंच पर अस्सी साल के रामदास बाबा अखबार पढ़ रहे थे।",
+   "sfx": [
+    {
+     "at": 0.6,
+     "file": "ambience/birds_forest_1.mp3",
+     "gain": -26,
+     "dur": 4.0
+    },
+    {
+     "at": 2.2,
+     "file": "footsteps/bvk_footsteps_1.mp3",
+     "gain": -24,
+     "dur": 1.5
+    }
+   ]
+  },
+  {
+   "who": "maa",
+   "bhaav": "pyaar",
+   "text": "बाबा, आपकी चाय।",
+   "sfx": [
+    {
+     "at": -0.2,
+     "file": "water/kettle_cup.mp3",
+     "gain": -18,
+     "dur": 2.0
+    }
+   ]
+  },
+  {
+   "who": "dada",
+   "bhaav": "khushi",
+   "text": "अरे बेटी, आज इतनी सुबह उठ गई?",
+   "sfx": [
+    {
+     "at": 0.3,
+     "file": "ambience/bird_chirp_3.mp3",
+     "gain": -24,
+     "dur": 2.0
+    }
+   ]
+  },
+  {
+   "who": "maa",
+   "bhaav": "neutral",
+   "text": "क्या करूं बाबा, आज गुड़िया को शहर जाना है। उसकी ट्रेन छूट गई तो फिर मुश्किल होगी।",
+   "sfx": [
+    {
+     "at": 0.8,
+     "file": "footsteps/bvk_footsteps_2.mp3",
+     "gain": -26,
+     "dur": 1.5
+    }
+   ]
+  },
+  {
+   "who": "gudiya",
+   "bhaav": "khushi",
+   "text": "मां! मेरी नीली जैकेट कहां है?",
+   "sfx": []
+  },
+  {
+   "who": "sonu",
+   "bhaav": "pyaar",
+   "text": "दीदी, मेरे लिए शहर से खिलौना लाना।",
+   "sfx": []
+  },
+  {
+   "who": "gudiya",
+   "bhaav": "khushi",
+   "text": "पहले स्कूल जाना सीख ले, फिर खिलौना मिलेगा।",
+   "sfx": []
+  },
+  {
+   "who": "dadi",
+   "bhaav": "pyaar",
+   "text": "बेटी, शहर जाकर अपना ध्यान रखना। किसी अनजान आदमी पर जल्दी भरोसा मत करना।",
+   "sfx": [
+    {
+     "at": 0.9,
+     "file": "footsteps/bvk_footsteps_3.mp3",
+     "gain": -25,
+     "dur": 1.5
+    }
+   ]
+  },
+  {
+   "who": "gudiya",
+   "bhaav": "pyaar",
+   "text": "दादी, आप चिंता मत करना। मैं जल्दी वापस आ जाऊंगी।",
+   "sfx": []
+  },
+  {
+   "who": "narrator",
+   "bhaav": "dar",
+   "text": "रात के करीब ग्यारह बजे गुड़िया के फोन पर गांव से फोन आया।",
+   "sfx": [
+    {
+     "at": 0.2,
+     "file": "transport/train_platform_ambience_1.mp3",
+     "gain": -27,
+     "dur": 3.0
+    }
+   ]
+  },
+  {
+   "who": "sonu",
+   "bhaav": "dar",
+   "text": "दीदी! जल्दी घर आ जाओ! दादी घर पर नहीं हैं। सुबह से नहीं मिलीं।",
+   "sfx": [
+    {
+     "at": -0.4,
+     "file": "ambience/city_night_crickets.mp3",
+     "gain": -27,
+     "dur": 3.0
+    }
+   ]
+  },
+  {
+   "who": "gudiya",
+   "bhaav": "dar",
+   "text": "क्या? मैं अगली ट्रेन से आ रही हूँ।",
+   "sfx": []
+  },
+  {
+   "who": "dada",
+   "bhaav": "dukh",
+   "text": "कल शाम वह जंगल की तरफ गई थीं। उसके बाद वापस नहीं आईं।",
+   "sfx": []
+  },
+  {
+   "who": "narrator",
+   "bhaav": "dar",
+   "text": "जंगल में ऊंचे पेड़ों के बीच से सूरज की रोशनी आ रही थी। सूखे पत्ते पैरों के नीचे चरमरा रहे थे।",
+   "sfx": [
+    {
+     "at": -0.3,
+     "file": "footsteps/feet_leaves.mp3",
+     "gain": -19,
+     "dur": 2.0
+    },
+    {
+     "at": 1.4,
+     "file": "ambience/birds_forest_1.mp3",
+     "gain": -28,
+     "dur": 3.0
+    }
+   ]
+  },
+  {
+   "who": "gudiya",
+   "bhaav": "dar",
+   "text": "दादी! दादी, कहाँ हैं आप?",
+   "sfx": [
+    {
+     "at": 0.4,
+     "file": "footsteps/steps_soil.mp3",
+     "gain": -18,
+     "dur": 1.6
+    }
+   ]
+  },
+  {
+   "who": "narrator",
+   "bhaav": "dar",
+   "text": "तभी झाड़ियों के पीछे से गुर्राने की आवाज आई। एक बड़ा भेड़िया बाहर निकला। उसके मुंह में कपड़े का टुकड़ा था — दादी की साड़ी जैसा।",
+   "sfx": [
+    {
+     "at": -0.5,
+     "file": "horror/monster_lurk.mp3",
+     "gain": -15,
+     "dur": 2.2
+    },
+    {
+     "at": 1.2,
+     "file": "animals/dingo_howl.mp3",
+     "gain": -16,
+     "dur": 3.0
+    },
+    {
+     "at": 2.4,
+     "file": "footsteps/feet_leaves.mp3",
+     "gain": -19,
+     "dur": 1.6
+    }
+   ]
+  },
+  {
+   "who": "gudiya",
+   "bhaav": "hairan",
+   "text": "पापा! देखिए! यह तो दादी की साड़ी का हिस्सा है!",
+   "sfx": [
+    {
+     "at": 0.2,
+     "file": "footsteps/feet_leaves.mp3",
+     "gain": -22,
+     "dur": 1.2
+    }
+   ]
+  },
+  {
+   "who": "dada",
+   "bhaav": "dar",
+   "text": "बेटी, संभलकर!",
+   "sfx": []
+  },
+  {
+   "who": "narrator",
+   "bhaav": "dar",
+   "text": "भेड़िया कुछ दूर जाकर रुका, फिर पीछे मुड़कर देखने लगा। गुड़िया हिम्मत करके उसके पीछे चल पड़ी।",
+   "sfx": [
+    {
+     "at": 0.1,
+     "file": "footsteps/feet_leaves.mp3",
+     "gain": -20,
+     "dur": 2.0
+    }
+   ]
+  },
+  {
+   "who": "narrator",
+   "bhaav": "hairan",
+   "text": "जंगल के भीतर पुरानी पत्थर की इमारत मिली। ऊपर के कमरे में दादी एक पुराने बिस्तर पर लेटी थीं।",
+   "sfx": [
+    {
+     "at": 0.3,
+     "file": "door/bvk_door_1.mp3",
+     "gain": -16,
+     "dur": 1.4
+    },
+    {
+     "at": 2.0,
+     "file": "footsteps/ladder_wood.mp3",
+     "gain": -20,
+     "dur": 2.0
+    }
+   ]
+  },
+  {
+   "who": "gudiya",
+   "bhaav": "dukh",
+   "text": "दादी! आप यहां कैसे पहुंच गईं?",
+   "sfx": []
+  },
+  {
+   "who": "dadi",
+   "bhaav": "pyaar",
+   "text": "जंगल में मेरा पैर फिसल गया था। तभी यह भेड़िया आया। इसने मुझे नुकसान नहीं पहुंचाया, रात भर मेरे पास बैठा रहा।",
+   "sfx": [
+    {
+     "at": 0.2,
+     "file": "animals/dogs_howl.mp3",
+     "gain": -26,
+     "dur": 3.0
+    }
+   ]
+  },
+  {
+   "who": "dadi",
+   "bhaav": "khushi",
+   "text": "यह वही भेड़िया है, जिसकी जान तुम्हारे दादाजी ने कई साल पहले बचाई थी।",
+   "sfx": [
+    {
+     "at": 0.5,
+     "file": "ambience/weather_rain_thunder_storm.mp3",
+     "gain": -18,
+     "dur": 3.0
+    }
+   ]
+  },
+  {
+   "who": "narrator",
+   "bhaav": "dar",
+   "text": "लौटते समय आसमान में बादल घिर आए। अचानक बारिश शुरू हो गई, और दूर जंगल में बिजली चमकी।",
+   "sfx": [
+    {
+     "at": 0.3,
+     "file": "ambience/rain_gentle_1.mp3",
+     "gain": -24,
+     "dur": 4.0
+    }
+   ]
+  },
+  {
+   "who": "gudiya",
+   "bhaav": "pyaar",
+   "text": "धन्यवाद, शेरू!",
+   "sfx": []
+  },
+  {
+   "who": "sonu",
+   "bhaav": "khushi",
+   "text": "दादी आ गईं! दादी आ गईं!",
+   "sfx": [
+    {
+     "at": 0.4,
+     "file": "ambience/bird_chirp_3.mp3",
+     "gain": -26,
+     "dur": 2.0
+    }
+   ]
+  },
+  {
+   "who": "dadi",
+   "bhaav": "pyaar",
+   "text": "बेटी, जिंदगी में रास्ते बहुत मिलेंगे। कभी खुशी मिलेगी, कभी डर लगेगा। लेकिन मुश्किल समय में एक-दूसरे का हाथ कभी मत छोड़ना।",
+   "sfx": []
+  },
+  {
+   "who": "narrator",
+   "bhaav": "pyaar",
+   "text": "उस रात पूरे गांव में शांति थी। नदी बह रही थी, पेड़ सांस ले रहे थे, और जंगल अपने रहस्यों को अपने भीतर समेटे हुए था।",
+   "sfx": [
+    {
+     "at": 0.2,
+     "file": "water/flowing_river.mp3",
+     "gain": -26,
+     "dur": 4.0
+    },
+    {
+     "at": 1.5,
+     "file": "animals/dogs_howl.mp3",
+     "gain": -28,
+     "dur": 3.0
+    }
+   ]
+  }
+ ],
+ "bed": [
+  {
+   "file": "ambience/birds_forest_1.mp3",
+   "gain": -25
+  }
+ ],
+ "events": []
+}

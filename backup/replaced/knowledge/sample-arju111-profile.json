@@ -1,0 +1,55 @@
+{
+ "ok": true,
+ "file": "/scratch/input/arju111.mp3",
+ "dur": 19.99,
+ "rms_dbfs": -26.4,
+ "peak": 0.26,
+ "silence_pct": 23.1,
+ "pauses": {
+  "count": 8,
+  "mean_s": 0.57,
+  "max_s": 0.85
+ },
+ "pitch": {
+  "median_hz": 119,
+  "std_hz": 11.3,
+  "p10": 111,
+  "p90": 135,
+  "range_hz": 24,
+  "jitter": 0.0281
+ },
+ "voice": {
+  "gender_guess": "male",
+  "age_guess": "budha/budhi"
+ },
+ "expressiveness": {
+  "f0_std": 11.3,
+  "energy_variation": 0.754
+ },
+ "background": {
+  "noise_floor_dbfs": -50.8,
+  "spectral_flatness": 0.1558,
+  "bed_likely": false,
+  "onsets": 29,
+  "stereo_width": 0.223
+ },
+ "compare": {
+  "closest_cast": "narrator",
+  "distance_hz": 0,
+  "advice": "band ke andar hai — theek"
+ },
+ "advice": {
+  "closest": "narrator",
+  "target_band": [
+   90,
+   125
+  ],
+  "pitch_change_hz": 0,
+  "pitch_param_delta": 0.0,
+  "action": "sur band me hai — jaisa hai waisa rakho",
+  "expressiveness": "flat hai — temperature/emotion badhao (Sarvam temp +0.1)",
+  "pause_style": "bahut rukta hai — pace badhao",
+  "background_note": "saaf recording, background halka",
+  "gain_note": "awaaz dheemi hai — -6 dB se zyada boost karna padega"
+ }
+}

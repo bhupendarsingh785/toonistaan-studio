@@ -1,0 +1,95 @@
+# Claude API bina kisi stored key ke — GitHub OIDC (Workload Identity Federation)
+# Zaroori: repo Settings → Secrets me ye 4 values (IDs) daalo:
+#   ANTHROPIC_FEDERATION_RULE_ID  (fdrl_...)
+#   ANTHROPIC_ORGANIZATION_ID     (UUID)
+#   ANTHROPIC_SERVICE_ACCOUNT_ID  (svac_...)
+#   ANTHROPIC_WORKSPACE_ID        (wrkspc_...)
+name: claude-oidc-test
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  call-claude:
+    runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_FEDERATION_RULE_ID: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID }}
+      ANTHROPIC_ORGANIZATION_ID: ${{ vars.ANTHROPIC_ORGANIZATION_ID }}
+      ANTHROPIC_SERVICE_ACCOUNT_ID: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
+      ANTHROPIC_WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
+      ANTHROPIC_IDENTITY_TOKEN_FILE: /tmp/gha-jwt
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Diagnostics (kaunsi value sahi hai)
+        run: |
+          python3 - <<'EOF'
+          import os, re
+          checks = {
+            "ANTHROPIC_FEDERATION_RULE_ID": (r"^fdrl_[A-Za-z0-9]+$", "fdrl_"),
+            "ANTHROPIC_ORGANIZATION_ID": (r"^[0-9a-fA-F-]{36}$", "UUID"),
+            "ANTHROPIC_SERVICE_ACCOUNT_ID": (r"^svac_[A-Za-z0-9]+$", "svac_ (optional)"),
+            "ANTHROPIC_WORKSPACE_ID": (r"^wrkspc_[A-Za-z0-9]+$", "wrkspc_ (optional)"),
+          }
+          for k, (pat, want) in checks.items():
+              v = os.environ.get(k, "")
+              if not v:
+                  print(f"{k}: EMPTY (chahiye: {want})"); continue
+              ok = bool(re.match(pat, v))
+              print(f"{k}: len={len(v)} start={v[:6]!r} end={v[-4:]!r} valid={ok} (chahiye: {want})")
+          EOF
+
+      - name: GitHub OIDC token lo
+        run: |
+          curl -sS -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://api.anthropic.com" \
+            | jq -r .value > "$ANTHROPIC_IDENTITY_TOKEN_FILE"
+          echo "JWT bytes: $(wc -c < $ANTHROPIC_IDENTITY_TOKEN_FILE)"
+
+      - name: Anthropic access token (exchange)
+        run: |
+          python3 - <<'EOF'
+          import json, os, urllib.request, sys
+          body = {
+            "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
+            "assertion": open(os.environ["ANTHROPIC_IDENTITY_TOKEN_FILE"]).read().strip(),
+            "federation_rule_id": os.environ["ANTHROPIC_FEDERATION_RULE_ID"],
+            "organization_id": os.environ["ANTHROPIC_ORGANIZATION_ID"],
+          }
+          # optional fields — sirf tab bhejo jab value ho
+          for env, key in (("ANTHROPIC_SERVICE_ACCOUNT_ID", "service_account_id"),
+                           ("ANTHROPIC_WORKSPACE_ID", "workspace_id")):
+              v = os.environ.get(env, "").strip()
+              if v:
+                  body[key] = v
+          # workspace_id sirf tab bhejo jab asli wrkspc_ ID ho (single-workspace rule me optional)
+          missing = [k for k in ("federation_rule_id", "organization_id") if not body[k]]
+          if missing:
+              print("MISSING:", missing); sys.exit(1)
+          req = urllib.request.Request("https://api.anthropic.com/v1/oauth/token",
+              data=json.dumps(body).encode(), headers={"content-type": "application/json"})
+          try:
+              r = json.load(urllib.request.urlopen(req))
+          except urllib.error.HTTPError as e:
+              print("HTTP", e.code, e.read().decode()[:500]); sys.exit(1)
+          tok = r.get("access_token")
+          if not tok:
+              print("NO TOKEN:", json.dumps(r)[:300]); sys.exit(1)
+          with open(os.environ["GITHUB_ENV"], "a") as f:
+              f.write(f"ANTHROPIC_ACCESS_TOKEN={tok}\n")
+          print("token OK, expires_in", r.get("expires_in"))
+          EOF
+
+      - name: Claude se ek chhota test
+        run: |
+          curl -sS https://api.anthropic.com/v1/messages \
+            -H "x-api-key: $ANTHROPIC_ACCESS_TOKEN" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "content-type: application/json" \
+            -d '{"model":"claude-sonnet-4-5","max_tokens":64,"messages":[{"role":"user","content":"Reply in Hindi: namaste, ek line me bolo ki tum kaun ho."}]}' \
+            | jq -r '.content[0].text // .error.message'

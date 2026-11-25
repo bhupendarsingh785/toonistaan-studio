@@ -17,10 +17,15 @@ import sys
 from pathlib import Path
 
 import numpy as np
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
-INP = Path("/scratch/input")
+INP = _AP.INPUT
 K = ROOT / "knowledge"
 SR = 22050
 
@@ -145,7 +150,7 @@ def features(x, sr=SR):
 
 def build(limit=220):
     kw = keywords()
-    extra = Path("/scratch/work/creature_extra")
+    extra = (_AP.WORK / "creature_extra")
     src = list(INP.glob("*")) + (list(extra.glob("*")) if extra.exists() else [])
     files = [p for p in sorted(src)
              if p.suffix.lower() in (".mp3", ".wav", ".ogg", ".ogx", ".flac")

@@ -1,0 +1,1180 @@
+{
+ "total": 108,
+ "routes": {
+  "library": 86,
+  "kuch_nahi": 18,
+  "synth": 4
+ },
+ "by_group": {
+  "pashu": {
+   "library": 32,
+   "kuch_nahi": 5
+  },
+  "pakshi": {
+   "library": 21,
+   "kuch_nahi": 3
+  },
+  "keeda": {
+   "library": 8,
+   "kuch_nahi": 6
+  },
+  "jalchar": {
+   "library": 2,
+   "kuch_nahi": 3
+  },
+  "vanspati": {
+   "library": 11,
+   "synth": 2,
+   "kuch_nahi": 1
+  },
+  "prakriti": {
+   "library": 12,
+   "synth": 2
+  }
+ },
+ "rows": [
+  {
+   "word": "शेर",
+   "group": "pashu",
+   "english": [
+    "lion",
+    "tiger",
+    "roar"
+   ],
+   "route": "library",
+   "path": "mrmark81-stadium-roar-concert-for-hire-message-me-471943.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "बाघ",
+   "group": "pashu",
+   "english": [
+    "tiger",
+    "roar"
+   ],
+   "route": "library",
+   "path": "mrmark81-stadium-roar-concert-for-hire-message-me-471943.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "हाथी",
+   "group": "pashu",
+   "english": [
+    "elephant"
+   ],
+   "route": "library",
+   "path": "elephant-asian-elephant-sfxjar.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "भालू",
+   "group": "pashu",
+   "english": [
+    "bear",
+    "growl"
+   ],
+   "route": "library",
+   "path": "elephant-growl-another-version.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "बंदर",
+   "group": "pashu",
+   "english": [
+    "monkey",
+    "chimp"
+   ],
+   "route": "library",
+   "path": "freesound_community-jungle-night-geko-or-monkey-call-creepy-32670.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "लंगूर",
+   "group": "pashu",
+   "english": [
+    "langur",
+    "monkey"
+   ],
+   "route": "library",
+   "path": "freesound_community-jungle-night-geko-or-monkey-call-creepy-32670.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "हिरण",
+   "group": "pashu",
+   "english": [
+    "deer",
+    "stag"
+   ],
+   "route": "library",
+   "path": "हरण_Fallow_Deer_Dama_dama_W1CDR0001444_BD17.ogg",
+   "why": "naam se mili"
+  },
+  {
+   "word": "चीता",
+   "group": "pashu",
+   "english": [
+    "cheetah",
+    "leopard"
+   ],
+   "route": "library",
+   "path": "dffdv-tiger-lion-werewolf-and-leopard-sounds-195878.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "तेंदुआ",
+   "group": "pashu",
+   "english": [
+    "leopard",
+    "panther"
+   ],
+   "route": "library",
+   "path": "dffdv-tiger-lion-werewolf-and-leopard-sounds-195878.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "लोमड़ी",
+   "group": "pashu",
+   "english": [
+    "fox"
+   ],
+   "route": "library",
+   "path": "slimeyfox-faith-loop-528296.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "भेड़िया",
+   "group": "pashu",
+   "english": [
+    "wolf",
+    "howl"
+   ],
+   "route": "library",
+   "path": "dragon-studio-a-lone-wolf-cries-359871-2.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "गीदड़",
+   "group": "pashu",
+   "english": [
+    "jackal",
+    "coyote"
+   ],
+   "route": "library",
+   "path": "Jackal.ogg.ogx",
+   "why": "naam se mili"
+  },
+  {
+   "word": "कुत्ता",
+   "group": "pashu",
+   "english": [
+    "dog-bark",
+    "barking"
+   ],
+   "route": "library",
+   "path": "dragon-studio-dog-barking-406629.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "बिल्ली",
+   "group": "pashu",
+   "english": [
+    "cat-meow",
+    "meow"
+   ],
+   "route": "library",
+   "path": "meowmusic-rajasthani-shyam-bhajan-desert-folk-algoza-dholak-khartal-586043.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "गाय",
+   "group": "pashu",
+   "english": [
+    "cow",
+    "cattle"
+   ],
+   "route": "library",
+   "path": "गय_Mudchute_cow_1.ogg",
+   "why": "naam se mili"
+  },
+  {
+   "word": "भैंस",
+   "group": "pashu",
+   "english": [
+    "buffalo"
+   ],
+   "route": "library",
+   "path": "buffalo-rests-soft-snuffling.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "बैल",
+   "group": "pashu",
+   "english": [
+    "bull",
+    "ox"
+   ],
+   "route": "library",
+   "path": "universfield-boxing-bell-122093.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "बकरी",
+   "group": "pashu",
+   "english": [
+    "goat",
+    "sheep"
+   ],
+   "route": "kuch_nahi",
+   "path": "",
+   "why": "library + synth + web teeno khali"
+  },
+  {
+   "word": "भेड़",
+   "group": "pashu",
+   "english": [
+    "sheep",
+    "lamb"
+   ],
+   "route": "library",
+   "path": "samuelfjohanns-sacralambient-03-119034.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "घोड़ा",
+   "group": "pashu",
+   "english": [
+    "horse",
+    "neigh"
+   ],
+   "route": "library",
+   "path": "neighbor-cobra-hissing-behind-glass.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "गधा",
+   "group": "pashu",
+   "english": [
+    "donkey",
+    "bray"
+   ],
+   "route": "kuch_nahi",
+   "path": "",
+   "why": "library + synth + web teeno khali"
+  },
+  {
+   "word": "ऊंट",
+   "group": "pashu",
+   "english": [
+    "camel"
+   ],
+   "route": "library",
+   "path": "angry-camel-snaps-at-its-owner.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "सूअर",
+   "group": "pashu",
+   "english": [
+    "boar",
+    "pig"
+   ],
+   "route": "library",
+   "path": "dragon-studio-keyboard-typing-sound-effect-335503.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "चूहा",
+   "group": "pashu",
+   "english": [
+    "mouse",
+    "rat",
+    "squeak"
+   ],
+   "route": "library",
+   "path": "freesound_community-squeaky-metal-door-40393.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "गिलहरी",
+   "group": "pashu",
+   "english": [
+    "squirrel"
+   ],
+   "route": "library",
+   "path": "गलहर_Grey_Squirrel_Sciurus_carolinensis_W1CDR0001470_BD12.ogg",
+   "why": "naam se mili"
+  },
+  {
+   "word": "खरगोश",
+   "group": "pashu",
+   "english": [
+    "rabbit"
+   ],
+   "route": "library",
+   "path": "खरगश_Rabbit_oinks_and_squeaks.wav",
+   "why": "naam se mili"
+  },
+  {
+   "word": "सांप",
+   "group": "pashu",
+   "english": [
+    "snake",
+    "python",
+    "hiss"
+   ],
+   "route": "library",
+   "path": "the-dragon-growls-hisses-releases-flames.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "मगरमच्छ",
+   "group": "pashu",
+   "english": [
+    "crocodile",
+    "alligator"
+   ],
+   "route": "library",
+   "path": "the-hiss-of-an-alligator-a-crocodile.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "कछुआ",
+   "group": "pashu",
+   "english": [
+    "tortoise",
+    "turtle"
+   ],
+   "route": "library",
+   "path": "tortoise-turning-in-water.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "मेंढक",
+   "group": "pashu",
+   "english": [
+    "frog",
+    "croak"
+   ],
+   "route": "library",
+   "path": "freesound_community-026778_frogs-croaking-amp-crickets-at-night-in-jungle-swamp-africa-68329.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "जिराफ",
+   "group": "pashu",
+   "english": [
+    "giraffe"
+   ],
+   "route": "kuch_nahi",
+   "path": "",
+   "why": "library + synth + web teeno khali"
+  },
+  {
+   "word": "ज़ेबरा",
+   "group": "pashu",
+   "english": [
+    "zebra"
+   ],
+   "route": "library",
+   "path": "communication-zebra-in-the-mating-season.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "गैंडा",
+   "group": "pashu",
+   "english": [
+    "rhino"
+   ],
+   "route": "library",
+   "path": "rhinoceros-snorts-and-grunts-nearby.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "कंगारू",
+   "group": "pashu",
+   "english": [
+    "kangaroo"
+   ],
+   "route": "library",
+   "path": "voices-of-a-wild-kangaroo-herd.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "पांडा",
+   "group": "pashu",
+   "english": [
+    "panda"
+   ],
+   "route": "library",
+   "path": "giant-panda-voice-recording-from-chinese-zoo.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "नीलगाय",
+   "group": "pashu",
+   "english": [
+    "nilgai",
+    "antelope"
+   ],
+   "route": "kuch_nahi",
+   "path": "",
+   "why": "library + synth + web teeno khali"
+  },
+  {
+   "word": "सेही",
+   "group": "pashu",
+   "english": [
+    "porcupine"
+   ],
+   "route": "kuch_nahi",
+   "path": "",
+   "why": "library + synth + web teeno khali"
+  },
+  {
+   "word": "कौवा",
+   "group": "pakshi",
+   "english": [
+    "crow",
+    "raven"
+   ],
+   "route": "library",
+   "path": "storegraphic-crowd-cheers-314921.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "कबूतर",
+   "group": "pakshi",
+   "english": [
+    "pigeon",
+    "dove"
+   ],
+   "route": "library",
+   "path": "Spilopelia_chinensis_-_Spotted_Dove_XC497557.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "मैना",
+   "group": "pakshi",
+   "english": [
+    "myna"
+   ],
+   "route": "library",
+   "path": "Acridotheres_tristis_-_Common_Myna_XC509307.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "गौरैया",
+   "group": "pakshi",
+   "english": [
+    "sparrow"
+   ],
+   "route": "library",
+   "path": "Ammodramus_henslowii_-_Henslow_s_Sparrow_XC134157.ogg.ogx",
+   "why": "naam se mili"
+  },
+  {
+   "word": "मोर",
+   "group": "pakshi",
+   "english": [
+    "peacock"
+   ],
+   "route": "library",
+   "path": "Acridotheres_tristis_-_Common_Myna_XC509307.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "मुर्गा",
+   "group": "pakshi",
+   "english": [
+    "rooster"
+   ],
+   "route": "library",
+   "path": "मरग_Medium_rooster_crowing.ogg",
+   "why": "naam se mili"
+  },
+  {
+   "word": "मुर्गी",
+   "group": "pakshi",
+   "english": [
+    "hen",
+    "chicken"
+   ],
+   "route": "library",
+   "path": "BVKER_-_Footsteps_Kitchen_59.wav",
+   "why": "naam se mili"
+  },
+  {
+   "word": "चूजा",
+   "group": "pakshi",
+   "english": [
+    "chick"
+   ],
+   "route": "library",
+   "path": "igorlisul-sloppy-chicken-relaxing-and-fun-guitar-music-496873.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "उल्लू",
+   "group": "pakshi",
+   "english": [
+    "owl"
+   ],
+   "route": "library",
+   "path": "freesound_community-wolf-howl-6310.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "कोयल",
+   "group": "pakshi",
+   "english": [
+    "koel",
+    "cuckoo"
+   ],
+   "route": "library",
+   "path": "Brush_Cuckoo_song_Nov2007.ogg.ogx",
+   "why": "naam se mili"
+  },
+  {
+   "word": "तोता",
+   "group": "pakshi",
+   "english": [
+    "parrot"
+   ],
+   "route": "library",
+   "path": "तत_African_grey_parrot_sound.wav",
+   "why": "naam se mili"
+  },
+  {
+   "word": "बाज",
+   "group": "pakshi",
+   "english": [
+    "hawk",
+    "falcon"
+   ],
+   "route": "library",
+   "path": "Accipiter_cooperii_-_Cooper_s_Hawk_XC483616-2.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "चील",
+   "group": "pakshi",
+   "english": [
+    "kite",
+    "eagle"
+   ],
+   "route": "library",
+   "path": "गरड_Yellowstone_sound_library_-_Bald_Eagle_-_001.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "गरुड़",
+   "group": "pakshi",
+   "english": [
+    "eagle"
+   ],
+   "route": "library",
+   "path": "गरड_Yellowstone_sound_library_-_Bald_Eagle_-_001.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "बत्तख",
+   "group": "pakshi",
+   "english": [
+    "duck"
+   ],
+   "route": "library",
+   "path": "बततख_Domestic_duck_sound_01.wav",
+   "why": "naam se mili"
+  },
+  {
+   "word": "हंस",
+   "group": "pakshi",
+   "english": [
+    "swan"
+   ],
+   "route": "library",
+   "path": "Eolophus_roseicapilla_-_Pink_and_grey_cockatoo_galah_call,_near_the_Swan_River_in_Perth,_Western_Australia.ogg.ogx",
+   "why": "naam se mili"
+  },
+  {
+   "word": "सारस",
+   "group": "pakshi",
+   "english": [
+    "crane",
+    "stork"
+   ],
+   "route": "library",
+   "path": "सरस_Yellowstone_sound_library_-_Sandhill_Crane_-_001.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "बगुला",
+   "group": "pakshi",
+   "english": [
+    "heron",
+    "egret"
+   ],
+   "route": "library",
+   "path": "बगल_Grey_heron_call_recorded_in_January_2023_at_Sangli.wav",
+   "why": "naam se mili"
+  },
+  {
+   "word": "चिड़िया",
+   "group": "pakshi",
+   "english": [
+    "bird",
+    "chirp"
+   ],
+   "route": "library",
+   "path": "Eastern_Whipbird_Psophodes_olivaceus_W_PSOPHODES_OLIVACEUS_R1_C2_.ogg-2.ogx",
+   "why": "naam se mili"
+  },
+  {
+   "word": "तीतर",
+   "group": "pakshi",
+   "english": [
+    "partridge",
+    "quail"
+   ],
+   "route": "library",
+   "path": "Cyrtonyx_montezumae_-_Montezuma_Quail_XC492136.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "कठफोड़वा",
+   "group": "pakshi",
+   "english": [
+    "woodpecker"
+   ],
+   "route": "library",
+   "path": "nematoki-walking-along-gravel-muddy-road-crows-wind-woodpecker-332977.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "गिद्ध",
+   "group": "pakshi",
+   "english": [
+    "vulture"
+   ],
+   "route": "kuch_nahi",
+   "path": "",
+   "why": "library + synth + web teeno khali"
+  },
+  {
+   "word": "पेंगुइन",
+   "group": "pakshi",
+   "english": [
+    "penguin"
+   ],
+   "route": "kuch_nahi",
+   "path": "",
+   "why": "library + synth + web teeno khali"
+  },
+  {
+   "word": "शुतुरमुर्ग",
+   "group": "pakshi",
+   "english": [
+    "ostrich"
+   ],
+   "route": "kuch_nahi",
+   "path": "",
+   "why": "library + synth + web teeno khali"
+  },
+  {
+   "word": "झींगुर",
+   "group": "keeda",
+   "english": [
+    "cricket"
+   ],
+   "route": "library",
+   "path": "fayazahmedsunny-sound-of-crickets-at-night-529705.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "टिड्डा",
+   "group": "keeda",
+   "english": [
+    "grasshopper"
+   ],
+   "route": "library",
+   "path": "populouswildman-night-cricket-grasshopper-balcony-raw-197387-2.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "चींटी",
+   "group": "keeda",
+   "english": [
+    "ant"
+   ],
+   "route": "library",
+   "path": "samuelfjohanns-romantic-keys-153559.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "मच्छर",
+   "group": "keeda",
+   "english": [
+    "mosquito"
+   ],
+   "route": "library",
+   "path": "the-sound-effect-of-mosquitoes-in-flight.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "मक्खी",
+   "group": "keeda",
+   "english": [
+    "fly",
+    "buzz"
+   ],
+   "route": "library",
+   "path": "dingo-barks-briefly-and-falls-silent.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "मधुमक्खी",
+   "group": "keeda",
+   "english": [
+    "bee",
+    "buzz"
+   ],
+   "route": "library",
+   "path": "BVKER_-_Footsteps_Beep_02.wav",
+   "why": "naam se mili"
+  },
+  {
+   "word": "तितली",
+   "group": "keeda",
+   "english": [
+    "butterfly"
+   ],
+   "route": "kuch_nahi",
+   "path": "",
+   "why": "library + synth + web teeno khali"
+  },
+  {
+   "word": "पतंगा",
+   "group": "keeda",
+   "english": [
+    "moth"
+   ],
+   "route": "kuch_nahi",
+   "path": "",
+   "why": "library + synth + web teeno khali"
+  },
+  {
+   "word": "बिच्छू",
+   "group": "keeda",
+   "english": [
+    "scorpion"
+   ],
+   "route": "kuch_nahi",
+   "path": "",
+   "why": "library + synth + web teeno khali"
+  },
+  {
+   "word": "मकड़ी",
+   "group": "keeda",
+   "english": [
+    "spider"
+   ],
+   "route": "kuch_nahi",
+   "path": "",
+   "why": "library + synth + web teeno khali"
+  },
+  {
+   "word": "दीमक",
+   "group": "keeda",
+   "english": [
+    "termite"
+   ],
+   "route": "kuch_nahi",
+   "path": "",
+   "why": "library + synth + web teeno khali"
+  },
+  {
+   "word": "जुगनू",
+   "group": "keeda",
+   "english": [
+    "firefly"
+   ],
+   "route": "kuch_nahi",
+   "path": "",
+   "why": "library + synth + web teeno khali"
+  },
+  {
+   "word": "सिकाडा",
+   "group": "keeda",
+   "english": [
+    "cicada"
+   ],
+   "route": "library",
+   "path": "freesound_community-cicada-insects-8_26_13-8_07-pm-32476.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "कीड़ा",
+   "group": "keeda",
+   "english": [
+    "insect",
+    "bug"
+   ],
+   "route": "library",
+   "path": "tanweraman-crickets-and-bugs-sound-at-night-237996.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "मछली",
+   "group": "jalchar",
+   "english": [
+    "fish",
+    "splash"
+   ],
+   "route": "library",
+   "path": "arunangshubanerjee-kolkata-fish-market-ambience-bustling-sounds-of-vendors-amp-buyers-339954-2.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "डॉल्फिन",
+   "group": "jalchar",
+   "english": [
+    "dolphin"
+   ],
+   "route": "kuch_nahi",
+   "path": "",
+   "why": "library + synth + web teeno khali"
+  },
+  {
+   "word": "व्हेल",
+   "group": "jalchar",
+   "english": [
+    "whale"
+   ],
+   "route": "kuch_nahi",
+   "path": "",
+   "why": "library + synth + web teeno khali"
+  },
+  {
+   "word": "झींगा",
+   "group": "jalchar",
+   "english": [
+    "prawn",
+    "shrimp"
+   ],
+   "route": "kuch_nahi",
+   "path": "",
+   "why": "library + synth + web teeno khali"
+  },
+  {
+   "word": "सील",
+   "group": "jalchar",
+   "english": [
+    "seal"
+   ],
+   "route": "library",
+   "path": "coghezzi-sacred-rune-lock-holy-magic-seal-activation-533277.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "पेड़",
+   "group": "vanspati",
+   "english": [
+    "tree",
+    "forest"
+   ],
+   "route": "library",
+   "path": "36301272-night-forest-soundscape-158701.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "पत्ते",
+   "group": "vanspati",
+   "english": [
+    "leaves",
+    "rustl"
+   ],
+   "route": "library",
+   "path": "tanweraman-leaves-rustling-2-329002-3.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "घास",
+   "group": "vanspati",
+   "english": [
+    "grass",
+    "rustling"
+   ],
+   "route": "library",
+   "path": "populouswildman-night-cricket-grasshopper-balcony-raw-197387-2.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "बांस",
+   "group": "vanspati",
+   "english": [
+    "bamboo"
+   ],
+   "route": "library",
+   "path": "giant-panda-grumbling-over-bamboo-dispute.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "झाड़ी",
+   "group": "vanspati",
+   "english": [
+    "bush",
+    "shrub"
+   ],
+   "route": "library",
+   "path": "dragon-studio-bush-rustling-467467.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "जंगल",
+   "group": "vanspati",
+   "english": [
+    "jungle",
+    "forest"
+   ],
+   "route": "library",
+   "path": "jungle-nadi-safar-v5.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "बरगद",
+   "group": "vanspati",
+   "english": [
+    "banyan",
+    "tree"
+   ],
+   "route": "library",
+   "path": "10_rugstreeppad_individu_Bufo_calamita_individual.wav",
+   "why": "naam se mili"
+  },
+  {
+   "word": "पीपल",
+   "group": "vanspati",
+   "english": [
+    "peepal",
+    "tree"
+   ],
+   "route": "library",
+   "path": "10_rugstreeppad_individu_Bufo_calamita_individual.wav",
+   "why": "naam se mili"
+  },
+  {
+   "word": "नीम",
+   "group": "vanspati",
+   "english": [
+    "neem",
+    "tree"
+   ],
+   "route": "library",
+   "path": "10_rugstreeppad_individu_Bufo_calamita_individual.wav",
+   "why": "naam se mili"
+  },
+  {
+   "word": "आम",
+   "group": "vanspati",
+   "english": [
+    "mango",
+    "tree"
+   ],
+   "route": "library",
+   "path": "10_rugstreeppad_individu_Bufo_calamita_individual.wav",
+   "why": "naam se mili"
+  },
+  {
+   "word": "नारियल",
+   "group": "vanspati",
+   "english": [
+    "coconut",
+    "palm"
+   ],
+   "route": "synth",
+   "path": "",
+   "why": "loop_maker (theek (slope 4.2, centroid 6090 Hz))"
+  },
+  {
+   "word": "कमल",
+   "group": "vanspati",
+   "english": [
+    "lotus",
+    "pond"
+   ],
+   "route": "synth",
+   "path": "",
+   "why": "loop_maker (theek (slope -2.7, centroid 1378 Hz))"
+  },
+  {
+   "word": "बेंत",
+   "group": "vanspati",
+   "english": [
+    "reed"
+   ],
+   "route": "library",
+   "path": "wings_of_freedom-tiger-roar-399277.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "गन्ना",
+   "group": "vanspati",
+   "english": [
+    "sugarcane"
+   ],
+   "route": "kuch_nahi",
+   "path": "",
+   "why": "library + synth + web teeno khali"
+  },
+  {
+   "word": "नदी",
+   "group": "prakriti",
+   "english": [
+    "river",
+    "stream",
+    "flowing-water"
+   ],
+   "route": "library",
+   "path": "driverless_taxi_China_with_Lulu_MP3_160K.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "पानी",
+   "group": "prakriti",
+   "english": [
+    "water"
+   ],
+   "route": "library",
+   "path": "gugunxyz-flowing-water-03-464668-2.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "बारिश",
+   "group": "prakriti",
+   "english": [
+    "rain"
+   ],
+   "route": "library",
+   "path": "echogatestudios-soft-sounds-of-rain-486910-2.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "हवा",
+   "group": "prakriti",
+   "english": [
+    "wind"
+   ],
+   "route": "library",
+   "path": "Hum_Bewafa_Hargiz_Na_They_The_Unwind_Mix_I_Mohammed_Irfan_MP3_160K.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "आंधी",
+   "group": "prakriti",
+   "english": [
+    "storm",
+    "wind"
+   ],
+   "route": "library",
+   "path": "Hum_Bewafa_Hargiz_Na_They_The_Unwind_Mix_I_Mohammed_Irfan_MP3_160K.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "बिजली",
+   "group": "prakriti",
+   "english": [
+    "thunder",
+    "lightning"
+   ],
+   "route": "library",
+   "path": "turning_pages-heavy-thunderstorm-595237-3.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "आग",
+   "group": "prakriti",
+   "english": [
+    "fire",
+    "crackle"
+   ],
+   "route": "library",
+   "path": "BVKER_-_Footsteps_Vinyl_Crackles_10.wav",
+   "why": "naam se mili"
+  },
+  {
+   "word": "समुद्र",
+   "group": "prakriti",
+   "english": [
+    "sea",
+    "waves",
+    "ocean"
+   ],
+   "route": "library",
+   "path": "🚨_China_s_Scary_AI_Research_Papers_Chinese_researchers_are_exploring_how_AI_could_develop_advanced_intelligence_learn_independently_improve_its_own_c.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "झरना",
+   "group": "prakriti",
+   "english": [
+    "waterfall"
+   ],
+   "route": "library",
+   "path": "BVKER_-_Footsteps_Waterfall_03.wav",
+   "why": "naam se mili"
+  },
+  {
+   "word": "तालाब",
+   "group": "prakriti",
+   "english": [
+    "pond",
+    "lake"
+   ],
+   "route": "synth",
+   "path": "",
+   "why": "loop_maker (theek (slope -2.7, centroid 1378 Hz))"
+  },
+  {
+   "word": "पहाड़",
+   "group": "prakriti",
+   "english": [
+    "mountain",
+    "wind"
+   ],
+   "route": "library",
+   "path": "Hum_Bewafa_Hargiz_Na_They_The_Unwind_Mix_I_Mohammed_Irfan_MP3_160K.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "गुफा",
+   "group": "prakriti",
+   "english": [
+    "cave"
+   ],
+   "route": "synth",
+   "path": "",
+   "why": "loop_maker (reference nahi (judge chhoda))"
+  },
+  {
+   "word": "रेत",
+   "group": "prakriti",
+   "english": [
+    "sand"
+   ],
+   "route": "library",
+   "path": "beansandsausages-vinyl-crackle-infinite-groove-01-518684.mp3",
+   "why": "naam se mili"
+  },
+  {
+   "word": "मिट्टी",
+   "group": "prakriti",
+   "english": [
+    "soil"
+   ],
+   "route": "library",
+   "path": "freesound_community-soil-steps-87382.mp3",
+   "why": "naam se mili"
+  }
+ ]
+}

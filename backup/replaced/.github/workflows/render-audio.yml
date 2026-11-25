@@ -1,0 +1,72 @@
+name: Kahani ka audio banao (local engine, GPU/cloud key nahi)
+
+on:
+  workflow_dispatch:
+    inputs:
+      scene:
+        description: "Scene JSON ka path"
+        default: "knowledge/scene_bhediya.json"
+        required: true
+      praat:
+        description: "Praat sur-curve on? (1 = haan)"
+        default: "1"
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q --upgrade pip
+          python -m pip install -q numpy
+
+      - name: Piper binary
+        run: |
+          set -e
+          mkdir -p bin
+          curl -sL -o piper.tgz https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_x86_64.tar.gz
+          tar -xzf piper.tgz
+          mv piper bin/piper
+          chmod +x bin/piper
+          ./bin/piper --help | head -3
+
+      - name: Hindi voices (3)
+        run: |
+          set -e
+          mkdir -p voices
+          base=https://huggingface.co/rhasspy/piper-voices/resolve/main/hi/hi_IN
+          for v in pratham priyamvada rohan; do
+            curl -sL -o "voices/hi_IN-$v-medium.onnx" "$base/$v/medium/hi_IN-$v-medium.onnx"
+            curl -sL -o "voices/hi_IN-$v-medium.onnx.json" "$base/$v/medium/hi_IN-$v-medium.onnx.json"
+          done
+          ls -lh voices
+
+      - name: Render
+        env:
+          ASTRA_VOICE_DIR: ${{ github.workspace }}/voices
+          PATH: ${{ github.workspace }}/bin:${{ env.PATH }}
+        run: |
+          set -e
+          export PATH="$PWD/bin:$PATH"
+          python tools/drama/drama.py "${{ inputs.scene }}" out/kahani.mp3 --praat ${{ inputs.praat }} || {
+            echo "pehla try fail — simple mode"
+            mkdir -p out
+            python tools/drama/drama.py "${{ inputs.scene }}" out/kahani.mp3
+          }
+          ls -lh out/
+
+      - name: Upload audio
+        uses: actions/upload-artifact@v4
+        with:
+          name: kahani-audio
+          path: out/*.mp3
+          if-no-files-found: error

@@ -1,0 +1,100 @@
+name: sarvam-health
+
+on:
+  push:
+    paths: [".sarvam-trigger"]
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: deps
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -q requests soundfile numpy
+      - name: sarvam api check (ek chhoti line)
+        env:
+          SARVAM_API_KEY: ${{ secrets.SARVAM_API_KEY }}
+        run: |
+          python - <<'PY' 2>&1 | tee sarvam_health.txt
+          import os, json, base64, requests, subprocess, numpy as np, soundfile as sf
+          key = os.environ.get("SARVAM_API_KEY")
+          print("key present:", bool(key), flush=True)
+          if not key:
+              print("RESULT: NO_KEY"); raise SystemExit(0)
+          import json as _json
+          line = "मुझे बहुत तकलीफ़ हो रही है, बेटा।"
+          cases = [("neutral", 1.00, 1.00, 1.00), ("dukh", 0.94, 0.88, 0.90), ("gussa", 1.06, 1.10, 1.15)]
+          url = "https://api.sarvam.ai/text-to-speech"
+          results = {}
+          for name, pitch, pace, loud in cases:
+              payload = {"text": line, "language_code": "hi-IN", "speaker": "rohan",
+                         "model": "bulbul:v3",
+                         "pace": round(pace, 3), "pitch": round((pitch - 1.0) * 0.5, 3),
+                         "loudness": round(loud, 3),
+                         "speech_sample_rate": 24000, "output_audio_codec": "wav"}
+              r = requests.post(url, json=payload, headers={"api-subscription-key": key,
+                                                            "Content-Type": "application/json"}, timeout=90)
+              print(name, "http:", r.status_code, flush=True)
+              if r.status_code != 200:
+                  results[name] = {"error": r.text[:150]}; continue
+              raw = base64.b64decode((r.json().get("audios") or [""])[0])
+              f = f"sarvam_{name}.wav"; open(f, "wb").write(raw)
+              subprocess.run(["ffmpeg","-loglevel","error","-y","-i",f,"-ac","1","-ar","16000","-c:a","pcm_s16le", f"m_{name}.wav"], check=False)
+              x, sr = sf.read(f"m_{name}.wav")
+              N,H = int(0.06*sr), int(0.02*sr); f0=[]
+              a0, a1 = int(len(x)*0.2), int(len(x)*0.8)      # beech ka 60% (kinare chhodo)
+              for i in range(a0, max(a0+1, a1-N), H):
+                  seg = x[i:i+N]
+                  if np.sqrt((seg**2).mean()) < 0.02: continue
+                  seg = seg - seg.mean(); ac = np.correlate(seg,seg,"full")[N-1:]
+                  lo,hi = int(sr/350), int(sr/80)
+                  if hi >= len(ac): continue
+                  k = lo+int(np.argmax(ac[lo:hi]))
+                  if k>0: f0.append(sr/k)
+              results[name] = {"dur": round(len(x)/sr, 2), "hz": int(np.median(f0)) if f0 else 0,
+                               "bytes": len(raw)}
+          print("RESULT:", _json.dumps(results))
+
+          # ---- param sweep: pace/pitch ka asli asar (andaza nahi, naap) ----
+          sweep = [("pace_0.7", {"pace": 0.7}), ("pace_1.0", {"pace": 1.0}), ("pace_1.3", {"pace": 1.3}),
+                   ("pitch_-0.3", {"pitch": -0.3}), ("pitch_0.0", {"pitch": 0.0}), ("pitch_0.3", {"pitch": 0.3})]
+          sw = {}
+          for label, extra in sweep:
+              payload = {"text": line, "language_code": "hi-IN", "speaker": "rohan", "model": "bulbul:v3",
+                         "speech_sample_rate": 24000, "output_audio_codec": "wav", **extra}
+              r = requests.post(url, json=payload, headers={"api-subscription-key": key,
+                                                            "Content-Type": "application/json"}, timeout=90)
+              if r.status_code != 200:
+                  sw[label] = {"error": r.status_code}; continue
+              raw = base64.b64decode((r.json().get("audios") or [""])[0])
+              f = f"sw_{label}.wav"; open(f, "wb").write(raw)
+              subprocess.run(["ffmpeg","-loglevel","error","-y","-i",f,"-ac","1","-ar","16000","-c:a","pcm_s16le", f"swm_{label}.wav"], check=False)
+              x, sr = sf.read(f"swm_{label}.wav")
+              N,H = int(0.06*sr), int(0.02*sr); f0=[]
+              a0, a1 = int(len(x)*0.2), int(len(x)*0.8)      # beech ka 60% (kinare chhodo)
+              for i in range(a0, max(a0+1, a1-N), H):
+                  seg = x[i:i+N]
+                  if np.sqrt((seg**2).mean()) < 0.02: continue
+                  seg = seg - seg.mean(); ac = np.correlate(seg,seg,"full")[N-1:]
+                  lo,hi = int(sr/350), int(sr/80)
+                  if hi >= len(ac): continue
+                  k = lo+int(np.argmax(ac[lo:hi]))
+                  if k>0: f0.append(sr/k)
+              sw[label] = {"dur": round(len(x)/sr, 2), "hz": int(np.median(f0)) if f0 else 0}
+          print("SWEEP:", _json.dumps(sw))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sarvam-health
+          path: |
+            sarvam_health.txt
+            sarvam_out.wav
+            m.wav
+          retention-days: 3

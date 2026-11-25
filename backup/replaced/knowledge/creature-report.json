@@ -1,0 +1,70 @@
+{
+ "fine": {
+  "acc": 0.267,
+  "test": 101,
+  "train": 151,
+  "per_class": {
+   "bird": 0.5,
+   "boar": 0.33,
+   "camel": 0.33,
+   "cat": 1.0,
+   "cow_buffalo": 0.0,
+   "cricket": 0.0,
+   "dog": 0.25,
+   "elephant": 0.0,
+   "frog": 0.33,
+   "horse": 0.0,
+   "kangaroo": 0.33,
+   "lion": 0.33,
+   "monkey": 0.0,
+   "mouse_rat": 0.17,
+   "panda": 0.25,
+   "rhino": 0.0,
+   "snake": 0.5,
+   "wolf": 0.5,
+   "wombat": 0.0,
+   "zebra": 0.67
+  },
+  "labels": [
+   "bird",
+   "boar",
+   "camel",
+   "cat",
+   "cow_buffalo",
+   "cricket",
+   "dog",
+   "elephant",
+   "frog",
+   "horse",
+   "kangaroo",
+   "lion",
+   "monkey",
+   "mouse_rat",
+   "panda",
+   "rhino",
+   "snake",
+   "wolf",
+   "wombat",
+   "zebra"
+  ]
+ },
+ "coarse": {
+  "acc": 0.482,
+  "test": 83,
+  "train": 169,
+  "per_class": {
+   "bada_janwar": 0.64,
+   "chhota_janwar": 0.41,
+   "keeda": 0.33,
+   "pakshi": 0.0,
+   "sarpan": 0.0
+  },
+  "labels": [
+   "bada_janwar",
+   "chhota_janwar",
+   "keeda",
+   "pakshi",
+   "sarpan"
+  ]
+ }
+}

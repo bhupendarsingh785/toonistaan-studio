@@ -1,0 +1,13 @@
+{
+  "engine": "piper",
+  "agent": "no_evidence",
+  "candidate_count": 0,
+  "sources_collected": 0,
+  "linked_pages_collected": 0,
+  "search_provider_errors": 33,
+  "fetch_errors": 0,
+  "research_file": "/scratch/work/engines/PIPER/research/deep_research_20261119-053247.json",
+  "handoff_file": "/scratch/work/engines/PIPER/knowledge_inbox/inbox_20261119-053247.json",
+  "last_run": "2026-11-19T05:32:47+00:00",
+  "review_state": "PENDING_REVIEW"
+}

@@ -25,7 +25,8 @@ NEEDS_HEAVY = {"voice_extract", "voice_clone", "indicf5_render", "teacher_studen
 def modules():
     out = []
     for p in sorted((ROOT / "tools").rglob("*.py")):
-        if "__pycache__" in str(p) or p.name == "__init__.py" or p.name == "system_activate.py":
+        if ("__pycache__" in str(p) or p.name == "__init__.py" or p.name == "system_activate.py"
+                or "purana" in p.parts or "backup" in p.parts):      # archive — live system ka hissa nahi
             continue
         out.append(p)
     return out

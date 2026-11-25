@@ -1,0 +1,769 @@
+{
+ "_samjho": "Kahani Dimaag (tools/kahani_dimaag.py) ka dimaag. Naya shabd/jagah/awaaz/doori/bhaav sikhana ho to bas list me jodo.",
+ "scenes": {
+  "raat": {
+   "words": [
+    "रात",
+    "अंधेरा",
+    "सन्नाटा",
+    "आधी रात",
+    "चांदनी",
+    "raat",
+    "andhera",
+    "sannata",
+    "शाम",
+    "रात हो",
+    "अंधेरा हो"
+   ],
+   "beds": [
+    "night_crickets",
+    "wind_soft"
+   ],
+   "events": [
+    "dog_far",
+    "owl",
+    "insect_buzz"
+   ],
+   "event_every": [
+    10,
+    25
+   ]
+  },
+  "din": {
+   "words": [
+    "सुबह",
+    "दोपहर",
+    "धूप",
+    "दिन",
+    "subah",
+    "dopahar",
+    "din"
+   ],
+   "beds": [
+    "birds_day"
+   ],
+   "events": [
+    "bird_call",
+    "car_far"
+   ],
+   "event_every": [
+    8,
+    20
+   ]
+  },
+  "jungle": {
+   "words": [
+    "जंगल",
+    "पेड़",
+    "झाड़ी",
+    "वन",
+    "jungle",
+    "ped",
+    "jhadi"
+   ],
+   "beds": [
+    "forest_air",
+    "leaves_wind"
+   ],
+   "events": [
+    "bird_call",
+    "branch_crack"
+   ],
+   "event_every": [
+    9,
+    22
+   ]
+  },
+  "gaon": {
+   "words": [
+    "गांव",
+    "खेत",
+    "चौपाल",
+    "कुआं",
+    "gaon",
+    "khet"
+   ],
+   "beds": [
+    "village_air"
+   ],
+   "events": [
+    "cow",
+    "rooster",
+    "dog_far",
+    "cycle_bell"
+   ],
+   "event_every": [
+    10,
+    24
+   ]
+  },
+  "shahar": {
+   "words": [
+    "सड़क",
+    "शहर",
+    "बाज़ार",
+    "चौराहा",
+    "sadak",
+    "shahar",
+    "bazaar"
+   ],
+   "beds": [
+    "city_traffic"
+   ],
+   "events": [
+    "horn_far",
+    "bike_pass",
+    "car_pass"
+   ],
+   "event_every": [
+    6,
+    15
+   ]
+  },
+  "ghar": {
+   "words": [
+    "घर",
+    "कमरा",
+    "कमरे",
+    "रसोई",
+    "आंगन",
+    "ghar",
+    "kamra",
+    "kamre"
+   ],
+   "beds": [
+    "room_tone"
+   ],
+   "events": [
+    "clock_tick",
+    "fan"
+   ],
+   "event_every": [
+    20,
+    40
+   ]
+  },
+  "barish": {
+   "words": [
+    "बारिश",
+    "बरसात",
+    "बूंदें",
+    "barish"
+   ],
+   "beds": [
+    "rain"
+   ],
+   "events": [
+    "thunder_far"
+   ],
+   "event_every": [
+    15,
+    35
+   ]
+  },
+  "nadi": {
+   "words": [
+    "नदी",
+    "नाला",
+    "झरना",
+    "किनारे",
+    "nadi",
+    "jharna"
+   ],
+   "beds": [
+    "river"
+   ],
+   "events": [
+    "bird_call",
+    "frog"
+   ],
+   "event_every": [
+    10,
+    25
+   ]
+  }
+ },
+ "sfx": {
+  "footsteps_stairs": {
+   "words": [
+    "सीढ़ी",
+    "सीढ़ियों",
+    "सीढ़ियां",
+    "seedhi",
+    "sidhi"
+   ],
+   "gain": -8
+  },
+  "footsteps_room": {
+   "words": [
+    "कदमों",
+    "कदम",
+    "अंदर आया",
+    "अंदर आई",
+    "बाहर गया",
+    "बाहर गई",
+    "चलकर",
+    "चलते हुए",
+    "टहल",
+    "kadam"
+   ],
+   "gain": -9
+  },
+  "footsteps_leaves": {
+   "words": [
+    "झाड़ियों से",
+    "झाड़ी से",
+    "पत्तों पर",
+    "जंगल में चल",
+    "jhadi se"
+   ],
+   "gain": -8
+  },
+  "footsteps_run": {
+   "words": [
+    "दौड़",
+    "भागा",
+    "भागी",
+    "भागते",
+    "daud",
+    "bhaag"
+   ],
+   "gain": -7
+  },
+  "leaves_rustle": {
+   "words": [
+    "सरसराहट",
+    "पत्ते हिले",
+    "झाड़ी हिली",
+    "sarsarahat",
+    "सरसरा",
+    "सरसराते"
+   ],
+   "gain": -9
+  },
+  "door_open": {
+   "words": [
+    "दरवाज़ा खुला",
+    "दरवाज़ा खोला",
+    "दरवाजा खुला",
+    "दरवाजा खोला",
+    "darwaza khula"
+   ],
+   "gain": -7
+  },
+  "door_close": {
+   "words": [
+    "दरवाज़ा बंद",
+    "दरवाजा बंद",
+    "darwaza band"
+   ],
+   "gain": -7
+  },
+  "door_knock": {
+   "words": [
+    "खटखट",
+    "दस्तक",
+    "khatkhat"
+   ],
+   "gain": -7
+  },
+  "dog_bark": {
+   "words": [
+    "कुत्ता भौंका",
+    "भौंकने",
+    "भौंक",
+    "bhaunk"
+   ],
+   "gain": -9
+  },
+  "car_pass": {
+   "words": [
+    "गाड़ी",
+    "कार",
+    "जीप",
+    "gaadi",
+    "car"
+   ],
+   "gain": -10
+  },
+  "bike_pass": {
+   "words": [
+    "बाइक",
+    "मोटरसाइकिल",
+    "स्कूटर",
+    "bike"
+   ],
+   "gain": -10
+  },
+  "horse": {
+   "words": [
+    "घोड़ा",
+    "घोड़े",
+    "ghoda"
+   ],
+   "gain": -9
+  },
+  "owl": {
+   "words": [
+    "उल्लू",
+    "ullu"
+   ],
+   "gain": -10
+  },
+  "wolf_howl": {
+   "words": [
+    "भेड़िया",
+    "हुआं",
+    "bhediya"
+   ],
+   "gain": -9
+  },
+  "thunder_far": {
+   "words": [
+    "बिजली कड़की",
+    "गरज",
+    "बादल गरजे",
+    "garaj"
+   ],
+   "gain": -6
+  },
+  "glass_break": {
+   "words": [
+    "कांच टूट",
+    "शीशा टूट",
+    "kaanch"
+   ],
+   "gain": -6
+  },
+  "water_splash": {
+   "words": [
+    "छपाक",
+    "पानी में कूद",
+    "chhapak"
+   ],
+   "gain": -7
+  },
+  "bell_temple": {
+   "words": [
+    "घंटी",
+    "मंदिर",
+    "ghanti"
+   ],
+   "gain": -10
+  },
+  "phone_ring": {
+   "words": [
+    "फ़ोन बजा",
+    "फोन बजा",
+    "phone baja"
+   ],
+   "gain": -8
+  }
+ },
+ "_positions_samjho": "Bolne wale ke naam ke baad () me likho, jaise: मोहन (दूर से): गौरी! — system awaaz ko waisa bana dega.",
+ "positions": {
+  "paas": {
+   "words": [
+    "पास",
+    "paas"
+   ],
+   "gain": 0,
+   "lowpass": 0,
+   "reverb": 0.04,
+   "pan": 0
+  },
+  "door": {
+   "words": [
+    "दूर से",
+    "दूर",
+    "door se",
+    "door"
+   ],
+   "gain": -13,
+   "lowpass": 3200,
+   "reverb": 0.38,
+   "pan": 0.15
+  },
+  "bahut_door": {
+   "words": [
+    "बहुत दूर",
+    "bahut door"
+   ],
+   "gain": -19,
+   "lowpass": 2300,
+   "reverb": 0.5,
+   "pan": 0.25
+  },
+  "jhadi": {
+   "words": [
+    "झाड़ी के पीछे",
+    "झाड़ियों के पीछे",
+    "पेड़ के पीछे",
+    "jhadi ke peeche"
+   ],
+   "gain": -6,
+   "lowpass": 2400,
+   "reverb": 0.12,
+   "pan": -0.4
+  },
+  "deewar": {
+   "words": [
+    "दीवार के पीछे",
+    "दरवाज़े के पीछे",
+    "बाहर से",
+    "दूसरे कमरे",
+    "deewar",
+    "bahar se"
+   ],
+   "gain": -10,
+   "lowpass": 1300,
+   "reverb": 0.2,
+   "pan": 0.3
+  },
+  "phone": {
+   "words": [
+    "फ़ोन पर",
+    "फोन पर",
+    "phone par"
+   ],
+   "gain": -2,
+   "bandpass": [
+    320,
+    3300
+   ],
+   "reverb": 0,
+   "pan": 0
+  },
+  "mann": {
+   "words": [
+    "मन में",
+    "सोचा",
+    "मन ही मन",
+    "mann me"
+   ],
+   "gain": -3,
+   "lowpass": 0,
+   "reverb": 0.3,
+   "pan": 0
+  },
+  "baayein": {
+   "words": [
+    "बाएं",
+    "बाईं",
+    "left"
+   ],
+   "pan": -0.6
+  },
+  "daayein": {
+   "words": [
+    "दाएं",
+    "दाईं",
+    "right"
+   ],
+   "pan": 0.6
+  }
+ },
+ "emotions": {
+  "gussa": {
+   "words": [
+    "गुस्से",
+    "गुस्सा",
+    "gussa"
+   ],
+   "rate": 10,
+   "pitch": 4,
+   "volume": 10
+  },
+  "chillana": {
+   "words": [
+    "चिल्ला",
+    "पुकार",
+    "आवाज़ लगा",
+    "chilla",
+    "pukaar"
+   ],
+   "rate": 4,
+   "pitch": 10,
+   "volume": 25
+  },
+  "dheere": {
+   "words": [
+    "धीरे",
+    "फुसफुसा",
+    "धीमे",
+    "dheere",
+    "fusfusa"
+   ],
+   "rate": -10,
+   "pitch": -3,
+   "volume": -25
+  },
+  "dar": {
+   "words": [
+    "डर",
+    "घबरा",
+    "कांपती",
+    "dar",
+    "ghabra"
+   ],
+   "rate": 8,
+   "pitch": 6,
+   "volume": -5
+  },
+  "khushi": {
+   "words": [
+    "खुश",
+    "हंस",
+    "मुस्कुरा",
+    "khush",
+    "hans"
+   ],
+   "rate": 6,
+   "pitch": 6,
+   "volume": 5
+  },
+  "udaas": {
+   "words": [
+    "उदास",
+    "रोते",
+    "दुखी",
+    "udaas",
+    "rote"
+   ],
+   "rate": -12,
+   "pitch": -6,
+   "volume": -10
+  },
+  "thakan": {
+   "words": [
+    "थका",
+    "थकी",
+    "थके",
+    "हांफ",
+    "thaka",
+    "haanf"
+   ],
+   "rate": -8,
+   "pitch": -4,
+   "volume": -8
+  },
+  "hairani": {
+   "words": [
+    "हैरान",
+    "चौंक",
+    "hairan"
+   ],
+   "rate": 6,
+   "pitch": 9,
+   "volume": 5
+  },
+  "pyaar": {
+   "words": [
+    "प्यार से",
+    "दुलार",
+    "pyaar se"
+   ],
+   "rate": -6,
+   "pitch": 2,
+   "volume": -6
+  }
+ },
+ "_library_samjho": "Download ki hui file ke naam me ye English shabd hon to system use sahi khaane me rakh dega. Freesound par yahi shabd search karo.",
+ "library_find": {
+  "night_crickets": [
+   "cricket",
+   "crickets",
+   "night ambience",
+   "night"
+  ],
+  "wind_soft": [
+   "wind soft",
+   "breeze",
+   "wind"
+  ],
+  "dog_far": [
+   "dog distant",
+   "dog far",
+   "distant bark"
+  ],
+  "owl": [
+   "owl"
+  ],
+  "insect_buzz": [
+   "insect",
+   "cicada",
+   "buzz"
+  ],
+  "birds_day": [
+   "birds morning",
+   "birdsong",
+   "dawn chorus",
+   "birds"
+  ],
+  "bird_call": [
+   "bird call",
+   "bird chirp",
+   "chirp",
+   "cuckoo",
+   "koel"
+  ],
+  "car_far": [
+   "traffic distant",
+   "car distant",
+   "road far"
+  ],
+  "forest_air": [
+   "forest ambience",
+   "forest",
+   "jungle ambience"
+  ],
+  "leaves_wind": [
+   "leaves wind",
+   "trees wind",
+   "foliage"
+  ],
+  "branch_crack": [
+   "branch",
+   "twig snap",
+   "stick break"
+  ],
+  "village_air": [
+   "village",
+   "rural ambience",
+   "countryside"
+  ],
+  "cow": [
+   "cow",
+   "cattle"
+  ],
+  "rooster": [
+   "rooster"
+  ],
+  "cycle_bell": [
+   "bicycle bell",
+   "bike bell"
+  ],
+  "city_traffic": [
+   "city traffic",
+   "traffic",
+   "street ambience"
+  ],
+  "horn_far": [
+   "horn",
+   "car horn"
+  ],
+  "bike_pass": [
+   "motorcycle",
+   "motorbike",
+   "scooter"
+  ],
+  "car_pass": [
+   "car pass",
+   "car by",
+   "car passing",
+   "car"
+  ],
+  "room_tone": [
+   "room tone",
+   "room ambience",
+   "indoor ambience"
+  ],
+  "clock_tick": [
+   "clock",
+   "tick"
+  ],
+  "fan": [
+   "ceiling fan",
+   "fan"
+  ],
+  "rain": [
+   "rain"
+  ],
+  "thunder_far": [
+   "thunder"
+  ],
+  "river": [
+   "river",
+   "stream",
+   "creek",
+   "brook"
+  ],
+  "frog": [
+   "frog",
+   "toad"
+  ],
+  "footsteps_stairs": [
+   "stairs",
+   "staircase",
+   "steps up",
+   "steps down"
+  ],
+  "footsteps_room": [
+   "footsteps wood",
+   "footsteps floor",
+   "footsteps indoor",
+   "footsteps tile",
+   "footsteps"
+  ],
+  "footsteps_leaves": [
+   "footsteps leaves",
+   "footsteps grass",
+   "footsteps forest",
+   "walking bushes",
+   "bushes"
+  ],
+  "footsteps_run": [
+   "running",
+   "run footsteps"
+  ],
+  "leaves_rustle": [
+   "rustle",
+   "rustling"
+  ],
+  "door_open": [
+   "door open",
+   "door creak"
+  ],
+  "door_close": [
+   "door close",
+   "door slam",
+   "door shut"
+  ],
+  "door_knock": [
+   "knock"
+  ],
+  "dog_bark": [
+   "dog bark",
+   "barking",
+   "dog"
+  ],
+  "horse": [
+   "horse",
+   "hooves",
+   "gallop"
+  ],
+  "wolf_howl": [
+   "wolf",
+   "howl"
+  ],
+  "glass_break": [
+   "glass break",
+   "glass shatter"
+  ],
+  "water_splash": [
+   "splash"
+  ],
+  "bell_temple": [
+   "temple bell",
+   "bell"
+  ],
+  "phone_ring": [
+   "phone ring",
+   "ringtone"
+  ],
+  "insect_night": [
+   "night insects"
+  ]
+ },
+ "_time_change": "Varnan me 'रात हो गई' / 'सुबह हुई' aaye to wahi jagah, naya samay (raat/din) — khud badalta hai."
+}

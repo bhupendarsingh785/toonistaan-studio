@@ -1,0 +1,383 @@
+{
+ "title": "हवेली की खिड़की — एक डरावनी सी सच्ची घटना",
+ "scenes": [
+  {
+   "env": "village",
+   "music": "suspense",
+   "start": 0.9,
+   "end": 20.68,
+   "cues": [
+    {
+     "type": "dialogue",
+     "who": "madhur",
+     "emotion": "calm",
+     "text": "गाँव के बाहर वह हवेली आज भी खड़ी है। लोग कहते हैं, वहाँ कोई रहता नहीं।",
+     "start": 0.9,
+     "dur": 5.64
+    },
+    {
+     "type": "sfx",
+     "name": "crowd",
+     "start": 6.56
+    },
+    {
+     "type": "dialogue",
+     "who": "dadi",
+     "emotion": "sad",
+     "text": "बेटा, उस हवेली की तरफ मत जाना। मैंने तुम्हें पहले भी कहा था।",
+     "start": 6.82,
+     "dur": 5.07
+    },
+    {
+     "type": "dialogue",
+     "who": "ramesh",
+     "emotion": "calm",
+     "text": "दादी, मैं तो बस देखने जा रहा हूँ। कुछ नहीं होगा।",
+     "start": 12.17,
+     "dur": 3.71
+    },
+    {
+     "type": "dialogue",
+     "who": "dadi",
+     "emotion": "scared",
+     "text": "जो वहाँ गया, वह लौटा नहीं। सुन ले मेरी बात।",
+     "start": 16.16,
+     "dur": 3.65
+    }
+   ]
+  },
+  {
+   "env": "village",
+   "music": "calm",
+   "start": 21.13,
+   "end": 37.19,
+   "cues": [
+    {
+     "type": "dialogue",
+     "who": "madhur",
+     "emotion": "calm",
+     "text": "शाम ढल रही थी। रमेश ने रस्सी खोली और खिड़की के पल्ले पर बाँध दी।",
+     "start": 21.13,
+     "dur": 4.56
+    },
+    {
+     "type": "sfx",
+     "name": "wind",
+     "start": 25.72
+    },
+    {
+     "type": "sfx",
+     "name": "gate_open",
+     "start": 25.72
+    },
+    {
+     "type": "dialogue",
+     "who": "ramesh",
+     "emotion": "calm",
+     "text": "गाँठ कसकर जाँच ली। अब कोई दिक्कत नहीं होगी।",
+     "start": 25.98,
+     "dur": 3.27
+    },
+    {
+     "type": "dialogue",
+     "who": "bachcha",
+     "emotion": "excited",
+     "text": "भैया, मैं भी चलूँगा! मुझे भी ले चलो!",
+     "start": 29.53,
+     "dur": 3.0
+    },
+    {
+     "type": "dialogue",
+     "who": "ramesh",
+     "emotion": "calm",
+     "text": "नहीं बच्चे, तुम घर जाओ। दादी के पास रहो।",
+     "start": 32.81,
+     "dur": 3.51
+    }
+   ]
+  },
+  {
+   "env": "hall",
+   "music": "horror",
+   "start": 37.64,
+   "end": 54.09,
+   "cues": [
+    {
+     "type": "dialogue",
+     "who": "madhur",
+     "emotion": "calm",
+     "text": "रमेश रस्सी पकड़कर धीरे-धीरे ऊपर चढ़ा। लकड़ी की सीढ़ी चरमराई।",
+     "start": 37.64,
+     "dur": 4.78
+    },
+    {
+     "type": "sfx",
+     "name": "stairs",
+     "start": 42.45
+    },
+    {
+     "type": "dialogue",
+     "who": "ramesh",
+     "emotion": "scared",
+     "text": "ये हवेली इतनी पुरानी है कि दीवारें भी बोलती हैं।",
+     "start": 42.71,
+     "dur": 3.41
+    },
+    {
+     "type": "dialogue",
+     "who": "madhur",
+     "emotion": "calm",
+     "text": "उसने खिड़की खोली। अंदर अंधेरा था, और ठंडी हवा आ रही थी।",
+     "start": 46.4,
+     "dur": 4.62
+    },
+    {
+     "type": "sfx",
+     "name": "gate_open",
+     "start": 51.04
+    },
+    {
+     "type": "dialogue",
+     "who": "ramesh",
+     "emotion": "scared",
+     "text": "कोई है? यहाँ कोई है क्या?",
+     "start": 51.3,
+     "dur": 1.91
+    }
+   ]
+  },
+  {
+   "env": "room",
+   "music": "horror",
+   "start": 54.54,
+   "end": 71.98,
+   "cues": [
+    {
+     "type": "dialogue",
+     "who": "madhur",
+     "emotion": "calm",
+     "text": "कमरे में सिर्फ एक पुरानी अलमारी थी और एक टूटी कुर्सी।",
+     "start": 54.54,
+     "dur": 4.45
+    },
+    {
+     "type": "sfx",
+     "name": "chair",
+     "start": 59.0
+    },
+    {
+     "type": "dialogue",
+     "who": "ramesh",
+     "emotion": "calm",
+     "text": "चाबी से ताला खोला। अलमारी के अंदर एक पुरानी डायरी रखी थी।",
+     "start": 59.26,
+     "dur": 4.43
+    },
+    {
+     "type": "sfx",
+     "name": "gate_open",
+     "start": 63.71
+    },
+    {
+     "type": "dialogue",
+     "who": "madhur",
+     "emotion": "scared",
+     "text": "डायरी के पन्ने पलटे। आखिरी पन्ने पर लिखा था — वह आज भी वहीं है।",
+     "start": 63.97,
+     "dur": 5.25
+    },
+    {
+     "type": "sfx",
+     "name": "paper",
+     "start": 69.24
+    },
+    {
+     "type": "dialogue",
+     "who": "ramesh",
+     "emotion": "scared",
+     "text": "कौन? कौन वहाँ है?",
+     "start": 69.5,
+     "dur": 1.61
+    }
+   ]
+  },
+  {
+   "env": "room",
+   "music": "suspense",
+   "start": 72.43,
+   "end": 88.94,
+   "cues": [
+    {
+     "type": "dialogue",
+     "who": "madhur",
+     "emotion": "scared",
+     "text": "पीछे से किसी के कदमों की आवाज़ आई। धीरे-धीरे, बहुत धीरे।",
+     "start": 72.43,
+     "dur": 4.32
+    },
+    {
+     "type": "sfx",
+     "name": "footsteps",
+     "start": 76.77
+    },
+    {
+     "type": "dialogue",
+     "who": "dadi",
+     "emotion": "angry",
+     "text": "मैंने कहा था न! अब भाग, यहाँ से भाग जा!",
+     "start": 77.03,
+     "dur": 3.63
+    },
+    {
+     "type": "sfx",
+     "name": "footsteps",
+     "start": 80.68
+    },
+    {
+     "type": "dialogue",
+     "who": "madhur",
+     "emotion": "excited",
+     "text": "रमेश दौड़ा। सीढ़ी से उतरा, सूखे पत्तों पर पैर पड़े।",
+     "start": 80.94,
+     "dur": 4.28
+    },
+    {
+     "type": "sfx",
+     "name": "stairs",
+     "start": 85.24
+    },
+    {
+     "type": "dialogue",
+     "who": "ramesh",
+     "emotion": "scared",
+     "text": "दादी! दादी, दरवाज़ा खोलो!",
+     "start": 85.5,
+     "dur": 2.56
+    },
+    {
+     "type": "sfx",
+     "name": "gate_open",
+     "start": 88.08
+    }
+   ]
+  },
+  {
+   "env": "village",
+   "music": "emotional",
+   "start": 89.39,
+   "end": 110.6,
+   "cues": [
+    {
+     "type": "dialogue",
+     "who": "madhur",
+     "emotion": "sad",
+     "text": "दरवाज़ा खुला। दादी ने उसे गले लगा लिया, और रोने लगीं।",
+     "start": 89.39,
+     "dur": 4.24
+    },
+    {
+     "type": "sfx",
+     "name": "gate_open",
+     "start": 93.65
+    },
+    {
+     "type": "dialogue",
+     "who": "dadi",
+     "emotion": "sad",
+     "text": "मैंने कितनी बार कहा था बेटा... कितनी बार।",
+     "start": 93.91,
+     "dur": 3.28
+    },
+    {
+     "type": "dialogue",
+     "who": "bachcha",
+     "emotion": "happy",
+     "text": "भैया आ गए! भैया आ गए!",
+     "start": 97.47,
+     "dur": 1.87
+    },
+    {
+     "type": "dialogue",
+     "who": "ramesh",
+     "emotion": "scared",
+     "text": "दादी, वह डायरी... उसमें मेरा नाम लिखा था।",
+     "start": 99.62,
+     "dur": 3.45
+    },
+    {
+     "type": "dialogue",
+     "who": "dadi",
+     "emotion": "sad",
+     "text": "क्योंकि वह हवेली हर बीस साल में एक नाम चुनती है। और आज तेरा नाम चुना है।",
+     "start": 103.35,
+     "dur": 6.37
+    }
+   ]
+  }
+ ],
+ "world_engine": {
+  "version": "1.1.0",
+  "mode": "integrated_additive",
+  "duration_source": "measured_tts_audio_or_existing_2s_tts_failure_fallback",
+  "events": [
+   {
+    "event": "movement_run",
+    "asset": "running_footsteps",
+    "kind": "world_state",
+    "start": 80.938,
+    "end": 88.339,
+    "status": "failed:'name'"
+   },
+   {
+    "event": "door_open",
+    "asset": "door_open",
+    "kind": "world_sfx",
+    "start": 88.089,
+    "end": 88.339,
+    "status": "failed:'name'"
+   },
+   {
+    "event": "door_open",
+    "asset": "door_open",
+    "kind": "world_sfx",
+    "start": 93.656,
+    "end": 109.996,
+    "status": "failed:'name'"
+   }
+  ]
+ },
+ "vocal_check": {
+  "ok": true,
+  "audio": "cinema-demo.mp3",
+  "characters": 4,
+  "lines_checked": 25,
+  "pitch_per_character": {
+   "bachcha": 129.6,
+   "dadi": 168.4,
+   "madhur": 110.3,
+   "ramesh": 98.8
+  },
+  "too_close_pairs": [],
+  "wide_pitch_characters": [
+   {
+    "kirdaar": "dadi",
+    "pitch_range_hz": 137.6
+   },
+   {
+    "kirdaar": "bachcha",
+    "pitch_range_hz": 90.4
+   }
+  ],
+  "verdict": "PASS",
+  "note": "pitch 8.0 Hz se kam farak = same lagenge. Sirf naap hai."
+ },
+ "qa": {
+  "ok": true,
+  "status": "PASS",
+  "report": "cinema-demo.mp3.qa.json",
+  "reason": "",
+  "sample_peak_dbfs": -1.73,
+  "true_peak_dbtp": -1.71,
+  "warnings": []
+ }
+}

@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Research connector must remain non-blocking and optional",
+    "category": "architecture_guard",
+    "severity": "high",
+    "cause": "A third-party TTS model or network source could accidentally become a blocking runtime dependency.",
+    "fix": "Queue documentation-only fetches in an isolated daemon worker; preserve independent sources and no automatic production promotion.",
+    "affected_module": "open_source_learning.py; browser_agent_v08.py",
+    "regression_test": "tests/test_open_source_learning.py",
+    "state": "OPEN_UNTIL_RUNTIME_VERIFICATION"
+  },
+  {
+    "fingerprint": "b9387272699bd2ef",
+    "title": "TTS render failure",
+    "symptom": "ElevenLabs disabled: supply your API key and per-character voice IDs; usage may be billable.",
+    "root_cause": "Backend/model/dependency/configuration unavailable or failed",
+    "fix": "Install/configure a supported backend and rerun the regression case",
+    "prevention": "Preflight backend, model file, credentials and output validation before batch render",
+    "regression_test": "python app.py preflight",
+    "severity": "medium",
+    "status": "REOPENED",
+    "repeat_observations": 4,
+    "first_seen": "2026-11-19T05:06:33Z",
+    "last_seen": "2026-11-19T05:06:33Z",
+    "note": "Known issue reappeared; block release until regression test passes."
+  }
+]

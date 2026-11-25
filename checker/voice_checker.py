@@ -50,6 +50,9 @@ def main() -> int:
     else:
         print("--file ya --audit-dir do"); return 0
     out = []
+    missing = [f for f in files if not Path(f).exists()]
+    if missing:
+        print(f"File nahi mili: {', '.join(missing)}  (pehle cast_build chalao)"); return 3
     for f in files:
         r = check(f, a.script or None)
         show(r); out.append(r)

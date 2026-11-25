@@ -1,0 +1,36 @@
+name: Catalyst refresh token banao
+
+on:
+  workflow_dispatch:
+
+jobs:
+  token:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code se refresh token
+        env:
+          CID: ${{ secrets.CATALYST_CLIENT_ID }}
+          CSEC: ${{ secrets.CATALYST_CLIENT_SECRET }}
+          CODE: ${{ secrets.CATALYST_CODE }}
+        run: |
+          set -e
+          if [ -z "$CODE" ]; then echo "CATALYST_CODE secret nahi mila"; exit 1; fi
+          echo "code ki lambai: ${#CODE} | shuru: ${CODE:0:8}… | client: ${CID:0:12}…"
+          echo "code me space ya newline ho to invalid_code aata hai"
+          RESP=$(curl -s -X POST https://accounts.zoho.in/oauth/v2/token \
+            -d grant_type=authorization_code \
+            -d client_id="$CID" \
+            -d client_secret="$CSEC" \
+            -d code="$CODE")
+          RT=$(echo "$RESP" | jq -r '.refresh_token // empty')
+          if [ -z "$RT" ]; then
+            echo "TOKEN NAHI BANA — Zoho ka jawab:"; echo "$RESP" | jq .
+            echo "$RESP" > refresh_token.txt
+            exit 1
+          fi
+          echo "$RT" > refresh_token.txt
+          echo "OK — refresh token mil gaya (artifact me hai)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: catalyst-refresh-token
+          path: refresh_token.txt

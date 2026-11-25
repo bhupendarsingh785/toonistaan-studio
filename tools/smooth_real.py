@@ -17,6 +17,11 @@ import sys
 from pathlib import Path
 
 import numpy as np
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -153,7 +158,7 @@ def _measure(x, sr):
 
 def selftest():
     import soundfile as sf
-    src = Path("/scratch/work/pov14/kahani.wav")
+    src = (_AP.WORK / "pov14/kahani.wav")
     if not src.exists():
         print("test clip nahi mila"); return 1
     y, sr = sf.read(str(src))
@@ -163,7 +168,7 @@ def selftest():
     after = _measure(after_y, sr)
     print("pehle:", before)
     print("baad :", after)
-    out = Path("/scratch/work/smooth_test.wav")
+    out = (_AP.WORK / "smooth_test.wav")
     sf.write(str(out), after_y.astype("float32"), sr)
     print("saved:", out)
     ok = after["f0_range"] >= before["f0_range"] * 1.05
@@ -182,8 +187,8 @@ def main() -> int:
     import soundfile as sf
     y, sr = sf.read(a.file)
     y2 = smooth(y, sr)
-    sf.write(a.out or "/scratch/work/smooth_out.wav", y2.astype("float32"), sr)
-    print("saved:", a.out or "/scratch/work/smooth_out.wav")
+    sf.write(a.out or str(_AP.WORK / "smooth_out.wav"), y2.astype("float32"), sr)
+    print("saved:", a.out or str(_AP.WORK / "smooth_out.wav"))
     return 0
 
 

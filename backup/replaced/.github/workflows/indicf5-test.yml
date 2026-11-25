@@ -1,0 +1,51 @@
+name: indicf5-test
+
+on:
+  push:
+    paths:
+      - ".indicf5-trigger"
+  workflow_dispatch:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: deps
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -q --index-url https://download.pytorch.org/whl/cpu torch torchaudio
+          # IndicF5 package ko --no-deps lagao: uska "numpy<=1.26.4" pin modern
+          # pyarrow (numpy 2) se takrata hai. Sirf inference ke liye jo chahiye wo lo.
+          pip install -q --no-deps "git+https://github.com/ai4bharat/IndicF5.git" 2>&1 | tail -2
+          pip install -q "numpy==1.26.4" accelerate vocos soundfile cached_path ema_pytorch \
+            hydra-core jieba librosa matplotlib pydub pypinyin safetensors tomli \
+            torchdiffeq tqdm x_transformers transformers_stream_generator click wandb "datasets==2.14.0" "pyarrow==15.0.2" 2>&1 | tail -2
+          # torchaudio 2.11+ audio load ke liye torchcodec chahiye
+          pip install -q torchcodec 2>&1 | tail -2
+          python -c "import numpy, torch, vocos, torchcodec; print('numpy', numpy.__version__, 'torch', torch.__version__, 'torchcodec ok')"
+      - name: check-only (v1.7 script)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python indicf5_fix_v1/indicf5_render.py --check-only --require-token | tee indicf5_log.txt
+      - name: render (v1.7 script)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python indicf5_fix_v1/indicf5_render.py \
+            --text "दादी ने कहा, बेटा, आ जा पास। आज बहुत देर कर दी तूने।" \
+            --ref-audio engines/PIPER/tests/fixtures/ref_hi.wav \
+            --ref-text "$(cat engines/PIPER/tests/fixtures/ref_hi.txt)" \
+            --out indicf5_out.wav --device cpu 2>&1 | tee -a indicf5_log.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: indicf5-test
+          path: |
+            indicf5_out.wav
+            indicf5_log.txt
+          retention-days: 7

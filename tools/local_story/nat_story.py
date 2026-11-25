@@ -7,6 +7,11 @@ from __future__ import annotations
 import json, os, subprocess, sys, wave
 from pathlib import Path
 import numpy as np
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent.parent)); import astra_paths as _AP
 
 HERE = Path(__file__).resolve().parent
 VOICES = {"rohan": HERE.parent / "voices/hi_IN-rohan-medium.onnx",
@@ -63,7 +68,7 @@ def bed(total, sr=SR):
 def main() -> int:
     out = Path(sys.argv[1] if len(sys.argv) > 1 else "nat-story.mp3")
     script = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
-    work = Path("/scratch/work/nat"); work.mkdir(exist_ok=True)
+    work = (_AP.WORK / "nat"); work.mkdir(exist_ok=True)
     parts, marks, t = [], [], 0.0
     for i, row in enumerate(script):
         who = row.get("who", "narrator"); text = row["text"]

@@ -1,0 +1,144 @@
+# Ek_Din_Teri_Raahon_Mein_-_Naqaab_Javed_Ali_Bobby_Deol_Urvashi_Sharrma_Akshaye_Pritam_MP3_160K.mp3
+
+- **1480 s** · BPM **92.3** (conf 7.38)
+- **Key:** D major (conf 0.426) · **thaat andaaza:** bilawal
+- **Awaaz:** 124 Hz (sd 18.0) — purush
+- **Mix:** low 17% · mid 45% · high 38%
+
+## Beat pattern (16 steps)
+```
+kick  ................................
+snare ................................
+hat   ................................
+```
+
+## Structure
+- 0–18s shant/intro
+- 18–28s antara/chalu
+- 34–40s antara/chalu
+- 42–48s antara/chalu
+- 50–70s antara/chalu
+- 72–80s antara/chalu
+- 80–92s shant/intro
+- 92–104s antara/chalu
+- 106–134s antara/chalu
+- 136–146s antara/chalu
+- 148–152s antara/chalu
+- 154–168s shant/intro
+- 170–178s shant/intro
+- 178–188s antara/chalu
+- 190–212s antara/chalu
+- 214–220s antara/chalu
+- 226–232s antara/chalu
+- 234–238s antara/chalu
+- 240–246s antara/chalu
+- 248–252s antara/chalu
+- 252–314s shant/intro
+- 314–324s antara/chalu
+- 326–334s antara/chalu
+- 340–344s antara/chalu
+- 344–348s mukhda/tez
+- 348–352s antara/chalu
+- 352–356s mukhda/tez
+- 360–364s antara/chalu
+- 366–370s antara/chalu
+- 372–378s antara/chalu
+- 378–384s shant/intro
+- 384–388s antara/chalu
+- 394–398s antara/chalu
+- 400–410s antara/chalu
+- 410–414s shant/intro
+- 418–422s antara/chalu
+- 424–432s antara/chalu
+- 436–440s mukhda/tez
+- 440–454s antara/chalu
+- 454–476s shant/intro
+- 476–486s antara/chalu
+- 486–490s shant/intro
+- 490–496s antara/chalu
+- 502–508s antara/chalu
+- 508–516s mukhda/tez
+- 526–540s shant/intro
+- 542–564s shant/intro
+- 566–572s shant/intro
+- 574–584s antara/chalu
+- 590–600s antara/chalu
+- 602–612s antara/chalu
+- 616–620s mukhda/tez
+- 620–630s antara/chalu
+- 632–636s antara/chalu
+- 640–646s antara/chalu
+- 648–660s antara/chalu
+- 662–668s antara/chalu
+- 670–676s antara/chalu
+- 680–684s mukhda/tez
+- 686–690s mukhda/tez
+- 690–694s antara/chalu
+- 702–706s mukhda/tez
+- 706–712s antara/chalu
+- 712–716s mukhda/tez
+- 716–722s antara/chalu
+- 724–732s antara/chalu
+- 734–738s mukhda/tez
+- 740–748s mukhda/tez
+- 748–768s antara/chalu
+- 772–792s shant/intro
+- 794–822s shant/intro
+- 822–828s antara/chalu
+- 828–834s shant/intro
+- 838–854s antara/chalu
+- 856–868s antara/chalu
+- 870–876s antara/chalu
+- 878–882s antara/chalu
+- 884–902s antara/chalu
+- 906–918s shant/intro
+- 922–934s antara/chalu
+- 934–938s shant/intro
+- 940–954s shant/intro
+- 958–964s antara/chalu
+- 966–976s antara/chalu
+- 976–986s shant/intro
+- 986–990s antara/chalu
+- 992–996s mukhda/tez
+- 996–1008s antara/chalu
+- 1008–1012s mukhda/tez
+- 1012–1022s antara/chalu
+- 1024–1032s antara/chalu
+- 1032–1054s shant/intro
+- 1054–1058s antara/chalu
+- 1058–1064s shant/intro
+- 1064–1068s antara/chalu
+- 1070–1090s antara/chalu
+- 1090–1098s shant/intro
+- 1100–1104s shant/intro
+- 1110–1114s shant/intro
+- 1114–1118s antara/chalu
+- 1120–1130s antara/chalu
+- 1132–1150s antara/chalu
+- 1150–1170s shant/intro
+- 1170–1188s antara/chalu
+- 1188–1192s mukhda/tez
+- 1196–1248s antara/chalu
+- 1248–1254s shant/intro
+- 1254–1274s antara/chalu
+- 1276–1288s antara/chalu
+- 1290–1300s antara/chalu
+- 1302–1316s antara/chalu
+- 1316–1326s mukhda/tez
+- 1326–1330s shant/intro
+- 1334–1344s antara/chalu
+- 1346–1352s antara/chalu
+- 1352–1360s mukhda/tez
+- 1362–1366s antara/chalu
+- 1368–1386s antara/chalu
+- 1388–1392s antara/chalu
+- 1394–1406s antara/chalu
+- 1408–1412s mukhda/tez
+- 1412–1416s antara/chalu
+- 1418–1428s antara/chalu
+- 1428–1434s mukhda/tez
+- 1440–1444s antara/chalu
+- 1444–1448s mukhda/tez
+- 1448–1452s antara/chalu
+- 1454–1470s antara/chalu
+- 1470–1474s shant/intro

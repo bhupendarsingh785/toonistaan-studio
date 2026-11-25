@@ -19,6 +19,11 @@ CLI:
 from __future__ import annotations
 import argparse, json, subprocess, sys, wave
 from pathlib import Path
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -444,7 +449,7 @@ def read(path: str, outdir: Path | None = None, learn: bool = False) -> dict:
 def selftest() -> int:
     """synthetic awaazon par classifier check."""
     import numpy as np
-    tmp = Path("/scratch/work/selftest6"); tmp.mkdir(parents=True, exist_ok=True)
+    tmp = (_AP.WORK / "selftest6"); tmp.mkdir(parents=True, exist_ok=True)
     def write(name, sig):
         p = tmp / f"{name}.wav"
         with wave.open(str(p), "wb") as w:

@@ -1,0 +1,82 @@
+{
+ "title": "पुरानी हवेली की आवाज़",
+ "lines": [
+  {
+   "who": "dadi",
+   "bhaav": "neutral",
+   "text": "बेटा, उस पुरानी हवेली के पास मत जाना। वहाँ रात को कोई रोता है।"
+  },
+  {
+   "who": "bachcha",
+   "bhaav": "dar",
+   "text": "दादी, आपने वो आवाज़ सुनी थी? कैसी थी?"
+  },
+  {
+   "who": "dadi",
+   "bhaav": "dar",
+   "text": "सुनी थी। बारिश वाली रात थी। दरवाज़ा अपने आप खुला, और अंदर से कोई मेरा नाम ले रहा था।"
+  },
+  {
+   "who": "bachcha",
+   "bhaav": "dar",
+   "text": "फिर आप क्या की?"
+  },
+  {
+   "who": "dadi",
+   "bhaav": "dukh",
+   "text": "मैं भाग गई। पर जब पलट कर देखा, खिड़की पर एक हाथ टिका था। और वह हाथ मेरा ही था।"
+  },
+  {
+   "who": "bachcha",
+   "bhaav": "dar",
+   "text": "मतलब... वहाँ कोई और था?"
+  },
+  {
+   "who": "dadi",
+   "bhaav": "gussa",
+   "text": "चुप! आवाज़ आ रही है। सुन..."
+  },
+  {
+   "who": "dadi",
+   "bhaav": "dar",
+   "text": "देखा? मैंने कहा था ना... वह आज भी गिनती करता है। एक, दो, तीन... चार।"
+  }
+ ],
+ "bed": [
+  {
+   "file": "horror/horror_ambience.mp3",
+   "gain": -20
+  },
+  {
+   "file": "ambience/wind_howl_window.mp3",
+   "gain": -24
+  }
+ ],
+ "events": [
+  {
+   "at": 0.3,
+   "file": "horror/horror_intro.mp3",
+   "gain": -18
+  },
+  {
+   "at": 9.0,
+   "file": "door/bvk_door_1.mp3",
+   "gain": -14
+  },
+  {
+   "at": 16.0,
+   "file": "horror/ghost_howl_1.mp3",
+   "gain": -16
+  },
+  {
+   "at": 24.0,
+   "file": "horror/scary_sting.mp3",
+   "gain": -12
+  },
+  {
+   "at": 30.0,
+   "file": "ambience/rain_window.mp3",
+   "gain": -20
+  }
+ ]
+}

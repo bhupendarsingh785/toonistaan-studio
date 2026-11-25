@@ -15,6 +15,11 @@ from __future__ import annotations
 import argparse, json, re, subprocess, sys
 from difflib import SequenceMatcher
 from pathlib import Path
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -139,7 +144,7 @@ def acoustics(seg):
 def asr(audio_np, model_size="small"):
     from faster_whisper import WhisperModel
     m = WhisperModel(model_size, device="cpu", compute_type="int8",
-                     download_root="/scratch/work/whisper")
+                     download_root=str(_AP.WORK / "whisper"))
     segs, _ = m.transcribe(audio_np, language="hi", vad_filter=False, beam_size=5)
     return [{"start": round(s.start, 2), "end": round(s.end, 2), "text": s.text.strip()} for s in segs]
 

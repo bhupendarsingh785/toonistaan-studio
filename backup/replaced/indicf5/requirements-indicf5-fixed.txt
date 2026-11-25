@@ -1,0 +1,36 @@
+# IndicF5 ke liye asli kaam karne wala set (19 Nov 2026 ko test kiya)
+# Wajah: IndicF5 ka apna requirements "numpy<=1.26.4" maangta hai, par naya
+# pyarrow (jo datasets ke saath aata hai) numpy 2 maangta hai — isliye yahan
+# datasets/pyarrow ko purane version par pin kiya gaya hai.
+
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
+torchaudio
+
+numpy==1.26.4
+datasets==2.14.0
+pyarrow==15.0.2
+
+accelerate
+vocos
+soundfile
+cached_path
+ema_pytorch
+hydra-core
+jieba
+librosa
+matplotlib
+pydub
+pypinyin
+safetensors
+tomli
+torchdiffeq
+tqdm
+x_transformers
+transformers_stream_generator
+click
+wandb
+huggingface_hub
+
+# f5_tts ko --no-deps se install karo (warna uska numpy pin sab tod deta hai):
+#   pip install --no-deps git+https://github.com/ai4bharat/IndicF5.git

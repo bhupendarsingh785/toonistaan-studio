@@ -17,6 +17,22 @@
     "P1": 86,
     "P0": 1
    }
+  },
+  {
+   "counts": {
+    "P2-nested-deep": 90,
+    "P1-silent-swallow": 50,
+    "P2-marker": 15,
+    "P2-range-len": 11,
+    "P1-global": 16,
+    "P1-open-no-with": 35,
+    "P1-assert": 1
+   },
+   "severity": {
+    "P2": 116,
+    "P1": 102,
+    "P0": 0
+   }
   }
  ]
 }

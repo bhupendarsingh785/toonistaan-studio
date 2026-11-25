@@ -1,0 +1,57 @@
+[
+  {
+    "title": "Research connector must remain non-blocking and optional",
+    "category": "architecture_guard",
+    "severity": "high",
+    "cause": "A third-party TTS model or network source could accidentally become a blocking runtime dependency.",
+    "fix": "Queue documentation-only fetches in an isolated daemon worker; preserve independent sources and no automatic production promotion.",
+    "affected_module": "open_source_learning.py; browser_agent_v08.py",
+    "regression_test": "tests/test_open_source_learning.py",
+    "state": "OPEN_UNTIL_RUNTIME_VERIFICATION"
+  },
+  {
+    "fingerprint": "6d8d5d967ee17c26",
+    "title": "TTS render failure",
+    "symptom": "Cannot connect to host speech.platform.bing.com:443 ssl:<ssl.SSLContext object at 0x7ecc93822e50> [Temporary failure in name resolution]",
+    "root_cause": "Backend/model/dependency/configuration unavailable or failed",
+    "fix": "Install/configure a supported backend and rerun the regression case",
+    "prevention": "Preflight backend, model file, credentials and output validation before batch render",
+    "regression_test": "python app.py preflight",
+    "severity": "medium",
+    "status": "REOPENED",
+    "repeat_observations": 2,
+    "first_seen": "2026-11-19T05:04:47Z",
+    "last_seen": "2026-11-19T05:05:07Z",
+    "note": "Known issue reappeared; block release until regression test passes."
+  },
+  {
+    "fingerprint": "03a4ef0202df27f2",
+    "title": "TTS render failure",
+    "symptom": "Cannot connect to host speech.platform.bing.com:443 ssl:<ssl.SSLContext object at 0x7eac40572dd0> [Temporary failure in name resolution]",
+    "root_cause": "Backend/model/dependency/configuration unavailable or failed",
+    "fix": "Install/configure a supported backend and rerun the regression case",
+    "prevention": "Preflight backend, model file, credentials and output validation before batch render",
+    "regression_test": "python app.py preflight",
+    "severity": "medium",
+    "status": "REOPENED",
+    "repeat_observations": 2,
+    "first_seen": "2026-11-19T05:05:51Z",
+    "last_seen": "2026-11-19T05:06:11Z",
+    "note": "Known issue reappeared; block release until regression test passes."
+  },
+  {
+    "fingerprint": "1dfaa16dbca7cf1c",
+    "title": "TTS render failure",
+    "symptom": "Cannot connect to host speech.platform.bing.com:443 ssl:<ssl.SSLContext object at 0x7ea86e37add0> [Temporary failure in name resolution]",
+    "root_cause": "Backend/model/dependency/configuration unavailable or failed",
+    "fix": "Install/configure a supported backend and rerun the regression case",
+    "prevention": "Preflight backend, model file, credentials and output validation before batch render",
+    "regression_test": "python app.py preflight",
+    "severity": "medium",
+    "status": "REOPENED",
+    "repeat_observations": 4,
+    "first_seen": "2026-11-19T05:07:09Z",
+    "last_seen": "2026-11-19T05:08:09Z",
+    "note": "Known issue reappeared; block release until regression test passes."
+  }
+]

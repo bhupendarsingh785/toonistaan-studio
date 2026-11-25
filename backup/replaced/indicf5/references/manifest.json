@@ -1,0 +1,22 @@
+{
+  "dadi": {
+    "speaker": "roopa",
+    "text": "बेटा, आ जा पास। दादी तेरे को ही ढूँढ रही थी।",
+    "file": "dadi.wav"
+  },
+  "maa": {
+    "speaker": "kavitha",
+    "text": "बेटा, खाना ठंडा हो रहा है। पहले खा ले, फिर जाना।",
+    "file": "maa.wav"
+  },
+  "bachcha": {
+    "speaker": "priya",
+    "text": "दादी, देखो! मुझे कितनी बड़ी तितली मिली है।",
+    "file": "bachcha.wav"
+  },
+  "madhur": {
+    "speaker": "shubh",
+    "text": "डरो मत, मैं तुम्हारे साथ हूँ। चलो, घर चलें।",
+    "file": "madhur.wav"
+  }
+}

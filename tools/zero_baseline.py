@@ -47,6 +47,9 @@ def metrics(path):
 
 
 def check(path):
+    if not Path(path).exists() or Path(path).stat().st_size < 1000:
+        print(f"File nahi mili ya khaali hai: {path}  (pehle cast_build chalao — uski galti upar dekho)")
+        return 3
     z = load()["naap"]; m = metrics(path)
     print("zero :", z)
     print("naya :", m)

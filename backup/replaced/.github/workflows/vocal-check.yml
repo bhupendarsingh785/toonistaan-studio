@@ -1,0 +1,63 @@
+name: Vocal check (optional ML)
+
+# Ye workflow ALAG hai — main render ko chhoota nahi.
+# Bhaari ML (torch/whisper/pyannote) sirf yahan install hota hai.
+on:
+  workflow_dispatch:
+    inputs:
+      audio:
+        description: "audio file path in repo (jaise astra/library/voices/cry_1.mp3)"
+        required: true
+        default: "astra/library/voices/cry_1.mp3"
+      mode:
+        description: "transcribe | diarize | both"
+        required: true
+        default: "transcribe"
+
+permissions:
+  contents: read
+
+jobs:
+  vocal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Base python
+        run: pip install -q --upgrade pip && pip install -q numpy scipy soundfile
+      - name: Vocal ML (optional, heavy)
+        run: |
+          pip install -q faster-whisper
+          echo "ML_INSTALLED faster-whisper"
+      - name: Backend status
+        run: python -c "import sys; sys.path.insert(0,'.'); from astra_audio.vocal_intelligence import backend_status; print(backend_status())"
+      - name: Transcribe
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          if [ -z "$HF_TOKEN" ]; then echo "HF_TOKEN nahi — sirf ASR (bina diarization)"; fi
+          python - "${{ inputs.audio }}" "${{ inputs.mode }}" <<'PY'
+          import sys, json
+          sys.path.insert(0, ".")
+          from astra_audio.vocal_intelligence import analyze_vocal_file, save_vocal_report
+          audio, mode = sys.argv[1], sys.argv[2]
+          diar = (mode in ("diarize", "both"))
+          import os
+          rep = analyze_vocal_file(audio, asr_model="small", language="hi",
+                                   diarization=diar, device="cpu", compute_type="int8",
+                                   hf_token=os.environ.get("HF_TOKEN") or None)
+          out = "vocal-report.json"
+          save_vocal_report(rep, out)
+          print("VOCAL_OK", json.dumps({"segments": len(rep.get("transcript") or []),
+                                        "diarization": bool(rep.get("speaker_turns") or [])}, ensure_ascii=False))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vocal-report
+          path: vocal-report.json
+          if-no-files-found: warn

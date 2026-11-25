@@ -1,0 +1,874 @@
+{
+ "version": "2.0",
+ "date": "2026-11-22",
+ "kya_hai": "Seetal ne saikdon asli audio (kahani, gaane, vlog, horror) naap kar jo seekha — poora gyaan ek jagah. Har local engine isse padh kar wahi quality laa sakta hai.",
+ "niyam": [
+  "asli audio sirf seekhne ke liye — copy/use nahi",
+  "har cheez naapo, andaza nahi",
+  "patch ke baad output verify karo (chupchap fail hota hai)",
+  "bina QA ke deliver nahi",
+  "bahar se aaya system bina CHECK kiye include nahi — sirf majboot hisse lo, kamzori chhodo"
+ ],
+ "awaaz": {
+  "targets": {
+   "narrator": [
+    90,
+    125
+   ],
+   "dada": [
+    95,
+    130
+   ],
+   "dadi": [
+    140,
+    185
+   ],
+   "mahila": [
+    165,
+    205
+   ],
+   "ladki": [
+    200,
+    245
+   ],
+   "bachcha": [
+    240,
+    330
+   ]
+  },
+  "measured_cast": {
+   "narrator": 104,
+   "dadi": 169,
+   "maa": 153,
+   "sonu": 233
+  },
+  "robotic_ke_5_karan": [
+   "pitch shift se formants khisakte hain (chipmunk/monster) → resample + formant soch",
+   "comb-filter reverb (17/23/31 ms) = goonj → reverb band ya smooth tail",
+   "line ke andar lambi khamoshi = 'ruk-ruk kar bolna' → 110 ms se lambi gap 65 ms karo",
+   "line ke shuru/aakhir ki silence trim nahi = har line ke baad hole",
+   "mid patla + high chubhta = hollow/machine awaaz (mid 55–65%, high ≤20%)"
+  ],
+  "smoothness_rules": [
+   "piper: length_scale 0.92–1.05 (1.2+ = ruk-ruk kar bolna)",
+   "piper: noise_scale 0.62, noise_w_scale 0.75 (natural prosody)",
+   "har line: trim 25–40 ms → andar ki 80 ms+ gap ko 35 ms karo → 20 ms fade-in",
+   "lines ke beech pause 0.22–0.35 s (1.5 s nahi)",
+   "humanize me amplitude micro-dips band (woh shabd kaat dete hain)",
+   "target: andar ke 80 ms+ gaps ≤5, pace 12–14 akshar/s, speech 65–70%",
+   "smooth reference ka target: low 15–17, mid 55–57, high 27–30%, brightness 2086–2187 Hz, RMS -18.5 dBFS",
+   "gap 0.10s se kam KABHI nahi — 28ms compression se robotic lagta tha (duniya engine ka sabak)"
+  ],
+  "emotion_map": {
+   "neutral": {
+    "pitch_mul": 1.0,
+    "rate_mul": 1.0,
+    "pause_mul": 1.0
+   },
+   "khushi": {
+    "pitch_mul": 1.08,
+    "rate_mul": 1.1,
+    "pause_mul": 0.8
+   },
+   "dukh": {
+    "pitch_mul": 0.94,
+    "rate_mul": 0.85,
+    "pause_mul": 1.4
+   },
+   "dar": {
+    "pitch_mul": 1.06,
+    "rate_mul": 1.15,
+    "pause_mul": 0.7
+   },
+   "gussa": {
+    "pitch_mul": 1.04,
+    "rate_mul": 1.12,
+    "pause_mul": 0.75
+   },
+   "hairan": {
+    "pitch_mul": 1.1,
+    "rate_mul": 0.95,
+    "pause_mul": 1.2
+   },
+   "pyaar": {
+    "pitch_mul": 0.98,
+    "rate_mul": 0.9,
+    "pause_mul": 1.25
+   }
+  }
+ },
+ "bhaav_ke_signal": {
+  "cheekh": {
+   "rms_dbfs": -10.4,
+   "high_3k_pct": 29.1
+  },
+  "hasi": {
+   "modulation_3_8hz": 0.315
+  },
+  "darr": {
+   "f0_jitter": 0.057
+  },
+  "gussa": {
+   "f0_sd_min": 50,
+   "jitter_max": 0.05
+  },
+  "dukh": {
+   "f0_max": 165,
+   "rms_dbfs_max": -26
+  },
+  "note": "hasi ko sur se nahi, 3–8 Hz modulation se pakdo; darr ko jitter se; cheekh ko high band se"
+ },
+ "shabd_galat": {
+  "problem": "piper ka Hindi G2P: व girta hai, ि→े, ठ→ख/त, श→ष, ौ→ो",
+  "examples": {
+   "बारिश": "बारेश",
+   "गाँव": "गाँ",
+   "ठंडक": "खन्न",
+   "देखो": "बेखो",
+   "भीगने": "भीट में",
+   "कितनी": "किच्मी",
+   "छाता": "च्हाता",
+   "खुशबू": "फुष्बो"
+  },
+  "hal": "respell dictionary + carrier-phrase test (अब सुनो, <शब्द>) — akela shabd ASR se test nahi hota"
+ },
+ "beats": {
+  "patterns_16": {
+   "keherwa": {
+    "kick": "X.......X.......",
+    "snare": "....X.......X...",
+    "hat": "X.X.X.X.X.X.X.X.",
+    "bpm": 92
+   },
+   "dadra": {
+    "kick": "X.....X.........",
+    "snare": "......X.....X...",
+    "hat": "X...X...X...X...",
+    "bpm": 84
+   },
+   "teen": {
+    "kick": "X.....X.....X...",
+    "snare": "....X.......X..X",
+    "hat": "X.X.X.X.X.X.X.X.",
+    "bpm": 100
+   },
+   "unwind": {
+    "kick": "X.......XX..X..X",
+    "snare": "X......X....X.XX",
+    "hat": "X.X..X......XX..",
+    "bpm": 76
+   },
+   "bhakti": {
+    "kick": "......XXXX.XX...",
+    "snare": "............XXXX",
+    "hat": ".........XXX....",
+    "bpm": 132
+   },
+   "four_floor": {
+    "kick": "X...X...X...X...",
+    "snare": "....X.......X...",
+    "hat": "..X...X...X...X.",
+    "bpm": 124
+   },
+   "trap": {
+    "kick": "X.......X...X...",
+    "snare": "....X.......X...",
+    "hat": "X.XXX.XXX.XXX.XX",
+    "bpm": 140
+   },
+   "breakbeat": {
+    "kick": "X..X....X.X.....",
+    "snare": "....X.......X...",
+    "hat": "X.X.X.X.X.X.X.X.",
+    "bpm": 165
+   }
+  },
+  "sabak": [
+   "sparse beat bhi beat hai — khaali jagah gayak ke liye",
+   "off-beat snare groove deta hai",
+   "bhajan me chaal aage (7–16 step)",
+   "komal gaane 70–85 BPM, bhakti 125–135, pop 90–125"
+  ]
+ },
+ "blueprints": {
+  "kahani": {
+   "pause_s": [
+    0.35,
+    0.6
+   ],
+   "background_below_db": [
+    10,
+    12
+   ],
+   "speech_pct": [
+    60,
+    70
+   ]
+  },
+  "vlog": {
+   "pause_s": [
+    0.3,
+    0.5
+   ],
+   "background_below_db": [
+    20,
+    22
+   ],
+   "f0": [
+    150,
+    195
+   ]
+  },
+  "horror": {
+   "scream_pct": 3,
+   "story_pct": 46,
+   "silence_before_scream": true,
+   "cycle_s": [
+    60,
+    90
+   ]
+  },
+  "gaana": {
+   "bpm": [
+    76,
+    132
+   ],
+   "mid_pct": [
+    52,
+    61
+   ]
+  }
+ },
+ "qa": {
+  "checks": {
+   "clipping_pct": "<0.01",
+   "peak": "0.5–0.97",
+   "dc_offset": "<0.01",
+   "mid_pct": "55–68",
+   "high_pct": "<=20",
+   "snr_db": "12–22",
+   "echo": "<0.78 (insaan 0.43–0.72)",
+   "f0_spread_pct": "<=15",
+   "wer": "<0.25",
+   "internal_gap_ms": "<=70",
+   "footstep_material_centroid": "target band ke andar (dirt 200-900, concrete 1800-5000, leaves 3500-9000)"
+  },
+  "tools": {
+   "audio_judge.py": "poora scorecard",
+   "asr_cache.py": "tez ASR cache",
+   "self_listen.py": "line-wise ASR",
+   "music_make2.py": "beats+sur",
+   "song_read.py": "gaana padho",
+   "horror_read.py": "darr ka blueprint",
+   "emotion_read.py": "bhaav timeline",
+   "local_story.py": "piper kahani"
+  },
+  "world_gates": {
+   "holes_pct": "<0.5",
+   "stereo_width": "0.08–0.45",
+   "sentence_pauses_per_min": ">=8",
+   "breaths_per_min": ">=1",
+   "mud_db": "<=-4",
+   "lufs": "-16±1.5"
+  }
+ },
+ "galtiyan_jo_ki": [
+  "pitch shift se goonj aayi (comb reverb + phasiness)",
+  "background 0.30 par tha → khamoshi hi nahi bachi",
+  "CAST patch chupchap fail hua → dadi 240 Hz par reh gayi",
+  "length_scale 1.4+ kar diya → ruk-ruk kar bolna",
+  "line ke andar ki 1 s+ gaps compress nahi kiye",
+  "smoothness ke liye sirf gaps compress kiye, piper ke noise_w/length_scale ko nahi chhua — isliye phir ruk-ruk laga",
+  "main 'garam/dull' EQ ki taraf chali gayi (mid 69, high 9) — Swag ka smooth reference bright hai, isliye ruk-ruk lagta tha"
+ ],
+ "duniya_ki_awaaz": {
+  "niyam": "jis cheez ka zikr ho, usi ki awaaz background me ubhare — nadi, hawa, barish, patte, chidaiyan, jhingur, kadam, gaon",
+  "kaise": "script ke shabd → sound map; har line ke hisaab se gain 2.4x tak; 1.2 s smooth fade (chatka nahi)",
+  "levels": "bed speech se 10–14 dB neeche (SNR 12–22 dB)",
+  "map": {
+   "नदी/पानी/लहर": "river",
+   "बारिश/बूँद/बादल": "rain",
+   "हवा/ठंड": "wind",
+   "पेड़/पत्ते/मिट्टी": "leaves",
+   "चिड़िया/पक्षी": "birds",
+   "तारा/शाम": "crickets",
+   "गाँव/छत/दादी": "village",
+   "चलना/किनारा": "footsteps"
+  },
+  "sabak": "sirf ek flat bed nahi — duniya badalti rehni chahiye, warna scene mar jata hai"
+ },
+ "smooth_reference": {
+  "kya_hai": "SMOOTH reference — Swag ke banwaye hue jungle-nadi-safar v5/v8 (Sarvam) ka naap. Local engines ko isi ke kareeb laana hai.",
+  "files": {
+   "v5": "/scratch/input/jungle-nadi-safar-v5.mp3",
+   "v8": "/scratch/input/jungle-nadi-safar-v8.mp3"
+  },
+  "targets": {
+   "speech_pct": [
+    82,
+    95
+   ],
+   "inner_gaps": "40–115 (mean 104–180 ms, max 300–580 ms)",
+   "f0_clusters": [
+    120,
+    320
+   ],
+   "low_pct": [
+    15,
+    17
+   ],
+   "mid_pct": [
+    55,
+    57
+   ],
+   "high_pct": [
+    27,
+    30
+   ],
+   "brightness_hz": [
+    2086,
+    2187
+   ],
+   "rms_dbfs": [
+    -18.6,
+    -18.5
+   ],
+   "peak": [
+    0.79,
+    0.8
+   ],
+   "spectral_flux": [
+    57.5,
+    58.3
+   ]
+  },
+  "sabak": [
+   "smooth reference KAALI/dull nahi hai — bright 2086–2187 Hz (mera local 1157 tha)",
+   "mid 55–57%, high 27–30% — yahi 'khula, clear' sunai deta hai",
+   "gaps reference me bhi hain (mean 104–180 ms) — matlab 'ruk-ruk' gaps se nahi, DULLNESS se lagta hai",
+   "local ko match karne ke liye: presence +2.3 dB @3.2k, air +1.45 dB @6.2k, de-ess @7.5k, air bed layer"
+  ]
+ },
+ "zameen_ke_kadam": {
+  "niyam": "jahan chalna ho, wahan ki ZAMEEN ki awaaz aani chahiye — kachchi mitti, pakka farash, sookhe patte, ghaas, lakdi, keechad, kankad",
+  "naap": {
+   "steps_dirt": "centroid ~600 Hz (dull thud)",
+   "steps_concrete": "~4500 Hz (teekha click)",
+   "steps_leaves": "~8000 Hz (chhar-chhar)",
+   "steps_grass": "~1900 Hz (soft swish)",
+   "steps_wood": "~1000 Hz (resonant knock)",
+   "steps_mud": "~500 Hz (geela squelch)",
+   "steps_gravel": "~3200 Hz (chhote patthar)"
+  },
+  "script_map": {
+   "कच्ची/मिट्टी/रास्ता/धूल": "steps_dirt",
+   "पक्का/फर्श/पत्थर/इमारत": "steps_concrete",
+   "पत्ते/सूखे": "steps_leaves",
+   "घास/मैदान": "steps_grass",
+   "लकड़ी/सीढ़ी": "steps_wood",
+   "कीचड़/दलदल/गीली": "steps_mud",
+   "कंकड़/बजरी/पथरीला": "steps_gravel"
+  },
+  "jeev": {
+   "भेड़िया": "growl",
+   "कुत्ता": "bark",
+   "शेर": "roar",
+   "चिड़िया": "birds",
+   "झींगुर": "crickets",
+   "नदी/पानी": "river",
+   "हवा": "wind",
+   "बारिश": "rain"
+  },
+  "sabak": "har jeev/kirdaar ki apni awaaz — khana, peena, saans, chalna, sab mehsoos hona chahiye"
+ },
+ "sound_library": {
+  "total_catalogued": 1142,
+  "by_cat": {
+   "insects": 37,
+   "birds": 66,
+   "creatures": 148,
+   "footsteps": 618,
+   "water": 90,
+   "horror": 32,
+   "human": 128,
+   "wind": 15,
+   "rain": 8
+  },
+  "jeev": {
+   "crow": 30,
+   "bird": 19,
+   "cat": 18,
+   "dog": 12,
+   "tiger": 11,
+   "lion": 11,
+   "horse": 10,
+   "wolf": 9,
+   "elephant": 9,
+   "cricket": 9,
+   "monkey": 9,
+   "python": 6,
+   "boar": 6,
+   "dingo": 5,
+   "panda": 5,
+   "rhino": 4,
+   "camel": 4,
+   "insect": 4,
+   "kangaroo": 4,
+   "zebra": 4,
+   "chimp": 3,
+   "mosquito": 2,
+   "frog": 1,
+   "bear": 1,
+   "snake": 1
+  },
+  "footstep_materials": {
+   "mitti/keechad (dull, <900 Hz)": 122,
+   "lakdi/ghaas (900–1800)": 257,
+   "kankad/pakka halka (1800–3500)": 239
+  },
+  "kaise_use": "tools/sound_catalog.py se catalog; pipeline keyword se best file chunti hai (quality ≥0.8)",
+  "kami": [
+   "sookhe patte (>7000 Hz) sample kam — apni synth se bana lo",
+   "rain sirf 8 files — apni barish synth (code) hi behtar",
+   "frog/bear/snake 1-1 file — inki awaaz khud banani padegi"
+  ]
+ },
+ "awaaz_ki_training": {
+  "kya": "asli sounds se har class ka signature (naap) + MFCC kNN model",
+  "signatures": "knowledge/sound-signatures.json",
+  "model": "knowledge/sound-model.json (563 samples, 9 classes)",
+  "accuracy": {
+   "v1": 0.29,
+   "v2": 0.25,
+   "v2_clean_labels": 0.54
+  },
+  "sach": "54% — sirf sanity check ke liye; species-level pehchan abhi nahi",
+  "confusions": [
+   "human cheekh vs jeev ki cheekh",
+   "barish vs paani"
+  ],
+  "human_protected": true,
+  "aage": [
+   "200 files haath se tag",
+   "per-species 30-30 samples",
+   "spectral contrast + chroma features"
+  ]
+ },
+ "duniya_engine_adopted": {
+  "source": "seetal-duniya-engine.zip (Swag ka diya system) — sirf advanced hisse liye",
+  "kya_liya": [
+   "pause rules: inside-line 0.10–0.35s, comma 0.16–0.26, sentence 0.45–0.70, question 0.55–0.85, speaker change 0.35–0.60, scene 1.4–2.6",
+   "world-map.json: 150+ shabd → awaaz, surfaces (leaves/soil/stone/water), levels_db (bed −15 dB under speech, duck 6 dB), time_of_day",
+   "world_qa.py gates: holes <0.5%, stereo width 0.08–0.45, sentence pauses ≥8/min, breaths ≥1/min, mud ≤ −4 dB, LUFS −16 ±1.5",
+   "stereo duniya (Haas/pan) — mono se stereo",
+   "learned sounds: per-sound dna/limits/memory (seekho.py)",
+   "spotting + harkat + rachna + awaazein modules"
+  ],
+  "kya_nahi_liya": [
+   "koi bhi cheez bina test kiye nahi",
+   "unka demo script/pipeline replace nahi kiya — sirf engine"
+  ],
+  "naap": {
+   "hamara_purana": {
+    "stereo": 0.0,
+    "mud_db": -2.7,
+    "lufs": -16.7,
+    "speech_pct": 89.6
+   },
+   "unke_engine_ke_baad": {
+    "stereo": 0.149,
+    "mud_db": -5.1,
+    "lufs": -16.2,
+    "holes_pct": 0.0
+   },
+   "bacha_hua": [
+    "sentence pauses 0.0/min (chahiye ≥8)",
+    "breaths 0.0/min (chahiye ≥1)"
+   ],
+   "v34_pauses_breaths": {
+    "sentence_pauses_per_min": 11.2,
+    "breaths_per_min": 3.37,
+    "voice_speech_pct": 65.3,
+    "holes_pct": 0.0,
+    "measured_on": "voice-stem (sidecar)",
+    "kaise": "line pause 0.46–0.52s, scene break 1.7s, halki saans layer, gap range 40ms–3s"
+   },
+   "r43_all_pass": {
+    "world_qa_overall": "PASS",
+    "holes_pct": 0.19,
+    "stereo_width": 0.113,
+    "sentence_pauses_per_min": 11.0,
+    "breaths_per_min": 3.31,
+    "mud_db": -5.4,
+    "lufs": -15.9,
+    "render_time_s": 98,
+    "sr": 22050,
+    "fixes": [
+     "voice cache (har line par PiperVoice.load — speed ka asli bug)",
+     "SR 44100 → 22050 (piper ka native) — 2.5× tez",
+     "stereo default ON (width 0.10, 4 ms)",
+     "high-pass 130/110 Hz — mud -5.4 dB",
+     "level -16.9 dBFS → LUFS -15.9",
+     "saans har 3rd line, level 0.032 — zyada nahi"
+    ]
+   }
+  },
+  "agla_kadam": "line ke beech 0.45–0.60s aur vakya ke baad 0.45–0.70s rakho, phir world_qa dobara",
+  "bacha_hua": [
+   "rohan voice model (reset me gaya)",
+   "paragraph-wise prosody (aur smoothness)"
+  ],
+  "v2_update": {
+   "source": "seetal-duniya-engine-2.zip (22 Nov 2026)",
+   "kya_naya": [
+    "apply_emotion() — line ka bhaav (gussa/dar/dukh) mix par asar",
+    "apply_weather() — mausam layer",
+    "auto_repace() — script na ho to ruke khud lagana",
+    "situation_at() / indoor_muffle() / phone_voice() / outdoor_reverb() — jagah ke hisaab se awaaz",
+    "voice_chain() — voice par FX chain",
+    "syn_bird/syn_crickets/syn_koel/syn_leaves/syn_rain/syn_river/syn_step/syn_thunder/syn_wind — khud banayi awaazein"
+   ],
+   "install": {
+    "world": "src/tools/world (v2)",
+    "backup_v1": "src/backup/world_v1 (import se bahar)",
+    "knowledge": "world-map/sound-events/situation-rules + learned/ (v2)"
+   },
+   "naap": {
+    "qa_v2_on_v65": {
+     "holes_pct": 0.03,
+     "stereo_width": 0.242,
+     "sentence_pauses_per_min": 4.5,
+     "breaths_per_min": 3.38,
+     "mud_db": -10.8,
+     "lufs": -16.8,
+     "overall": "FAIL"
+    }
+   },
+   "sabak": "v2 ka QA sidecar (*.pauses.json) ke bina mix par naapta hai — bed gaps bhar deta hai, isliye 4.5 aaya; pipeline sidecar likhta hai to 11.0 aata hai (v1 naap). Ye galti nahi, tareeka hai.",
+   "conflict_check": "tools/ me duplicate module naam = 0 (backup ko tools/ se bahar rakha); doctor me do naye check: module collision + duniya version"
+  }
+ },
+ "saans_model": {
+  "research": [
+   "speech me inhalation chhoti aur tez — average ~0.5 s (kai studies me 0.68 s); exhale lamba (speech ke saath)",
+   "resting respiratory rate 12–26/min (adults); speech breathing rate zyada variable",
+   "high arousal (dar, gussa) → tez + shallow; sadness/withdrawal → dheemi, gehri, sigh",
+   "happy (high arousal) → rate upar; calm (low arousal) → rate neeche"
+  ],
+  "table": {
+   "neutral": {
+    "rate_per_min": 11,
+    "dur_s": 0.5,
+    "level": 0.03,
+    "band_hz": [
+     300,
+     2000
+    ]
+   },
+   "calm": {
+    "rate_per_min": 9,
+    "dur_s": 0.55,
+    "level": 0.028,
+    "band_hz": [
+     280,
+     1800
+    ]
+   },
+   "sad": {
+    "rate_per_min": 8,
+    "dur_s": 0.75,
+    "level": 0.05,
+    "band_hz": [
+     260,
+     1600
+    ]
+   },
+   "happy": {
+    "rate_per_min": 17,
+    "dur_s": 0.38,
+    "level": 0.034,
+    "band_hz": [
+     320,
+     2400
+    ]
+   },
+   "anger": {
+    "rate_per_min": 21,
+    "dur_s": 0.4,
+    "level": 0.06,
+    "band_hz": [
+     350,
+     3200
+    ]
+   },
+   "fear": {
+    "rate_per_min": 26,
+    "dur_s": 0.27,
+    "level": 0.048,
+    "band_hz": [
+     400,
+     4200
+    ]
+   }
+  },
+  "kaise_kaam_karta_hai": "line number se nahi — (a) pichhli saans se kitna time hua, (b) line ka bhav (shabd se) — in dono se tay hota hai",
+  "naap_r50": {
+   "breaths_per_min": 5.48,
+   "breath_times_s": [
+    6.43,
+    14.9,
+    25.41,
+    35.19,
+    44.29
+   ],
+   "world_qa_overall": "PASS"
+  },
+  "sabak": "saans headline/line se bandhi nahi hoti — time aur bhav se bandhti hai"
+ },
+ "realtime_checker_v3": {
+  "source": "seetal-duniya-engine-3.zip",
+  "kya_hai": [
+   "tools/realtime/ (8 modules, 1474 lines): akshar, kaan, gates, nirantarta, sudhaar, bahi, live, bhaav",
+   "knowledge/bhaav-rules.json: 6 bhaav signature (khushi/gussa/dar/dukh/neutral + ek), 7 dims (f0/range/rate/energy/bright/end/pause)"
+  ],
+  "kya_karta_hai": [
+   "har line bante hi: ASR → akshar-akshar milaan → galti ki kism (15 kism: mahapraan, ghosh, murdhanya, ushm, nukta, matra, sanyukt…)",
+   "pakki galti (line dobara) vs shak (darj) — likhai ke fark barabar",
+   "echo F0-safe (cepstrum) — 105 Hz sur ko echo nahi samajhta",
+   "bhaav: lakshya (text se) vs mila (audio se, signature cosine + projection)",
+   "sudhaar: likhai badal kar dobara (ख→क्ह, ि↔ी, ँ↔ं, क्ष→क्श) + raftaar/sur/zor/chamak",
+   "yaad: galti-bahi + shabdkosh + voice-profiles + bhaav-yaad (agli render se pehle)",
+   "nirantarta: kirdaar ki awaaz bhatke to pakde (sur/raftaar/zor pakka; chamak/rang halka)"
+  ],
+  "naap": {
+   "modules": "8/8 import OK",
+   "bhaav_pehchan": "4/4 sahi (khushi, dukh, dar, neutral)",
+   "doctor": "PASS 16 | WARN 0 | FAIL 1"
+  },
+  "dependency": "faster-whisper (kaan.py) — abhi install nahi; ASR ke bina SimulatedEar se test",
+  "install": {
+   "tools/realtime": "src/tools/realtime",
+   "backup_v2": "src/backup/world_v2"
+  }
+ },
+ "asr_gate": {
+  "tool": "tools/asr_gate.py (faster-whisper int8 + akshar.py CER)",
+  "kya_pakda": [
+   "BUG 1: build() ke doosre loop me `i`/`text` pichhle loop se bache the → har line ka marks-text aur saans AAKHRI line ka tha",
+   "BUG 2: CAST ratio 0.70–0.72 (dadi/maa) formant tod raha tha → ASR padh hi nahi paata (CER 0.9)"
+  ],
+  "naap": {
+   "pehle": {
+    "mean_cer": 0.912,
+    "overall": "FAIL"
+   },
+   "ab": {
+    "mean_cer": 0.167,
+    "overall": "WARN",
+    "lines": {
+     "sonu": 0.083,
+     "sonu2": 0.0,
+     "dadi": 0.091,
+     "dadi2": 0.294,
+     "narrator": 0.368
+    }
+   }
+  },
+  "sabak": [
+   "ratio 0.95–1.05 ke bahar jaana = formant todna = robot + ASR fail",
+   "stale loop variable = sabse chupa hua bug (audio theek, marks galat)",
+   "ASR gate har render par chalana chahiye — yahi 'sach' batata hai"
+  ],
+  "dependency": "faster-whisper 1.2.1 (small int8), ffmpeg shim, numpy decode (av bug bypass)"
+ },
+ "bhaav_target_v2": {
+  "kya_badla": [
+   "wazan: vismayadi 2.0 > bhaav-shabd 1.5 > tez-karne-wala 0.5 > punctuation 0.3",
+   "intensity saturating (1-exp(-0.55*score)) — 25% se 100%",
+   "punh-raavriti (ek shabd do baar = zyada)",
+   "context: pichhli line ka bhaav + kirdaar ka swabhav (dadi→pyaar, bachcha→hairani)",
+   "mixed top-2 share (jaise pyaar 62% + khushi 38%)",
+   "arc: chadhav/utar/flat (! ? se)",
+   "shabd-war zor: len/f0/energy/pause"
+  ],
+  "test": {
+   "वाह! बहुत खुश": "khushi 100%",
+   "आँसू देखकर दुख": "dukh 90%",
+   "कौन है वहाँ? डर": "dar 100%",
+   "दादी! आज बारिश होगी क्या?": "hairani 91%",
+   "होगी बेटा...": "pyaar 73%"
+  }
+ },
+ "smooth_fix_v72": {
+  "kya_badla": [
+   "lagatar ek hi kirdaar ki lines JODI (group_script) — beech ka ruk gaya",
+   "pause 0.40–0.44s (0.46–0.52 se kam), scene break 1.7 → 1.2s",
+   "saans sirf 0.9s se bade ruk me, speech se 0.03s pehle",
+   "room tone (-48 dB, dono channel) — background holes band"
+  ],
+  "naap": {
+   "world_qa": "PASS (holes 0.31, stereo 0.143, pauses 12.9/min, breaths 3.88, mud -12.4, LUFS -16.0)",
+   "asr": {
+    "mean_cer": 0.227,
+    "sonu": [
+     0.154,
+     0.0
+    ],
+    "dadi": 0.375,
+    "narrator": 0.378
+   }
+  },
+  "bacha": "narrator (pratham) kamzor — rohan model chahiye"
+ },
+ "narrator_fix": {
+  "research": [
+   "piper ki Hindi G2P **mahapraan (aspirated) vyanjan gira deti hai**: छ→च, थ→त, ध→द, ख→क",
+   "asli galtiyan: छह→'चैहे', थे→'ते', छतों→'चतो', धुआँ→'दूवान', उठ→'उठे'",
+   "whisper-small (2GB RAM) medium load nahi hota — isliye naap ko phonetic banana pada"
+  ],
+  "fixes": {
+   "voice": "narrator = rohan (m2), F0 102 Hz — pratham se behtar",
+   "respell": "h-spell: ख→क्ह, घ→ग्ह, छ→च्ह, झ→ज्ह, ठ→ट्ह, ढ→ड्ह, थ→त्ह, ध→द्ह, फ→प्ह, भ→ब्ह (sirf TTS ko, script asli)",
+   "safe": "गाँव→गांव, धुआँ→धुआं, आँख→आंख, आँसू→आंसू",
+   "metric": "phonetic CER — mahapraan 0.4, dantya↔murdhanya 0.5, matra-lambai 0.25, schwa 0.3"
+  },
+  "naap": {
+   "narrator_ph_cer": {
+    "pehle": 0.341,
+    "ab": 0.155
+   },
+   "hspell_test": {
+    "asis": 0.265,
+    "h-spell": 0.192
+   },
+   "poora": {
+    "mean_ph_cer": 0.164,
+    "sonu": [
+     0.062,
+     0.277
+    ],
+    "dadi": 0.162,
+    "narrator": 0.155
+   },
+   "world_qa": "PASS (holes 0.47, stereo 0.135, pauses 12.2/min, breaths 3.66, mud -13.3, LUFS -15.9)"
+  },
+  "sabak": "voice badalne se pehle likhai theek karo — h-spell ne akela hi 0.265 → 0.192 kiya"
+ },
+ "hindi_shabd_mala": {
+  "checker_ki_sachchai": {
+   "test": "10 jaane-maane jode (mahapraan, matra, ushm, nukta, sanyukt, anunasik)",
+   "sahi": "10/10 (उठ→उट bhi sahi: wo mahapraan hi hai, murdhanya nahi)"
+  },
+  "naya": "tools/local_story/hindi_shabd.py — shabd-mala check (chandrabindu/anunasvar, halant, purane roop) + TTS-safe respell",
+  "niyam": {
+   "chandrabindu": "sirf khule अ/आ par — गाँव, आँख, धुआँ, हँस",
+   "anusvar": "baaki jagah — छतों, हिंदी, गंगा, संत",
+   "purana_roop": "हिन्दी → हिंदी",
+   "h-spell": "sirf shabd ke BEECH ka mahapraan (shuru me 'ब्हेटा' garbage banta hai — naap se pakda)"
+  },
+  "naap": {
+   "pehle": {
+    "mean_ph_cer": 0.167,
+    "dadi": 0.311,
+    "narrator": 0.149
+   },
+   "ab_r76": {
+    "mean_ph_cer": 0.137,
+    "narrator": 0.174,
+    "sonu": 0.092,
+    "dadi": 0.144,
+    "verdict": "PASS"
+   }
+  }
+ },
+ "human_vs_ours": {
+  "naap": {
+   "HUMAN rishtey": {
+    "F0med": 120,
+    "F0std_st": 8.2,
+    "range_st": 21.2,
+    "jitter": 0.109
+   },
+   "HUMAN aahat": {
+    "F0med": 178,
+    "F0std_st": 13.56,
+    "range_st": 30.1,
+    "jitter": 0.209
+   },
+   "OURS r76 dadi": {
+    "F0med": 227,
+    "F0std_st": 4.73,
+    "range_st": 12.9
+   },
+   "OURS r76 narrator": {
+    "F0med": 167,
+    "F0std_st": 5.02,
+    "range_st": 10.7
+   }
+  },
+  "matlab": "hamara sur insaan se AADHA hai (robotic ki asli wajah) + dadi ki F0 227 Hz (bahut jawaan)",
+  "fixes_try": {
+   "prosody_contour (5 hisse)": "F0std 4.7→6.5 par dadi CER 0.14→0.39 (formant shift seam) — REJECT",
+   "formant_shift 0.88 (F0 nahi badalta)": "centroid 1568→1420 (badi umar), isolated CER 0.131 — ACCEPT",
+   "breath overlap BUG": "saans speech ke start par chadh rahi thi (pehla shabd kha jaati) — clamp se fix"
+  },
+  "r84": {
+   "mean_ph_cer": 0.171,
+   "narrator": 0.246,
+   "dadi": 0.253,
+   "sonu": 1.4025974025974026
+  }
+ },
+ "agla_kadam": "asli pitch engine (WORLD vocoder / PSOLA) chahiye — piper ka formant shift seams banata hai; tabhi F0std 8st tak ja sakta hai bina ASR tode",
+ "asli_background": {
+  "kya_bana": "tools/local_story/real_bed.py — Swag ki 1120+ recordings me se shabd ke hisaab se bed (synthetic ambience ki jagah)",
+  "files_chune": {
+   "rain": "u_tmwllo5zur-rain-on-a-tin-roof",
+   "river": "loswin23-forest-birds-and-river",
+   "wind": "gregorquendel-designed-fire-winds-swoosh",
+   "crickets": "mosquitoes-and-crickets"
+  },
+  "niyam": [
+   "pattern strict + blacklist (train/window/dragon nahi ginte) — 'rain' me 'train' match ho raha tha",
+   "bed ka level APNE AAP calibrate: gaps me awaaz se 12 dB neeche",
+   "loop par crossfade (seam sunai na de), band-limit 80–9000 Hz, stereo 0.12 width"
+  ],
+  "naap": {
+   "r87 synthetic": "gap bed -37.2 dB (sunai hi nahi deta)",
+   "r91 asli": "gap bed -26.5 dB (fark 7.5 dB)"
+  },
+  "sach": "Sarvam TTS yahan se nahi chalta — sandbox me SARVAM_API_KEY nahi hai (sirf GitHub secret me). GH Actions se chala sakte hain."
+ },
+ "buzz_fix": {
+  "asli_wajah": "harsh 2–4.5 kHz — hamara 1.02, insaan 0.52–0.75 (do guna) = 'girrr/barrr' robot buzz",
+  "fix": [
+   "presence EQ 3.1k: 1.6 → 1.0, 6.2k: 1.0 → 0.35",
+   "de_buzz(): 2.4–5.2 kHz par −1.5 dB (naya function voice_fx me)",
+   "echo naap se pata chala ki echo hamara 0.653 vs insaan 0.688–0.704 — echo problem hi nahi thi"
+  ],
+  "naap": {
+   "harsh": {
+    "pehle": 1.02,
+    "ab": 0.46,
+    "insaan": 0.75
+   },
+   "bright": {
+    "pehle": 2046,
+    "ab": 1770,
+    "insaan": 1126
+   }
+  },
+  "bhaav_ka_asar": {
+   "dadi pyaar 216 Hz → dadi khushi 258 Hz (+3.5 semitone)": "ab sunai deta hai",
+   "sonu hairani 219/213 Hz": "sahi"
+  },
+  "r93": {
+   "world_qa": "PASS",
+   "ph_cer_mean": 0.213,
+   "dadi": 0.352,
+   "narrator": 0.173,
+   "sonu": 0.113
+  },
+  "bacha": "dadi par sur+formant dono = ASR tootta (cap 0.6 try kiya, 0.524 — aur kharab); asli hal WORLD vocoder ya dadi ki alag voice model"
+ }
+}

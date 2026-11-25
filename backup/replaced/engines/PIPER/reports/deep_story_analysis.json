@@ -1,0 +1,185 @@
+{
+  "schema_version": "0.6",
+  "characters": [
+    {
+      "id": "7f87c70bc2b2",
+      "name": "वाचक",
+      "dialogue_lines": [
+        1
+      ],
+      "age_group": "unknown",
+      "role": "unknown",
+      "relations": [],
+      "voice_profile": "UNASSIGNED",
+      "evidence": [
+        {
+          "line": 1,
+          "kind": "explicit_speaker_label"
+        }
+      ]
+    },
+    {
+      "id": "47521be3ca15",
+      "name": "आरव",
+      "dialogue_lines": [
+        2,
+        4
+      ],
+      "age_group": "unknown",
+      "role": "unknown",
+      "relations": [],
+      "voice_profile": "UNASSIGNED",
+      "evidence": [
+        {
+          "line": 2,
+          "kind": "explicit_speaker_label"
+        },
+        {
+          "line": 4,
+          "kind": "explicit_speaker_label"
+        }
+      ]
+    },
+    {
+      "id": "3136b4970d47",
+      "name": "माँ",
+      "dialogue_lines": [
+        3
+      ],
+      "age_group": "unknown",
+      "role": "unknown",
+      "relations": [],
+      "voice_profile": "UNASSIGNED",
+      "evidence": [
+        {
+          "line": 3,
+          "kind": "explicit_speaker_label"
+        }
+      ]
+    },
+    {
+      "id": "8727bf38d7cf",
+      "name": "दादी",
+      "dialogue_lines": [
+        6
+      ],
+      "age_group": "elderly",
+      "role": "unknown",
+      "relations": [],
+      "voice_profile": "UNASSIGNED",
+      "evidence": [
+        {
+          "line": 6,
+          "kind": "explicit_speaker_label"
+        },
+        {
+          "line": 6,
+          "kind": "age_hint",
+          "text": "दादी"
+        }
+      ]
+    }
+  ],
+  "segments": [
+    {
+      "line": 1,
+      "speaker": "वाचक",
+      "text": "शाम ढल रही थी।",
+      "emotion": {
+        "primary": "neutral",
+        "secondary": [],
+        "confidence": "low",
+        "evidence": "no_clear_lexical_cue"
+      },
+      "delivery": "dialogue",
+      "character_id": "7f87c70bc2b2"
+    },
+    {
+      "line": 2,
+      "speaker": "आरव",
+      "text": "माँ, देखो! कितना सुंदर आसमान है!",
+      "emotion": {
+        "primary": "खुश",
+        "confidence": "explicit",
+        "evidence": "script_markup"
+      },
+      "delivery": "dialogue",
+      "character_id": "47521be3ca15"
+    },
+    {
+      "line": 3,
+      "speaker": "माँ",
+      "text": "हाँ बेटा, लेकिन अब घर चलना चाहिए।",
+      "emotion": {
+        "primary": "गंभीर",
+        "confidence": "explicit",
+        "evidence": "script_markup"
+      },
+      "delivery": "dialogue",
+      "character_id": "3136b4970d47"
+    },
+    {
+      "line": 4,
+      "speaker": "आरव",
+      "text": "[खींचें:नहीं] अभी पाँच मिनट और!",
+      "emotion": {
+        "primary": "neutral",
+        "secondary": [],
+        "confidence": "low",
+        "evidence": "no_clear_lexical_cue"
+      },
+      "delivery": "dialogue",
+      "character_id": "47521be3ca15"
+    },
+    {
+      "line": 5,
+      "speaker": null,
+      "text": "[विराम:500ms]",
+      "emotion": {
+        "primary": "neutral",
+        "secondary": [],
+        "confidence": "low",
+        "evidence": "no_clear_lexical_cue"
+      },
+      "delivery": "narration",
+      "character_id": null
+    },
+    {
+      "line": 6,
+      "speaker": "दादी",
+      "text": "धीरे बोलो, सब सो रहे हैं।",
+      "emotion": {
+        "primary": "फुसफुस",
+        "confidence": "explicit",
+        "evidence": "script_markup"
+      },
+      "delivery": "dialogue",
+      "character_id": "8727bf38d7cf"
+    }
+  ],
+  "candidate_names": [],
+  "candidate_places": [],
+  "relationship_mentions": [
+    {
+      "line": 2,
+      "speaker": "आरव",
+      "relation_term": "माँ",
+      "relation": "mother",
+      "target": "UNRESOLVED",
+      "confidence": "lexical_only"
+    },
+    {
+      "line": 3,
+      "speaker": "माँ",
+      "relation_term": "बेटा",
+      "relation": "son",
+      "target": "UNRESOLVED",
+      "confidence": "lexical_only"
+    }
+  ],
+  "warnings": [
+    "रिश्ते के शब्द मिले, लेकिन किस पात्र से संबंध है यह स्पष्ट नहीं; अनुमान नहीं लगाया गया।",
+    "भावना पहचान नियम-आधारित अनुमान है; अंतिम अभिनय के लिए संदर्भ/मानवीय समीक्षा आवश्यक है।",
+    "उम्र, लिंग, नाम और स्थान केवल स्पष्ट पाठ-साक्ष्य पर निर्धारित किए जाएँ; अस्पष्टता को unknown रखा गया है।"
+  ]
+}

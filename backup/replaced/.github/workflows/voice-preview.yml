@@ -1,0 +1,30 @@
+name: voice-preview
+
+on:
+  push:
+    paths:
+      - ".voice-trigger"
+  workflow_dispatch:
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: tools
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -q edge-tts numpy
+      - name: render
+        run: |
+          python tools/voice_preview.py preview_out | tee preview_log.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: voice-cast-preview
+          path: |
+            preview_out/*.mp3
+            preview_log.txt
+          retention-days: 7

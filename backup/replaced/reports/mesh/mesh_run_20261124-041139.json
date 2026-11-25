@@ -1,0 +1,53 @@
+{
+ "topic": "procedural audio synthesis realism rain river wind",
+ "created_at": "2026-11-24T04:11:39Z",
+ "seconds_total": 3.3,
+ "agents": {
+  "AGNI": {
+   "agent": "AGNI",
+   "browser": "ANVESH",
+   "research": "KHOJ",
+   "queries": [
+    "procedural audio synthesis realism rain river wind tutorial implementation",
+    "procedural audio synthesis realism rain river wind github example"
+   ],
+   "tried": 4,
+   "collected": 4,
+   "seconds": 3.3,
+   "error": ""
+  }
+ },
+ "evidence_count": 2,
+ "unique_domains": [
+  "arxiv.org"
+ ],
+ "domain_count": 1,
+ "evidence": [
+  {
+   "url": "http://arxiv.org/abs/2206.06811v2",
+   "domain": "arxiv.org",
+   "title": "Adversarial Audio Synthesis with Complex-valued Polynomial Networks",
+   "text": "Time-frequency (TF) representations in audio synthesis have been increasingly modeled with real-valued networks. However, overlooking the complex-valued nature of TF representations can result in suboptimal performance and require additional modules (e.g., for modeling the phase). To this end, we introduce complex-valued polynomial networks, called APOLLO, that integrate such complex-valued representations in a natural way. Concretely, APOLLO captures high-order correlations of the input elements using high-order tensors as scaling parameters. By leveraging standard tensor decompositions, we derive different architectures and enable modeling richer correlations. We outline such architectures and showcase their performance in audio generation across four benchmarks. As a highlight, APOLLO results in $17.5\\%$ improvement over adversarial methods and $8.2\\%$ over the state-of-the-art diffusion models on SC09 dataset in audio generation. Our models can encourage the systematic design of other efficient architectures on the complex field.",
+   "sha256": "292dbd6b894062aa832a252aa05440e6a3c97cc9f655879cdd8c09f7d4a19eef",
+   "relevance": "search_match",
+   "fetched_at": "2026-11-24T04:11:38Z",
+   "status": "collected",
+   "reason": "",
+   "agent": "PIPER",
+   "query": "procedural audio synthesis realism rain river wind tutorial implementation"
+  },
+  {
+   "url": "http://arxiv.org/abs/2305.15266v3",
+   "domain": "arxiv.org",
+   "title": "Diffusion-Based Audio Inpainting",
+   "text": "Audio inpainting aims to reconstruct missing segments in corrupted recordings. Most of existing methods produce plausible reconstructions when the gap lengths are short, but struggle to reconstruct gaps larger than about 100 ms. This paper explores recent advancements in deep learning and, particularly, diffusion models, for the task of audio inpainting. The proposed method uses an unconditionally trained generative model, which can be conditioned in a zero-shot fashion for audio inpainting, and is able to regenerate gaps of any size. An improved deep neural network architecture based on the constant-Q transform, which allows the model to exploit pitch-equivariant symmetries in audio, is also presented. The performance of the proposed algorithm is evaluated through objective and subjective metrics for the task of reconstructing short to mid-sized gaps, up to 300 ms. The results of a formal listening test show that the proposed method delivers comparable performance against the compared baselines for short gaps, such as 50 ms, while retaining a good audio quality and outperforming the baselines for wider gaps that are up to 300 ms long. The method presented in this paper can be applied to restoring sound recordings that suffer from severe local disturbances or dropouts, which must be reconstructed.",
+   "sha256": "196f99180e5518d0b7c8969e6c38bad4d6aa2e6cae92e2db7703c4277c7e71c2",
+   "relevance": "search_match",
+   "fetched_at": "2026-11-24T04:11:38Z",
+   "status": "collected",
+   "reason": "",
+   "agent": "PIPER",
+   "query": "procedural audio synthesis realism rain river wind tutorial implementation"
+  }
+ ]
+}

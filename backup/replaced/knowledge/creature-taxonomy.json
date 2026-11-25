@@ -1,0 +1,168 @@
+{
+ "wolf": {
+  "hindi": [
+   "भेड़िया",
+   "भेड़िये",
+   "बhediya"
+  ],
+  "english": "wolf",
+  "kind": "janwar"
+ },
+ "dog": {
+  "hindi": [
+   "कुत्ता",
+   "कुत्ते",
+   "kutta"
+  ],
+  "english": "dog",
+  "kind": "janwar"
+ },
+ "cat": {
+  "hindi": [
+   "बिल्ली",
+   "बिल्ला"
+  ],
+  "english": "cat",
+  "kind": "janwar"
+ },
+ "lion": {
+  "hindi": [
+   "शेर",
+   "बाघ",
+   "sher",
+   "bagh"
+  ],
+  "english": "lion/tiger",
+  "kind": "janwar"
+ },
+ "bird": {
+  "hindi": [
+   "चिड़िया",
+   "पक्षी",
+   "मैना",
+   "कबूतर",
+   "कौवा",
+   "मोर"
+  ],
+  "english": "bird",
+  "kind": "pakshi"
+ },
+ "cricket": {
+  "hindi": [
+   "झींगुर",
+   "चींटी",
+   "कीड़ा",
+   "मच्छर"
+  ],
+  "english": "insect",
+  "kind": "keeda"
+ },
+ "frog": {
+  "hindi": [
+   "मेंढक",
+   "टर्र"
+  ],
+  "english": "frog",
+  "kind": "janwar"
+ },
+ "monkey": {
+  "hindi": [
+   "बंदर",
+   "वानर"
+  ],
+  "english": "monkey",
+  "kind": "janwar"
+ },
+ "elephant": {
+  "hindi": [
+   "हाथी"
+  ],
+  "english": "elephant",
+  "kind": "janwar"
+ },
+ "horse": {
+  "hindi": [
+   "घोड़ा",
+   "घोड़े",
+   "टाप"
+  ],
+  "english": "horse",
+  "kind": "janwar"
+ },
+ "snake": {
+  "hindi": [
+   "सांप",
+   "साँप",
+   "अजगर"
+  ],
+  "english": "snake",
+  "kind": "janwar"
+ },
+ "boar": {
+  "hindi": [
+   "सूअर",
+   "जंगली सूअर"
+  ],
+  "english": "boar",
+  "kind": "janwar"
+ },
+ "camel": {
+  "hindi": [
+   "ऊंट"
+  ],
+  "english": "camel",
+  "kind": "janwar"
+ },
+ "zebra": {
+  "hindi": [
+   "ज़ेबरा"
+  ],
+  "english": "zebra",
+  "kind": "janwar"
+ },
+ "rhino": {
+  "hindi": [
+   "गैंडा"
+  ],
+  "english": "rhino",
+  "kind": "janwar"
+ },
+ "panda": {
+  "hindi": [
+   "पांडा"
+  ],
+  "english": "panda",
+  "kind": "janwar"
+ },
+ "kangaroo": {
+  "hindi": [
+   "कंगारू"
+  ],
+  "english": "kangaroo",
+  "kind": "janwar"
+ },
+ "mouse_rat": {
+  "hindi": [
+   "चूहा",
+   "चूहे"
+  ],
+  "english": "mouse/rat",
+  "kind": "janwar"
+ },
+ "wombat": {
+  "hindi": [
+   "वोम्बैट"
+  ],
+  "english": "wombat",
+  "kind": "janwar"
+ },
+ "cow_buffalo": {
+  "hindi": [
+   "गाय",
+   "भैंस",
+   "बछड़ा"
+  ],
+  "english": "cow/buffalo",
+  "kind": "janwar"
+ }
+}

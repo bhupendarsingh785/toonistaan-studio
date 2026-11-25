@@ -1,0 +1,93 @@
+{
+ "targets": {
+  "narrator": [
+   90,
+   125
+  ],
+  "dada": [
+   95,
+   130
+  ],
+  "dadi": [
+   140,
+   185
+  ],
+  "mahila": [
+   165,
+   205
+  ],
+  "ladki": [
+   200,
+   245
+  ],
+  "bachcha": [
+   240,
+   330
+  ]
+ },
+ "measured": {
+  "narrator": 104,
+  "dadi": 169,
+  "maa": 153,
+  "sonu": 233
+ },
+ "emotion_map": {
+  "neutral": {
+   "pitch_mul": 1.0,
+   "rate_mul": 1.0,
+   "pause_mul": 1.0
+  },
+  "khushi": {
+   "pitch_mul": 1.08,
+   "rate_mul": 1.1,
+   "pause_mul": 0.8
+  },
+  "dukh": {
+   "pitch_mul": 0.94,
+   "rate_mul": 0.85,
+   "pause_mul": 1.4
+  },
+  "dar": {
+   "pitch_mul": 1.06,
+   "rate_mul": 1.15,
+   "pause_mul": 0.7
+  },
+  "gussa": {
+   "pitch_mul": 1.04,
+   "rate_mul": 1.12,
+   "pause_mul": 0.75
+  },
+  "hairan": {
+   "pitch_mul": 1.1,
+   "rate_mul": 0.95,
+   "pause_mul": 1.2
+  },
+  "pyaar": {
+   "pitch_mul": 0.98,
+   "rate_mul": 0.9,
+   "pause_mul": 1.25
+  }
+ },
+ "smoothness": [
+  "piper: length_scale 0.92–1.05 (1.2+ = ruk-ruk kar bolna)",
+  "piper: noise_scale 0.62, noise_w_scale 0.75 (natural prosody)",
+  "har line: trim 25–40 ms → andar ki 80 ms+ gap ko 35 ms karo → 20 ms fade-in",
+  "lines ke beech pause 0.22–0.35 s (1.5 s nahi)",
+  "humanize me amplitude micro-dips band (woh shabd kaat dete hain)",
+  "target: andar ke 80 ms+ gaps ≤5, pace 12–14 akshar/s, speech 65–70%",
+  "smooth reference ka target: low 15–17, mid 55–57, high 27–30%, brightness 2086–2187 Hz, RMS -18.5 dBFS"
+ ],
+ "qa": {
+  "clipping_pct": "<0.01",
+  "peak": "0.5–0.97",
+  "dc_offset": "<0.01",
+  "mid_pct": "55–68",
+  "high_pct": "<=20",
+  "snr_db": "12–22",
+  "echo": "<0.78 (insaan 0.43–0.72)",
+  "f0_spread_pct": "<=15",
+  "wer": "<0.25",
+  "internal_gap_ms": "<=70",
+  "footstep_material_centroid": "target band ke andar (dirt 200-900, concrete 1800-5000, leaves 3500-9000)"
+ }
+}

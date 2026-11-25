@@ -1,0 +1,21 @@
+# Kabhi GitHub par nahi jaana chahiye (channel ki chaabi / login)
+youtube_studio/secrets/
+**/secrets/
+*.token.json
+client_secret*.json
+
+# Bani hui cheezein (dobara ban sakti hain)
+youtube_studio/queue/
+youtube_studio/logs/
+studio/out/
+studio/audio/library/
+**/__pycache__/
+*.pyc
+_check_*.jpg
+_check_report.json
+models/
+storage/
+cache/
+*.onnx
+*.onnx.json
+__pycache__/

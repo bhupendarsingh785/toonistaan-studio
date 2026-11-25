@@ -1,0 +1,535 @@
+[
+ {
+  "stage": "script",
+  "fn": "script_pipeline.prepare_script",
+  "in": [
+   "str[352]",
+   "int=400",
+   "str[6]"
+  ],
+  "out": "list[4] of dict(5): ['chunk', 'emotion', 'sequence', 'speaker', 'text']",
+  "secs": 0.0,
+  "kw": []
+ },
+ {
+  "stage": "shabd",
+  "fn": "local_story.respell.respell",
+  "in": [
+   "str[99]",
+   "bool=True",
+   "bool=True"
+  ],
+  "out": "str[109]",
+  "secs": 0.0,
+  "kw": []
+ },
+ {
+  "stage": "awaaz",
+  "fn": "engine_router.render_line",
+  "in": [
+   "str[109]",
+   "str[8]",
+   "str[34]",
+   "None",
+   "None",
+   "str[7]"
+  ],
+  "out": "tuple[2] of bool=True",
+  "secs": 0.19,
+  "kw": []
+ },
+ {
+  "stage": "gates",
+  "fn": "realtime.gates.check",
+  "in": [
+   "np(328193,):float32",
+   "int=44100",
+   "None",
+   "str[99]"
+  ],
+  "out": "list[5] of dict(4): ['fix', 'gate', 'ok', 'value']",
+  "secs": 3.2,
+  "kw": []
+ },
+ {
+  "stage": "gate_fix",
+  "fn": "realtime.gates.apply_fix",
+  "in": [
+   "np(328193,):float32",
+   "int=44100",
+   "str[6]",
+   "dict(4): ['fix', 'gate', 'ok', 'value']",
+   "str[99]"
+  ],
+  "out": "tuple[2] of np(328193,):float32",
+  "secs": 0.0,
+  "kw": []
+ },
+ {
+  "stage": "shabd",
+  "fn": "local_story.respell.respell",
+  "in": [
+   "str[81]",
+   "bool=True",
+   "bool=True"
+  ],
+  "out": "str[83]",
+  "secs": 0.0,
+  "kw": []
+ },
+ {
+  "stage": "awaaz",
+  "fn": "engine_router.render_line",
+  "in": [
+   "str[83]",
+   "str[7]",
+   "str[34]",
+   "None",
+   "None",
+   "str[7]"
+  ],
+  "out": "tuple[2] of bool=True",
+  "secs": 0.11,
+  "kw": []
+ },
+ {
+  "stage": "gates",
+  "fn": "realtime.gates.check",
+  "in": [
+   "np(242690,):float32",
+   "int=44100",
+   "None",
+   "str[81]"
+  ],
+  "out": "list[5] of dict(4): ['fix', 'gate', 'ok', 'value']",
+  "secs": 0.07,
+  "kw": []
+ },
+ {
+  "stage": "gate_fix",
+  "fn": "realtime.gates.apply_fix",
+  "in": [
+   "np(242690,):float32",
+   "int=44100",
+   "str[6]",
+   "dict(4): ['fix', 'gate', 'ok', 'value']",
+   "str[81]"
+  ],
+  "out": "tuple[2] of np(242690,):float32",
+  "secs": 0.0,
+  "kw": []
+ },
+ {
+  "stage": "shabd",
+  "fn": "local_story.respell.respell",
+  "in": [
+   "str[68]",
+   "bool=True",
+   "bool=True"
+  ],
+  "out": "str[78]",
+  "secs": 0.0,
+  "kw": []
+ },
+ {
+  "stage": "awaaz",
+  "fn": "engine_router.render_line",
+  "in": [
+   "str[78]",
+   "str[8]",
+   "str[34]",
+   "str[5]",
+   "list[0] of khaali",
+   "str[7]"
+  ],
+  "out": "tuple[2] of bool=True",
+  "secs": 0.08,
+  "kw": []
+ },
+ {
+  "stage": "gates",
+  "fn": "realtime.gates.check",
+  "in": [
+   "np(215041,):float32",
+   "int=44100",
+   "None",
+   "str[68]"
+  ],
+  "out": "list[5] of dict(4): ['fix', 'gate', 'ok', 'value']",
+  "secs": 0.07,
+  "kw": []
+ },
+ {
+  "stage": "gate_fix",
+  "fn": "realtime.gates.apply_fix",
+  "in": [
+   "np(215041,):float32",
+   "int=44100",
+   "str[6]",
+   "dict(4): ['fix', 'gate', 'ok', 'value']",
+   "str[68]"
+  ],
+  "out": "tuple[2] of np(215041,):float32",
+  "secs": 0.0,
+  "kw": []
+ },
+ {
+  "stage": "shabd",
+  "fn": "local_story.respell.respell",
+  "in": [
+   "str[63]",
+   "bool=True",
+   "bool=True"
+  ],
+  "out": "str[71]",
+  "secs": 0.0,
+  "kw": []
+ },
+ {
+  "stage": "awaaz",
+  "fn": "engine_router.render_line",
+  "in": [
+   "str[71]",
+   "str[7]",
+   "str[34]",
+   "str[5]",
+   "list[0] of khaali",
+   "str[7]"
+  ],
+  "out": "tuple[2] of bool=True",
+  "secs": 0.08,
+  "kw": []
+ },
+ {
+  "stage": "gates",
+  "fn": "realtime.gates.check",
+  "in": [
+   "np(200705,):float32",
+   "int=44100",
+   "None",
+   "str[63]"
+  ],
+  "out": "list[5] of dict(4): ['fix', 'gate', 'ok', 'value']",
+  "secs": 0.1,
+  "kw": []
+ },
+ {
+  "stage": "gate_fix",
+  "fn": "realtime.gates.apply_fix",
+  "in": [
+   "np(200705,):float32",
+   "int=44100",
+   "str[6]",
+   "dict(4): ['fix', 'gate', 'ok', 'value']",
+   "str[63]"
+  ],
+  "out": "tuple[2] of np(200705,):float32",
+  "secs": 0.0,
+  "kw": []
+ },
+ {
+  "stage": "ruke",
+  "fn": "world.duniya.pause_after",
+  "in": [
+   "str[99]",
+   "str[7]",
+   "str[8]",
+   "bool=False",
+   "dict(8): ['_note', 'keywords', 'layers', 'levels_db', 'pauses_s', 'surfaces']",
+   "Generator"
+  ],
+  "out": "float=0.6062738666511667",
+  "secs": 0.0,
+  "kw": []
+ },
+ {
+  "stage": "ruke",
+  "fn": "world.duniya.pause_after",
+  "in": [
+   "str[81]",
+   "str[8]",
+   "str[7]",
+   "bool=False",
+   "dict(8): ['_note', 'keywords', 'layers', 'levels_db', 'pauses_s', 'surfaces']",
+   "Generator"
+  ],
+  "out": "float=0.6439214225612984",
+  "secs": 0.0,
+  "kw": []
+ },
+ {
+  "stage": "ruke",
+  "fn": "world.duniya.pause_after",
+  "in": [
+   "str[68]",
+   "str[7]",
+   "str[8]",
+   "bool=False",
+   "dict(8): ['_note', 'keywords', 'layers', 'levels_db', 'pauses_s', 'surfaces']",
+   "Generator"
+  ],
+  "out": "float=0.5683883613490655",
+  "secs": 0.0,
+  "kw": []
+ },
+ {
+  "stage": "ruke",
+  "fn": "world.duniya.pause_after",
+  "in": [
+   "str[63]",
+   "None",
+   "str[7]",
+   "bool=False",
+   "dict(8): ['_note', 'keywords', 'layers', 'levels_db', 'pauses_s', 'surfaces']",
+   "Generator"
+  ],
+  "out": "float=0.45131632614139366",
+  "secs": 0.0,
+  "kw": []
+ },
+ {
+  "stage": "voice_eq",
+  "fn": "world.duniya.voice_chain",
+  "in": [
+   "np(1086729,):float32"
+  ],
+  "out": "np(1086729,):float64",
+  "secs": 0.05,
+  "kw": []
+ },
+ {
+  "stage": "spot",
+  "fn": "world.spotting.spot",
+  "in": [
+   "list[4] of dict(5): ['bhaav', 'end', 'start', 'text', 'who']",
+   "float=24.642380952380954",
+   "dict(9): ['_note', '_note_prefer', 'emotion_world', 'events', 'motion', 'places']",
+   "dict(8): ['_note', 'keywords', 'layers', 'levels_db', 'pauses_s', 'surfaces']",
+   "bool=False",
+   "str[23]"
+  ],
+  "out": "dict(9): ['actions', 'cues', 'emotions', 'llm', 'missing', 'motion']",
+  "secs": 0.26,
+  "kw": []
+ },
+ {
+  "stage": "jagah",
+  "fn": "world.spotting.place_timeline",
+  "in": [
+   "list[4] of dict(5): ['bhaav', 'end', 'start', 'text', 'who']",
+   "float=24.642380952380954",
+   "dict(9): ['_note', '_note_prefer', 'emotion_world', 'events', 'motion', 'places']"
+  ],
+  "out": "list[1] of dict(3): ['place', 't0', 't1']",
+  "secs": 0.0,
+  "kw": []
+ },
+ {
+  "stage": "mausam",
+  "fn": "world.spotting.weather_timeline",
+  "in": [
+   "list[4] of dict(5): ['bhaav', 'end', 'start', 'text', 'who']",
+   "float=24.642380952380954",
+   "dict(9): ['_note', '_note_prefer', 'emotion_world', 'events', 'motion', 'places']"
+  ],
+  "out": "list[1] of dict(3): ['state', 't0', 't1']",
+  "secs": 0.0,
+  "kw": []
+ },
+ {
+  "stage": "harkat",
+  "fn": "world.harkat.plan_actions",
+  "in": [
+   "list[4] of dict(5): ['bhaav', 'end', 'start', 'text', 'who']",
+   "float=24.642380952380954",
+   "dict(8): ['_note', 'keywords', 'layers', 'levels_db', 'pauses_s', 'surfaces']"
+  ],
+  "out": "tuple[2] of list[3] of dict(4): ['dist', 'kind', 'pan', 't0']",
+  "secs": 0.0,
+  "kw": []
+ },
+ {
+  "stage": "scene",
+  "fn": "world.duniya.plan_scene",
+  "in": [
+   "list[4] of dict(5): ['bhaav', 'end', 'start', 'text', 'who']",
+   "float=24.642380952380954",
+   "dict(8): ['_note', 'keywords', 'layers', 'levels_db', 'pauses_s', 'surfaces']",
+   "None"
+  ],
+  "out": "tuple[2] of dict(9): ['_mentioned', 'birds', 'crickets', 'koel', 'leaves', 'rain']",
+  "secs": 0.79,
+  "kw": []
+ },
+ {
+  "stage": "bhaav_env",
+  "fn": "world.duniya.apply_emotion",
+  "in": [
+   "dict(9): ['_mentioned', 'birds', 'crickets', 'koel', 'leaves', 'rain']",
+   "list[1] of tuple[3] of float=8.048292007240736",
+   "float=24.642380952380954"
+  ],
+  "out": "dict(9): ['_mentioned', 'birds', 'crickets', 'koel', 'leaves', 'rain']",
+  "secs": 0.84,
+  "kw": []
+ },
+ {
+  "stage": "mausam_env",
+  "fn": "world.duniya.apply_weather",
+  "in": [
+   "dict(9): ['_mentioned', 'birds', 'crickets', 'koel', 'leaves', 'rain']",
+   "list[1] of dict(3): ['state', 't0', 't1']",
+   "dict(9): ['_note', '_note_prefer', 'emotion_world', 'events', 'motion', 'places']",
+   "float=24.642380952380954",
+   "list[3] of dict(4): ['dist', 'kind', 'pan', 't0']",
+   "list[3] of dict(4): ['dist', 'kind', 'pan', 't0']",
+   "Generator"
+  ],
+  "out": "dict(9): ['_mentioned', 'birds', 'crickets', 'koel', 'leaves', 'rain']",
+  "secs": 0.43,
+  "kw": []
+ },
+ {
+  "stage": "andar",
+  "fn": "world.duniya.place_env",
+  "in": [
+   "list[1] of dict(3): ['place', 't0', 't1']",
+   "float=24.642380952380954"
+  ],
+  "out": "np(1086729,):float64",
+  "secs": 0.17,
+  "kw": []
+ },
+ {
+  "stage": "world",
+  "fn": "world.duniya.render_world",
+  "in": [
+   "float=24.642380952380954",
+   "dict(9): ['_mentioned', 'birds', 'crickets', 'koel', 'leaves', 'rain']",
+   "list[0] of khaali",
+   "dict(8): ['_note', 'keywords', 'layers', 'levels_db', 'pauses_s', 'surfaces']",
+   "Library",
+   "Generator",
+   "str[4]",
+   "None"
+  ],
+  "out": "tuple[2] of np(2, 1086729):float64",
+  "secs": 8.15,
+  "kw": []
+ },
+ {
+  "stage": "sheet",
+  "fn": "world.duniya.render_sheet",
+  "in": [
+   "float=24.642380952380954",
+   "dict(2): ['cues', 'motion']",
+   "dict(9): ['_note', '_note_prefer', 'emotion_world', 'events', 'motion', 'places']",
+   "Library",
+   "Generator",
+   "np(1086729,):float64",
+   "list[4] of dict(5): ['bhaav', 'end', 'start', 'text', 'who']"
+  ],
+  "out": "tuple[2] of np(2, 1086729):float64",
+  "secs": 0.61,
+  "kw": []
+ },
+ {
+  "stage": "fx",
+  "fn": "world.duniya.render_fx",
+  "in": [
+   "float=24.642380952380954",
+   "list[3] of dict(6): ['dist', 'event', 'kind', 'pan', 't', 't0']",
+   "list[1] of tuple[3] of float=8.048292007240736",
+   "Generator"
+  ],
+  "out": "tuple[2] of np(2, 1086729):float64",
+  "secs": 1.49,
+  "kw": []
+ },
+ {
+  "stage": "deewar",
+  "fn": "world.duniya.indoor_muffle",
+  "in": [
+   "np(2, 1086729):float64",
+   "np(1086729,):float64"
+  ],
+  "out": "np(2, 1086729):float64",
+  "secs": 0.0,
+  "kw": []
+ },
+ {
+  "stage": "jagah_goonj",
+  "fn": "__main__.space_voice",
+  "in": [
+   "np(1086729,):float64",
+   "np(1086729,):float64",
+   "Generator"
+  ],
+  "out": "np(1086729,):float32",
+  "secs": 0.38,
+  "kw": []
+ },
+ {
+  "stage": "mix",
+  "fn": "world.duniya.mix",
+  "in": [
+   "np(1086729,):float32",
+   "np(2, 1086729):float64",
+   "dict(8): ['_note', 'keywords', 'layers', 'levels_db', 'pauses_s', 'surfaces']",
+   "float=0.0",
+   "list[4] of dict(5): ['bhaav', 'end', 'start', 'text', 'who']",
+   "np(2, 1086729):float64",
+   "np(1086729,):float64",
+   "list[0] of khaali"
+  ],
+  "out": "np(2, 1086729):float64",
+  "secs": 6.61,
+  "kw": []
+ },
+ {
+  "stage": "master",
+  "fn": "world.duniya.master",
+  "in": [
+   "np(2, 1086729):float64",
+   "str[30]",
+   "float=-16.0",
+   "float=-1.0"
+  ],
+  "out": "None",
+  "secs": 3.92,
+  "kw": []
+ },
+ {
+  "stage": "qa_world",
+  "fn": "world.world_qa.judge",
+  "in": [
+   "str[30]"
+  ],
+  "out": "dict(9): ['breaths_per_min', 'duration_s', 'holes_pct', 'lufs', 'mud_db', 'overall']",
+  "secs": 1.09,
+  "kw": []
+ },
+ {
+  "stage": "self_improve",
+  "fn": "self_improve.deep",
+  "in": [
+   "str[30]"
+  ],
+  "out": "dict(30): ['air', 'clip_pct', 'cpp_db', 'dur_s', 'dyn_db', 'f0_med']",
+  "secs": 24.48,
+  "kw": []
+ },
+ {
+  "stage": "manifest",
+  "fn": "render_manifest.build",
+  "in": [
+   "str[23]",
+   "str[30]",
+   "str[33]",
+   "dict(1): ['lufs']"
+  ],
+  "out": "dict(8): ['audio', 'failed_checks', 'qa', 'script', 'settings', 'skipped_checks']",
+  "secs": 1.47,
+  "kw": []
+ }
+]

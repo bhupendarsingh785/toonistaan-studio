@@ -1,0 +1,37 @@
+{
+ "_note": "Kahaniyon me aayi awaazein jo system ke paas nahi thi. Inhe sound-events.json + awaazein.py me jodo.",
+ "items": [
+  {
+   "key": "यहाँ पानी की आवाज़ बहुत पास है।",
+   "example": "यहाँ पानी की आवाज़ बहुत पास है।",
+   "suggest": null,
+   "count": 1,
+   "last_story": "/tmp/kahani-nadi.txt",
+   "added": "2026-11-24"
+  },
+  {
+   "key": "यहाँ आवाज़ बहुत गूंजती है।",
+   "example": "यहाँ आवाज़ बहुत गूंजती है।",
+   "suggest": null,
+   "count": 8,
+   "last_story": "/tmp/kahani-jagah.txt",
+   "added": "2026-11-24"
+  },
+  {
+   "key": "बेटी, जंगल में हर आवाज़ दुश्मन की नहीं होती। कभी-कभी सबसे खत",
+   "example": "बेटी, जंगल में हर आवाज़ दुश्मन की नहीं होती। कभी-कभी सबसे खतरनाक दिखने वाला जीव ही सबसे अधिक दुख सह रहा होता है।",
+   "suggest": null,
+   "count": 1,
+   "last_story": "/scratch/work/astra_parts/20ffe4c96955/part9.txt",
+   "added": "2026-11-24"
+  },
+  {
+   "key": "तभी बाहर से किसी जानवर के कराहने की आवाज आई।",
+   "example": "तभी बाहर से किसी जानवर के कराहने की आवाज आई।",
+   "suggest": null,
+   "count": 1,
+   "last_story": "/scratch/work/astra_parts/20ffe4c96955/part11.txt",
+   "added": "2026-11-24"
+  }
+ ]
+}

@@ -25,6 +25,11 @@ from __future__ import annotations
 import argparse, json, re, subprocess, sys
 from difflib import SequenceMatcher
 from pathlib import Path
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -186,7 +191,7 @@ def asr_words(x, model="small"):
     """word-level timestamps — har shabd apni line me daalne ke liye."""
     from faster_whisper import WhisperModel
     m = WhisperModel(model, device="cpu", compute_type="int8", cpu_threads=1,
-                     download_root="/scratch/work/whisper")
+                     download_root=str(_AP.WORK / "whisper"))
     segs, _ = m.transcribe(x, language="hi", vad_filter=False,
                            condition_on_previous_text=False, word_timestamps=True)
     words = []

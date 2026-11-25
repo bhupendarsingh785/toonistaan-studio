@@ -1,0 +1,178 @@
+{
+ "title": "Jugnu ki Roshni | छोटू और जुगनू | Toonistaan Hindi Kahani",
+ "title_card": [
+  "जुगनू की रोशनी",
+  "टूनिस्तान की कहानी"
+ ],
+ "seed": 41,
+ "narrators": [
+  "madhur"
+ ],
+ "style": ", original 3D animated movie style, cinematic lighting, highly detailed, smooth, beautiful",
+ "cast": {
+  "CHHOTU": "a cute 8-year-old Indian boy Chhotu with short messy black hair, big expressive brown eyes, wearing a RED t-shirt",
+  "DADAJI": "a kind old Indian grandfather, 72 years old, white beard and white moustache, bald head with white hair on sides, white kurta, warm smile"
+ },
+ "scenes": [
+  {
+   "id": "s01",
+   "people": 0,
+   "music": "mystery",
+   "cam": "in",
+   "sfx": [
+    "thunder",
+    "wind"
+   ],
+   "vfx": [
+    "rain",
+    "lightning"
+   ],
+   "img": "an Indian village at night during a heavy thunderstorm, mud houses with dark windows, a big banyan tree, dark blue clouds, wide shot",
+   "lines": [
+    [
+     "madhur",
+     "उस रात रामपुर में ज़ोरदार तूफ़ान आया। तेज़ बारिश हुई, बिजली कड़की, और पूरे गाँव की बत्ती चली गई।"
+    ]
+   ],
+   "motion": "heavy rain falling, lightning flashes in the clouds, trees swaying in strong wind, slow camera push in"
+  },
+  {
+   "id": "s02",
+   "people": 1,
+   "variants": 2,
+   "music": "mystery",
+   "cam": "static",
+   "sfx": [],
+   "vfx": [],
+   "img": "inside a dark mud house at night lit only by a small oil lamp, close-up portrait of CHHOTU looking scared, holding a blanket, warm orange lamp light on his face",
+   "lines": [
+    [
+     "swara_bachcha",
+     "दादाजी! बत्ती चली गई! मुझे अँधेरे से बहुत डर लग रहा है।"
+    ]
+   ],
+   "motion": "the boy blinks, looks around nervously and pulls the blanket closer, the oil lamp flame flickers"
+  },
+  {
+   "id": "s03",
+   "people": 1,
+   "music": "happy",
+   "cam": "static",
+   "sfx": [],
+   "vfx": [
+    "dust"
+   ],
+   "img": "inside a mud house at night, close-up portrait of DADAJI smiling kindly, lit by a warm oil lamp, cozy",
+   "lines": [
+    [
+     "madhur_dada",
+     "डरो मत छोटू। अँधेरा भी कुछ नहीं बिगाड़ता। चलो, बारिश रुक गई है, मैं तुम्हें कुछ जादू दिखाता हूँ।"
+    ]
+   ],
+   "motion": "the grandfather smiles warmly, nods gently and speaks, the oil lamp flame flickers softly"
+  },
+  {
+   "id": "s04",
+   "people": 0,
+   "music": "mystery",
+   "cam": "left",
+   "sfx": [
+    "leaves"
+   ],
+   "vfx": [
+    "fireflies"
+   ],
+   "img": "a quiet Indian village lane at night after rain, wet ground shining, mud houses, bushes and trees, deep blue moonlight, no people, wide shot",
+   "lines": [
+    [
+     "madhur",
+     "बारिश थम चुकी थी। चारों तरफ़ अँधेरा था, लेकिन तभी झाड़ियों में छोटी-छोटी रोशनियाँ टिमटिमाने लगीं।"
+    ]
+   ]
+  },
+  {
+   "id": "s05",
+   "people": 1,
+   "variants": 2,
+   "music": "happy",
+   "cam": "in",
+   "sfx": [
+    "sparkle"
+   ],
+   "vfx": [
+    "fireflies"
+   ],
+   "img": "outdoors at night in a village, close-up portrait of CHHOTU looking amazed with a big smile, glowing green light on his face, dark blue background",
+   "lines": [
+    [
+     "swara_bachcha",
+     "वाह! दादाजी, ये चमकते हुए तारे ज़मीन पर कैसे आ गए?"
+    ]
+   ],
+   "motion": "the boy's face lights up with amazement, he smiles wide and looks around at floating fireflies"
+  },
+  {
+   "id": "s06",
+   "people": 1,
+   "music": "happy",
+   "cam": "static",
+   "sfx": [],
+   "vfx": [
+    "fireflies"
+   ],
+   "img": "outdoors at night in a village, medium close-up of DADAJI smiling and pointing up, soft blue moonlight and green glow, dark background",
+   "lines": [
+    [
+     "madhur_dada",
+     "ये जुगनू हैं बेटा। ये ख़ुद अपनी रोशनी बनाते हैं। छोटे हैं, पर अँधेरे से कभी नहीं डरते।"
+    ]
+   ],
+   "motion": "the grandfather smiles and slowly points up at the glowing fireflies, fireflies drift around"
+  },
+  {
+   "id": "s07",
+   "people": 0,
+   "music": "happy",
+   "cam": "up",
+   "sfx": [
+    "chime"
+   ],
+   "vfx": [
+    "fireflies",
+    "dust"
+   ],
+   "img": "a magical night field in an Indian village filled with hundreds of glowing green fireflies, tall grass, a big tree, starry sky, no people, wide shot",
+   "lines": [
+    [
+     "madhur",
+     "उस रात छोटू ने सैकड़ों जुगनुओं को खेतों में नाचते देखा। अँधेरा अब डरावना नहीं, सुंदर लग रहा था।"
+    ]
+   ],
+   "motion": "hundreds of fireflies float and twinkle over the grass, the grass sways in a gentle breeze, slow camera rise"
+  },
+  {
+   "id": "s08",
+   "people": 1,
+   "music": "happy",
+   "cam": "out",
+   "sfx": [
+    "sparkle"
+   ],
+   "vfx": [
+    "fireflies"
+   ],
+   "img": "outdoors at night under stars, close-up portrait of CHHOTU smiling bravely and happily, fireflies glowing around him, blue and green light",
+   "lines": [
+    [
+     "swara_bachcha",
+     "अब मुझे अँधेरे से डर नहीं लगता! मैं भी जुगनू जैसा बहादुर बनूँगा!"
+    ],
+    [
+     "madhur",
+     "हिम्मत की एक छोटी सी रोशनी, सबसे बड़ा अँधेरा भी दूर कर देती है। ऐसी ही कहानियों के लिए, टूनिस्तान को सब्सक्राइब करें!"
+    ]
+   ],
+   "motion": "the boy smiles bravely, fireflies float around him, his hair moves slightly in the breeze"
+  }
+ ]
+}

@@ -1,0 +1,18 @@
+{
+  "naam": "ZERO baseline",
+  "kya": "yahin se aage badhega; isse neeche kabhi nahi jaana",
+  "audio": "baseline/zero/kahani-zero.mp3",
+  "script": "baseline/zero/script.txt",
+  "pipeline": "tools/cast_build.py",
+  "cast": {
+    "गौरी": {"engine": "piper-f", "pitch": 1.0, "tempo": 1.0, "tilt": 1.0, "breath": 0.01, "vib": 0.15, "form": "preserved"},
+    "कमला": {"engine": "piper-f", "pitch": 0.93, "tempo": 0.92, "tilt": -2.0, "breath": 0.014, "vib": 0.22, "form": "preserved"},
+    "मोहन": {"engine": "piper-f", "pitch": 1.3, "tempo": 1.05, "tilt": 2.0, "breath": 0.012, "vib": 0.1, "form": "shifted"}
+  },
+  "joins": {"gap_same_speaker": 0.12, "gap_new_speaker": 0.34, "breath": true, "legato_ms": 55, "comma_hata": true},
+  "clarity": {"hp_hz": 100, "exciter_drive": 6.0, "exciter_amt": 0.7, "presence_db": 3.0, "deess": 0.35},
+  "loudness": {"lufs": -16.0, "peak_max": 0.95},
+  "naap": {"ruke_per_min": 35.0, "sabse_lambi_chupp_s": 0.42, "roughness": 0.0515,
+            "f0_hz": {"गौरी": [216, 265], "कमला": [205, 222], "मोहन": [238, 258]}},
+  "mana": ["1.5x se bada pitch shift", "harmonic clean 8/-9 + compressor 3:1", "background pehle"]
+}

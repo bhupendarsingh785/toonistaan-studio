@@ -16,9 +16,14 @@ CLI:
 from __future__ import annotations
 import argparse, json, os, shutil, subprocess, sys, time, wave
 from pathlib import Path
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
-VOICES = Path("/scratch/work/voices")
+VOICES = _AP.VOICES
 BUS_FILE = ROOT / "knowledge" / "engine-bus.jsonl"
 SR = 22050
 
@@ -207,3 +212,45 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+# ---------------- defaults + galti ledger (system_check inhe maangta hai)
+CORE_ENGINES = ("piper", "espeak", "edge", "elevenlabs")
+
+
+def ensure_defaults() -> list:
+    """Bus ko shuru karo: registry me chaaron engine hon, bus file bani ho.
+
+    Idempotent — jitni baar chalao, kuch bigadta nahi. Return: engine caps ki list
+    (name, offline, key, quality) — system_check isi ko dekhta hai.
+    """
+    from collections import namedtuple
+    Cap = namedtuple("Cap", "name offline key quality hindi clone")
+    for name in CORE_ENGINES:
+        REGISTRY.setdefault(name, {
+            "kind": "unknown", "offline": False, "key": True,
+            "quality": 0.5, "speed": 0.5, "hindi": True, "clone": False,
+            "use": [], "note": "default (config nahi mila)",
+        })
+    BUS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    if not BUS_FILE.exists():
+        BUS_FILE.write_text("", encoding="utf-8")
+    return [Cap(n, bool(e.get("offline")), bool(e.get("key")), float(e.get("quality", 0.5)),
+                bool(e.get("hindi")), bool(e.get("clone")))
+            for n, e in REGISTRY.items()]
+
+
+def sudhaar_report() -> dict:
+    """Kitni galtiyan bus par likhi hain (aur kaun si) — ledger ka saaf hisaab."""
+    rows = []
+    if BUS_FILE.exists():
+        for line in BUS_FILE.read_text(encoding="utf-8", errors="ignore").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                rows.append(json.loads(line))
+            except Exception:
+                continue
+    errs = [r for r in rows if str(r.get("kind", "")).lower() in ("error", "galti", "fail")]
+    return {"total": len(rows), "total_errors": len(errs),
+            "last_error": errs[-1] if errs else None}

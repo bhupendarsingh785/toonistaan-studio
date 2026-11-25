@@ -1,0 +1,7 @@
+{
+ "narrator": {"age":"adult","gender":"male","voice":"rohan","base_pitch":"mid","style":"kahani","space":"open","pace":1.00,"gain_db":0},
+ "bhediya": {"age":"adult","gender":"male","voice":"pratham","base_pitch":"low","style":"gehri_dheemi","space":"open","pace":0.96,"gain_db":-0.5},
+ "stree":   {"age":"adult","gender":"female","voice":"priyamvada","base_pitch":"high","style":"garam","space":"open","pace":1.00,"gain_db":2.0},
+ "dadi":    {"age":"old","gender":"female","voice":"priyamvada","base_pitch":"low","style":"dheemi","space":"indoor","pace":0.95,"gain_db":0.5},
+ "bachcha": {"age":"child","gender":"female","voice":"priyamvada","base_pitch":"high","style":"tez","space":"open","pace":1.06,"gain_db":1.0}
+}

@@ -12,8 +12,13 @@ import json
 import urllib.parse
 import urllib.request
 from pathlib import Path
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
-OUT = Path("/scratch/work/real")
+OUT = (_AP.WORK / "real")
 API = "https://commons.wikimedia.org/w/api.php"
 UA = "AstraAudioTest/1.0 (audio engine testing; https://github.com/bhupendarsingh785/toonistaan-studio) python-urllib"
 

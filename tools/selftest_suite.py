@@ -14,11 +14,16 @@ CLI: python tools/selftest_suite.py [--verbose]
 from __future__ import annotations
 import argparse, json, subprocess, sys, wave
 from pathlib import Path
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 SR = 16000
-TMP = Path("/scratch/work/selftest_suite")
+TMP = (_AP.WORK / "selftest_suite")
 
 
 def wav(name: str, sig, sr=SR):

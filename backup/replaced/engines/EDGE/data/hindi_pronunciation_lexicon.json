@@ -1,0 +1,5 @@
+{
+  "schema": "hindi-pronunciation-lexicon/v1",
+  "entries": {},
+  "instructions": "Add reviewed word->phoneme/alias entries here. Do not auto-guess schwa deletion. Include source, dialect, reviewer and confidence for every entry."
+}

@@ -1,0 +1,23 @@
+name: system-doctor
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 */6 * * *"   # har 6 ghante apne aap check
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  doctor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deps
+        run: pip install numpy imageio-ffmpeg
+      - name: Run system doctor
+        run: python tools/system_doctor.py

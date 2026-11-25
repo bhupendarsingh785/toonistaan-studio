@@ -1,0 +1,585 @@
+{
+  "schema": "astra-story-audio-review-pack/v1",
+  "source_name": "story_scene_demo.txt",
+  "script_sha256": "81fbff92b51e79f1002e8fafe626f8ccbbcb969fe6ab67ad1d0544750931c5b4",
+  "counts": {
+    "scenes": 3,
+    "characters": 2,
+    "story_event_cues": 1,
+    "action_chains": 0,
+    "physical_action_events": 0,
+    "environment_bed_suggestions": 12,
+    "asset_search_events": 9,
+    "asset_events_with_candidates": 0
+  },
+  "stages": {
+    "story_intelligence": {
+      "status": "completed_advisory",
+      "analysis": {
+        "schema": "astra-story-intelligence/v1",
+        "source_name": "story_scene_demo.txt",
+        "script_sha256": "81fbff92b51e79f1002e8fafe626f8ccbbcb969fe6ab67ad1d0544750931c5b4",
+        "language_hint": "hi",
+        "line_count": 14,
+        "nonempty_line_count": 11,
+        "scene_count": 3,
+        "characters": [
+          {
+            "name": "आरव",
+            "dialogue_lines": 3,
+            "first_seen_line": 3,
+            "emotion_hint_counts": {
+              "peaceful": 1
+            },
+            "voice_continuity_rule": "Keep the same voice identity across scenes; do not infer age, gender or accent from the name."
+          },
+          {
+            "name": "माँ",
+            "dialogue_lines": 3,
+            "first_seen_line": 4,
+            "emotion_hint_counts": {
+              "fear": 1
+            },
+            "voice_continuity_rule": "Keep the same voice identity across scenes; do not infer age, gender or accent from the name."
+          }
+        ],
+        "scenes": [
+          {
+            "scene_id": "scene_001",
+            "heading": "दृश्य 1: गाँव की सुबह — बाहरी स्थान",
+            "source_line_start": 1,
+            "source_line_end": 4,
+            "start_time_seconds": null,
+            "source_text": "दृश्य 1: गाँव की सुबह — बाहरी स्थान\nवाचक: सुबह की हल्की रोशनी खेतों पर फैल रही थी। दूर कहीं पक्षियों की आवाज़ आ रही थी।\nआरव [भाव:खुश]: माँ, आज हवा कितनी अच्छी चल रही है!\nमाँ [भाव:स्नेह]: हाँ बेटा, पहले नाश्ता कर लो।",
+            "speakers": [
+              "आरव",
+              "माँ"
+            ],
+            "dialogue_line_count": 2,
+            "narration_line_count": 1,
+            "lexical_mood": "peaceful",
+            "mood_confidence": 0.59,
+            "mood_evidence": [
+              "सुबह",
+              "हवा"
+            ],
+            "mixer_mood_suggestion": "peaceful",
+            "environment_candidates": [
+              {
+                "environment": "village",
+                "evidence": [
+                  "गाँव"
+                ],
+                "confidence": 0.5,
+                "requires_human_review": true
+              }
+            ],
+            "sound_cues": [
+              {
+                "cue_type": "performance_direction",
+                "label": "आरव: peaceful",
+                "source_line": 3,
+                "confidence": 0.47,
+                "evidence": [
+                  "हवा"
+                ],
+                "requires_human_review": true
+              }
+            ],
+            "needs_review": true
+          },
+          {
+            "scene_id": "scene_002",
+            "heading": "दृश्य 2: पुरानी हवेली — भीतरी स्थान",
+            "source_line_start": 6,
+            "source_line_end": 9,
+            "start_time_seconds": null,
+            "source_text": "दृश्य 2: पुरानी हवेली — भीतरी स्थान\nवाचक: दरवाज़ा धीरे से चरमराया। अंदर गहरी खामोशी थी।\nआरव [भाव:डर]: माँ... क्या आपने भी यह आवाज़ सुनी?\nमाँ [भाव:गंभीर]: मेरे पास ही रहना।",
+            "speakers": [
+              "आरव",
+              "माँ"
+            ],
+            "dialogue_line_count": 2,
+            "narration_line_count": 1,
+            "lexical_mood": "fear",
+            "mood_confidence": 0.47,
+            "mood_evidence": [
+              "डर"
+            ],
+            "mixer_mood_suggestion": "tense",
+            "environment_candidates": [
+              {
+                "environment": "old_mansion",
+                "evidence": [
+                  "हवेली"
+                ],
+                "confidence": 0.5,
+                "requires_human_review": true
+              }
+            ],
+            "sound_cues": [
+              {
+                "cue_id": "cue_0001",
+                "cue_type": "sound_event",
+                "event": "door",
+                "suggested_role": "sfx",
+                "source_line": 7,
+                "text_excerpt": "वाचक: दरवाज़ा धीरे से चरमराया। अंदर गहरी खामोशी थी।",
+                "evidence": [
+                  "दरवाज़ा"
+                ],
+                "confidence": 0.5,
+                "requires_human_review": true,
+                "timing": "align_to_story_event_not_known_from_text_alone"
+              }
+            ],
+            "needs_review": true
+          },
+          {
+            "scene_id": "scene_003",
+            "heading": "दृश्य 3: आँगन",
+            "source_line_start": 11,
+            "source_line_end": 13,
+            "start_time_seconds": null,
+            "source_text": "दृश्य 3: आँगन\nआरव [भाव:हैरान]: अरे! यह तो बिल्ली है!\nमाँ [भाव:हँसी]: तुम भी न, हर आवाज़ से डर जाते हो।",
+            "speakers": [
+              "आरव",
+              "माँ"
+            ],
+            "dialogue_line_count": 2,
+            "narration_line_count": 0,
+            "lexical_mood": "mixed",
+            "mood_confidence": 0.35,
+            "mood_evidence": [
+              "हँसी",
+              "डर"
+            ],
+            "mixer_mood_suggestion": "neutral",
+            "environment_candidates": [
+              {
+                "environment": "home_interior",
+                "evidence": [
+                  "आँगन"
+                ],
+                "confidence": 0.5,
+                "requires_human_review": true
+              }
+            ],
+            "sound_cues": [
+              {
+                "cue_type": "performance_direction",
+                "label": "माँ: fear",
+                "source_line": 13,
+                "confidence": 0.47,
+                "evidence": [
+                  "डर"
+                ],
+                "requires_human_review": true
+              }
+            ],
+            "needs_review": true
+          }
+        ],
+        "summary": {
+          "dialogue_line_count": 6,
+          "narration_line_count": 2,
+          "sound_event_candidate_count": 1,
+          "review_scene_count": 3,
+          "environment_candidate_count": 3,
+          "performance_direction_count": 2
+        },
+        "policy": {
+          "analysis_mode": "local_heuristic_no_external_model",
+          "claims_full_story_understanding": false,
+          "automatic_asset_assignment": false,
+          "automatic_sfx_insertion": false,
+          "automatic_environment_asset_selection": false,
+          "source_script_modified": false,
+          "lexical_emotion_is_not_psychological_truth": true,
+          "cue_timing_requires_human_or_alignment_input": true
+        },
+        "limitations": [
+          "Scene and speaker detection are strongest when the script uses explicit scene headings and Name: dialogue format.",
+          "Emotion, setting and sound-event candidates are keyword-based; metaphor, sarcasm, implied events and context may be missed.",
+          "The engine does not synthesize voices, recognize speaker identity from audio, or align words to exact audio timestamps.",
+          "Human review is required before production cue approval."
+        ]
+      }
+    },
+    "world_soundscape": {
+      "status": "completed_advisory",
+      "plan": {
+        "schema": "astra-world-soundscape-plan/v1",
+        "source_name": "story_scene_demo.txt",
+        "scene_count": 3,
+        "scenes": [
+          {
+            "scene_id": "scene_001",
+            "heading": "दृश्य 1: गाँव की सुबह — बाहरी स्थान",
+            "source_lines": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "primary_environment": "village",
+            "environment_alternatives": [
+              {
+                "environment": "village",
+                "evidence": [
+                  "गाँव"
+                ],
+                "profile": {
+                  "beds": [
+                    "rural_air",
+                    "distant_domestic_activity",
+                    "birds"
+                  ],
+                  "acoustics": "open_mixed_environment"
+                },
+                "confidence": "lexical_only"
+              },
+              {
+                "environment": "farm",
+                "evidence": [
+                  "खेत"
+                ],
+                "profile": {
+                  "beds": [
+                    "rural_air",
+                    "field_wind",
+                    "farm_animals_only_if_present"
+                  ],
+                  "acoustics": "open_rural"
+                },
+                "confidence": "lexical_only"
+              }
+            ],
+            "acoustic_space": "open_mixed_environment",
+            "mood_candidate": "joy",
+            "environment_layers": [
+              {
+                "layer_type": "environment_bed",
+                "asset_search_tags": [
+                  "rural_air"
+                ],
+                "priority": "supporting",
+                "mix_guidance": "low_and_non_intrusive",
+                "evidence": "environment_profile",
+                "requires_asset_match_and_human_approval": true
+              },
+              {
+                "layer_type": "environment_bed",
+                "asset_search_tags": [
+                  "distant_domestic_activity"
+                ],
+                "priority": "supporting",
+                "mix_guidance": "low_and_non_intrusive",
+                "evidence": "environment_profile",
+                "requires_asset_match_and_human_approval": true
+              },
+              {
+                "layer_type": "environment_bed",
+                "asset_search_tags": [
+                  "birds"
+                ],
+                "priority": "supporting",
+                "mix_guidance": "low_and_non_intrusive",
+                "evidence": "environment_profile",
+                "requires_asset_match_and_human_approval": true
+              },
+              {
+                "layer_type": "environment_candidate",
+                "environment": "village",
+                "evidence": [
+                  "गाँव"
+                ],
+                "profile": {
+                  "beds": [
+                    "rural_air",
+                    "distant_domestic_activity",
+                    "birds"
+                  ],
+                  "acoustics": "open_mixed_environment"
+                },
+                "confidence": "lexical_only",
+                "requires_human_review": true
+              },
+              {
+                "layer_type": "environment_candidate",
+                "environment": "farm",
+                "evidence": [
+                  "खेत"
+                ],
+                "profile": {
+                  "beds": [
+                    "rural_air",
+                    "field_wind",
+                    "farm_animals_only_if_present"
+                  ],
+                  "acoustics": "open_rural"
+                },
+                "confidence": "lexical_only",
+                "requires_human_review": true
+              }
+            ],
+            "action_foley": [],
+            "mixing_policy": {
+              "dialogue_priority": "highest",
+              "ambience": "quiet_continuous_bed_only_when_scene_supports_it",
+              "foley": "short_and_event_synced",
+              "dynamic_range": "preserve_natural_distance_and_transients",
+              "noise_policy": "do_not_add_noise_as_texture_without_story_evidence",
+              "silence": "retain_intentional_silence"
+            },
+            "review_required": true,
+            "action_chains": []
+          },
+          {
+            "scene_id": "scene_002",
+            "heading": "दृश्य 2: पुरानी हवेली — भीतरी स्थान",
+            "source_lines": [
+              6,
+              7,
+              8,
+              9
+            ],
+            "primary_environment": "old_mansion",
+            "environment_alternatives": [
+              {
+                "environment": "old_mansion",
+                "evidence": [
+                  "हवेली"
+                ],
+                "profile": {
+                  "beds": [
+                    "interior_room_tone",
+                    "wood_settling_if_cued",
+                    "distant_wind_if_exposed"
+                  ],
+                  "acoustics": "large_or_empty_interior"
+                },
+                "confidence": "lexical_only"
+              }
+            ],
+            "acoustic_space": "large_or_empty_interior",
+            "mood_candidate": "fear",
+            "environment_layers": [
+              {
+                "layer_type": "environment_bed",
+                "asset_search_tags": [
+                  "interior_room_tone"
+                ],
+                "priority": "supporting",
+                "mix_guidance": "low_and_non_intrusive",
+                "evidence": "environment_profile",
+                "requires_asset_match_and_human_approval": true
+              },
+              {
+                "layer_type": "environment_bed",
+                "asset_search_tags": [
+                  "wood_settling_if_cued"
+                ],
+                "priority": "supporting",
+                "mix_guidance": "low_and_non_intrusive",
+                "evidence": "environment_profile",
+                "requires_asset_match_and_human_approval": true
+              },
+              {
+                "layer_type": "environment_bed",
+                "asset_search_tags": [
+                  "distant_wind_if_exposed"
+                ],
+                "priority": "supporting",
+                "mix_guidance": "low_and_non_intrusive",
+                "evidence": "environment_profile",
+                "requires_asset_match_and_human_approval": true
+              },
+              {
+                "layer_type": "environment_candidate",
+                "environment": "old_mansion",
+                "evidence": [
+                  "हवेली"
+                ],
+                "profile": {
+                  "beds": [
+                    "interior_room_tone",
+                    "wood_settling_if_cued",
+                    "distant_wind_if_exposed"
+                  ],
+                  "acoustics": "large_or_empty_interior"
+                },
+                "confidence": "lexical_only",
+                "requires_human_review": true
+              }
+            ],
+            "action_foley": [],
+            "mixing_policy": {
+              "dialogue_priority": "highest",
+              "ambience": "quiet_continuous_bed_only_when_scene_supports_it",
+              "foley": "short_and_event_synced",
+              "dynamic_range": "preserve_natural_distance_and_transients",
+              "noise_policy": "do_not_add_noise_as_texture_without_story_evidence",
+              "silence": "retain_intentional_silence"
+            },
+            "review_required": true,
+            "action_chains": []
+          },
+          {
+            "scene_id": "scene_003",
+            "heading": "दृश्य 3: आँगन",
+            "source_lines": [
+              11,
+              12,
+              13
+            ],
+            "primary_environment": "home_interior",
+            "environment_alternatives": [
+              {
+                "environment": "home_interior",
+                "evidence": [
+                  "आँगन"
+                ],
+                "profile": {
+                  "beds": [
+                    "room_tone",
+                    "subtle_household_activity_if_present"
+                  ],
+                  "acoustics": "room_size_dependent_reflections"
+                },
+                "confidence": "lexical_only"
+              }
+            ],
+            "acoustic_space": "room_size_dependent_reflections",
+            "mood_candidate": "fear",
+            "environment_layers": [
+              {
+                "layer_type": "environment_bed",
+                "asset_search_tags": [
+                  "room_tone"
+                ],
+                "priority": "supporting",
+                "mix_guidance": "low_and_non_intrusive",
+                "evidence": "environment_profile",
+                "requires_asset_match_and_human_approval": true
+              },
+              {
+                "layer_type": "environment_bed",
+                "asset_search_tags": [
+                  "subtle_household_activity_if_present"
+                ],
+                "priority": "supporting",
+                "mix_guidance": "low_and_non_intrusive",
+                "evidence": "environment_profile",
+                "requires_asset_match_and_human_approval": true
+              },
+              {
+                "layer_type": "environment_candidate",
+                "environment": "home_interior",
+                "evidence": [
+                  "आँगन"
+                ],
+                "profile": {
+                  "beds": [
+                    "room_tone",
+                    "subtle_household_activity_if_present"
+                  ],
+                  "acoustics": "room_size_dependent_reflections"
+                },
+                "confidence": "lexical_only",
+                "requires_human_review": true
+              }
+            ],
+            "action_foley": [],
+            "mixing_policy": {
+              "dialogue_priority": "highest",
+              "ambience": "quiet_continuous_bed_only_when_scene_supports_it",
+              "foley": "short_and_event_synced",
+              "dynamic_range": "preserve_natural_distance_and_transients",
+              "noise_policy": "do_not_add_noise_as_texture_without_story_evidence",
+              "silence": "retain_intentional_silence"
+            },
+            "review_required": true,
+            "action_chains": []
+          }
+        ],
+        "action_chain_count": 0,
+        "action_event_count": 0,
+        "coverage_note": "Extensible world/setting taxonomy with explicit evidence. Unknown settings receive a conservative generic plan; this is not omniscient semantic scene understanding.",
+        "asset_generation_performed": false,
+        "audio_rendered": false,
+        "human_review_required": true
+      }
+    },
+    "action_foley": {
+      "status": "completed_advisory",
+      "plan": {
+        "schema": "astra-action-foley-chain/v1",
+        "source_name": "story_scene_demo.txt",
+        "action_chain_count": 0,
+        "event_count": 0,
+        "action_chains": [],
+        "safety_and_realism": {
+          "no_unmentioned_actions": true,
+          "no_auto_asset_insertion": true,
+          "no_auto_render": true,
+          "source_audio_untouched": true,
+          "uncertain_or_missing_steps": "do not invent; request editorial review",
+          "mix_priority": [
+            "dialogue",
+            "foreground_action",
+            "nearby_foley",
+            "environment_bed",
+            "music"
+          ]
+        },
+        "limitations": [
+          "Evidence-based Hindi/English pattern recognition, not full semantic comprehension.",
+          "Does not infer exact timing, force, material, rope type, anchor type or landing surface unless stated.",
+          "Asset retrieval, audition, approval and final rendering are separate stages."
+        ],
+        "human_review_required": true
+      }
+    },
+    "asset_matching": {
+      "status": "not_run_no_catalog",
+      "report": null
+    },
+    "timeline_alignment": {
+      "status": "blocked_needs_audio_alignment",
+      "reason": "Story text does not provide reliable exact event timestamps; use forced alignment or manual review."
+    },
+    "mix_render": {
+      "status": "blocked_needs_approved_assets_and_timing",
+      "reason": "No assets are auto-selected or inserted; explicit audition, licence, approval and cue timing are required."
+    },
+    "human_listening_qa": {
+      "status": "not_run",
+      "reason": "Requires rendered audio and human audition."
+    }
+  },
+  "policy": {
+    "review_only": true,
+    "auto_asset_insertion": false,
+    "auto_timeline_guessing": false,
+    "auto_render": false,
+    "source_audio_or_script_modified": false,
+    "unknown_assets_or_licences_not_cleared_for_commercial_use": true
+  },
+  "known_limitations": [
+    "Story, mood and action understanding are evidence/lexicon based, not unrestricted semantic reasoning.",
+    "Asset matching is metadata/token matching, not audio-embedding semantic retrieval or human audition.",
+    "Exact action micro-timing, material, force, direction and distance need narration alignment and review.",
+    "A cue can be missed when phrased outside known Hindi/English patterns; unknown cues are not invented.",
+    "The report is not a final audio mix and cannot certify artistic quality."
+  ],
+  "next_required_gates": [
+    "Review scene and action interpretation",
+    "Audition candidate recordings",
+    "Verify asset licence and production permission",
+    "Align cues to actual narration waveform",
+    "Approve final cue list and mix",
+    "Render stems and master",
+    "Run technical QA and human listening QA"
+  ]
+}

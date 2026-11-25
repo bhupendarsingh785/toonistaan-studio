@@ -1,0 +1,302 @@
+{
+  "schema": "astra-world-soundscape-plan/v1",
+  "source_name": "story_scene_demo.txt",
+  "scene_count": 3,
+  "scenes": [
+    {
+      "scene_id": "scene_001",
+      "heading": "दृश्य 1: गाँव की सुबह — बाहरी स्थान",
+      "source_lines": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "primary_environment": "village",
+      "environment_alternatives": [
+        {
+          "environment": "village",
+          "evidence": [
+            "गाँव"
+          ],
+          "profile": {
+            "beds": [
+              "rural_air",
+              "distant_domestic_activity",
+              "birds"
+            ],
+            "acoustics": "open_mixed_environment"
+          },
+          "confidence": "lexical_only"
+        },
+        {
+          "environment": "farm",
+          "evidence": [
+            "खेत"
+          ],
+          "profile": {
+            "beds": [
+              "rural_air",
+              "field_wind",
+              "farm_animals_only_if_present"
+            ],
+            "acoustics": "open_rural"
+          },
+          "confidence": "lexical_only"
+        }
+      ],
+      "acoustic_space": "open_mixed_environment",
+      "mood_candidate": "joy",
+      "environment_layers": [
+        {
+          "layer_type": "environment_bed",
+          "asset_search_tags": [
+            "rural_air"
+          ],
+          "priority": "supporting",
+          "mix_guidance": "low_and_non_intrusive",
+          "evidence": "environment_profile",
+          "requires_asset_match_and_human_approval": true
+        },
+        {
+          "layer_type": "environment_bed",
+          "asset_search_tags": [
+            "distant_domestic_activity"
+          ],
+          "priority": "supporting",
+          "mix_guidance": "low_and_non_intrusive",
+          "evidence": "environment_profile",
+          "requires_asset_match_and_human_approval": true
+        },
+        {
+          "layer_type": "environment_bed",
+          "asset_search_tags": [
+            "birds"
+          ],
+          "priority": "supporting",
+          "mix_guidance": "low_and_non_intrusive",
+          "evidence": "environment_profile",
+          "requires_asset_match_and_human_approval": true
+        },
+        {
+          "layer_type": "environment_candidate",
+          "environment": "village",
+          "evidence": [
+            "गाँव"
+          ],
+          "profile": {
+            "beds": [
+              "rural_air",
+              "distant_domestic_activity",
+              "birds"
+            ],
+            "acoustics": "open_mixed_environment"
+          },
+          "confidence": "lexical_only",
+          "requires_human_review": true
+        },
+        {
+          "layer_type": "environment_candidate",
+          "environment": "farm",
+          "evidence": [
+            "खेत"
+          ],
+          "profile": {
+            "beds": [
+              "rural_air",
+              "field_wind",
+              "farm_animals_only_if_present"
+            ],
+            "acoustics": "open_rural"
+          },
+          "confidence": "lexical_only",
+          "requires_human_review": true
+        }
+      ],
+      "action_foley": [],
+      "mixing_policy": {
+        "dialogue_priority": "highest",
+        "ambience": "quiet_continuous_bed_only_when_scene_supports_it",
+        "foley": "short_and_event_synced",
+        "dynamic_range": "preserve_natural_distance_and_transients",
+        "noise_policy": "do_not_add_noise_as_texture_without_story_evidence",
+        "silence": "retain_intentional_silence"
+      },
+      "review_required": true,
+      "action_chains": []
+    },
+    {
+      "scene_id": "scene_002",
+      "heading": "दृश्य 2: पुरानी हवेली — भीतरी स्थान",
+      "source_lines": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "primary_environment": "old_mansion",
+      "environment_alternatives": [
+        {
+          "environment": "old_mansion",
+          "evidence": [
+            "हवेली"
+          ],
+          "profile": {
+            "beds": [
+              "interior_room_tone",
+              "wood_settling_if_cued",
+              "distant_wind_if_exposed"
+            ],
+            "acoustics": "large_or_empty_interior"
+          },
+          "confidence": "lexical_only"
+        }
+      ],
+      "acoustic_space": "large_or_empty_interior",
+      "mood_candidate": "fear",
+      "environment_layers": [
+        {
+          "layer_type": "environment_bed",
+          "asset_search_tags": [
+            "interior_room_tone"
+          ],
+          "priority": "supporting",
+          "mix_guidance": "low_and_non_intrusive",
+          "evidence": "environment_profile",
+          "requires_asset_match_and_human_approval": true
+        },
+        {
+          "layer_type": "environment_bed",
+          "asset_search_tags": [
+            "wood_settling_if_cued"
+          ],
+          "priority": "supporting",
+          "mix_guidance": "low_and_non_intrusive",
+          "evidence": "environment_profile",
+          "requires_asset_match_and_human_approval": true
+        },
+        {
+          "layer_type": "environment_bed",
+          "asset_search_tags": [
+            "distant_wind_if_exposed"
+          ],
+          "priority": "supporting",
+          "mix_guidance": "low_and_non_intrusive",
+          "evidence": "environment_profile",
+          "requires_asset_match_and_human_approval": true
+        },
+        {
+          "layer_type": "environment_candidate",
+          "environment": "old_mansion",
+          "evidence": [
+            "हवेली"
+          ],
+          "profile": {
+            "beds": [
+              "interior_room_tone",
+              "wood_settling_if_cued",
+              "distant_wind_if_exposed"
+            ],
+            "acoustics": "large_or_empty_interior"
+          },
+          "confidence": "lexical_only",
+          "requires_human_review": true
+        }
+      ],
+      "action_foley": [],
+      "mixing_policy": {
+        "dialogue_priority": "highest",
+        "ambience": "quiet_continuous_bed_only_when_scene_supports_it",
+        "foley": "short_and_event_synced",
+        "dynamic_range": "preserve_natural_distance_and_transients",
+        "noise_policy": "do_not_add_noise_as_texture_without_story_evidence",
+        "silence": "retain_intentional_silence"
+      },
+      "review_required": true,
+      "action_chains": []
+    },
+    {
+      "scene_id": "scene_003",
+      "heading": "दृश्य 3: आँगन",
+      "source_lines": [
+        11,
+        12,
+        13
+      ],
+      "primary_environment": "home_interior",
+      "environment_alternatives": [
+        {
+          "environment": "home_interior",
+          "evidence": [
+            "आँगन"
+          ],
+          "profile": {
+            "beds": [
+              "room_tone",
+              "subtle_household_activity_if_present"
+            ],
+            "acoustics": "room_size_dependent_reflections"
+          },
+          "confidence": "lexical_only"
+        }
+      ],
+      "acoustic_space": "room_size_dependent_reflections",
+      "mood_candidate": "fear",
+      "environment_layers": [
+        {
+          "layer_type": "environment_bed",
+          "asset_search_tags": [
+            "room_tone"
+          ],
+          "priority": "supporting",
+          "mix_guidance": "low_and_non_intrusive",
+          "evidence": "environment_profile",
+          "requires_asset_match_and_human_approval": true
+        },
+        {
+          "layer_type": "environment_bed",
+          "asset_search_tags": [
+            "subtle_household_activity_if_present"
+          ],
+          "priority": "supporting",
+          "mix_guidance": "low_and_non_intrusive",
+          "evidence": "environment_profile",
+          "requires_asset_match_and_human_approval": true
+        },
+        {
+          "layer_type": "environment_candidate",
+          "environment": "home_interior",
+          "evidence": [
+            "आँगन"
+          ],
+          "profile": {
+            "beds": [
+              "room_tone",
+              "subtle_household_activity_if_present"
+            ],
+            "acoustics": "room_size_dependent_reflections"
+          },
+          "confidence": "lexical_only",
+          "requires_human_review": true
+        }
+      ],
+      "action_foley": [],
+      "mixing_policy": {
+        "dialogue_priority": "highest",
+        "ambience": "quiet_continuous_bed_only_when_scene_supports_it",
+        "foley": "short_and_event_synced",
+        "dynamic_range": "preserve_natural_distance_and_transients",
+        "noise_policy": "do_not_add_noise_as_texture_without_story_evidence",
+        "silence": "retain_intentional_silence"
+      },
+      "review_required": true,
+      "action_chains": []
+    }
+  ],
+  "action_chain_count": 0,
+  "action_event_count": 0,
+  "coverage_note": "Extensible world/setting taxonomy with explicit evidence. Unknown settings receive a conservative generic plan; this is not omniscient semantic scene understanding.",
+  "asset_generation_performed": false,
+  "audio_rendered": false,
+  "human_review_required": true
+}

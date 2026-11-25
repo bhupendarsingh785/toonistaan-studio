@@ -11,6 +11,11 @@ CLI:
 from __future__ import annotations
 import argparse, json, random, subprocess, sys
 from pathlib import Path
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -145,7 +150,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--train", action="store_true"); ap.add_argument("--test", action="store_true")
     ap.add_argument("--catalog", required=True); ap.add_argument("--model", required=True)
-    ap.add_argument("--base", default="/scratch/input")
+    ap.add_argument("--base", default=str(_AP.INPUT))
     ap.add_argument("--per-class", type=int, default=140); ap.add_argument("--n", type=int, default=30)
     a = ap.parse_args()
     cat = json.loads(Path(a.catalog).read_text(encoding="utf-8"))

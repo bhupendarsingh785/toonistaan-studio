@@ -12,6 +12,11 @@ from __future__ import annotations
 import json, os, subprocess, sys, wave
 from pathlib import Path
 import numpy as np
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "tools"))
@@ -40,7 +45,7 @@ def piper_line(text, who, out):
     from piper import PiperVoice
     from piper.config import SynthesisConfig
     m = FALLBACK_PIPER.get(who, "rohan")
-    p = f"/scratch/work/voices/hi_IN-{m}-medium.onnx"
+    p = f"{_AP.VOICES}/hi_IN-{m}-medium.onnx"
     if not Path(p).exists():
         return None
     v = PiperVoice.load(p, config_path=p + ".json")
@@ -62,9 +67,9 @@ def sarvam_line(text, who, bhaav, out):
 
 
 def river_bed(n):
-    src = [("/scratch/input/gugunxyz-flowing-water-02-464647.mp3", 0.55),
-           ("/scratch/input/gugunxyz-flowing-water-03-464668-2.mp3", 0.30),
-           ("/scratch/input/loswin23-flowing-river-623417.mp3", 0.35)]
+    src = [(str(_AP.INPUT / "gugunxyz-flowing-water-02-464647.mp3"), 0.55),
+           (str(_AP.INPUT / "gugunxyz-flowing-water-03-464668-2.mp3"), 0.30),
+           (str(_AP.INPUT / "loswin23-flowing-river-623417.mp3"), 0.35)]
     bed = np.zeros(n, dtype=np.float32)
     for p, w in src:
         if not Path(p).exists():
@@ -83,7 +88,7 @@ def main():
     bed_db = -7.0
     if "--bed" in sys.argv:
         bed_db = float(sys.argv[sys.argv.index("--bed") + 1])
-    work = Path("/scratch/work/sarvam"); work.mkdir(exist_ok=True)
+    work = (_AP.WORK / "sarvam"); work.mkdir(exist_ok=True)
     parts, marks, t, engines = [], [], 0.0, {}
     for i, row in enumerate(script):
         who = row.get("who", "narrator"); txt = row["text"]; bhaav = row.get("bhaav", "neutral")

@@ -13,13 +13,18 @@ FF = get_ffmpeg_exe(); SR = 22050
 CAST = {"narrator": ("rohan", 1.00, 0.42), "bhediya": ("pratham", 1.05, 0.46), "stree": ("priyamvada", 1.05, 0.40)}
 GAIN = {"narrator": 1.0, "bhediya": 1.0, "stree": 1.24}      # ladki ki awaaz 2 dB upar
 import os as _os
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 _D = float(_os.environ.get("PSOLA_DEPTH", "0"))     # 0 = PSOLA band (samajh bani rahe)
 DEPTH = {k: _D for k in ("pyaar", "dukh", "dar", "hairani", "khushi", "gussa", "neutral")}
 _c = {}
 
 def voice(m):
     if m not in _c:
-        p = f"/scratch/work/voices/hi_IN-{m}-medium.onnx"
+        p = f"{_AP.VOICES}/hi_IN-{m}-medium.onnx"
         _c[m] = PiperVoice.load(p, config_path=p + ".json")
     return _c[m]
 
@@ -63,9 +68,9 @@ def micro(y, rng, jitter_st=0.12, breath=0.012):
     return (y2 + noise * env * breath * 4).astype(np.float32)
 
 def river_bed(n):
-    src = [("/scratch/input/gugunxyz-flowing-water-02-464647.mp3", 0.55),
-           ("/scratch/input/gugunxyz-flowing-water-03-464668-2.mp3", 0.30),
-           ("/scratch/input/loswin23-flowing-river-623417.mp3", 0.35)]
+    src = [(str(_AP.INPUT / "gugunxyz-flowing-water-02-464647.mp3"), 0.55),
+           (str(_AP.INPUT / "gugunxyz-flowing-water-03-464668-2.mp3"), 0.30),
+           (str(_AP.INPUT / "loswin23-flowing-river-623417.mp3"), 0.35)]
     bed = np.zeros(n, dtype=np.float32)
     for p, w in src:
         if not Path(p).exists(): continue
@@ -80,7 +85,7 @@ def river_bed(n):
 def main():
     out = sys.argv[1]; script = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
     bed_db = float(sys.argv[3]) if len(sys.argv) > 3 else -8.0
-    work = Path("/scratch/work/rfin"); work.mkdir(exist_ok=True)
+    work = (_AP.WORK / "rfin"); work.mkdir(exist_ok=True)
     rng = np.random.default_rng(7)
     parts, marks, t = [], [], 0.0
     for i, row in enumerate(script):

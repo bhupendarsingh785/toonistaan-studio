@@ -1,0 +1,66 @@
+{
+ "calls": 0,
+ "mode": "dry-run (piper)",
+ "rows": [
+  {
+   "emotion": "neutral",
+   "text": "नमस्ते, आज हम एक नई कहानी सुनेंगे।",
+   "file": "/scratch/work/p2/teacher_data/dry_neutral.wav",
+   "dur": 1.77,
+   "cps": 19.16,
+   "hz": 271,
+   "rms": 0.1349,
+   "silence_ratio": 0.029
+  },
+  {
+   "emotion": "dukh",
+   "text": "मुझे बहुत तकलीफ़ हो रही है, बेटा।",
+   "file": "/scratch/work/p2/teacher_data/dry_dukh.wav",
+   "dur": 1.61,
+   "cps": 20.55,
+   "hz": 246,
+   "rms": 0.1481,
+   "silence_ratio": 0.062
+  },
+  {
+   "emotion": "gussa",
+   "text": "चुप रहो! मैंने तुम्हें मना किया था।",
+   "file": "/scratch/work/p2/teacher_data/dry_gussa.wav",
+   "dur": 1.4,
+   "cps": 24.94,
+   "hz": 254,
+   "rms": 0.1753,
+   "silence_ratio": 0.036
+  },
+  {
+   "emotion": "khushi",
+   "text": "अरे वाह! यह तो बहुत अच्छी खबर है।",
+   "file": "/scratch/work/p2/teacher_data/dry_khushi.wav",
+   "dur": 1.57,
+   "cps": 21.02,
+   "hz": 242,
+   "rms": 0.1303,
+   "silence_ratio": 0.032
+  },
+  {
+   "emotion": "dar",
+   "text": "वहाँ कोई है... मुझे डर लग रहा है।",
+   "file": "/scratch/work/p2/teacher_data/dry_dar.wav",
+   "dur": 1.21,
+   "cps": 27.33,
+   "hz": 253,
+   "rms": 0.1481,
+   "silence_ratio": 0.0
+  },
+  {
+   "emotion": "pyaar",
+   "text": "बेटा, आ जा पास, मैं तुम्हारी माँ हूँ।",
+   "file": "/scratch/work/p2/teacher_data/dry_pyaar.wav",
+   "dur": 1.71,
+   "cps": 21.69,
+   "hz": 253,
+   "rms": 0.1476,
+   "silence_ratio": 0.118
+  }
+ ]
+}

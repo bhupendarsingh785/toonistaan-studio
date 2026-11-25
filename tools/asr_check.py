@@ -13,6 +13,11 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from audio_decode import decode
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 OUT = Path("knowledge/audio-asr-check.jsonl")
 
@@ -20,7 +25,7 @@ OUT = Path("knowledge/audio-asr-check.jsonl")
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("tags", nargs="?", default="knowledge/audio-tags-guess.jsonl")
-    ap.add_argument("--dir", default="/scratch/input")
+    ap.add_argument("--dir", default=str(_AP.INPUT))
     ap.add_argument("--limit", type=int, default=140)
     ap.add_argument("--model", default="base")
     ap.add_argument("--secs", type=int, default=25)

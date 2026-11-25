@@ -10,6 +10,11 @@ Kuch bhi toota ho to exit code 1 (CI me fail hoga) — chupchap kharab nahi reht
 from __future__ import annotations
 import argparse, json, subprocess, sys
 from pathlib import Path
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -23,7 +28,7 @@ def add(name, status, detail=""):
 def c_voices():
     v = ROOT / "voices"
     need = ["hi_IN-pratham-medium.onnx", "hi_IN-priyamvada-medium.onnx", "hi_IN-rohan-medium.onnx"]
-    have = [n for n in need if (v / n).exists() or (Path("/scratch/work/voices") / n).exists()]
+    have = [n for n in need if (v / n).exists() or (_AP.VOICES / n).exists()]
     import os
     if len(have) == 3:
         add("piper voices", "PASS", "3/3 maujood")
@@ -79,7 +84,7 @@ def c_ground():
 def c_world():
     try:
         sys.path.insert(0, str(ROOT / "tools" / "local_story"))
-        import story_local as sl
+        from local_story import story_local as sl   # duplicate naam hata diya (local_story me hi asli)
         g = len(getattr(sl, "GROUND", {})); w = len(getattr(sl, "WORLD", {}))
         add("world layer", "PASS" if g >= 7 and w >= 8 else "WARN", f"ground {g}, world {w}")
     except Exception as e:
@@ -178,6 +183,8 @@ def c_collision():
         _rel = str(f.relative_to(ROOT))
         if "__pycache__" in str(f) or _rel.startswith(("tools/purana/", "tools/backup/", "tools/world_v1")):
             continue   # purana/ = jaan-boojh kar archive
+        if f.name == "__init__.py":
+            continue   # har package ka apna __init__ hota hai — takraav nahi
         names[f.name].append(str(f.relative_to(ROOT)))
     dups = {k: v for k, v in names.items() if len(v) > 1}
     add("module collision", "PASS" if not dups else "FAIL",
@@ -341,7 +348,55 @@ def c_bug_hunt():
         add("bug_hunt P0", "WARN", type(e).__name__)
 
 
-CHECKS = [c_bug_hunt, c_sarvam, c_sfx, c_praat, c_self_improve, c_agents, c_activate, c_shabd, c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
+def c_dimaag():
+    """Kahani dimaag: zero script par faisle (bina awaaz) — kirdaar, jagah, bhaav, library."""
+    try:
+        import kahani_dimaag as KD
+        rules = json.loads(KD.RULES.read_text(encoding="utf-8"))
+        CB, auto = KD.load_cast()
+        pl, _ = KD.plan(KD.parse_script((ROOT / "baseline" / "zero" / "script.txt").read_text(encoding="utf-8")), rules, CB, auto)
+        lines = [p for p in pl if p["type"] == "line"]
+        idx = KD.scan(rules, verbose=False)
+        full = sum(1 for v in idx.values() if v)
+        ok = len(lines) == 10 and any(p["type"] == "scene" for p in pl)
+        add("kahani dimaag", "PASS" if ok and full >= 20 else ("WARN" if ok else "FAIL"),
+            f"{len(lines)} line, jagah {pl[0].get('scenes')}, library {full}/{len(idx)} khaane"
+            + ("" if full >= 20 else " — library-badao chalao"))
+    except Exception as e:
+        add("kahani dimaag", "FAIL", f"{type(e).__name__}: {e}")
+
+
+def c_awaaz_bank():
+    """Asli awaazon ka bank: kitne kirdaar, kitne bhaav, IndicF5 taiyar hai ya nahi (model load nahi karta)."""
+    try:
+        import awaaz_bank as AB
+        ix = AB._index()
+        bh = sum(len(v["bhaav"]) for v in ix.values())
+        import importlib.util
+        f5 = importlib.util.find_spec("f5_tts") is not None
+        add("awaaz bank", "PASS" if ix and f5 else "WARN",
+            f"{len(ix)} kirdaar, {bh} recording, IndicF5 {'taiyar' if f5 else 'install nahi (indicf5_fix_v1/INSTALL_HI.md)'}"
+            + ("" if ix else " — python tools/awaaz_bank.py ui"))
+    except Exception as e:
+        add("awaaz bank", "FAIL", f"{type(e).__name__}: {e}")
+
+
+def c_saaf():
+    """Safai jaanch khud ko jaanche: saaf shor = SAAF, usi me 1 kHz beep = KHARAB (watermark pakadna)."""
+    try:
+        import tempfile, numpy as np, soundfile as sf, saaf_jaanch as SJ
+        sr = 44100; rng = np.random.default_rng(0); t = np.arange(12 * sr) / sr
+        bed = rng.normal(0, 0.1, len(t)); bed[: sr] *= np.linspace(0, 1, sr); bed[-sr:] *= np.linspace(1, 0, sr)
+        d = Path(tempfile.mkdtemp())
+        sf.write(d / "a.wav", bed.astype("float32"), sr)
+        sf.write(d / "b.wav", (bed + 0.2 * np.sin(2 * np.pi * 1000 * t) * ((t % 4) < 0.6)).astype("float32"), sr)
+        ok = SJ.jaanch(d / "a.wav", "bed")["theek"] and not SJ.jaanch(d / "b.wav", "bed")["theek"]
+        add("safai jaanch", "PASS" if ok else "FAIL", "saaf/beep sahi pehchana" if ok else "saaf/beep galat")
+    except Exception as e:
+        add("safai jaanch", "FAIL", f"{type(e).__name__}: {e}")
+
+
+CHECKS = [c_saaf, c_awaaz_bank, c_dimaag, c_bug_hunt, c_sarvam, c_sfx, c_praat, c_self_improve, c_agents, c_activate, c_shabd, c_realtime, c_bhaav_kaam, c_collision, c_world_version, c_world_engine, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model,
           c_engines, c_tools, c_qa_thresholds, c_judge_smoke, c_selftest]
 
 

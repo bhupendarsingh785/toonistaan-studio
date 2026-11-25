@@ -1,0 +1,51 @@
+{
+ "clips": 4,
+ "norms": {
+  "jitter": [
+   1.21,
+   2.83,
+   4.04
+  ],
+  "shimmer": [
+   5.74,
+   13.39,
+   19.13
+  ],
+  "hnr": [
+   11.0,
+   16.8,
+   9.0
+  ],
+  "rate": [
+   2.8,
+   4.5,
+   5.5
+  ],
+  "pause_per_min": [
+   15,
+   60,
+   90
+  ],
+  "max_pause": [
+   0.0,
+   1.5,
+   2.5
+  ],
+  "clicks": [
+   0,
+   5,
+   20
+  ],
+  "peak": [
+   0.0,
+   0.99,
+   1.0
+  ]
+ },
+ "source": [
+  "woman_Courtney_Love_BBC_Radio_4_-_Womans_Hour_4_April_2014.ogg",
+  "man_Kathy_Manning_speaks_in_support_of_the_Speak_Out_Act.ogg",
+  "child_Catherine_Russell_speaks_on_child_marriage.ogg",
+  "interview_Sextortionagent_interview.ogg"
+ ]
+}

@@ -6,10 +6,15 @@ import numpy as np
 from piper import PiperVoice
 from piper.config import SynthesisConfig
 from imageio_ffmpeg import get_ffmpeg_exe
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 FF = get_ffmpeg_exe(); SR = 22050
 V = {"narrator": ("rohan", 1.00, 0.42), "bhediya": ("pratham", 1.05, 0.46), "stree": ("priyamvada", 1.02, 0.40)}
-MODEL = {v: f"/scratch/work/voices/hi_IN-{v}-medium.onnx" for v in ("rohan", "pratham", "priyamvada")}
+MODEL = {v: f"{_AP.VOICES}/hi_IN-{v}-medium.onnx" for v in ("rohan", "pratham", "priyamvada")}
 _cache = {}
 
 def voice(m):
@@ -38,9 +43,9 @@ def loop(x, n):
     return y
 
 def river_bed(n):
-    src = ["/scratch/input/gugunxyz-flowing-water-02-464647.mp3",
-           "/scratch/input/gugunxyz-flowing-water-03-464668-2.mp3",
-           "/scratch/input/loswin23-flowing-river-623417.mp3"]
+    src = [str(_AP.INPUT / "gugunxyz-flowing-water-02-464647.mp3"),
+           str(_AP.INPUT / "gugunxyz-flowing-water-03-464668-2.mp3"),
+           str(_AP.INPUT / "loswin23-flowing-river-623417.mp3")]
     w = [0.55, 0.30, 0.35]
     bed = np.zeros(n, dtype=np.float32)
     for p, ww in zip(src, w):
@@ -54,7 +59,7 @@ def river_bed(n):
 def main():
     out = sys.argv[1]; script = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
     bed_db = float(sys.argv[3]) if len(sys.argv) > 3 else -9.0
-    work = Path("/scratch/work/rw"); work.mkdir(exist_ok=True)
+    work = (_AP.WORK / "rw"); work.mkdir(exist_ok=True)
     parts, marks, t = [], [], 0.0
     for i, row in enumerate(script):
         who = row.get("who", "narrator"); txt = row["text"]

@@ -1,0 +1,254 @@
+<!doctype html><html><body style="margin:0;background:#000"><canvas id="c"></canvas>
+<script>
+// Toonistaan 3D engine: WebGL2 ray-marched 3D (soft shadows, AO, rim light). Koi library nahi.
+// Kirdaar: Chhotu (robot), Munni (ladki), Dadaji. window.setup(ep,W,H), window.drawFrame(t)
+const FS = `#version 300 es
+precision highp float;
+uniform vec2 R; uniform float T; uniform vec3 camPos, camTgt;
+uniform vec4 chhotu; // xyz pos, w = rotY
+uniform vec4 munni; uniform vec4 dada;
+uniform vec4 act;    // x=talkChhotu y=talkMunni z=wave w=talkDada
+uniform float fly;
+out vec4 O;
+#define PI 3.14159
+float sdS(vec3 p,float r){return length(p)-r;}
+float sdE(vec3 p,vec3 r){float k0=length(p/r);float k1=length(p/(r*r));return k0*(k0-1.)/k1;}
+float sdC(vec3 p,vec3 a,vec3 b,float r){vec3 pa=p-a,ba=b-a;float h=clamp(dot(pa,ba)/dot(ba,ba),0.,1.);return length(pa-ba*h)-r;}
+float sdRB(vec3 p,vec3 b,float r){vec3 q=abs(p)-b+r;return length(max(q,0.))+min(max(q.x,max(q.y,q.z)),0.)-r;}
+float sdCone(vec3 p,float h,float r1,float r2){vec2 q=vec2(length(p.xz),p.y);vec2 k1=vec2(r2,h),k2=vec2(r2-r1,2.*h);vec2 ca=vec2(q.x-min(q.x,(q.y<0.)?r1:r2),abs(q.y)-h);vec2 cb=q-k1+k2*clamp(dot(k1-q,k2)/dot(k2,k2),0.,1.);float s=(cb.x<0.&&ca.y<0.)?-1.:1.;return s*sqrt(min(dot(ca,ca),dot(cb,cb)));}
+float smin(float a,float b,float k){float h=clamp(.5+.5*(b-a)/k,0.,1.);return mix(b,a,h)-k*h*(1.-h);}
+mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
+vec2 U(vec2 a,vec2 b){return a.x<b.x?a:b;}
+// materials: 1 ground 2 robotBlue 3 visor 4 eyeGlow 5 red 6 skin 7 hair 8 frock 9 white 10 dark 11 cheek 12 house 13 roof 14 tree 15 trunk 16 kurta 17 mustache 18 shoe
+vec2 chhotuM(vec3 p,float talk,float wave){
+  float b=sin(T*5.)*.04*(1.-fly); p.y-=b;
+  vec2 d=vec2(sdRB(p-vec3(0,1.15,0),vec3(.62,.55,.5),.38),2.);
+  d=U(d,vec2(sdRB(p-vec3(0,1.17,.33),vec3(.45,.32,.2),.24),3.));
+  float bl=fract(T*.31)<.04?.15:1.;
+  vec3 e=p-vec3(0,1.22,.5);e.x=abs(e.x)-.19;
+  d=U(d,vec2(sdE(e,vec3(.11,.14*bl,.06)),4.));
+  vec3 pu=p-vec3(0,1.26,.555);pu.x=abs(pu.x)-.16;
+  d=U(d,vec2(sdS(pu,.04*bl),9.));
+  float m=sdC(p,vec3(-.12,1.02+.0,.53),vec3(.12,1.02,.53),.025+.03*talk*abs(sin(T*16.)));
+  d=U(d,vec2(m,4.));
+  vec3 ck=p-vec3(0,1.07,.5);ck.x=abs(ck.x)-.36;d=U(d,vec2(sdS(ck,.07),11.));
+  d=U(d,vec2(sdC(p,vec3(0,1.7,0),vec3(sin(T*3.)*.05,2.0,0),.035),10.));
+  d=U(d,vec2(sdS(p-vec3(sin(T*3.)*.05,2.05,0),.09),5.));
+  // arms
+  vec3 sl=vec3(-.68,1.1,0),sr=vec3(.68,1.1,0);
+  vec3 hl=sl+vec3(-.18,-.42,.05);
+  vec3 hr=sr+mix(vec3(.18,-.42,.05),vec3(.28,.38+.08*sin(T*12.),.05),wave);
+  d=U(d,vec2(min(sdC(p,sl,hl,.09),sdC(p,sr,hr,.09)),2.));
+  d=U(d,vec2(min(sdS(p-hl,.13),sdS(p-hr,.13)),10.));
+  // legs
+  vec3 q=p;q.x=abs(q.x)-.25;
+  float lg=sdC(q,vec3(0,.6,0),vec3(0,.18-.12*fly,0),.1);
+  d=U(d,vec2(lg,10.));
+  d=U(d,vec2(sdRB(q-vec3(0,.1-.12*fly,.06),vec3(.14,.08,.2),.07),2.));
+  return d;
+}
+float sdTor(vec3 p,float R,float r){return length(vec2(length(p.xy)-R,p.z))-r;}
+// Insaani sharir: kind 0 = Munni (ladki), 1 = Dadaji
+vec2 human(vec3 p,float kind,float talk){
+  float hs = kind<.5?1.3:1.05;          // bachchon ka sir thoda bada
+  float skin = kind<.5?6.:23.;
+  vec3 h=(p-vec3(0,kind<.5?1.6:1.62,0))/hs;
+  // sir + jabda + kaan + naak
+  float head=sdE(h,vec3(.09,.112,.1));
+  head=smin(head,sdE(h-vec3(0,-.062,.018),vec3(.07,.058,.078)),.04);
+  vec3 ea=h;ea.x=abs(ea.x)-.091;head=smin(head,sdE(ea,vec3(.012,.03,.022)),.01);
+  head=smin(head,sdC(h,vec3(0,.0,.094),vec3(0,-.034,.11),kind<.5?.009:.012),.015);
+  head=smin(head,sdS(h-vec3(0,-.037,.106),kind<.5?.013:.017),.01);
+  vec2 d=vec2(head*hs,skin);
+  // aankhein
+  vec3 e=h-vec3(0,.012,.08);e.x=abs(e.x)-.035;
+  float bl=fract(T*.29+kind*.5)<.035?1.:0.;
+  d=U(d,vec2(sdS(e,.019)*hs,9.));
+  vec3 ir=e-vec3(0,-.001,.014);
+  d=U(d,vec2(sdS(ir,.0105)*hs,19.));
+  d=U(d,vec2(sdS(ir-vec3(0,0,.0045),.0058)*hs,10.));
+  d=U(d,vec2(sdS(ir-vec3(.004,.004,.009),.0022)*hs,9.));
+  float lid=max(sdS(e,.0205),-(e.y-mix(kind<.5?.012:.004,-.03,bl)));
+  d=U(d,vec2(lid*hs,skin));
+  // bhaunh
+  vec3 b=h-vec3(0,.044,.09);b.x=abs(b.x)-.036;
+  d=U(d,vec2(sdC(b,vec3(-.018,.005,0),vec3(.02,-.001,-.006),kind>.5?.0085:.0045)*hs,kind>.5?17.:7.));
+  // honth
+  float op=talk*abs(sin(T*15.))*.011;
+  vec3 l=h-vec3(0,-.068,.086);
+  float lp=min(sdE(l-vec3(0,.005,0),vec3(.024,.0065,.012)),sdE(l-vec3(0,-.007-op,-.002),vec3(.022,.0075,.012)));
+  d=U(d,vec2(lp*hs,20.));
+  if(op>.002)d=U(d,vec2(sdE(l-vec3(0,-op*.5,-.003),vec3(.019,op*.6+.002,.008))*hs,10.));
+  // baal
+  if(kind<.5){
+    float sh=sdE(h-vec3(0,.016,-.012),vec3(.098,.122,.108));
+    float hair=max(sh,-max(h.y-.058,-(h.z+.005)));
+    vec3 pt=h-vec3(0,.0,-.04);pt.x=abs(pt.x)-.1;
+    hair=min(hair,sdS(pt,.04));
+    hair=min(hair,sdC(pt,vec3(.01,-.02,-.01),vec3(.02,-.13,-.02),.026));
+    d=U(d,vec2(hair*hs,7.));
+    vec3 rb=pt-vec3(.004,-.008,.0);d=U(d,vec2(sdE(rb,vec3(.016,.03,.03))*hs,5.));
+  } else {
+    float sh=sdE(h-vec3(0,-.004,-.008),vec3(.096,.116,.105));
+    float hair=max(sh,max(h.y-.035,h.z-.03));
+    d=U(d,vec2(hair,17.));
+    vec3 mu=h-vec3(0,-.052,.1);mu.x=abs(mu.x)-.024;mu.xy*=rot(-.35);
+    d=U(d,vec2(sdE(mu,vec3(.03,.011,.014)),17.));
+    vec3 gl=h-vec3(0,.012,.103);gl.x=abs(gl.x)-.036;
+    d=U(d,vec2(sdTor(gl,.024,.0028),10.));
+    d=U(d,vec2(sdC(h,vec3(-.012,.014,.105),vec3(.012,.014,.105),.0025),10.));
+  }
+  // gardan, dhad
+  float body=sdC(p,vec3(0,1.42,0),vec3(0,1.53,-.005),kind<.5?.04:.048);
+  // haath (kandha-kohni-kalai)
+  vec3 a=p;a.x=abs(a.x);
+  vec3 sh=kind<.5?vec3(.165,1.39,0):vec3(.195,1.39,0),el=sh+vec3(.035,-.26,.03),wr=sh+vec3(.04,-.49,.07);
+  // chhati, kamar, kandhon ki dhalaan
+  float tor;
+  if(kind<.5){ // ladki: patli kamar, halka ghera
+    float chest=sdE(p-vec3(0,1.28,.005),vec3(.135,.13,.09));
+    float waist=sdE(p-vec3(0,1.1,0),vec3(.1,.07,.075));
+    float hip=sdE(p-vec3(0,.96,0),vec3(.135,.1,.095));
+    tor=smin(smin(chest,waist,.06),hip,.06);
+  } else { // aadmi: chaude kandhe, seedhi kamar, halka pet
+    float chest=sdE(p-vec3(0,1.27,.005),vec3(.17,.15,.1));
+    float waist=sdE(p-vec3(0,1.07,.02),vec3(.155,.14,.11));
+    float hip=sdE(p-vec3(0,.95,0),vec3(.15,.09,.1));
+    tor=smin(smin(chest,waist,.08),hip,.06);
+  }
+  tor=smin(tor,sdC(a,vec3(.035,1.45,-.01),sh+vec3(-.01,.015,0),.048),.05);
+  tor=smin(tor,sdS(a-sh,.05),.04);
+  float arm=smin(sdC(a,sh,el,.041),sdC(a,el,wr,.033),.02);
+  float hand=smin(sdE(a-wr-vec3(.003,-.055,.005),vec3(.026,.045,.02)),sdC(a,wr+vec3(-.01,-.04,.02),wr+vec3(-.02,-.07,.03),.009),.01);
+  // pair
+  vec3 g=p;g.x=abs(g.x);
+  float leg=smin(sdC(g,vec3(.085,.94,0),vec3(.09,.52,.01),.064),sdC(g,vec3(.09,.52,.01),vec3(.09,.1,0),.046),.03);
+  float foot=sdE(g-vec3(.09,.045,.05),vec3(.045,.04,.11));
+  d=U(d,vec2(body,skin));
+  d=U(d,vec2(hand,skin));
+  d=U(d,vec2(foot,18.));
+  if(kind<.5){
+    float bodice=tor-.012;
+    float skirt=sdCone(p-vec3(0,.84,0),.22,.33,.105);
+    float frock=smin(bodice,skirt,.07);
+    vec3 fq=p-vec3(0,.6,0);frock=smin(frock,sdTor(fq.xzy,.315,.028),.04);
+    float col=sdTor((p-vec3(0,1.455,.0)).xzy,.06,.012);d=U(d,vec2(col,9.));
+    vec3 sl=a-sh;d=U(d,vec2(sdS(sl-vec3(.01,-.03,0),.07),8.));
+    d=U(d,vec2(frock,8.));
+    float bt=sdTor((p-vec3(0,1.1,0.0)).xzy,.106,.011);d=U(d,vec2(bt,5.));
+    d=U(d,vec2(arm,skin));d=U(d,vec2(leg,skin));
+  } else {
+    float kurta=smin(tor-.016,sdCone(p-vec3(0,.84,0),.34,.26,.16),.14);
+    float col=sdTor((p-vec3(0,1.465,.0)).xzy,.058,.014);d=U(d,vec2(col,16.));
+    d=U(d,vec2(kurta,16.));
+    d=U(d,vec2(arm-.012,16.));
+    float dhoti=smin(leg+.012,sdCone(g-vec3(.07,.3,0),.25,.1,.12),.04);
+    d=U(d,vec2(dhoti,21.));
+    vec3 bu=p-vec3(0,1.3,.1);bu.y=mod(bu.y+.04,.08)-.04;
+    if(p.y>1.15&&p.y<1.45)d=U(d,vec2(sdS(bu,.009),10.));
+  }
+  return d;
+}
+vec2 munniM(vec3 p,float talk){
+  float s=.8; p.y-=abs(sin(T*4.))*.006;
+  vec2 d=human(p/s,0.,talk); d.x*=s; return d;
+}
+vec2 dadaM(vec3 p,float talk){
+  vec2 d=human(p,1.,talk);
+  d=U(d,vec2(sdC(p,vec3(.3,1.0,.12),vec3(.36,0.,.2),.018),15.));
+  return d;
+}
+vec2 world(vec3 p){
+  float g=p.y+.02*sin(p.x*.7)*sin(p.z*.5);
+  vec2 d=vec2(g,1.);
+  // houses
+  vec3 hp=p-vec3(-4.2,0,-5.);d=U(d,vec2(sdRB(hp-vec3(0,.9,0),vec3(1.1,.9,.9),.05),12.));
+  vec3 rp=hp-vec3(0,2.1,0);d=U(d,vec2(max(sdRB(rp,vec3(1.35,.6,1.1),.05),abs(rp.x)*.8+rp.y-.55),13.));
+  d=U(d,vec2(sdRB(hp-vec3(.0,.45,.91),vec3(.25,.45,.02),.02),15.));
+  vec3 hp2=p-vec3(4.6,0,-7.);d=U(d,vec2(sdRB(hp2-vec3(0,1.,0),vec3(1.2,1.,1.),.05),12.));
+  vec3 rp2=hp2-vec3(0,2.3,0);d=U(d,vec2(max(sdRB(rp2,vec3(1.45,.6,1.2),.05),abs(rp2.x)*.8+rp2.y-.55),13.));
+  // trees
+  vec3 tp=p-vec3(2.2,0,-3.6);
+  d=U(d,vec2(sdC(tp,vec3(0),vec3(0,1.6,0),.14),15.));
+  d=U(d,vec2(smin(sdS(tp-vec3(0,2.1,0),.8),sdS(tp-vec3(.45,1.8,.2),.55),.3),14.));
+  vec3 tp2=p-vec3(-1.8,0,-8.);
+  d=U(d,vec2(sdC(tp2,vec3(0),vec3(0,1.9,0),.16),15.));
+  d=U(d,vec2(smin(sdS(tp2-vec3(0,2.5,0),1.),sdS(tp2-vec3(-.6,2.1,.2),.6),.3),14.));
+  // characters
+  vec3 cp=p-chhotu.xyz;cp.xz*=rot(chhotu.w);vec2 cr=chhotuM(cp/.62,act.x,act.z);cr.x*=.62;d=U(d,cr);
+  if(munni.y>-50.){vec3 mp=p-munni.xyz;mp.xz*=rot(munni.w);d=U(d,munniM(mp,act.y));}
+  if(dada.y>-50.){vec3 dp=p-dada.xyz;dp.xz*=rot(dada.w);d=U(d,dadaM(dp,act.w));}
+  return d;
+}
+vec3 nor(vec3 p){vec2 e=vec2(.002,0);return normalize(vec3(world(p+e.xyy).x-world(p-e.xyy).x,world(p+e.yxy).x-world(p-e.yxy).x,world(p+e.yyx).x-world(p-e.yyx).x));}
+float shadow(vec3 ro,vec3 rd){float r=1.,t=.03;for(int i=0;i<40;i++){float h=world(ro+rd*t).x;r=min(r,10.*h/t);t+=clamp(h,.03,.4);if(r<.01||t>12.)break;}return clamp(r,0.,1.);}
+float ao(vec3 p,vec3 n){float o=0.,s=1.;for(int i=1;i<5;i++){float h=.06*float(i);o+=(h-world(p+n*h).x)*s;s*=.75;}return clamp(1.-2.5*o,0.,1.);}
+vec3 matCol(float m,vec3 p){
+  if(m<1.5){float c=.5+.5*sin(p.x*3.)*sin(p.z*3.);return mix(vec3(.25,.55,.22),vec3(.33,.66,.27),c);}
+  if(m<2.5)return vec3(.16,.42,.95); if(m<3.5)return vec3(.04,.06,.14); if(m<4.5)return vec3(.4,1.,1.);
+  if(m<5.5)return vec3(.95,.25,.3); if(m<6.5)return vec3(.93,.66,.5); if(m<7.5)return vec3(.08,.05,.05);
+  if(m<8.5)return vec3(1.,.78,.15); if(m<9.5)return vec3(.97); if(m<10.5)return vec3(.12,.12,.16);
+  if(m<11.5)return vec3(1.,.5,.6); if(m<12.5)return vec3(.95,.55,.35); if(m<13.5)return vec3(.6,.08,.08);
+  if(m<14.5)return vec3(.18,.5,.2); if(m<15.5)return vec3(.4,.25,.14); if(m<16.5)return vec3(.95,.92,.85);
+  if(m<17.5)return vec3(.93); if(m<18.5)return vec3(.35,.18,.1); if(m<19.5)return vec3(.28,.14,.05); if(m<20.5)return vec3(.78,.36,.36); if(m<21.5)return vec3(.96,.93,.84); return vec3(.82,.56,.42);
+}
+vec3 sky(vec3 rd){float y=rd.y;vec3 c=mix(vec3(1.,.72,.45),vec3(.35,.6,.95),smoothstep(-.05,.5,y));
+  vec3 sd=normalize(vec3(.6,.35,-.7));c+=vec3(1.,.8,.5)*pow(max(dot(rd,sd),0.),64.)*1.2;
+  float cl=smoothstep(.55,.8,sin(rd.x*9.+T*.05)*sin(rd.y*20.)*.5+.5)*smoothstep(.05,.3,y);return mix(c,vec3(1.),cl*.5);}
+void main(){
+  vec2 uv=(gl_FragCoord.xy-.5*R)/R.y;
+  vec3 ro=camPos,ww=normalize(camTgt-ro),uu=normalize(cross(ww,vec3(0,1,0))),vv=cross(uu,ww);
+  vec3 rd=normalize(uv.x*uu+uv.y*vv+1.6*ww);
+  float t=0.;vec2 h;
+  for(int i=0;i<140;i++){h=world(ro+rd*t);if(h.x<.001||t>40.)break;t+=h.x*.9;}
+  vec3 col=sky(rd);
+  if(t<40.){
+    vec3 p=ro+rd*t,n=nor(p),L=normalize(vec3(.6,.8,.5));
+    vec3 al=matCol(h.y,p);
+    float sk=(h.y>5.5&&h.y<6.5)||h.y>21.5?1.:0.;float dif=mix(max(dot(n,L),0.),max(dot(n,L)+.35,0.)/1.35,sk)*shadow(p+n*.01,L);
+    float a=ao(p,n);
+    float fre=pow(1.-max(dot(n,-rd),0.),3.);
+    vec3 lin=dif*vec3(1.25,1.1,.95)+sk*vec3(.12,.04,.02)+a*(.35+.25*n.y)*vec3(.55,.65,.85)+fre*vec3(.5,.6,.8)*a;
+    col=al*lin;
+    float spec=pow(max(dot(reflect(-L,n),-rd),0.),32.)*dif;col+=spec*(h.y==2.||h.y==3.?.6:.15);
+    if(h.y>3.5&&h.y<4.5)col=al*1.25; // glow
+    col=mix(col,sky(rd)*.95,1.-exp(-.0006*t*t));
+  }
+  col=pow(col,vec3(.4545));float lu=dot(col,vec3(.299,.587,.114));col=mix(vec3(lu),col,1.35);col=smoothstep(0.,1.,col)*.15+col*.85;
+  col*=1.-.25*dot(uv,uv);
+  O=vec4(col,1.);
+}`;
+let gl, prog, E, W, H, loc = {};
+function setup(ep, w, h) {
+  E = ep; W = w; H = h; const c = document.getElementById('c'); c.width = w; c.height = h;
+  gl = c.getContext('webgl2', { preserveDrawingBuffer: true });
+  const vs = gl.createShader(gl.VERTEX_SHADER); gl.shaderSource(vs, `#version 300 es
+in vec2 p; void main(){gl_Position=vec4(p,0,1);}`); gl.compileShader(vs);
+  const fs = gl.createShader(gl.FRAGMENT_SHADER); gl.shaderSource(fs, FS); gl.compileShader(fs);
+  if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(fs));
+  prog = gl.createProgram(); gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog); gl.useProgram(prog);
+  const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const pl = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(pl); gl.vertexAttribPointer(pl, 2, gl.FLOAT, false, 0, 0);
+  ['R', 'T', 'camPos', 'camTgt', 'chhotu', 'munni', 'dada', 'act', 'fly'].forEach(n => loc[n] = gl.getUniformLocation(prog, n));
+}
+const lerp = (a, b, k) => a.map((v, i) => v + (b[i] - v) * k);
+const ease = k => k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+function key(track, t, def) { // track: [{t, v:[...]}...]
+  if (!track || !track.length) return def;
+  if (t <= track[0].t) return track[0].v; const last = track[track.length - 1]; if (t >= last.t) return last.v;
+  for (let i = 0; i < track.length - 1; i++) { const a = track[i], b = track[i + 1]; if (t >= a.t && t <= b.t) return lerp(a.v, b.v, ease((t - a.t) / (b.t - a.t))); }
+}
+const on = (t, type, who) => (E.actions || []).some(a => a.type === type && (!who || a.who === who) && t >= a.start && t <= a.end);
+function drawFrame(t) {
+  const k = E.keys || {};
+  gl.viewport(0, 0, W, H);
+  gl.uniform2f(loc.R, W, H); gl.uniform1f(loc.T, t);
+  gl.uniform3fv(loc.camPos, key(k.cam, t, [0, 1.6, 5.5])); gl.uniform3fv(loc.camTgt, key(k.camTgt, t, [0, 1.1, 0]));
+  gl.uniform4fv(loc.chhotu, key(k.chhotu, t, [-.9, 0, 0, .25]));
+  gl.uniform4fv(loc.munni, key(k.munni, t, [1.0, 0, .2, -.35]));
+  gl.uniform4fv(loc.dada, key(k.dada, t, [0, -99, 0, 0]));
+  gl.uniform4f(loc.act, on(t, 'talk', 'chhotu') ? 1 : 0, on(t, 'talk', 'munni') ? 1 : 0, on(t, 'wave', 'chhotu') ? 1 : 0, on(t, 'talk', 'dada') ? 1 : 0);
+  gl.uniform1f(loc.fly, on(t, 'fly') ? 1 : 0);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
+</script></body></html>

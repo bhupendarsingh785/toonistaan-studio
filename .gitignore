@@ -19,3 +19,16 @@ cache/
 *.onnx
 *.onnx.json
 __pycache__/
+
+# bani hui / download cheezein
+.work/
+out/
+voices/*.onnx
+voices/*.onnx.json
+library_awaaz/*/
+freesound_key.txt
+voices/bank/
+knowledge/voice_bank.json
+knowledge/khoj_yaad.json
+knowledge/khoj_anjaan.json
+input/

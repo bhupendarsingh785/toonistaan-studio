@@ -4,6 +4,11 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 doc = Document()
 sec = doc.sections[0]
@@ -183,7 +188,7 @@ doc.add_paragraph("System ka maksad: **kisi par depend na karna** — apna offli
 
 def _save():
     """File sirf chalane par bane — import karne par nahi (side effect bug tha)."""
-    out = "/scratch/output/seetal-audio-system-document.docx"
+    out = str(_AP.OUTPUT / "seetal-audio-system-document.docx")
     doc.save(out)
     print("saved:", out)
 

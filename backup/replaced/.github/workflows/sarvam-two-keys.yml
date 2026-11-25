@@ -1,0 +1,55 @@
+name: sarvam keys test (6 ID tak, key print nahi hoti)
+
+on:
+  workflow_dispatch:
+  push:
+    paths: [".keys-trigger"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: dono key se ek-ek line
+        env:
+          SARVAM_API_KEY: ${{ secrets.SARVAM_API_KEY }}
+          SARVAM_API_KEY_2: ${{ secrets.SARVAM_API_KEY_2 }}
+          SARVAM_API_KEY_3: ${{ secrets.SARVAM_API_KEY_3 }}
+          SARVAM_API_KEY_4: ${{ secrets.SARVAM_API_KEY_4 }}
+          SARVAM_API_KEY_5: ${{ secrets.SARVAM_API_KEY_5 }}
+          SARVAM_API_KEY_6: ${{ secrets.SARVAM_API_KEY_6 }}
+          SARVAM_API_KEY_7: ${{ secrets.SARVAM_API_KEY_7 }}
+          SARVAM_API_KEY_8: ${{ secrets.SARVAM_API_KEY_8 }}
+          SARVAM_API_KEY_9: ${{ secrets.SARVAM_API_KEY_9 }}
+          SARVAM_API_KEY_10: ${{ secrets.SARVAM_API_KEY_10 }}
+          SARVAM_API_KEY_11: ${{ secrets.SARVAM_API_KEY_11 }}
+          SARVAM_API_KEY_12: ${{ secrets.SARVAM_API_KEY_12 }}
+        run: |
+          pip install -q requests
+          python - <<'PY'
+          import os, json, base64, requests
+          names = ["SARVAM_API_KEY"] + [f"SARVAM_API_KEY_{i}" for i in range(2, 13)]
+          url = "https://api.sarvam.ai/text-to-speech"
+          for n in names:
+              k = (os.environ.get(n) or "").strip()
+              if not k:
+                  print(f"{n}: SET NAHI (secret add karo)"); continue
+              payload = {"text": "नमस्ते, मैं आपकी आवाज़ हूँ।", "language_code": "hi-IN",
+                         "speaker": "rohan", "model": "bulbul:v3",
+                         "speech_sample_rate": 24000, "output_audio_codec": "wav"}
+              r = requests.post(url, json=payload,
+                                headers={"api-subscription-key": k,
+                                         "Content-Type": "application/json"}, timeout=90)
+              if r.status_code == 200:
+                  audio = base64.b64decode((r.json().get("audios") or [""])[0])
+                  print(f"{n}: OK ({len(audio)} bytes, ~{len(audio)/48000:.1f}s audio)")
+              else:
+                  print(f"{n}: FAIL {r.status_code} {r.text[:120]}")
+          ok = [n for n in names if (os.environ.get(n) or "").strip()]
+          print(f"SET KEYS: {len(ok)} ({', '.join(ok)})")
+          print("ROTATION:", "chalega" if len(ok) >= 2 else "ek hi key")
+          PY

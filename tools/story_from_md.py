@@ -16,6 +16,11 @@ import re
 import sys
 from collections import Counter
 from pathlib import Path
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -227,7 +232,7 @@ def stats(path: Path) -> None:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("src", nargs="?", default="")
-    ap.add_argument("--out", default="/scratch/work/story-script.txt")
+    ap.add_argument("--out", default=str(_AP.WORK / "story-script.txt"))
     ap.add_argument("--stats", default="")
     ap.add_argument("--pov", default="", help="narration kis kirdaar ke muh se (jaise गौरी)")
     ap.add_argument("--intro-only", action="store_true", help="vachak sirf 10s, phir kirdaar bolte hain")

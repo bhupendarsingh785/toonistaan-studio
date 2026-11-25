@@ -1,0 +1,10 @@
+numpy
+scipy
+soundfile
+librosa
+pyloudnorm
+praat-parselmouth
+imageio-ffmpeg
+piper-tts
+onnxruntime
+python-docx

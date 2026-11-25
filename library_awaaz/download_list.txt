@@ -1,0 +1,45 @@
+Khaali khaane. Freesound/Pixabay se file lo, library_awaaz/<khaana>/ me daalo, phir: seekho
+Ya khud: python tools/kahani_dimaag.py library-badao 6
+
+library_awaaz/bell_temple/   search: temple bell, bell
+library_awaaz/bike_pass/   search: motorcycle, motorbike, scooter
+library_awaaz/bird_call/   search: bird call, bird chirp, chirp, cuckoo, koel
+library_awaaz/birds_day/   search: birds morning, birdsong, dawn chorus, birds
+library_awaaz/branch_crack/   search: branch, twig snap, stick break
+library_awaaz/car_far/   search: traffic distant, car distant, road far
+library_awaaz/car_pass/   search: car pass, car by, car passing, car
+library_awaaz/city_traffic/   search: city traffic, traffic, street ambience
+library_awaaz/clock_tick/   search: clock, tick
+library_awaaz/cow/   search: cow, cattle
+library_awaaz/cycle_bell/   search: bicycle bell, bike bell
+library_awaaz/dog_bark/   search: dog bark, barking, dog
+library_awaaz/dog_far/   search: dog distant, dog far, distant bark
+library_awaaz/door_close/   search: door close, door slam, door shut
+library_awaaz/door_knock/   search: knock
+library_awaaz/door_open/   search: door open, door creak
+library_awaaz/fan/   search: ceiling fan, fan
+library_awaaz/footsteps_leaves/   search: footsteps leaves, footsteps grass, footsteps forest, walking bushes, bushes
+library_awaaz/footsteps_room/   search: footsteps wood, footsteps floor, footsteps indoor, footsteps tile, footsteps
+library_awaaz/footsteps_run/   search: running, run footsteps
+library_awaaz/footsteps_stairs/   search: stairs, staircase, steps up, steps down
+library_awaaz/forest_air/   search: forest ambience, forest, jungle ambience
+library_awaaz/frog/   search: frog, toad
+library_awaaz/glass_break/   search: glass break, glass shatter
+library_awaaz/horn_far/   search: horn, car horn
+library_awaaz/horse/   search: horse, hooves, gallop
+library_awaaz/insect_buzz/   search: insect, cicada, buzz
+library_awaaz/insect_night/   search: night insects
+library_awaaz/leaves_rustle/   search: rustle, rustling
+library_awaaz/leaves_wind/   search: leaves wind, trees wind, foliage
+library_awaaz/night_crickets/   search: cricket, crickets, night ambience, night
+library_awaaz/owl/   search: owl
+library_awaaz/phone_ring/   search: phone ring, ringtone
+library_awaaz/rain/   search: rain
+library_awaaz/river/   search: river, stream, creek, brook
+library_awaaz/room_tone/   search: room tone, room ambience, indoor ambience
+library_awaaz/rooster/   search: rooster
+library_awaaz/thunder_far/   search: thunder
+library_awaaz/village_air/   search: village, rural ambience, countryside
+library_awaaz/water_splash/   search: splash
+library_awaaz/wind_soft/   search: wind soft, breeze, wind
+library_awaaz/wolf_howl/   search: wolf, howl

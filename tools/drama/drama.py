@@ -20,12 +20,17 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE)); sys.path.insert(0, str(HERE.parent)); sys.path.insert(0, str(HERE.parent / "local_story"))
 import script_parse, prosody, scene_audio
 try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent.parent)); import astra_paths as _AP
+try:
     import praat_pitch
 except Exception:
     praat_pitch = None
 
 SR = 22050
-VOICE_DIR = Path(os.environ.get("ASTRA_VOICE_DIR") or "/scratch/work/voices")
+VOICE_DIR = Path(os.environ.get("ASTRA_VOICE_DIR") or str(_AP.VOICES))
 CHARS = json.loads((HERE / "characters.json").read_text(encoding="utf-8"))
 _cache = {}
 
@@ -65,7 +70,7 @@ def trim(y):
 def main():
     src = Path(sys.argv[1]); out = sys.argv[2]
     _fxp = {}
-    for _c in ("/scratch/work/fix_plan.json", "fix_plan.json"):
+    for _c in (str(_AP.WORK / "fix_plan.json"), "fix_plan.json"):
         if Path(_c).exists():
             try:
                 _fxp = json.loads(Path(_c).read_text(encoding="utf-8")).get("fix", {})
@@ -79,7 +84,7 @@ def main():
         print("fix_plan mila:", fx)
     sc = script_parse.load(src)
     plans = prosody.plan_all(sc["lines"], CHARS)
-    work = Path("/scratch/work/drama"); work.mkdir(exist_ok=True)
+    work = (_AP.WORK / "drama"); work.mkdir(exist_ok=True)
     parts, marks, t = [], [], 0.0
     for i, pl in enumerate(plans):
         prof = CHARS.get(pl["who"], CHARS["narrator"])

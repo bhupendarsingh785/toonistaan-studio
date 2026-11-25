@@ -21,13 +21,18 @@ from pathlib import Path
 
 import numpy as np
 import soundfile as sf
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT / "tools" / "world"))
 SR = 24000
-CACHE = Path("/scratch/work/fast_cache")
+CACHE = (_AP.WORK / "fast_cache")
 CACHE.mkdir(parents=True, exist_ok=True)
 
 
@@ -124,7 +129,7 @@ def _tts_fast(who: str, text: str, dst: Path, base_ls: float = 1.38) -> bool:
             return True
     # female/child ke liye ASLI female model (priyamvada) — bada shift = robotic/bachcha lagta tha
     use_female = g == "f" or who in ("मोहन", "बच्चा", "बच्ची")
-    model = Path("/scratch/work/voices") / ("hi_IN-priyamvada-medium.onnx" if use_female else "hi_IN-pratham-medium.onnx")
+    model = _AP.VOICES / ("hi_IN-priyamvada-medium.onnx" if use_female else "hi_IN-pratham-medium.onnx")
     v = _LOCAL.get(str(model))        # har model ek baar (memory bachao)
     if v is None:
         v = PiperVoice.load(str(model), config_path=str(model) + ".json")

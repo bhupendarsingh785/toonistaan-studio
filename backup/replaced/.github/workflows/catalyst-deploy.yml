@@ -1,0 +1,34 @@
+name: Catalyst par deploy (astra-audio)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["tools/**", "knowledge/**", "app/**"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - name: Catalyst CLI
+        run: npm i -g zcatalyst-cli
+      - name: Login (refresh token se)
+        env:
+          CID: ${{ secrets.CATALYST_CLIENT_ID }}
+          CSEC: ${{ secrets.CATALYST_CLIENT_SECRET }}
+          RT: ${{ secrets.CATALYST_REFRESH_TOKEN }}
+          PROJECT: ${{ secrets.CATALYST_PROJECT_ID }}
+        run: |
+          set -e
+          if [ -z "$RT" ]; then echo "CATALYST_REFRESH_TOKEN nahi mila — pehle token workflow chalao"; exit 1; fi
+          TOKEN=$(curl -s -X POST https://accounts.zoho.in/oauth/v2/token \
+            -d grant_type=refresh_token -d client_id="$CID" -d client_secret="$CSEC" -d refresh_token="$RT" | jq -r .access_token)
+          echo "access token mila: ${TOKEN:0:6}… (poore token ko log me nahi likha)"
+          echo "$TOKEN" > /tmp/at.txt
+      - name: Deploy
+        run: |
+          echo "Catalyst CLI deploy step — AppSail/Functions ke liye project ka duniya-structure chahiye."
+          echo "Jab AppSail app bana lo, yahan 'catalyst deploy' chalega."

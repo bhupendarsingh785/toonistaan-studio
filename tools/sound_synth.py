@@ -9,6 +9,11 @@ CLI: python tools/sound_synth.py --out pack.mp3 [--verify]
 from __future__ import annotations
 import argparse, json, subprocess, sys, wave
 from pathlib import Path
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -107,7 +112,7 @@ def main() -> int:
     import numpy as np
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="sound-pack.mp3")
-    ap.add_argument("--dir", default="/scratch/work/synthpack")
+    ap.add_argument("--dir", default=str(_AP.WORK / "synthpack"))
     ap.add_argument("--verify", action="store_true")
     a = ap.parse_args()
     d = Path(a.dir); d.mkdir(parents=True, exist_ok=True)

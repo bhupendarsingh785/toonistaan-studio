@@ -1,0 +1,513 @@
+<!doctype html><html><body style="margin:0;background:#000"><canvas id="c"></canvas>
+<script>
+// Toonistaan World3D: kirdaar library (insaan har umar/ling, janwar, panchhi, ped). WebGL2 ray-march.
+const FS = `#version 300 es
+precision highp float;
+uniform vec2 R; uniform float T; uniform vec3 camPos, camTgt;
+uniform vec4 cPos[12];  // xyz, rotY
+uniform vec4 cTyp[12];  // x=type, y,z,w = params
+uniform vec4 cAct[12];  // x=talk, y=wave, z=fly
+uniform vec4 cExt[12];
+uniform vec4 cSkin[12]; uniform vec4 cHair[12]; uniform vec4 cBody[12]; uniform vec4 cEye[12]; uniform vec4 cPant[12]; // rgb + w=1 agar diya ho
+vec3 entCol[4]; bool entHas[4];  // x=rang(0 gora..3 kaala), y=kaathi(-1 patla..1 mota), z=lambai, w=haisiyat(0 garib,1 aam,2 amir)
+vec4 X;
+uniform int cN; uniform float env; uniform float zoom; // env 0 gaon, 1 jungle
+out vec4 O;
+float fly;
+float sdS(vec3 p,float r){return length(p)-r;}
+float sdE(vec3 p,vec3 r){float k0=length(p/r);float k1=length(p/(r*r));return k0*(k0-1.)/k1;}
+float sdC(vec3 p,vec3 a,vec3 b,float r){vec3 pa=p-a,ba=b-a;float h=clamp(dot(pa,ba)/dot(ba,ba),0.,1.);return length(pa-ba*h)-r;}
+float sdRB(vec3 p,vec3 b,float r){vec3 q=abs(p)-b+r;return length(max(q,0.))+min(max(q.x,max(q.y,q.z)),0.)-r;}
+float sdCone(vec3 p,float h,float r1,float r2){vec2 q=vec2(length(p.xz),p.y);vec2 k1=vec2(r2,h),k2=vec2(r2-r1,2.*h);vec2 ca=vec2(q.x-min(q.x,(q.y<0.)?r1:r2),abs(q.y)-h);vec2 cb=q-k1+k2*clamp(dot(k1-q,k2)/dot(k2,k2),0.,1.);float s=(cb.x<0.&&ca.y<0.)?-1.:1.;return s*sqrt(min(dot(ca,ca),dot(cb,cb)));}
+float smin(float a,float b,float k){float h=clamp(.5+.5*(b-a)/k,0.,1.);return mix(b,a,h)-k*h*(1.-h);}
+mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
+vec2 U(vec2 a,vec2 b){return a.x<b.x?a:b;}
+float sdTor(vec3 p,float R,float r){return length(vec2(length(p.xy)-R,p.z))-r;}
+float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+vec2 chhotuM(vec3 p,float talk,float wave){
+  float b=sin(T*5.)*.04*(1.-fly); p.y-=b;
+  vec2 d=vec2(sdRB(p-vec3(0,1.15,0),vec3(.62,.55,.5),.38),2.);
+  d=U(d,vec2(sdRB(p-vec3(0,1.17,.33),vec3(.45,.32,.2),.24),3.));
+  float bl=fract(T*.31)<.04?.15:1.;
+  vec3 e=p-vec3(0,1.22,.5);e.x=abs(e.x)-.19;
+  d=U(d,vec2(sdE(e,vec3(.11,.14*bl,.06)),4.));
+  vec3 pu=p-vec3(0,1.26,.555);pu.x=abs(pu.x)-.16;
+  d=U(d,vec2(sdS(pu,.04*bl),9.));
+  float m=sdC(p,vec3(-.12,1.02+.0,.53),vec3(.12,1.02,.53),.025+.03*talk*abs(sin(T*16.)));
+  d=U(d,vec2(m,4.));
+  vec3 ck=p-vec3(0,1.07,.5);ck.x=abs(ck.x)-.36;d=U(d,vec2(sdS(ck,.07),11.));
+  d=U(d,vec2(sdC(p,vec3(0,1.7,0),vec3(sin(T*3.)*.05,2.0,0),.035),10.));
+  d=U(d,vec2(sdS(p-vec3(sin(T*3.)*.05,2.05,0),.09),5.));
+  // arms
+  vec3 sl=vec3(-.68,1.1,0),sr=vec3(.68,1.1,0);
+  vec3 hl=sl+vec3(-.18,-.42,.05);
+  vec3 hr=sr+mix(vec3(.18,-.42,.05),vec3(.28,.38+.08*sin(T*12.),.05),wave);
+  d=U(d,vec2(min(sdC(p,sl,hl,.09),sdC(p,sr,hr,.09)),2.));
+  d=U(d,vec2(min(sdS(p-hl,.13),sdS(p-hr,.13)),10.));
+  // legs
+  vec3 q=p;q.x=abs(q.x)-.25;
+  float lg=sdC(q,vec3(0,.6,0),vec3(0,.18-.12*fly,0),.1);
+  d=U(d,vec2(lg,10.));
+  d=U(d,vec2(sdRB(q-vec3(0,.1-.12*fly,.06),vec3(.14,.08,.2),.07),2.));
+  return d;
+}
+// ---------------- INSAAN ----------------
+// g: 0 aurat/ladki, 1 aadmi/ladka; age: 0 bachcha, 1 jawan, 2 budha; o: kapde ka rang variant
+vec2 person(vec3 P,float g,float age,float o,float talk,float wave){
+  float s=(age<.5?.78:(age>1.5?.97:1.))*X.z;float fat=X.y;float wl=X.w;
+  vec3 p=P/s;
+  float hs=age<.5?1.3:(age>1.5?1.05:1.0);
+  float skin=41.+clamp(floor(X.x+.5),0.,3.);
+  vec3 h=(p-vec3(0,age<.5?1.6:1.62,0))/hs;
+  // sir: upar gol, neeche tikha jabda aur thodi
+  float head=sdE(h-vec3(0,.012,0),vec3(.088,.104,.097));
+  float jaw=sdE(h-vec3(0,-.06,.018),vec3(g>.5?.064:.058,.055,.072));
+  head=smin(head,jaw,.035);
+  head=smin(head,sdS(h-vec3(0,-.106,.07),g>.5?.026:.022),.025); // thodi
+  vec3 cb=h-vec3(0,-.005,.07);cb.x=abs(cb.x)-.052;head=smin(head,sdS(cb,.03),.03); // gaal ki haddi
+  vec3 ea=h;ea.x=abs(ea.x)-.088;head=smin(head,sdE(ea-vec3(0,-.005,-.005),vec3(.012,.028,.02)),.01);
+  // naak: haddi + nok + nathune
+  head=smin(head,sdC(h,vec3(0,.025,.094),vec3(0,-.028,.108),g>.5?.0085:.007),.01);
+  head=smin(head,sdS(h-vec3(0,-.032,.104),g>.5?.013:.011),.01);
+  vec3 nw=h-vec3(0,-.037,.096);nw.x=abs(nw.x)-.013;head=smin(head,sdS(nw,.008),.006);
+  // aankh ke gaddhe (eye sockets)
+  vec3 es=h-vec3(0,.012,.097);es.x=abs(es.x)-.035;head=smin(head,-(sdE(es,vec3(.028,.018,.01))),-.006);head=max(head,-sdE(es,vec3(.026,.016,.008)));
+  vec2 d=vec2(head*hs,skin);
+  // aankhein: badaam jaisi, badi putli, palkon ki lakeer
+  vec3 e=h-vec3(0,.012,.074);e.x=abs(e.x)-.035;
+  float bl=fract(T*.29+o*.37)<.035?1.:0.;
+  float ek=g<.5?1.13:1.; e/=ek;
+  float eyeW=sdE(e,vec3(.024,.0175,.017))*ek;
+  d=U(d,vec2(eyeW*hs,9.));
+  vec3 ir=e-vec3(0,-.001,.013);
+  d=U(d,vec2(sdS(ir,.0118)*ek*hs,19.));
+  d=U(d,vec2(sdS(ir-vec3(0,0,.0048),.0062)*ek*hs,10.));
+  d=U(d,vec2(sdS(ir-vec3(.0045,.0045,.0095),.0024)*ek*hs,9.));
+  float lidY=mix(.0125,-.02,bl);
+  float lid=max(sdE(e,vec3(.0255,.019,.0185)),-(e.y-lidY))*ek;
+  d=U(d,vec2(lid*hs,skin));
+  vec3 lsh=e-vec3(0,lidY+.001,.006);
+  d=U(d,vec2(max(sdE(lsh,vec3(.027,.0045,.016)),-lsh.z+.004)*ek*hs,10.)); // palkon ki lakeer
+  if(g<.5&&bl<.5){for(int k=0;k<3;k++){float fk=float(k);vec3 lb=vec3(.012+fk*.006,lidY+.002,.008-fk*.003);
+    d=U(d,vec2(sdC(e,lb,lb+vec3(.006+fk*.002,.007,.004),.0012)*ek*hs,10.));}} // lashes
+  // bhaunh: moti, mudi hui
+  vec3 b=h-vec3(0,.043,.088);b.x=abs(b.x)-.036;
+  float wh=age>1.5?17.:7.;
+  float bw=g>.5?.006:.0038;
+  vec3 bb=b;bb.y+=bb.x*bb.x*4.;float brow=sdE(bb-vec3(.002,.004,0),vec3(.026,bw,.006));
+  d=U(d,vec2(brow*hs,wh));
+  // honth: muskaan
+  float op=talk*abs(sin(T*15.))*.011;
+  vec3 l=h-vec3(0,-.07,.087);l.y-=l.x*l.x*3.;
+  float lips=min(sdE(l-vec3(0,.003,-.002),vec3(.022,.004,.009)),sdE(l-vec3(0,-.005-op,-.003),vec3(.019,.005,.009)));
+  d=U(d,vec2(lips*hs,g<.5&&age>.5?61.:20.));
+  if(g<.5||age<.5){vec3 bh=h-vec3(0,-.03,.083);bh.x=abs(bh.x)-.05;d=U(d,vec2((sdE(bh,vec3(.02,.013,.006))+.0035)*hs,62.));} // gaalon ki laali
+  if(g>.5&&age>.5&&age<1.5&&fract(o*.31)>.4){float st=max(sdE(h-vec3(0,-.074,.02),vec3(.067,.05,.078)),-(h.y+.04));d=U(d,vec2(st*hs,63.));} // halki daadhi
+  if(op>.002)d=U(d,vec2(sdE(l-vec3(0,-op*.5,-.003),vec3(.02,op*.6+.002,.008))*hs,10.));
+  // baal
+  float hair;
+  if(g<.5){
+    hair=max(sdE(h-vec3(0,.016,-.012),vec3(.098,.122,.108)),-max(h.y-.058,-(h.z+.005)));
+    if(age<.5){vec3 pt=h-vec3(0,0,-.04);pt.x=abs(pt.x)-.1;hair=min(hair,min(sdS(pt,.04),sdC(pt,vec3(.01,-.02,-.01),vec3(.02,-.13,-.02),.026)));
+      d=U(d,vec2(sdE(pt-vec3(.004,-.008,0),vec3(.016,.03,.03))*hs,5.));}
+    else {hair=min(hair,sdS(h-vec3(0,.02,-.13),.055));  // joodaa
+      if(age<1.5){ // lambe khule baal: peeche peeth tak + chehre ke dono taraf lat
+        float lh=sdE(h-vec3(0,-.12,-.065),vec3(.1,.2,.055));lh=max(lh,-(h.z-.0));
+        vec3 lt=h;lt.x=abs(lt.x)-.088;lh=min(lh,sdC(lt,vec3(0,.04,.02),vec3(.012,-.2,-.01),.02));
+        lh+=.0018*sin(h.x*90.+h.y*20.);
+        hair=smin(hair,lh,.03);}} // lambe baal
+    d=U(d,vec2(hair*hs,wh));
+    if(age>.5){vec3 bd=h-vec3(0,.02,.098);d=U(d,vec2(sdS(bd,.006)*hs,5.));} // bindi
+  } else {
+    if(age>1.5){hair=max(sdE(h-vec3(0,-.004,-.008),vec3(.096,.116,.105)),max(h.y-.035,h.z-.03));
+      if(mod(floor(o),2.)>.5){float bd2=sdE(h-vec3(0,-.11,.06),vec3(.06,.06,.045));bd2=smin(bd2,max(sdE(h-vec3(0,-.07,.03),vec3(.072,.05,.07)),-(h.y+.05)),.02);bd2+=.0015*sin(h.x*120.);d=U(d,vec2(bd2*hs,17.));} // safed daadhi
+      vec3 mu=h-vec3(0,-.052,.1);mu.x=abs(mu.x)-.024;mu.xy*=rot(-.35);d=U(d,vec2(sdE(mu,vec3(.03,.011,.014))*hs,17.));}
+    else {hair=max(sdE(h-vec3(0,.025,-.01),vec3(.097,.115,.106)),-max(h.y-.055,-(h.z+.02)));
+      float top=sdE(h-vec3(.01,.075,.0),vec3(.094,.045,.098));
+      vec3 sw=h-vec3(-.025,.075,.075);sw.xy*=rot(.45);sw.yz*=rot(-.3);
+      top=smin(top,sdE(sw,vec3(.065,.02,.035)),.025); // maathe par sanwara hua jhonka
+      top=max(top,-(h.y-.035-(h.z>.06?.03:0.)));
+      hair=smin(hair,top,.02);
+      hair+=.0012*sin(atan(h.z,h.x)*22.+h.y*30.)*smoothstep(.03,.08,h.y); // baalon ki lehren
+      if(age>.5&&fract(o*.31)>.4){vec3 mu=h-vec3(0,-.05,.1);mu.x=abs(mu.x)-.018;mu.xy*=rot(-.25);d=U(d,vec2(sdE(mu,vec3(.022,.007,.01))*hs,7.));}}
+    d=U(d,vec2(hair*hs,wh));
+  }
+  if(age>1.5){vec3 gl=h-vec3(0,.012,.103);gl.x=abs(gl.x)-.036;d=U(d,vec2(min(sdTor(gl,.024,.0028),sdC(h,vec3(-.012,.014,.105),vec3(.012,.014,.105),.0025))*hs,10.));}
+  // sharir
+  float neck=sdC(p,vec3(0,1.42,0),vec3(0,1.53,-.005),g<.5?.04:.048);
+  vec3 a=p;a.x=abs(a.x);float side=sign(p.x);
+  vec3 sh=g<.5?vec3(.165,1.39,0):vec3(.195,1.39,0);
+  vec3 el=sh+vec3(.035,-.26,.03),wr=sh+vec3(.04,-.49,.07);
+  if(wave>.5&&side>0.){el=sh+vec3(.12,.12,.05);wr=el+vec3(.04,.22+.03*sin(T*12.),0);}
+  float tor;
+  if(g<.5){tor=smin(smin(sdE(p-vec3(0,1.28,.005),vec3(.135,.13,.09)),sdE(p-vec3(0,1.1,0),vec3(.1,.07,.075)),.06),sdE(p-vec3(0,.96,0),vec3(.135,.1,.095)),.06);}
+  else {tor=smin(smin(sdE(p-vec3(0,1.27,.005),vec3(.17,.15,.1)),sdE(p-vec3(0,1.07,age>1.5?.02:0.),vec3(age>1.5?.155:.14,.14,age>1.5?.11:.095)),.08),sdE(p-vec3(0,.95,0),vec3(.15,.09,.1)),.06);}
+  tor-=fat*.035; if(fat>.3&&g>.5)tor=smin(tor,sdE(p-vec3(0,1.05,.06),vec3(.15,.13,.11)*(1.+fat*.4)),.06);
+  tor=smin(tor,sdC(a,vec3(.035,1.45,-.01),sh+vec3(-.01,.015,0),.048),.05);
+  tor=smin(tor,sdS(a-sh,.05),.04);
+  float arm=smin(sdC(a,sh,el,.041),sdC(a,el,wr,.033),.02)-fat*.012;
+  vec3 hd=wr+(wave>.5&&side>0.?vec3(0,.05,0):vec3(.003,-.055,.005));
+  float hand=sdE(a-hd-vec3(0,.012,0),vec3(.026,.03,.013));
+  bool up=wave>.5&&side>0.;
+  for(int f=0;f<4;f++){float fx=-.018+float(f)*.012;float fl=(f==1||f==2)?.048:.04;
+    vec3 fb=hd+vec3(fx,up?.035:-.012,0.);vec3 ft=fb+vec3(fx*.25,up?fl:-fl,up?0.:.008);
+    hand=smin(hand,sdC(a,fb,ft,.0068),.006);}
+  vec3 tb=hd+vec3(-.022,up?.0:.008,.012);hand=smin(hand,sdC(a,tb,tb+vec3(-.012,up?.025:-.022,.018),.0075),.006);
+  vec3 gg=p;gg.x=abs(gg.x);
+  float leg=smin(sdC(gg,vec3(.085,.94,0),vec3(.09,.52,.01),.064),sdC(gg,vec3(.09,.52,.01),vec3(.09,.1,0),.046),.03)-fat*.015;
+  float foot=sdE(gg-vec3(.09,.045,.05),vec3(.045,.04,.11));
+  d=U(d,vec2(neck*s,skin));d=U(d,vec2(hand*s,skin));d=U(d,vec2(foot*s,18.));
+  float oc=mod(floor(o),3.); // kapdon ke rang
+  float poor=wl<.5?1.:0.;float rich=wl>1.5?1.:0.;
+  if(g<.5&&age<.5){ // frock
+    float fr=smin(tor-.012,sdCone(p-vec3(0,.84,0),.22,.33,.105),.07);
+    fr=smin(fr,sdTor((p-vec3(0,.6,0)).xzy,.315,.028),.04);
+    float fm=poor>.5?45.:(oc<.5?8.:(oc<1.5?34.:37.));
+    d=U(d,vec2(fr*s,fm));d=U(d,vec2(sdS(a-sh-vec3(.01,-.03,0),.07)*s,fm));
+    d=U(d,vec2(sdTor((p-vec3(0,1.1,0)).xzy,.106,.011)*s,5.));
+    d=U(d,vec2(arm*s,skin));d=U(d,vec2(leg*s,skin));
+  } else if(g<.5){ // saree
+    float sm=poor>.5?(oc<.5?45.:46.):(age>1.5?21.:(oc<.5?35.:(oc<1.5?36.:34.)));
+    float blouse=tor-.01;
+    d=U(d,vec2(blouse*s,age>1.5?21.:38.));
+    float skirt=sdCone(p-vec3(0,.5,0),.5,.2,.115);
+    d=U(d,vec2(skirt*s,sm));
+    // pallu: kandhe se kamar tak tirchha
+    vec3 pq=p-vec3(0,1.18,.0);pq.xy*=rot(.55);
+    float pallu=max(sdE(pq,vec3(.08,.32,.115)),-sdE(pq,vec3(.06,.3,.09)));pallu=max(pallu,-(p.y-.82));
+    d=U(d,vec2(min(pallu,sdRB(pq-vec3(0,0,0),vec3(.06,.3,.11),.03))*s,sm));
+    d=U(d,vec2(sdTor((p-vec3(0,.04,0)).xzy,.2,.018)*s,rich>.5?47.:5.)); // border
+    if(rich>.5){d=U(d,vec2(sdTor((p-vec3(0,1.42,.03)).xzy,.075,.012)*s,47.));vec3 er=h-vec3(0,-.04,0);er.x=abs(er.x)-.095;d=U(d,vec2(sdS(er,.012)*hs*s,47.));}
+    float sl=sdC(a,sh,sh+vec3(.02,-.1,.01),.048);d=U(d,vec2(sl*s,age>1.5?21.:38.));
+    d=U(d,vec2(arm*s,skin));
+  } else if(age>1.5){ // kurta dhoti
+    float k=smin(tor-.016,sdCone(p-vec3(0,.86,0),.36,.27,.15),.08);
+    d=U(d,vec2(k*s,16.));d=U(d,vec2(sdTor((p-vec3(0,1.465,0)).xzy,.058,.014)*s,16.));
+    d=U(d,vec2((arm-.012)*s,16.));
+    d=U(d,vec2(smin(leg+.012,sdCone(gg-vec3(.07,.3,0),.25,.1,.12),.04)*s,21.));
+    vec3 bu=p-vec3(0,1.3,.105);bu.y=mod(bu.y+.04,.08)-.04;if(p.y>1.15&&p.y<1.45)d=U(d,vec2(sdS(bu,.009)*s,10.));
+  } else { // shirt + pant/shorts
+    float sm=poor>.5?(oc<.5?45.:46.):(rich>.5?10.:(oc<.5?37.:(oc<1.5?39.:5.)));
+    d=U(d,vec2((tor-.012-rich*.006)*s,sm));
+    if(rich>.5&&age>.5){ // suit: safed shirt ka V, laal tie, sone ki ghadi
+      vec3 v=p-vec3(0,1.33,.1);d=U(d,vec2(max(sdE(v,vec3(.05,.12,.02)),v.y-.12)*s,9.));
+      d=U(d,vec2(sdC(p,vec3(0,1.41,.115),vec3(0,1.18,.13),.014)*s,5.));
+      d=U(d,vec2(sdTor((a-wr).xzy,.036,.01)*s,47.));}
+    d=U(d,vec2(sdTor((p-vec3(0,1.465,0)).xzy,.055,.012)*s,sm));
+    d=U(d,vec2(smin(sdC(a,sh,sh+(el-sh)*.5,.05),sdS(a-sh,.055),.03)*s,sm));
+    d=U(d,vec2(arm*s,skin));
+    vec3 bu=p-vec3(0,1.3,.1);bu.y=mod(bu.y+.04,.08)-.04;if(p.y>1.0&&p.y<1.42)d=U(d,vec2(sdS(bu,.007)*s,9.));
+    float pant=smin(sdE(p-vec3(0,.93,0),vec3(.155,.1,.105)),(age<.5?sdC(gg,vec3(.09,.9,0),vec3(.095,.62,.01),.075):leg+.014),.04);
+    d=U(d,vec2(pant*s,age<.5?10.:(rich>.5?10.:(poor>.5?46.:40.))));
+    if(age<.5)d=U(d,vec2(leg*s,skin));
+    d=U(d,vec2(sdTor((p-vec3(0,1.0,0)).xzy,.145,.012)*s,15.)); // belt
+  }
+  if(age>1.5&&g>.5)d=U(d,vec2(sdC(P,vec3(.3,1.0,.12),vec3(.36,0.,.2),.018),15.));
+  return d;
+}
+// ---------------- JANWAR ----------------
+vec2 elephant(vec3 p){
+  vec2 d=vec2(sdE(p-vec3(0,1.25,0),vec3(.62,.58,.95)),24.);
+  vec3 h=p-vec3(0,1.5,.95);
+  d.x=smin(d.x,sdS(h,.46),.15);
+  vec3 ea=h;ea.x=abs(ea.x)-.42;ea.z+=.15;ea.xz*=rot(.5);d.x=smin(d.x,sdE(ea,vec3(.06,.42,.34)),.04);
+  float tr=sdC(p,vec3(0,1.35,1.3),vec3(0,.95,1.5),.12);tr=smin(tr,sdC(p,vec3(0,.95,1.5),vec3(0,.45,1.5+.08*sin(T*2.)),.08),.05);
+  d.x=smin(d.x,tr,.08);
+  vec3 tk=p-vec3(0,1.1,1.25);tk.x=abs(tk.x)-.16;d=U(d,vec2(sdC(tk,vec3(0),vec3(.03,-.12,.25),.04),9.));
+  vec3 e=h-vec3(0,.08,.38);e.x=abs(e.x)-.24;d=U(d,vec2(sdS(e,.045),10.));
+  vec3 lg=p;lg.x=abs(lg.x)-.36;lg.z=abs(lg.z)-.55;d.x=smin(d.x,sdC(lg,vec3(0,1.,0),vec3(0,.1,0),.19),.08);
+  d=U(d,vec2(sdC(p,vec3(0,1.3,-.95),vec3(0,.7,-1.1),.03),24.));
+  return d;
+}
+vec2 lion(vec3 p){
+  vec2 d=vec2(sdE(p-vec3(0,.78,0),vec3(.27,.27,.6)),25.);
+  vec3 h=p-vec3(0,1.08,.6);
+  d=U(d,vec2(sdS(h-vec3(0,0,-.08),.33+.02*sin(atan(h.y,h.x)*12.)),26.));
+  d=U(d,vec2(sdS(h-vec3(0,0,.05),.22),25.));
+  d=U(d,vec2(sdE(h-vec3(0,-.08,.2),vec3(.12,.09,.1)),27.));
+  d=U(d,vec2(sdE(h-vec3(0,-.02,.29),vec3(.045,.03,.03)),10.));
+  vec3 e=h-vec3(0,.06,.19);e.x=abs(e.x)-.08;d=U(d,vec2(sdS(e,.032),19.));d=U(d,vec2(sdS(e-vec3(0,0,.025),.012),10.));
+  vec3 lg=p;lg.x=abs(lg.x)-.16;lg.z=abs(lg.z)-.42;d=U(d,vec2(sdC(lg,vec3(0,.7,0),vec3(0,.06,0),.075),25.));
+  d=U(d,vec2(sdC(p,vec3(0,.85,-.58),vec3(0,.5+.08*sin(T*3.),-1.0),.03),25.));
+  d=U(d,vec2(sdS(p-vec3(0,.5+.08*sin(T*3.),-1.0),.07),26.));
+  return d;
+}
+vec2 monkey(vec3 p){
+  vec2 d=vec2(sdE(p-vec3(0,.55,0),vec3(.16,.22,.14)),28.);
+  vec3 h=p-vec3(0,.92,.03);d=U(d,vec2(sdS(h,.16),28.));
+  d=U(d,vec2(sdE(h-vec3(0,-.03,.11),vec3(.11,.1,.07)),29.));
+  vec3 ea=h;ea.x=abs(ea.x)-.16;d=U(d,vec2(sdE(ea,vec3(.03,.06,.05)),29.));
+  vec3 e=h-vec3(0,.02,.16);e.x=abs(e.x)-.045;d=U(d,vec2(sdS(e,.022),10.));
+  d=U(d,vec2(sdC(h,vec3(-.04,-.07,.17),vec3(.04,-.07,.17),.008),10.));
+  vec3 a=p;a.x=abs(a.x);d=U(d,vec2(sdC(a,vec3(.14,.7,0),vec3(.22,.3+.05*sin(T*6.),.1),.04),28.));
+  d=U(d,vec2(sdC(a,vec3(.08,.38,0),vec3(.12,.04,.05),.05),28.));
+  d=U(d,vec2(sdC(p,vec3(0,.4,-.12),vec3(0,.7,-.45),.025),28.));
+  return d;
+}
+vec2 cow(vec3 p){
+  vec2 d=vec2(sdE(p-vec3(0,1.0,0),vec3(.33,.36,.72)),30.);
+  vec3 h=p-vec3(0,1.18,.82);d.x=smin(d.x,sdE(h,vec3(.16,.2,.24)),.08);
+  d=U(d,vec2(sdE(h-vec3(0,-.1,.17),vec3(.12,.08,.08)),11.));
+  vec3 ho=h-vec3(0,.18,-.03);ho.x=abs(ho.x)-.1;d=U(d,vec2(sdC(ho,vec3(0),vec3(.1,.1,-.02),.025),9.));
+  vec3 ea=h-vec3(0,.1,-.05);ea.x=abs(ea.x)-.19;d=U(d,vec2(sdE(ea,vec3(.08,.03,.05)),30.));
+  vec3 e=h-vec3(0,.04,.17);e.x=abs(e.x)-.1;d=U(d,vec2(sdS(e,.03),10.));
+  vec3 lg=p;lg.x=abs(lg.x)-.2;lg.z=abs(lg.z)-.48;d=U(d,vec2(sdC(lg,vec3(0,.85,0),vec3(0,.05,0),.07),30.));
+  d=U(d,vec2(sdC(p,vec3(0,1.25,-.7),vec3(.05*sin(T*2.),.55,-.8),.02),30.));
+  return d;
+}
+vec2 dog(vec3 p){
+  vec2 d=vec2(sdE(p-vec3(0,.45,0),vec3(.15,.15,.33)),31.);
+  vec3 h=p-vec3(0,.67,.36);d=U(d,vec2(sdS(h,.13),31.));
+  d=U(d,vec2(sdE(h-vec3(0,-.04,.12),vec3(.07,.06,.09)),31.));
+  d=U(d,vec2(sdS(h-vec3(0,-.02,.21),.025),10.));
+  vec3 ea=h;ea.x=abs(ea.x)-.11;d=U(d,vec2(sdE(ea-vec3(0,-.05,-.02),vec3(.03,.09,.05)),15.));
+  vec3 e=h-vec3(0,.04,.11);e.x=abs(e.x)-.05;d=U(d,vec2(sdS(e,.022),10.));
+  vec3 lg=p;lg.x=abs(lg.x)-.09;lg.z=abs(lg.z)-.22;d=U(d,vec2(sdC(lg,vec3(0,.38,0),vec3(0,.03,0),.04),31.));
+  d=U(d,vec2(sdC(p,vec3(0,.52,-.3),vec3(.08*sin(T*12.),.75,-.42),.025),31.));
+  return d;
+}
+vec2 deer(vec3 p){
+  vec2 d=vec2(sdE(p-vec3(0,.9,0),vec3(.17,.2,.42)),32.);
+  d.x=smin(d.x,sdC(p,vec3(0,1.,.32),vec3(0,1.35,.45),.07),.06);
+  vec3 h=p-vec3(0,1.42,.5);d=U(d,vec2(smin(sdS(h,.1),sdE(h-vec3(0,-.03,.1),vec3(.06,.06,.1)),.05),32.));
+  vec3 an=h-vec3(0,.08,-.02);an.x=abs(an.x)-.05;
+  d=U(d,vec2(min(sdC(an,vec3(0),vec3(.08,.25,-.05),.012),sdC(an,vec3(.04,.12,-.02),vec3(.14,.2,.02),.01)),15.));
+  vec3 e=h-vec3(0,.02,.08);e.x=abs(e.x)-.06;d=U(d,vec2(sdS(e,.022),10.));
+  vec3 lg=p;lg.x=abs(lg.x)-.1;lg.z=abs(lg.z)-.3;d=U(d,vec2(sdC(lg,vec3(0,.8,0),vec3(0,.02,0),.03),32.));
+  return d;
+}
+vec2 parrot(vec3 p,float fl){
+  vec2 d=vec2(sdE(p,vec3(.07,.11,.07)),33.);
+  vec3 h=p-vec3(0,.12,.03);d=U(d,vec2(sdS(h,.06),33.));
+  d=U(d,vec2(sdC(h,vec3(0,0,.05),vec3(0,-.03,.09),.018),5.));
+  vec3 e=h-vec3(0,.015,.04);e.x=abs(e.x)-.035;d=U(d,vec2(sdS(e,.012),10.));
+  d=U(d,vec2(sdC(p,vec3(0,-.08,-.05),vec3(0,-.3,-.12),.02),33.));
+  vec3 w=p;w.x=abs(w.x)-.07;w.xy*=rot(fl*.9*sin(T*25.));d=U(d,vec2(sdE(w-vec3(fl*.08,0,0),vec3(.025+fl*.07,.09-fl*.05,.06)),34.));
+  return d;
+}
+// ---------------- PED, PAUDHE ----------------
+vec2 tree(vec3 p,float kind){
+  vec2 d;
+  if(kind<.5){d=vec2(sdC(p,vec3(0),vec3(0,1.6,0),.14),15.);d=U(d,vec2(smin(smin(sdS(p-vec3(0,2.1,0),.8),sdS(p-vec3(.45,1.8,.2),.55),.3),sdS(p-vec3(-.4,1.9,-.1),.5),.3),14.));}
+  else {vec3 q=p;q.x-=.15*q.y*q.y*.1;d=vec2(sdC(q,vec3(0),vec3(0,3.,0),.1),15.);
+    vec3 t=p-vec3(.15*.9,3.,0);float a=atan(t.z,t.x);float sec=6.2832/7.;a=mod(a+sec*.5,sec)-sec*.5;vec2 rq=vec2(cos(a),sin(a))*length(t.xz);
+    vec3 lp=vec3(rq.x,t.y,rq.y);lp.y+=lp.x*lp.x*.35;d=U(d,vec2(sdE(lp-vec3(.55,0,0),vec3(.55,.03,.12)),14.));}
+  return d;
+}
+vec2 entityRaw(vec3 p,int i){
+  vec4 ty=cTyp[i];vec4 ac=cAct[i];fly=ac.z;X=cExt[i];
+  if(ty.x<1.5){vec2 r=chhotuM(p/.62,ac.x,ac.y);r.x*=.62;return r;}
+  if(ty.x<2.5)return person(p,ty.y,ty.z,ty.w,ac.x,ac.y);
+  if(ty.x<3.5)return elephant(p);
+  if(ty.x<4.5)return lion(p);
+  if(ty.x<5.5)return monkey(p);
+  if(ty.x<6.5)return cow(p);
+  if(ty.x<7.5)return dog(p);
+  if(ty.x<8.5)return deer(p);
+  if(ty.x<9.5)return parrot(p,ac.z);
+  return tree(p,ty.y);
+}
+// apne rang: twacha->200, baal->201, kapde->202, aankh->203 (+ i*10)
+vec2 entity(vec3 p,int i){
+  vec2 r=entityRaw(p,i);
+  float m=r.y;float base=200.+float(i)*10.;
+  if(cSkin[i].w>.5&&(m>40.5&&m<44.5))r.y=base;
+  else if(cHair[i].w>.5&&(m>6.5&&m<7.5))r.y=base+1.;
+  else if(cBody[i].w>.5&&(m==8.||m==34.||m==37.||m==39.||m==35.||m==36.||m==38.||m==16.||m==45.||m==46.))r.y=base+2.;
+  else if(cEye[i].w>.5&&(m>18.5&&m<19.5))r.y=base+3.;
+  else if(cPant[i].w>.5&&(m==40.||m==21.))r.y=base+4.;
+  return r;
+}
+float radius(float t){return t<2.5?2.2:(t<3.5?2.4:(t<9.5?1.7:3.5));}
+vec2 world(vec3 p){
+  vec2 d=vec2(p.y+.02*sin(p.x*.7)*sin(p.z*.5),1.);
+  bool water=false;
+  if(env<.5||(env>.5&&env<1.5)){ // nadi (gaon + jungle)
+    float rz=-6.5+sin(p.x*.25)*1.2;float w=abs(p.z-rz)-1.1;
+    if(w<0.){d.x=p.y+.12;d.y=48.;}else{d.x=p.y+.02*sin(p.x*.7)*sin(p.z*.5)+smoothstep(.0,-.6,w)*0.;}
+    if(env<.5){vec3 bp=p-vec3(-1.,0,-6.5+sin(-.25)*1.2);d=U(d,vec2(sdRB(bp-vec3(0,.12,0),vec3(.6,.05,1.4),.02),15.));
+      vec3 rl=bp;rl.x=abs(rl.x)-.55;d=U(d,vec2(sdRB(rl-vec3(0,.38,0),vec3(.02,.02,1.4),.01),15.));}
+  }
+  if(env<.5){ // GAON
+    vec3 hp=p-vec3(-4.2,0,-2.6);d=U(d,vec2(sdRB(hp-vec3(0,.9,0),vec3(1.1,.9,.9),.05),12.));
+    vec3 rp=hp-vec3(0,2.1,0);d=U(d,vec2(max(sdRB(rp,vec3(1.35,.6,1.1),.05),abs(rp.x)*.8+rp.y-.55),13.));
+    d=U(d,vec2(sdRB(hp-vec3(.0,.45,.91),vec3(.25,.45,.02),.02),15.));
+    vec3 hu=p-vec3(4.4,0,-3.2);d=U(d,vec2(sdC(hu,vec3(0,0,0),vec3(0,1.,0),.9),51.)); // kachcha ghar
+    d=U(d,vec2(sdCone(hu-vec3(0,1.45,0),.45,1.15,.05),52.)); // chhappar
+    vec3 kw=p-vec3(2.6,0,-1.6);d=U(d,vec2(max(sdC(kw,vec3(0),vec3(0,.45,0),.42),-sdC(kw,vec3(0,.1,0),vec3(0,.6,0),.34)),12.)); // kuan
+    d=U(d,tree(p-vec3(1.6,0,-3.)*vec3(1,1,1),0.));d=U(d,tree(p-vec3(-1.8,0,-10.),0.));d=U(d,tree(p-vec3(6.5,0,-1.),1.));d=U(d,tree(p-vec3(-6.5,0,-1.5),1.));
+    if(p.z<-8.&&p.z>-30.){vec2 cell=floor(p.xz/4.);vec2 lc=mod(p.xz,4.)-2.;float hv=hash(cell);
+      if(hv>.35){vec3 q=vec3(lc.x+(hv-.5)*1.5,p.y,lc.y);d=U(d,tree(q,hv>.75?1.:0.));}}
+  } else if(env<1.5){ // JUNGLE
+    if(p.z<-1.5||abs(p.x)>3.5){vec2 cell=floor(p.xz/2.6);vec2 lc=mod(p.xz,2.6)-1.3;float hv=hash(cell);
+      vec3 q=vec3(lc.x+(hv-.5)*.9,p.y,lc.y+(hash(cell+7.)-.5)*.9);
+      float rz=-6.5+sin(p.x*.25)*1.2;if(abs(p.z-rz)>1.6){float sc=.8+hv*.6;vec2 tr=tree(q/sc,hv>.65?1.:0.);tr.x*=sc;d=U(d,tr);
+        d=U(d,vec2(sdE(q-vec3(.9,.2,.4),vec3(.45,.3,.4)*sc),14.));}}
+  } else if(env<2.5){ // SHAHAR: sadak z ke saath, dono taraf buildings
+    float ax=abs(p.x);
+    d=vec2(ax<2.5?p.y:max(p.y-.08,-(ax-2.5)),ax<2.5?50.:53.);
+    {float cz0=floor(p.z/4.5);
+      for(int k=-1;k<=1;k++){float cz=cz0+float(k);vec2 cell=vec2(sign(p.x),cz);float hv=hash(cell+11.);
+        vec3 q=vec3(ax-6.2,p.y,p.z-(cz+.5)*4.5);
+        if(hv<.15){ // jhuggi (garib basti)
+          d=U(d,vec2(sdRB(q-vec3(-1.4,.6,0),vec3(1.2,.6,1.5),.02),45.));
+          d=U(d,vec2(sdRB(q-vec3(-1.4,1.25,0),vec3(1.35,.05,1.65),.01),46.));
+        } else {
+          float hgt=2.5+hv*hv*12.;
+          d=U(d,vec2(sdRB(q-vec3(0,hgt*.5,0),vec3(2.7,hgt*.5,2.2),.03),hv>.66?49.:(hv>.4?54.:55.)));
+          if(hv>.8)d=U(d,vec2(sdRB(q-vec3(-2.75,3.2,0),vec3(.05,.45,1.4),.02),56.));
+        }
+      }
+    }
+    vec3 lp=p;lp.x=abs(lp.x)-2.85;lp.z=mod(lp.z,6.)-3.;d=U(d,vec2(sdC(lp,vec3(0),vec3(0,2.8,0),.045),10.));
+    d=U(d,vec2(sdC(lp,vec3(0,2.8,0),vec3(-.5,2.85,0),.03),10.));d=U(d,vec2(sdS(lp-vec3(-.55,2.78,0),.1),57.));
+  } else { // SHAHI MAHAL
+    vec3 m=p-vec3(0,0,-9.);
+    float pal=sdRB(m-vec3(0,2.2,0),vec3(6.,2.2,2.),.05);
+    pal=min(pal,sdRB(m-vec3(0,5.2,0),vec3(3.,.8,1.6),.05));
+    vec3 tw=m;tw.x=abs(tw.x)-6.;pal=min(pal,sdC(tw,vec3(0),vec3(0,6.,0),.8));
+    d=U(d,vec2(pal,58.));
+    d=U(d,vec2(sdS(m-vec3(0,6.8,0),1.6),59.));d=U(d,vec2(sdS(tw-vec3(0,6.6,0),.9),59.));
+    d=U(d,vec2(sdC(m,vec3(0,8.3,0),vec3(0,9.,0),.06),47.));
+    vec3 pl=m-vec3(0,0,2.2);pl.x=mod(pl.x+1.,2.)-1.;if(abs(m.x)<5.5)d=U(d,vec2(sdC(pl,vec3(0),vec3(0,3.6,0),.18),9.));
+    vec3 ar=m-vec3(0,1.3,2.05);d=U(d,vec2(max(sdRB(ar,vec3(.9,1.3,.1),.02),-0.),10.));
+    vec3 bush=p;bush.x=abs(bush.x)-3.5;bush.z=mod(bush.z+1.,2.)-1.;if(p.z>-6.5&&p.z<4.)d=U(d,vec2(sdS(bush-vec3(0,.35,0),.4),14.));
+    if(abs(p.x)<1.2&&p.z>-7.)d.y=d.y<1.5?60.:d.y;
+  }
+  // phool
+  if(p.y<.2&&env<1.5){vec2 fc=floor(p.xz/.7);vec2 fl=mod(p.xz,.7)-.35;float hv=hash(fc+3.);
+    if(hv>.7&&abs(p.x)>1.2){vec3 q=vec3(fl.x,p.y-.08,fl.y);d=U(d,vec2(sdS(q,.05),hv>.85?5.:35.));d=U(d,vec2(sdC(q,vec3(0),vec3(0,-.08,0),.008),14.));}}
+  for(int i=0;i<12;i++){ if(i>=cN)break;
+    vec4 cp=cPos[i];vec3 q=p-cp.xyz;
+    float bd=length(q-vec3(0,1.,0))-radius(cTyp[i].x);
+    if(bd>d.x)continue;
+    q.xz*=rot(cp.w);d=U(d,entity(q,i));
+  }
+  return d;
+}
+vec3 nor(vec3 p){vec2 e=vec2(.002,0);return normalize(vec3(world(p+e.xyy).x-world(p-e.xyy).x,world(p+e.yxy).x-world(p-e.yxy).x,world(p+e.yyx).x-world(p-e.yyx).x));}
+float shadow(vec3 ro,vec3 rd){float r=1.,t=.03;for(int i=0;i<40;i++){float h=world(ro+rd*t).x;r=min(r,10.*h/t);t+=clamp(h,.03,.4);if(r<.01||t>12.)break;}return clamp(r,0.,1.);}
+float ao(vec3 p,vec3 n){float o=0.,s=1.;for(int i=1;i<5;i++){float h=.06*float(i);o+=(h-world(p+n*h).x)*s;s*=.75;}return clamp(1.-2.5*o,0.,1.);}
+vec3 matCol(float m,vec3 p){
+  if(m>199.5){int i=int((m-200.)/10.);int sl=int(mod(m-200.,10.)+.5);
+    for(int k=0;k<12;k++){if(k==i){if(sl==0)return cSkin[k].rgb;if(sl==1)return cHair[k].rgb;if(sl==2)return cBody[k].rgb;if(sl==4)return cPant[k].rgb;return cEye[k].rgb;}}}
+  if(m<1.5){float c=.5+.5*sin(p.x*3.)*sin(p.z*3.);return mix(vec3(.25,.55,.22),vec3(.33,.66,.27),c);}
+  if(m<2.5)return vec3(.16,.42,.95); if(m<3.5)return vec3(.04,.06,.14); if(m<4.5)return vec3(.4,1.,1.);
+  if(m<5.5)return vec3(.95,.25,.3); if(m<6.5)return vec3(.93,.66,.5); if(m<7.5)return vec3(.08,.05,.05);
+  if(m<8.5)return vec3(1.,.78,.15); if(m<9.5)return vec3(.97); if(m<10.5)return vec3(.12,.12,.16);
+  if(m<11.5)return vec3(1.,.5,.6); if(m<12.5)return vec3(.95,.55,.35); if(m<13.5)return vec3(.6,.08,.08);
+  if(m<14.5)return vec3(.18,.5,.2); if(m<15.5)return vec3(.4,.25,.14); if(m<16.5)return vec3(.95,.92,.85);
+  if(m<17.5)return vec3(.93); if(m<18.5)return vec3(.35,.18,.1); if(m<19.5)return vec3(.28,.14,.05); if(m<20.5)return vec3(.74,.42,.4); if(m<21.5)return vec3(.96,.93,.84); if(m<23.5)return vec3(.78,.52,.38);
+  if(m<24.5)return vec3(.55,.55,.6); if(m<25.5)return vec3(.85,.62,.3); if(m<26.5)return vec3(.6,.3,.08); if(m<27.5)return vec3(.95,.85,.65);
+  if(m<28.5)return vec3(.45,.28,.15); if(m<29.5)return vec3(.92,.75,.6);
+  if(m<30.5){float sp=step(.55,sin(p.x*9.)*sin(p.z*7.)*sin(p.y*8.)*.5+.5);return mix(vec3(.96),vec3(.45,.25,.12),sp);}
+  if(m<31.5)return vec3(.75,.5,.25); if(m<32.5)return vec3(.75,.48,.25); if(m<33.5)return vec3(.15,.75,.25); if(m<34.5)return vec3(.95,.45,.7);
+  if(m<35.5)return vec3(.85,.1,.15); if(m<36.5)return vec3(1.,.5,.1); if(m<37.5)return vec3(.2,.45,.9); if(m<38.5)return vec3(.95,.8,.2);
+  if(m<39.5)return vec3(.2,.6,.35); if(m<40.5)return vec3(.15,.2,.4);
+  if(m<41.5)return vec3(.96,.76,.62); if(m<42.5)return vec3(.86,.62,.46); if(m<43.5)return vec3(.62,.4,.27); if(m<44.5)return vec3(.36,.22,.15);
+  if(m<45.5)return vec3(.55,.45,.33); if(m<46.5)return vec3(.5,.5,.48); if(m<47.5)return vec3(1.,.78,.25);
+  if(m<48.5)return vec3(.2,.45,.7);
+  if(m<49.5){vec2 w=fract(vec2(p.x+p.z,p.y)*vec2(2.,1.5));return (w.x>.2&&w.x<.8&&w.y>.25&&w.y<.8)?vec3(.55,.75,.95):vec3(.45,.5,.6);}
+  if(m<50.5){float ln=step(abs(p.x),.07)*step(.5,fract(p.z*.4));return mix(vec3(.2),vec3(.95),ln);}
+  if(m<51.5)return vec3(.7,.5,.32); if(m<52.5)return vec3(.75,.65,.3); if(m<53.5)return vec3(.62,.6,.58);
+  if(m<54.5){vec2 w=fract(vec2(p.x+p.z,p.y)*vec2(2.,1.5));return (w.x>.25&&w.x<.75&&w.y>.3&&w.y<.75)?vec3(.95,.85,.5):vec3(.85,.65,.5);}
+  if(m<55.5){vec2 w=fract(vec2(p.x+p.z,p.y)*vec2(1.,1.));return (w.x>.15&&w.x<.85&&w.y>.1&&w.y<.9)?vec3(.3,.5,.65):vec3(.8,.82,.85);}
+  if(m<56.5)return vec3(.95,.2,.25); if(m<57.5)return vec3(1.,.95,.7); if(m<58.5)return vec3(.98,.9,.78); if(m<59.5)return vec3(.95,.92,.9);
+  if(m<60.5)return vec3(.85,.3,.25);
+  if(m<61.5)return vec3(.82,.32,.38); if(m<62.5)return vec3(.95,.55,.55); return vec3(.42,.32,.28);
+}
+vec3 sky(vec3 rd){float y=rd.y;vec3 c=mix(vec3(1.,.72,.45),vec3(.35,.6,.95),smoothstep(-.05,.5,y));
+  vec3 sd=normalize(vec3(.6,.35,-.7));c+=vec3(1.,.8,.5)*pow(max(dot(rd,sd),0.),64.)*1.2;
+  float cl=smoothstep(.55,.8,sin(rd.x*9.+T*.05)*sin(rd.y*20.)*.5+.5)*smoothstep(.05,.3,y);return mix(c,vec3(1.),cl*.5);}
+void main(){
+  vec2 uv=(gl_FragCoord.xy-.5*R)/R.y;
+  vec3 ro=camPos,ww=normalize(camTgt-ro),uu=normalize(cross(ww,vec3(0,1,0))),vv=cross(uu,ww);
+  vec3 rd=normalize(uv.x*uu+uv.y*vv+zoom*ww);
+  float t=0.;vec2 h;
+  float stp=.9;for(int i=0;i<360;i++){h=world(ro+rd*t);if(h.x<.0005+.0003*t||t>60.)break;t+=h.x*stp;}
+  vec3 col=sky(rd);
+  if(t<60.){
+    vec3 p=ro+rd*t,n=nor(p),L=normalize(vec3(.6,.8,.5));
+    vec3 al=matCol(h.y,p);
+    float sk=((h.y>40.5&&h.y<44.5)||(h.y>199.5&&mod(h.y-200.,10.)<.5))?1.:0.;float dif=mix(max(dot(n,L),0.),max(dot(n,L)+.35,0.)/1.35,sk)*shadow(p+n*.01,L);
+    float a=ao(p,n);
+    float fre=pow(1.-max(dot(n,-rd),0.),3.);
+    vec3 lin=dif*vec3(1.25,1.1,.95)+sk*vec3(.12,.04,.02)+a*(.35+.25*n.y)*vec3(.55,.65,.85)+fre*vec3(.5,.6,.8)*a;
+    col=al*lin;
+    float spec=pow(max(dot(reflect(-L,n),-rd),0.),32.)*dif;col+=spec*(h.y==2.||h.y==3.?.6:.15);
+    if(h.y>3.5&&h.y<4.5)col=al*1.25; // glow
+    if(h.y>47.5&&h.y<48.5){vec3 rf=reflect(rd,vec3(.02*sin(p.x*4.+T*2.),1,.02*cos(p.z*5.+T*1.7)));col=mix(col,sky(rf),.55);}
+    if(h.y>56.5&&h.y<57.5)col=al*1.4;
+    col=mix(col,sky(rd)*.95,1.-exp(-.0006*t*t));
+  }
+  col=pow(col,vec3(.4545));float lu=dot(col,vec3(.299,.587,.114));col=mix(vec3(lu),col,1.35);col=smoothstep(0.,1.,col)*.15+col*.85;
+  col*=1.-.25*dot(uv,uv);
+  O=vec4(col,1.);
+}`;
+
+let gl, prog, E, W, H, loc = {};
+const TYPES = {chhotu:1, robot:1, person:2, elephant:3, haathi:3, lion:4, sher:4, monkey:5, bandar:5, cow:6, gaay:6, dog:7, kutta:7, deer:8, hiran:8, parrot:9, tota:9, tree:10, ped:10};
+// tayyar kirdaar (naam se bulao)
+// rang: 0 gora, 1 gehua, 2 saanwla, 3 kaala | kaathi: -1 patla .. 1 mota | lambai: 0.9-1.1 | haisiyat: 0 garib, 1 aam, 2 amir
+const CAST = {
+  // Arjun ke code se: naam, umar, lambai (m), rang (hex)
+  male:{type:'person',name:'Handsome Male',g:1,age:1,o:16,pants:'#30364A',height:1.85,kaathi:-.1,skin:'#D99B75',hair:'#17120F',eyes:'#302018',body:'#2878C8',style:'handsome, athletic'},
+  female:{type:'person',name:'Beautiful Female',g:0,age:1,o:1,height:1.75,skin:'#E8B18D',hair:'#24140F',eyes:'#38251D',body:'#D94F88',style:'beautiful, elegant'},
+  child:{type:'person',name:'Cute Child',g:0,age:0,o:0,height:1.10,skin:'#E9B48F',hair:'#24170F',eyes:'#352019',body:'#F5C542',style:'cute, adorable'},
+  oldMan:{type:'person',name:'Wise Old Man',g:1,age:2,o:1,height:1.70,skin:'#C99578',hair:'#D6D2CC',eyes:'#443A32',body:'#78916F',style:'wise, friendly, elderly'},
+  seth:{type:'person',g:1,age:1,o:0,rang:0,kaathi:.9,haisiyat:2}, sethani:{type:'person',g:0,age:1,o:0,rang:0,kaathi:.5,haisiyat:2},
+  kisan:{type:'person',g:1,age:1,o:0,rang:2,kaathi:-.4,haisiyat:0,lambai:.97}, kisanin:{type:'person',g:0,age:1,o:1,rang:2,kaathi:-.2,haisiyat:0},
+  garib_bachcha:{type:'person',g:1,age:0,o:0,rang:3,kaathi:-.6,haisiyat:0}, babu:{type:'person',g:1,age:1,o:1,rang:1,kaathi:.2,haisiyat:1,lambai:1.04},
+  daroga:{type:'person',g:1,age:1,o:1,rang:2,kaathi:1,haisiyat:1,lambai:1.06},
+  chhotu:{type:'chhotu'}, munni:{type:'person',g:0,age:0,o:0,rang:1}, dadaji:{type:'person',g:1,age:2,o:0,rang:1}, dada:{type:'person',g:1,age:2,o:0},
+  dadi:{type:'person',g:0,age:2,o:1,rang:2}, raju:{type:'person',g:1,age:0,o:0,rang:2}, maa:{type:'person',g:0,age:1,o:0,rang:1}, papa:{type:'person',g:1,age:1,o:1,rang:1},
+  priya:{type:'person',g:0,age:1,o:1}, kaalu:{type:'person',g:1,age:1,o:5,rang:3,kaathi:-.3,haisiyat:0}, ladka:{type:'person',g:1,age:0,o:1}, ladki:{type:'person',g:0,age:0,o:2}
+};
+function setup(ep, w, h) {
+  E = ep; W = w; H = h; const c = document.getElementById('c'); c.width = w; c.height = h;
+  gl = c.getContext('webgl2', { preserveDrawingBuffer: true });
+  const vs = gl.createShader(gl.VERTEX_SHADER); gl.shaderSource(vs, `#version 300 es
+in vec2 p; void main(){gl_Position=vec4(p,0,1);}`); gl.compileShader(vs);
+  const fs = gl.createShader(gl.FRAGMENT_SHADER); gl.shaderSource(fs, FS); gl.compileShader(fs);
+  if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(fs));
+  prog = gl.createProgram(); gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog); gl.useProgram(prog);
+  const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const pl = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(pl); gl.vertexAttribPointer(pl, 2, gl.FLOAT, false, 0, 0);
+  ['R','T','camPos','camTgt','cPos','cTyp','cAct','cExt','cSkin','cHair','cBody','cEye','cPant','cN','env','zoom'].forEach(n => loc[n] = gl.getUniformLocation(prog, n));
+  // purane episode (chhotu/munni/dada keys) bhi chalein
+  if (!E.cast) { E.cast = []; const k = E.keys || {};
+    if (k.chhotu || true) E.cast.push({id:'chhotu', ...CAST.chhotu, track:k.chhotu || [{t:0,v:[-.9,0,0,.25]}]});
+    if (k.munni) E.cast.push({id:'munni', ...CAST.munni, track:k.munni});
+    if (k.dada) E.cast.push({id:'dada', ...CAST.dada, track:k.dada});
+  }
+  E.cast = E.cast.map(c => ({...(CAST[c.preset || c.id] || {}), ...c}));
+}
+const lerp = (a, b, k) => a.map((v, i) => v + (b[i] - v) * k);
+const ease = k => k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+function key(track, t, def) {
+  if (!track || !track.length) return def;
+  if (t <= track[0].t) return track[0].v; const last = track[track.length - 1]; if (t >= last.t) return last.v;
+  for (let i = 0; i < track.length - 1; i++) { const a = track[i], b = track[i + 1]; if (t >= a.t && t <= b.t) return lerp(a.v, b.v, ease((t - a.t) / (b.t - a.t))); }
+}
+const on = (t, type, who) => (E.actions || []).some(a => a.type === type && (!who || !a.who || a.who === who || (who === 'dada' && a.who === 'dadaji')) && t >= a.start && t <= a.end);
+function drawFrame(t) {
+  const k = E.keys || {};
+  gl.viewport(0, 0, W, H); gl.uniform2f(loc.R, W, H); gl.uniform1f(loc.T, t);
+  gl.uniform3fv(loc.camPos, key(k.cam, t, [0, 1.6, 6])); gl.uniform3fv(loc.camTgt, key(k.camTgt, t, [0, 1.1, 0]));
+  gl.uniform1f(loc.zoom, key((E.keys||{}).zoom, t, [E.zoom || 1.6])[0]);
+  gl.uniform1f(loc.env, ({gaon:0, village:0, jungle:1, shahar:2, city:2, mahal:3, palace:3})[E.env || 'gaon'] ?? 0);
+  const P = [], Ty = [], A = [], X = [], CS = [], CH = [], CB = [], CE = [], CP = [];
+  const hex = c => c ? [parseInt(c.slice(1,3),16)/255, parseInt(c.slice(3,5),16)/255, parseInt(c.slice(5,7),16)/255].map(v => Math.pow(v, 2.2)).concat([1]) : [0,0,0,0];
+  E.cast.slice(0, 12).forEach(c => {
+    P.push(...key(c.track, t, c.pos || [0, 0, 0, 0]));
+    Ty.push(TYPES[c.type] || 2, c.g ?? c.kind ?? 0, c.age ?? 1, c.o ?? 0);
+    const L = c.height ? c.height / ({0:1.36,1:1.75,2:1.7})[c.age ?? 1] : (c.lambai ?? 1);
+    X.push(c.rang ?? 1, c.kaathi ?? 0, L, c.haisiyat ?? 1);
+    CS.push(...hex(c.skin)); CH.push(...hex(c.hair)); CB.push(...hex(c.body)); CE.push(...hex(c.eyes)); CP.push(...hex(c.pants));
+    const who = c.id; A.push(on(t, 'talk', who) ? 1 : 0, on(t, 'wave', who) ? 1 : 0, (c.type === 'chhotu' ? on(t, 'fly') : on(t, 'fly', who)) ? 1 : 0, 0);
+  });
+  while (P.length < 48) { P.push(0, -99, 0, 0); Ty.push(0, 0, 0, 0); A.push(0, 0, 0, 0); X.push(0, 0, 1, 1); CS.push(0,0,0,0); CH.push(0,0,0,0); CB.push(0,0,0,0); CE.push(0,0,0,0); CP.push(0,0,0,0); }
+  gl.uniform4fv(loc.cPos, P); gl.uniform4fv(loc.cTyp, Ty); gl.uniform4fv(loc.cAct, A); gl.uniform4fv(loc.cExt, X); gl.uniform4fv(loc.cSkin, CS); gl.uniform4fv(loc.cHair, CH); gl.uniform4fv(loc.cBody, CB); gl.uniform4fv(loc.cEye, CE); gl.uniform4fv(loc.cPant, CP); gl.uniform1i(loc.cN, Math.min(12, E.cast.length));
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
+</script></body></html>

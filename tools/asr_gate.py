@@ -12,11 +12,16 @@ Chalao:
 from __future__ import annotations
 import argparse, json, subprocess, sys
 from pathlib import Path
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools" / "realtime"))
 SR = 16000
-MODEL_CACHE = Path("/scratch/work/models")
+MODEL_CACHE = (_AP.WORK / "models")
 
 
 def _ffmpeg():

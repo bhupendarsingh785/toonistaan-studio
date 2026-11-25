@@ -89,9 +89,9 @@ def check_clone():
     code = (
         "import sys;sys.path.insert(0,'tools');"
         "from pathlib import Path;import voice_clone as VC, voice_clone_lite as VL;"
-        "src=sorted(Path('/scratch/input').glob('*man-talking*'))[0];"
+        "import astra_paths as _AP;src=sorted(_AP.INPUT.glob('*man-talking*'))[0];"
         "v=VC.enroll('reg_test', str(src), 'jaanch', consent=True, backend='lite');"
-        "out=Path('/scratch/work/reg_clone.wav');"
+        "out=_AP.WORK/'reg_clone.wav';"
         "ok=VC._render_line('lite', v, 'नमस्ते, यह जाँच है।', out);"
         "import soundfile as sf;"
         "ref=VL.profile_of(VL.load(v.audio)); y,_=sf.read(str(out)) if out.exists() else (None,None);"

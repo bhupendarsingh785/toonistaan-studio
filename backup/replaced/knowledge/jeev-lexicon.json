@@ -1,0 +1,1145 @@
+{
+ "शेर": {
+  "hindi": "शेर",
+  "english": "lion",
+  "group": "pashu",
+  "lib": [
+   "lion",
+   "tiger",
+   "roar"
+  ],
+  "synth": null,
+  "query": "lion sound"
+ },
+ "बाघ": {
+  "hindi": "बाघ",
+  "english": "tiger",
+  "group": "pashu",
+  "lib": [
+   "tiger",
+   "roar"
+  ],
+  "synth": null,
+  "query": "tiger sound"
+ },
+ "हाथी": {
+  "hindi": "हाथी",
+  "english": "elephant",
+  "group": "pashu",
+  "lib": [
+   "elephant"
+  ],
+  "synth": null,
+  "query": "elephant sound"
+ },
+ "भालू": {
+  "hindi": "भालू",
+  "english": "bear",
+  "group": "pashu",
+  "lib": [
+   "bear",
+   "growl"
+  ],
+  "synth": null,
+  "query": "bear sound"
+ },
+ "बंदर": {
+  "hindi": "बंदर",
+  "english": "monkey",
+  "group": "pashu",
+  "lib": [
+   "monkey",
+   "chimp"
+  ],
+  "synth": null,
+  "query": "monkey sound"
+ },
+ "लंगूर": {
+  "hindi": "लंगूर",
+  "english": "langur",
+  "group": "pashu",
+  "lib": [
+   "langur",
+   "monkey"
+  ],
+  "synth": null,
+  "query": "langur sound"
+ },
+ "हिरण": {
+  "hindi": "हिरण",
+  "english": "deer",
+  "group": "pashu",
+  "lib": [
+   "deer",
+   "stag"
+  ],
+  "synth": null,
+  "query": "deer sound"
+ },
+ "चीता": {
+  "hindi": "चीता",
+  "english": "cheetah",
+  "group": "pashu",
+  "lib": [
+   "cheetah",
+   "leopard"
+  ],
+  "synth": null,
+  "query": "cheetah sound"
+ },
+ "तेंदुआ": {
+  "hindi": "तेंदुआ",
+  "english": "leopard",
+  "group": "pashu",
+  "lib": [
+   "leopard",
+   "panther"
+  ],
+  "synth": null,
+  "query": "leopard sound"
+ },
+ "लोमड़ी": {
+  "hindi": "लोमड़ी",
+  "english": "fox",
+  "group": "pashu",
+  "lib": [
+   "fox"
+  ],
+  "synth": null,
+  "query": "fox sound"
+ },
+ "भेड़िया": {
+  "hindi": "भेड़िया",
+  "english": "wolf",
+  "group": "pashu",
+  "lib": [
+   "wolf",
+   "howl"
+  ],
+  "synth": null,
+  "query": "wolf sound"
+ },
+ "गीदड़": {
+  "hindi": "गीदड़",
+  "english": "jackal",
+  "group": "pashu",
+  "lib": [
+   "jackal",
+   "coyote"
+  ],
+  "synth": null,
+  "query": "jackal sound"
+ },
+ "कुत्ता": {
+  "hindi": "कुत्ता",
+  "english": "dog",
+  "group": "pashu",
+  "lib": [
+   "dog-bark",
+   "barking"
+  ],
+  "synth": null,
+  "query": "dog sound"
+ },
+ "बिल्ली": {
+  "hindi": "बिल्ली",
+  "english": "cat",
+  "group": "pashu",
+  "lib": [
+   "cat-meow",
+   "meow"
+  ],
+  "synth": null,
+  "query": "cat sound"
+ },
+ "गाय": {
+  "hindi": "गाय",
+  "english": "cow",
+  "group": "pashu",
+  "lib": [
+   "cow",
+   "cattle"
+  ],
+  "synth": null,
+  "query": "cow sound"
+ },
+ "भैंस": {
+  "hindi": "भैंस",
+  "english": "buffalo",
+  "group": "pashu",
+  "lib": [
+   "buffalo"
+  ],
+  "synth": null,
+  "query": "buffalo sound"
+ },
+ "बैल": {
+  "hindi": "बैल",
+  "english": "bull",
+  "group": "pashu",
+  "lib": [
+   "bull",
+   "ox"
+  ],
+  "synth": null,
+  "query": "bull sound"
+ },
+ "बकरी": {
+  "hindi": "बकरी",
+  "english": "goat",
+  "group": "pashu",
+  "lib": [
+   "goat",
+   "sheep"
+  ],
+  "synth": null,
+  "query": "goat sound"
+ },
+ "भेड़": {
+  "hindi": "भेड़",
+  "english": "sheep",
+  "group": "pashu",
+  "lib": [
+   "sheep",
+   "lamb"
+  ],
+  "synth": null,
+  "query": "sheep sound"
+ },
+ "घोड़ा": {
+  "hindi": "घोड़ा",
+  "english": "horse",
+  "group": "pashu",
+  "lib": [
+   "horse",
+   "neigh"
+  ],
+  "synth": null,
+  "query": "horse sound"
+ },
+ "गधा": {
+  "hindi": "गधा",
+  "english": "donkey",
+  "group": "pashu",
+  "lib": [
+   "donkey",
+   "bray"
+  ],
+  "synth": null,
+  "query": "donkey sound"
+ },
+ "ऊंट": {
+  "hindi": "ऊंट",
+  "english": "camel",
+  "group": "pashu",
+  "lib": [
+   "camel"
+  ],
+  "synth": null,
+  "query": "camel sound"
+ },
+ "सूअर": {
+  "hindi": "सूअर",
+  "english": "boar",
+  "group": "pashu",
+  "lib": [
+   "boar",
+   "pig"
+  ],
+  "synth": null,
+  "query": "boar sound"
+ },
+ "चूहा": {
+  "hindi": "चूहा",
+  "english": "mouse",
+  "group": "pashu",
+  "lib": [
+   "mouse",
+   "rat",
+   "squeak"
+  ],
+  "synth": null,
+  "query": "mouse sound"
+ },
+ "गिलहरी": {
+  "hindi": "गिलहरी",
+  "english": "squirrel",
+  "group": "pashu",
+  "lib": [
+   "squirrel"
+  ],
+  "synth": null,
+  "query": "squirrel sound"
+ },
+ "खरगोश": {
+  "hindi": "खरगोश",
+  "english": "rabbit",
+  "group": "pashu",
+  "lib": [
+   "rabbit"
+  ],
+  "synth": null,
+  "query": "rabbit sound"
+ },
+ "सांप": {
+  "hindi": "सांप",
+  "english": "snake",
+  "group": "pashu",
+  "lib": [
+   "snake",
+   "python",
+   "hiss"
+  ],
+  "synth": null,
+  "query": "snake sound"
+ },
+ "मगरमच्छ": {
+  "hindi": "मगरमच्छ",
+  "english": "crocodile",
+  "group": "pashu",
+  "lib": [
+   "crocodile",
+   "alligator"
+  ],
+  "synth": null,
+  "query": "crocodile sound"
+ },
+ "कछुआ": {
+  "hindi": "कछुआ",
+  "english": "tortoise",
+  "group": "pashu",
+  "lib": [
+   "tortoise",
+   "turtle"
+  ],
+  "synth": null,
+  "query": "tortoise sound"
+ },
+ "मेंढक": {
+  "hindi": "मेंढक",
+  "english": "frog",
+  "group": "pashu",
+  "lib": [
+   "frog",
+   "croak"
+  ],
+  "synth": null,
+  "query": "frog sound"
+ },
+ "जिराफ": {
+  "hindi": "जिराफ",
+  "english": "giraffe",
+  "group": "pashu",
+  "lib": [
+   "giraffe"
+  ],
+  "synth": null,
+  "query": "giraffe sound"
+ },
+ "ज़ेबरा": {
+  "hindi": "ज़ेबरा",
+  "english": "zebra",
+  "group": "pashu",
+  "lib": [
+   "zebra"
+  ],
+  "synth": null,
+  "query": "zebra sound"
+ },
+ "गैंडा": {
+  "hindi": "गैंडा",
+  "english": "rhino",
+  "group": "pashu",
+  "lib": [
+   "rhino"
+  ],
+  "synth": null,
+  "query": "rhino sound"
+ },
+ "कंगारू": {
+  "hindi": "कंगारू",
+  "english": "kangaroo",
+  "group": "pashu",
+  "lib": [
+   "kangaroo"
+  ],
+  "synth": null,
+  "query": "kangaroo sound"
+ },
+ "पांडा": {
+  "hindi": "पांडा",
+  "english": "panda",
+  "group": "pashu",
+  "lib": [
+   "panda"
+  ],
+  "synth": null,
+  "query": "panda sound"
+ },
+ "नीलगाय": {
+  "hindi": "नीलगाय",
+  "english": "nilgai",
+  "group": "pashu",
+  "lib": [
+   "nilgai",
+   "antelope"
+  ],
+  "synth": null,
+  "query": "nilgai sound"
+ },
+ "सेही": {
+  "hindi": "सेही",
+  "english": "porcupine",
+  "group": "pashu",
+  "lib": [
+   "porcupine"
+  ],
+  "synth": null,
+  "query": "porcupine sound"
+ },
+ "कौवा": {
+  "hindi": "कौवा",
+  "english": "crow",
+  "group": "pakshi",
+  "lib": [
+   "crow",
+   "raven"
+  ],
+  "synth": null,
+  "query": "crow sound"
+ },
+ "कबूतर": {
+  "hindi": "कबूतर",
+  "english": "pigeon",
+  "group": "pakshi",
+  "lib": [
+   "pigeon",
+   "dove"
+  ],
+  "synth": null,
+  "query": "pigeon sound"
+ },
+ "मैना": {
+  "hindi": "मैना",
+  "english": "myna",
+  "group": "pakshi",
+  "lib": [
+   "myna"
+  ],
+  "synth": null,
+  "query": "myna sound"
+ },
+ "गौरैया": {
+  "hindi": "गौरैया",
+  "english": "sparrow",
+  "group": "pakshi",
+  "lib": [
+   "sparrow"
+  ],
+  "synth": null,
+  "query": "sparrow sound"
+ },
+ "मोर": {
+  "hindi": "मोर",
+  "english": "peacock",
+  "group": "pakshi",
+  "lib": [
+   "peacock"
+  ],
+  "synth": null,
+  "query": "peacock sound"
+ },
+ "मुर्गा": {
+  "hindi": "मुर्गा",
+  "english": "rooster",
+  "group": "pakshi",
+  "lib": [
+   "rooster"
+  ],
+  "synth": null,
+  "query": "rooster sound"
+ },
+ "मुर्गी": {
+  "hindi": "मुर्गी",
+  "english": "hen",
+  "group": "pakshi",
+  "lib": [
+   "hen",
+   "chicken"
+  ],
+  "synth": null,
+  "query": "hen sound"
+ },
+ "चूजा": {
+  "hindi": "चूजा",
+  "english": "chick",
+  "group": "pakshi",
+  "lib": [
+   "chick"
+  ],
+  "synth": null,
+  "query": "chick sound"
+ },
+ "उल्लू": {
+  "hindi": "उल्लू",
+  "english": "owl",
+  "group": "pakshi",
+  "lib": [
+   "owl"
+  ],
+  "synth": null,
+  "query": "owl sound"
+ },
+ "कोयल": {
+  "hindi": "कोयल",
+  "english": "koel",
+  "group": "pakshi",
+  "lib": [
+   "koel",
+   "cuckoo"
+  ],
+  "synth": null,
+  "query": "koel sound"
+ },
+ "तोता": {
+  "hindi": "तोता",
+  "english": "parrot",
+  "group": "pakshi",
+  "lib": [
+   "parrot"
+  ],
+  "synth": null,
+  "query": "parrot sound"
+ },
+ "बाज": {
+  "hindi": "बाज",
+  "english": "hawk",
+  "group": "pakshi",
+  "lib": [
+   "hawk",
+   "falcon"
+  ],
+  "synth": null,
+  "query": "hawk sound"
+ },
+ "चील": {
+  "hindi": "चील",
+  "english": "kite",
+  "group": "pakshi",
+  "lib": [
+   "kite",
+   "eagle"
+  ],
+  "synth": null,
+  "query": "kite sound"
+ },
+ "गरुड़": {
+  "hindi": "गरुड़",
+  "english": "eagle",
+  "group": "pakshi",
+  "lib": [
+   "eagle"
+  ],
+  "synth": null,
+  "query": "eagle sound"
+ },
+ "बत्तख": {
+  "hindi": "बत्तख",
+  "english": "duck",
+  "group": "pakshi",
+  "lib": [
+   "duck"
+  ],
+  "synth": null,
+  "query": "duck sound"
+ },
+ "हंस": {
+  "hindi": "हंस",
+  "english": "swan",
+  "group": "pakshi",
+  "lib": [
+   "swan"
+  ],
+  "synth": null,
+  "query": "swan sound"
+ },
+ "सारस": {
+  "hindi": "सारस",
+  "english": "crane",
+  "group": "pakshi",
+  "lib": [
+   "crane",
+   "stork"
+  ],
+  "synth": null,
+  "query": "crane sound"
+ },
+ "बगुला": {
+  "hindi": "बगुला",
+  "english": "heron",
+  "group": "pakshi",
+  "lib": [
+   "heron",
+   "egret"
+  ],
+  "synth": null,
+  "query": "heron sound"
+ },
+ "चिड़िया": {
+  "hindi": "चिड़िया",
+  "english": "bird",
+  "group": "pakshi",
+  "lib": [
+   "bird",
+   "chirp"
+  ],
+  "synth": null,
+  "query": "bird sound"
+ },
+ "तीतर": {
+  "hindi": "तीतर",
+  "english": "partridge",
+  "group": "pakshi",
+  "lib": [
+   "partridge",
+   "quail"
+  ],
+  "synth": null,
+  "query": "partridge sound"
+ },
+ "कठफोड़वा": {
+  "hindi": "कठफोड़वा",
+  "english": "woodpecker",
+  "group": "pakshi",
+  "lib": [
+   "woodpecker"
+  ],
+  "synth": null,
+  "query": "woodpecker sound"
+ },
+ "गिद्ध": {
+  "hindi": "गिद्ध",
+  "english": "vulture",
+  "group": "pakshi",
+  "lib": [
+   "vulture"
+  ],
+  "synth": null,
+  "query": "vulture sound"
+ },
+ "पेंगुइन": {
+  "hindi": "पेंगुइन",
+  "english": "penguin",
+  "group": "pakshi",
+  "lib": [
+   "penguin"
+  ],
+  "synth": null,
+  "query": "penguin sound"
+ },
+ "शुतुरमुर्ग": {
+  "hindi": "शुतुरमुर्ग",
+  "english": "ostrich",
+  "group": "pakshi",
+  "lib": [
+   "ostrich"
+  ],
+  "synth": null,
+  "query": "ostrich sound"
+ },
+ "झींगुर": {
+  "hindi": "झींगुर",
+  "english": "cricket",
+  "group": "keeda",
+  "lib": [
+   "cricket"
+  ],
+  "synth": null,
+  "query": "cricket sound"
+ },
+ "टिड्डा": {
+  "hindi": "टिड्डा",
+  "english": "grasshopper",
+  "group": "keeda",
+  "lib": [
+   "grasshopper"
+  ],
+  "synth": null,
+  "query": "grasshopper sound"
+ },
+ "चींटी": {
+  "hindi": "चींटी",
+  "english": "ant",
+  "group": "keeda",
+  "lib": [
+   "ant"
+  ],
+  "synth": null,
+  "query": "ant sound"
+ },
+ "मच्छर": {
+  "hindi": "मच्छर",
+  "english": "mosquito",
+  "group": "keeda",
+  "lib": [
+   "mosquito"
+  ],
+  "synth": null,
+  "query": "mosquito sound"
+ },
+ "मक्खी": {
+  "hindi": "मक्खी",
+  "english": "fly",
+  "group": "keeda",
+  "lib": [
+   "fly",
+   "buzz"
+  ],
+  "synth": null,
+  "query": "fly sound"
+ },
+ "मधुमक्खी": {
+  "hindi": "मधुमक्खी",
+  "english": "bee",
+  "group": "keeda",
+  "lib": [
+   "bee",
+   "buzz"
+  ],
+  "synth": null,
+  "query": "bee sound"
+ },
+ "तितली": {
+  "hindi": "तितली",
+  "english": "butterfly",
+  "group": "keeda",
+  "lib": [
+   "butterfly"
+  ],
+  "synth": null,
+  "query": "butterfly sound"
+ },
+ "पतंगा": {
+  "hindi": "पतंगा",
+  "english": "moth",
+  "group": "keeda",
+  "lib": [
+   "moth"
+  ],
+  "synth": null,
+  "query": "moth sound"
+ },
+ "बिच्छू": {
+  "hindi": "बिच्छू",
+  "english": "scorpion",
+  "group": "keeda",
+  "lib": [
+   "scorpion"
+  ],
+  "synth": null,
+  "query": "scorpion sound"
+ },
+ "मकड़ी": {
+  "hindi": "मकड़ी",
+  "english": "spider",
+  "group": "keeda",
+  "lib": [
+   "spider"
+  ],
+  "synth": null,
+  "query": "spider sound"
+ },
+ "दीमक": {
+  "hindi": "दीमक",
+  "english": "termite",
+  "group": "keeda",
+  "lib": [
+   "termite"
+  ],
+  "synth": null,
+  "query": "termite sound"
+ },
+ "जुगनू": {
+  "hindi": "जुगनू",
+  "english": "firefly",
+  "group": "keeda",
+  "lib": [
+   "firefly"
+  ],
+  "synth": null,
+  "query": "firefly sound"
+ },
+ "सिकाडा": {
+  "hindi": "सिकाडा",
+  "english": "cicada",
+  "group": "keeda",
+  "lib": [
+   "cicada"
+  ],
+  "synth": null,
+  "query": "cicada sound"
+ },
+ "कीड़ा": {
+  "hindi": "कीड़ा",
+  "english": "insect",
+  "group": "keeda",
+  "lib": [
+   "insect",
+   "bug"
+  ],
+  "synth": null,
+  "query": "insect sound"
+ },
+ "मछली": {
+  "hindi": "मछली",
+  "english": "fish",
+  "group": "jalchar",
+  "lib": [
+   "fish",
+   "splash"
+  ],
+  "synth": null,
+  "query": "fish sound"
+ },
+ "डॉल्फिन": {
+  "hindi": "डॉल्फिन",
+  "english": "dolphin",
+  "group": "jalchar",
+  "lib": [
+   "dolphin"
+  ],
+  "synth": null,
+  "query": "dolphin sound"
+ },
+ "व्हेल": {
+  "hindi": "व्हेल",
+  "english": "whale",
+  "group": "jalchar",
+  "lib": [
+   "whale"
+  ],
+  "synth": null,
+  "query": "whale sound"
+ },
+ "झींगा": {
+  "hindi": "झींगा",
+  "english": "prawn",
+  "group": "jalchar",
+  "lib": [
+   "prawn",
+   "shrimp"
+  ],
+  "synth": null,
+  "query": "prawn sound"
+ },
+ "सील": {
+  "hindi": "सील",
+  "english": "seal",
+  "group": "jalchar",
+  "lib": [
+   "seal"
+  ],
+  "synth": null,
+  "query": "seal sound"
+ },
+ "पेड़": {
+  "hindi": "पेड़",
+  "english": "tree",
+  "group": "vanspati",
+  "lib": [
+   "tree",
+   "forest"
+  ],
+  "synth": "leaves",
+  "query": "tree sound"
+ },
+ "पत्ते": {
+  "hindi": "पत्ते",
+  "english": "leaves",
+  "group": "vanspati",
+  "lib": [
+   "leaves",
+   "rustl"
+  ],
+  "synth": "leaves",
+  "query": "leaves sound"
+ },
+ "घास": {
+  "hindi": "घास",
+  "english": "grass",
+  "group": "vanspati",
+  "lib": [
+   "grass",
+   "rustling"
+  ],
+  "synth": "leaves",
+  "query": "grass sound"
+ },
+ "बांस": {
+  "hindi": "बांस",
+  "english": "bamboo",
+  "group": "vanspati",
+  "lib": [
+   "bamboo"
+  ],
+  "synth": "leaves",
+  "query": "bamboo sound"
+ },
+ "झाड़ी": {
+  "hindi": "झाड़ी",
+  "english": "bush",
+  "group": "vanspati",
+  "lib": [
+   "bush",
+   "shrub"
+  ],
+  "synth": "leaves",
+  "query": "bush sound"
+ },
+ "जंगल": {
+  "hindi": "जंगल",
+  "english": "forest",
+  "group": "vanspati",
+  "lib": [
+   "jungle",
+   "forest"
+  ],
+  "synth": "crickets",
+  "query": "forest sound"
+ },
+ "बरगद": {
+  "hindi": "बरगद",
+  "english": "banyan",
+  "group": "vanspati",
+  "lib": [
+   "banyan",
+   "tree"
+  ],
+  "synth": "leaves",
+  "query": "banyan sound"
+ },
+ "पीपल": {
+  "hindi": "पीपल",
+  "english": "peepal",
+  "group": "vanspati",
+  "lib": [
+   "peepal",
+   "tree"
+  ],
+  "synth": "leaves",
+  "query": "peepal sound"
+ },
+ "नीम": {
+  "hindi": "नीम",
+  "english": "neem",
+  "group": "vanspati",
+  "lib": [
+   "neem",
+   "tree"
+  ],
+  "synth": "leaves",
+  "query": "neem sound"
+ },
+ "आम": {
+  "hindi": "आम",
+  "english": "mango",
+  "group": "vanspati",
+  "lib": [
+   "mango",
+   "tree"
+  ],
+  "synth": "leaves",
+  "query": "mango sound"
+ },
+ "नारियल": {
+  "hindi": "नारियल",
+  "english": "coconut",
+  "group": "vanspati",
+  "lib": [
+   "coconut",
+   "palm"
+  ],
+  "synth": "leaves",
+  "query": "coconut sound"
+ },
+ "कमल": {
+  "hindi": "कमल",
+  "english": "lotus",
+  "group": "vanspati",
+  "lib": [
+   "lotus",
+   "pond"
+  ],
+  "synth": "river",
+  "query": "lotus sound"
+ },
+ "बेंत": {
+  "hindi": "बेंत",
+  "english": "reed",
+  "group": "vanspati",
+  "lib": [
+   "reed"
+  ],
+  "synth": "leaves",
+  "query": "reed sound"
+ },
+ "गन्ना": {
+  "hindi": "गन्ना",
+  "english": "sugarcane",
+  "group": "vanspati",
+  "lib": [
+   "sugarcane"
+  ],
+  "synth": null,
+  "query": "sugarcane sound"
+ },
+ "नदी": {
+  "hindi": "नदी",
+  "english": "river",
+  "group": "prakriti",
+  "lib": [
+   "river",
+   "stream",
+   "flowing-water"
+  ],
+  "synth": "river",
+  "query": "river sound"
+ },
+ "पानी": {
+  "hindi": "पानी",
+  "english": "water",
+  "group": "prakriti",
+  "lib": [
+   "water"
+  ],
+  "synth": "river",
+  "query": "water sound"
+ },
+ "बारिश": {
+  "hindi": "बारिश",
+  "english": "rain",
+  "group": "prakriti",
+  "lib": [
+   "rain"
+  ],
+  "synth": "rain",
+  "query": "rain sound"
+ },
+ "हवा": {
+  "hindi": "हवा",
+  "english": "wind",
+  "group": "prakriti",
+  "lib": [
+   "wind"
+  ],
+  "synth": "wind",
+  "query": "wind sound"
+ },
+ "आंधी": {
+  "hindi": "आंधी",
+  "english": "storm",
+  "group": "prakriti",
+  "lib": [
+   "storm",
+   "wind"
+  ],
+  "synth": "wind",
+  "query": "storm sound"
+ },
+ "बिजली": {
+  "hindi": "बिजली",
+  "english": "lightning",
+  "group": "prakriti",
+  "lib": [
+   "thunder",
+   "lightning"
+  ],
+  "synth": null,
+  "query": "lightning sound"
+ },
+ "आग": {
+  "hindi": "आग",
+  "english": "fire",
+  "group": "prakriti",
+  "lib": [
+   "fire",
+   "crackle"
+  ],
+  "synth": "fire",
+  "query": "fire sound"
+ },
+ "समुद्र": {
+  "hindi": "समुद्र",
+  "english": "sea",
+  "group": "prakriti",
+  "lib": [
+   "sea",
+   "waves",
+   "ocean"
+  ],
+  "synth": "river",
+  "query": "sea sound"
+ },
+ "झरना": {
+  "hindi": "झरना",
+  "english": "waterfall",
+  "group": "prakriti",
+  "lib": [
+   "waterfall"
+  ],
+  "synth": "river",
+  "query": "waterfall sound"
+ },
+ "तालाब": {
+  "hindi": "तालाब",
+  "english": "pond",
+  "group": "prakriti",
+  "lib": [
+   "pond",
+   "lake"
+  ],
+  "synth": "river",
+  "query": "pond sound"
+ },
+ "पहाड़": {
+  "hindi": "पहाड़",
+  "english": "mountain",
+  "group": "prakriti",
+  "lib": [
+   "mountain",
+   "wind"
+  ],
+  "synth": "wind",
+  "query": "mountain sound"
+ },
+ "गुफा": {
+  "hindi": "गुफा",
+  "english": "cave",
+  "group": "prakriti",
+  "lib": [
+   "cave"
+  ],
+  "synth": "room",
+  "query": "cave sound"
+ },
+ "रेत": {
+  "hindi": "रेत",
+  "english": "sand",
+  "group": "prakriti",
+  "lib": [
+   "sand"
+  ],
+  "synth": "wood_steps",
+  "query": "sand sound"
+ },
+ "मिट्टी": {
+  "hindi": "मिट्टी",
+  "english": "soil",
+  "group": "prakriti",
+  "lib": [
+   "soil"
+  ],
+  "synth": "wood_steps",
+  "query": "soil sound"
+ }
+}

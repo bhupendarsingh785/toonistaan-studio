@@ -23,6 +23,11 @@ import sys
 from pathlib import Path
 
 import numpy as np
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -324,7 +329,7 @@ def _piper_line(text, out: Path, gender="f"):
     from piper import PiperVoice
     from piper.config import SynthesisConfig
     import wave
-    model = Path("/scratch/work/voices") / ("hi_IN-priyamvada-medium.onnx" if gender == "f" else "hi_IN-pratham-medium.onnx")
+    model = _AP.VOICES / ("hi_IN-priyamvada-medium.onnx" if gender == "f" else "hi_IN-pratham-medium.onnx")
     if not model.exists():
         return False
     v = PiperVoice.load(str(model), config_path=str(model) + ".json")
@@ -373,7 +378,7 @@ def test() -> int:
     # asli awaaz: library se (purane render par depend nahi)
     src = None
     for pat in ("man-talking", "speech", "voice"):
-        got = sorted(Path("/scratch/input").glob(f"*{pat}*"))
+        got = sorted(_AP.INPUT.glob(f"*{pat}*"))
         if got:
             src = got[0]; break
     if src is None:
@@ -381,7 +386,7 @@ def test() -> int:
     print("test awaaz:", src.name[:50])
     prof = enroll("test_voice", str(src), consent=True)
     print("profile: f0", round(prof["f0_median"], 1), "Hz | active", prof["active"])
-    out = Path("/scratch/work/clone_test.wav")
+    out = (_AP.WORK / "clone_test.wav")
     r = speak("test_voice", "नमस्ते, यह आवाज़ की जाँच है।", out)
     print("convert:", r)
     return 0
@@ -393,7 +398,7 @@ def main() -> int:
     ap.add_argument("--name", default="")
     ap.add_argument("--audio", default="")
     ap.add_argument("--text", default="")
-    ap.add_argument("--out", default="/scratch/work/clone-out.wav")
+    ap.add_argument("--out", default=str(_AP.WORK / "clone-out.wav"))
     ap.add_argument("--consent", action="store_true")
     a = ap.parse_args()
     if a.cmd == "test":

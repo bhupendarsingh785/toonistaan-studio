@@ -24,13 +24,18 @@ K = ROOT / "knowledge"
 OUT = K / "private-model"
 SR = 22050
 import private_train as PT  # noqa: E402  (feats wahi rahenge)
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 
 def anchors():
     """Har class ke pakke namune — awaaz khud banayi, label me shak nahi."""
     rows = []
     # insaan: apni render ki hui awaaz
-    v = Path("/scratch/work/out-j4/stem_voice.wav")
+    v = (_AP.WORK / "out-j4/stem_voice.wav")
     if v.exists():
         x, sr = sf.read(v)
         x = x.mean(1) if x.ndim > 1 else x

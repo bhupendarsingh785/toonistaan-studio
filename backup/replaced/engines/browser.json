@@ -1,0 +1,98 @@
+{
+ "narrator": {
+  "pitch": 0.8,
+  "rate": 0.77
+ },
+ "dada": {
+  "pitch": 0.8,
+  "rate": 0.77
+ },
+ "purush": {
+  "pitch": 1.22,
+  "rate": 0.86
+ },
+ "maa": {
+  "pitch": 1.77,
+  "rate": 1.07
+ },
+ "gudiya": {
+  "pitch": 1.93,
+  "rate": 1.07
+ },
+ "sonu": {
+  "pitch": 2,
+  "rate": 0.91
+ },
+ "_emotion_map": {
+  "neutral": {
+   "pitch_mul": 1.0,
+   "rate_mul": 1.0,
+   "pause_mul": 1.0
+  },
+  "pyaar": {
+   "pitch_mul": 0.97,
+   "rate_mul": 0.94,
+   "pause_mul": 1.3
+  },
+  "khushi": {
+   "pitch_mul": 1.06,
+   "rate_mul": 1.08,
+   "pause_mul": 0.8
+  },
+  "dukh": {
+   "pitch_mul": 0.93,
+   "rate_mul": 0.88,
+   "pause_mul": 1.6
+  },
+  "dar": {
+   "pitch_mul": 1.04,
+   "rate_mul": 1.12,
+   "pause_mul": 0.7
+  },
+  "gussa": {
+   "pitch_mul": 1.02,
+   "rate_mul": 1.15,
+   "pause_mul": 0.6
+  },
+  "hairan": {
+   "pitch_mul": 1.08,
+   "rate_mul": 1.05,
+   "pause_mul": 0.9
+  }
+ },
+ "_qa": {
+  "f0_bands_hz": {
+   "dada": [
+    88,
+    125
+   ],
+   "dadi": [
+    140,
+    185
+   ],
+   "mahila": [
+    165,
+    205
+   ],
+   "gudiya": [
+    190,
+    240
+   ],
+   "bachcha": [
+    240,
+    330
+   ]
+  },
+  "min_f0_std": 12,
+  "pace_range": [
+   3.0,
+   4.5
+  ],
+  "background_below_db": [
+   8,
+   16
+  ],
+  "max_peak": 0.95,
+  "clipping_pct": 0
+ }
+}

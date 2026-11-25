@@ -9,6 +9,11 @@ CLI: python tools/asr_cache.py --audio x.mp3 --cache asr.json [--model base] [--
 from __future__ import annotations
 import argparse, json, re, subprocess, sys
 from pathlib import Path
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -38,7 +43,7 @@ def transcribe(audio: str, cache: str, model="base", chunk=15.0) -> dict:
     state = json.loads(cpath.read_text(encoding="utf-8")) if cpath.exists() else {"chunks": {}}
     from faster_whisper import WhisperModel
     m = WhisperModel(model, device="cpu", compute_type="int8", cpu_threads=4,
-                     download_root="/scratch/work/whisper")
+                     download_root=str(_AP.WORK / "whisper"))
     n = len(x)
     step = int(chunk * SR)
     for i in range(0, n, step):

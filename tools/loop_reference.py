@@ -11,6 +11,11 @@ import json, sys
 from pathlib import Path
 import numpy as np
 import soundfile as sf
+try:
+    import astra_paths as _AP
+except ImportError:
+    import sys as _s, pathlib as _pl
+    _s.path.insert(0, str(_pl.Path(__file__).resolve().parent)); import astra_paths as _AP
 
 SR = 22050
 try:
@@ -57,7 +62,7 @@ def features(x: np.ndarray, band=(100, 8000)) -> dict:
 
 
 def main() -> int:
-    inp = Path("/scratch/input")
+    inp = _AP.INPUT
     out = {}
     for kind, pats in KIND_FILES.items():
         vals = []

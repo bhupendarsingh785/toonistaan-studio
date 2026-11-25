@@ -1,0 +1,43 @@
+{
+ "source": "piper dry-run",
+ "created_at": "2026-11-21T02:19:00Z",
+ "style": {
+  "neutral": {
+   "pitch": 1.0,
+   "pace": 1.0,
+   "energy": 1.0,
+   "gap_ms": 220
+  },
+  "dukh": {
+   "pitch": 0.908,
+   "pace": 1.073,
+   "energy": 1.098,
+   "gap_ms": 220
+  },
+  "gussa": {
+   "pitch": 0.937,
+   "pace": 1.302,
+   "energy": 1.299,
+   "gap_ms": 220
+  },
+  "khushi": {
+   "pitch": 0.893,
+   "pace": 1.097,
+   "energy": 0.966,
+   "gap_ms": 220
+  },
+  "dar": {
+   "pitch": 0.934,
+   "pace": 1.426,
+   "energy": 1.098,
+   "gap_ms": 220
+  },
+  "pyaar": {
+   "pitch": 0.934,
+   "pace": 1.132,
+   "energy": 1.094,
+   "gap_ms": 220
+  }
+ },
+ "measured_from": 6
+}

@@ -1,0 +1,7 @@
+{
+  "schema": "engine-knowledge-inbox/v1",
+  "engine": "piper",
+  "query": "hindi tts counter evidence criticism failure cases",
+  "research_file": "research/deep_research_20261119-052920.json",
+  "items": []
+}
