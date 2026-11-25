@@ -31,9 +31,9 @@ CACHE_VER = "v2-sr"
 # piper priyamvada = asli female 207 Hz, pratham = male 97 Hz — inhe chhedna nahi
 CAST = {
     "गौरी":  dict(engine="piper-f", pitch=1.00, tempo=1.00, tilt=+1.0, breath=0.010, vib=0.15, form="preserved"),  # 207 Hz
-    "कमला":  dict(engine="piper-f", pitch=0.93, tempo=0.92, tilt=-2.0, breath=0.014, vib=0.22, form="preserved"),  # ~192 Hz
+    "कमला":  dict(engine="piper-f", pitch=0.93, tempo=0.97, tilt=-2.0, breath=0.014, vib=0.22, form="preserved"),  # ~192 Hz
     "मोहन":  dict(engine="piper-f", pitch=1.30, tempo=1.05, tilt=+2.0, breath=0.012, vib=0.10, form="shifted"),    # ~269 Hz bachcha
-    "हरिदास": dict(engine="piper-m", pitch=1.12, tempo=0.90, tilt=-2.5, breath=0.016, vib=0.18, form="preserved"),  # ~109 Hz
+    "हरिदास": dict(engine="piper-m", pitch=1.12, tempo=0.95, tilt=-2.5, breath=0.016, vib=0.18, form="preserved"),  # ~109 Hz
     "सरपंच": dict(engine="piper-m", pitch=1.20, tempo=0.98, tilt=-0.5, breath=0.014, vib=0.16, form="preserved"),
     "वाचक":  dict(engine="piper-m", pitch=1.15, tempo=1.00, tilt=0.0, breath=0.012, vib=0.14, form="preserved"),
     "भेड़िया": dict(engine="piper-m", pitch=0.90, tempo=0.88, tilt=-3.0, breath=0.030, vib=0.30, form="preserved"),
@@ -233,7 +233,7 @@ def _trim(y, sr, keep=0.04):
     return y[a:b]
 
 
-def _legato(y, sr, ms=55):
+def _legato(y, sr, ms=90):
     """Chupp aur bolne ke jod par narmi (60ms) — 'ruk-ruk' ki jhatke wali cut khatam."""
     env = np.abs(y)
     k = max(3, int(0.008 * sr))
@@ -242,7 +242,7 @@ def _legato(y, sr, ms=55):
     soft = np.clip(e / (thr * 2.0 + 1e-12), 0.0, 1.0)      # 0 = chupp, 1 = bol raha
     n = max(8, int(ms / 1000 * sr))
     sm = np.convolve(soft, np.hanning(n) / np.hanning(n).sum(), mode="same")
-    gain = 0.35 + 0.65 * sm                                  # chupp me bhi 35% rehne do (cut na lage)
+    gain = 0.45 + 0.55 * sm                                  # chupp me bhi 35% rehne do (cut na lage)
     return y * gain
 
 
@@ -262,7 +262,7 @@ def _breath(sr, dur=0.22, level=0.012):
     return level * nz * env / (np.max(np.abs(nz * env)) + 1e-9)
 
 
-def build(script: Path, out: Path, gap=0.12, scene_gap=0.34):
+def build(script: Path, out: Path, gap=0.07, scene_gap=0.20):
     lines = []
     for l in script.read_text(encoding="utf-8").splitlines():
         if l.strip().startswith(("#", "[", "(", "{")):
@@ -285,7 +285,7 @@ def build(script: Path, out: Path, gap=0.12, scene_gap=0.34):
                 yy = _trim(yy.astype(np.float64), sr_)
                 ys.append(yy)
                 if pi_ < len(parts) - 1:
-                    ys.append(np.zeros(int(0.11 * SR)))
+                    ys.append(np.zeros(int(0.07 * SR)))
             y = np.concatenate(ys); sr = SR
         else:
             y, sr = sf.read(str(line_audio(who, text)))
