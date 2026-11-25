@@ -179,6 +179,9 @@ def line_audio(who, text, extra=None):
         else:
             cfg["pitch"] = cfg["pitch"] * extra.get("pitch", 1.0)
             cfg["tempo"] = cfg["tempo"] * extra.get("tempo", 1.0)
+            cfg["vib"] = cfg.get("vib", 0.15) * extra.get("vib", 1.0)
+            cfg["breath"] = cfg.get("breath", 0.012) * extra.get("breath", 1.0)
+            cfg["tilt"] = cfg.get("tilt", 0.0) + extra.get("tilt", 0.0)
     # settings bhi key me — pehle CAST badalne par purani (galat) awaaz cache se aa jaati thi
     key = hashlib.sha1(f"cast|{CACHE_VER}|{who}|{text}|{sorted(cfg.items())}".encode()).hexdigest()[:16]
     dst = CACHE / f"{key}.wav"
@@ -262,6 +265,37 @@ def _breath(sr, dur=0.22, level=0.012):
     return level * nz * env / (np.max(np.abs(nz * env)) + 1e-9)
 
 
+# bhaav -> sur/tempo/vibrato/saans ka halka badlav (insaan bhi aise hi badalta hai)
+BHAAV = {
+    "pyaar":  dict(pitch=1.02, tempo=0.96, vib=1.45, breath=1.35, tilt=+0.8),
+    "gussa":  dict(pitch=1.09, tempo=1.10, vib=1.70, breath=1.10, tilt=+1.6),
+    "dukh":   dict(pitch=0.94, tempo=0.91, vib=1.55, breath=1.45, tilt=-1.2),
+    "khushi": dict(pitch=1.06, tempo=1.08, vib=1.25, breath=1.15, tilt=+0.6),
+    "dar":    dict(pitch=1.05, tempo=1.12, vib=1.60, breath=1.70, tilt=-0.6),
+    "hairan": dict(pitch=1.07, tempo=1.04, vib=1.30, breath=1.30, tilt=+0.4),
+    "normal": dict(),
+}
+
+_AUTO = [
+    ("gussa",  ("क्यों", "अरे", "चुप", "बंद", "कैसे", "क्या बक", "हट", "नहीं!")),
+    ("pyaar",  ("बेटा", "बेटी", "माँ", "बाबा", "जान", "सुन ना", "अच्छा लगा", "प्यार", "दुआ")),
+    ("dukh",   ("रो", "आँसू", "आंसू", "टूट", "मर", "चला गया", "अकेला", "थक")),
+    ("dar",    ("डर", "बचाओ", "भाग", "काँप", "कांप")),
+    ("khushi", ("खुश", "हाँ!", "अच्छा", "बढ़िया", "शाबाश")),
+]
+
+
+def _bhaav_of(tag: str, text: str) -> str:
+    """Line ka bhaav: tag diya ho to wahi, warna shabdon se andaza."""
+    tag = (tag or "").strip().lower()
+    if tag in BHAAV:
+        return tag
+    for name, keys in _AUTO:
+        if any(k in text for k in keys):
+            return name
+    return "normal"
+
+
 def build(script: Path, out: Path, gap=0.07, scene_gap=0.20):
     lines = []
     for l in script.read_text(encoding="utf-8").splitlines():
@@ -269,18 +303,25 @@ def build(script: Path, out: Path, gap=0.07, scene_gap=0.20):
             continue                                   # comment / dṛśya / awaaz cue — awaaz nahi
         if ":" in l:
             w, t = l.split(":", 1)
-            if t.strip():
-                lines.append((w.strip(), t.strip()))
+            if not t.strip():
+                continue
+            tag = ""
+            import re as _r
+            m = _r.search(r"\[([^\]]+)\]", w)
+            if m:
+                tag = m.group(1).strip()
+                w = _r.sub(r"\[[^\]]+\]", "", w).strip()
+            lines.append((w.strip(), t.strip(), _bhaav_of(tag, t)))
     import re as _re
     pieces, prev = [], None
-    for who, text in lines:
+    for who, text, bhaav in lines:
         text = text.replace(",", " ")      # piper comma par lamba pause deta hai -> ruk-ruk
         # line ko danda par todkar chhote gap se jodo — piper ke lambe pause ki jagah
         parts = [c.strip() for c in _re.split(r"(?<=[।!?])\s*", text) if c.strip()]
         if len(parts) > 1:
             ys = []
             for pi_, part in enumerate(parts):
-                yy, sr_ = sf.read(str(line_audio(who, part)))
+                yy, sr_ = sf.read(str(line_audio(who, part, BHAAV.get(bhaav))))
                 yy = yy.mean(1) if yy.ndim > 1 else yy
                 yy = _trim(yy.astype(np.float64), sr_)
                 ys.append(yy)
@@ -288,7 +329,7 @@ def build(script: Path, out: Path, gap=0.07, scene_gap=0.20):
                     ys.append(np.zeros(int(0.07 * SR)))
             y = np.concatenate(ys); sr = SR
         else:
-            y, sr = sf.read(str(line_audio(who, text)))
+            y, sr = sf.read(str(line_audio(who, text, BHAAV.get(bhaav))))
             y = y.mean(1) if y.ndim > 1 else y
             y = y.astype(np.float64)
         y = _trim(y, sr)                       # khaali hissa kaato
