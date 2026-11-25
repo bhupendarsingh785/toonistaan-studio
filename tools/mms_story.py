@@ -110,13 +110,13 @@ def build(script: Path, out: Path, gap=0.30, scene_gap=0.55) -> dict:
     try:
         import harmonic_clean as HC
         r0 = float(np.sqrt((voice ** 2).mean()) + 1e-9)
-        voice = HC.clean(voice, SR, 8.0, -9.0)
+        voice = HC.clean(voice, SR, 4.0, -3.0)   # halka: tez clean se shabd kat-te the
         voice = voice * (r0 / (float(np.sqrt((voice ** 2).mean()) + 1e-9)))
         # compressor (shimmer kam) — naap: shimmer 14.4 -> 10.7, HNR 11.4
         _k = int(0.01 * SR)
         _e = np.convolve(np.abs(voice), np.ones(_k) / _k, mode="same") + 1e-9
-        _over = np.maximum(0, 20 * np.log10(_e) - (-22.0))
-        voice = voice * (10 ** ((-_over * (1 - 1 / 3.0)) / 20))
+        _over = np.maximum(0, 20 * np.log10(_e) - (-18.0))
+        voice = voice * (10 ** ((-_over * (1 - 1 / 2.0)) / 20))   # halka (2:1) — shabd na dabe
         voice = voice / (np.max(np.abs(voice)) + 1e-9) * 0.95
     except Exception:
         pass
@@ -132,7 +132,7 @@ def build(script: Path, out: Path, gap=0.30, scene_gap=0.55) -> dict:
         pass
     try:
         from scipy import signal as ss
-        sos = ss.butter(4, min(0.92, 9500 / (SR / 2)), btype="low", output="sos")
+        sos = ss.butter(4, min(0.94, 10500 / (SR / 2)), btype="low", output="sos")
         voice = ss.sosfilt(sos, voice)
     except Exception:
         pass
