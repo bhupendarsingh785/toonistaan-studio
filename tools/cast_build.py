@@ -300,6 +300,28 @@ def _bhaav_of(tag: str, text: str) -> str:
     return "normal"
 
 
+
+
+# ---------------------------------------------------------------- bolne ke liye text theek
+# Asli khoj (espeak phonemes se jaancha):
+#   "पढ़ाई" -> p ə r . h aː i  (shabd toot jata hai!)  |  "पढाई" -> p ə ɖ ʰ aː i  ✅
+#   "बड़ा"  -> b ʌ r . aː                             |  "बडा"  -> b ʌ ɖ aː     ✅
+#   "फीस"   -> p ʰ iː s (p)                          |  "फ़ीस" -> f iː s        ✅
+# Isliye: retroflex se nukta hatao (ड़->ड, ढ़->ढ), aur /f/ wale shabdon par nukta lagao.
+_NUKTA_HATAO = {"ड़": "ड", "ढ़": "ढ"}
+_F_WALE = {"फीस": "फ़ीस", "फोन": "फ़ोन", "फोटो": "फ़ोटो", "फौज": "फ़ौज", "फरमान": "फ़रमान",
+           "फायदा": "फ़ायदा", "फिजूल": "फ़िजूल", "फ़ीस": "फ़ीस"}
+
+
+def bolne_layak(text: str) -> str:
+    """Piper/eSpeak Hindi ke liye uchcharan theek karo (shabd tootne se bachao)."""
+    for a, b in _NUKTA_HATAO.items():
+        text = text.replace(a, b)
+    for a, b in _F_WALE.items():
+        text = text.replace(a, b)
+    return text
+
+
 def build(script: Path, out: Path, gap=0.03, scene_gap=0.12):
     lines = []
     for l in script.read_text(encoding="utf-8").splitlines():
@@ -319,6 +341,7 @@ def build(script: Path, out: Path, gap=0.03, scene_gap=0.12):
     import re as _re
     pieces, prev = [], None
     for who, text, bhaav in lines:
+        text = bolne_layak(text)
         text = text.replace(",", " ")      # piper comma par lamba pause deta hai -> ruk-ruk
         # line ko danda par todkar chhote gap se jodo — piper ke lambe pause ki jagah
         parts = [c.strip() for c in _re.split(r"(?<=[।!?])\s*", text) if c.strip()]
