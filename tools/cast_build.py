@@ -21,13 +21,16 @@ SR = 24000
 CACHE = Path("/scratch/work/cast_cache"); CACHE.mkdir(parents=True, exist_ok=True)
 
 # kirdaar -> (pitch, tempo, tilt_db, saans, vibrato)
-# MMS ka asli base 136 Hz naapa gaya — usi se factor (target Hz / 136)
+# ASLI sur par banao (bada shift = patli/robotic "bhrrr" awaaz)
+# piper priyamvada = asli female 207 Hz, pratham = male 97 Hz — inhe chhedna nahi
 CAST = {
-    "गौरी":  dict(pitch=1.55, tempo=1.00, tilt=+1.0, breath=0.010, vib=0.15, form="preserved"),  # ~215 Hz
-    "कमला":  dict(pitch=1.40, tempo=0.92, tilt=-2.0, breath=0.014, vib=0.22, form="preserved"),  # ~194 Hz
-    "मोहन":  dict(pitch=1.90, tempo=1.06, tilt=+2.0, breath=0.012, vib=0.10, form="shifted"),    # ~271 Hz bachcha
-    "हरिदास": dict(pitch=0.80, tempo=0.90, tilt=-2.5, breath=0.016, vib=0.18, form="preserved"),  # ~109 Hz
-    "भेड़िया": dict(pitch=0.62, tempo=0.88, tilt=-3.0, breath=0.030, vib=0.30, form="preserved"),
+    "गौरी":  dict(engine="piper-f", pitch=1.00, tempo=1.00, tilt=+1.0, breath=0.010, vib=0.15, form="preserved"),  # 207 Hz
+    "कमला":  dict(engine="piper-f", pitch=0.93, tempo=0.92, tilt=-2.0, breath=0.014, vib=0.22, form="preserved"),  # ~192 Hz
+    "मोहन":  dict(engine="piper-f", pitch=1.30, tempo=1.05, tilt=+2.0, breath=0.012, vib=0.10, form="shifted"),    # ~269 Hz bachcha
+    "हरिदास": dict(engine="piper-m", pitch=1.12, tempo=0.90, tilt=-2.5, breath=0.016, vib=0.18, form="preserved"),  # ~109 Hz
+    "सरपंच": dict(engine="piper-m", pitch=1.20, tempo=0.98, tilt=-0.5, breath=0.014, vib=0.16, form="preserved"),
+    "वाचक":  dict(engine="piper-m", pitch=1.15, tempo=1.00, tilt=0.0, breath=0.012, vib=0.14, form="preserved"),
+    "भेड़िया": dict(engine="piper-m", pitch=0.90, tempo=0.88, tilt=-3.0, breath=0.030, vib=0.30, form="preserved"),
 }
 
 
@@ -74,19 +77,40 @@ def _life(x, sr, breath, vib):
     return x
 
 
+_PV = {}
+
+
+def _piper_line(text, dst, model_name):
+    """piper se line — asli sur par (koi bada shift nahi)."""
+    import wave
+    from piper import PiperVoice
+    from piper.config import SynthesisConfig
+    v = _PV.get(model_name)
+    if v is None:
+        mp = Path("/scratch/work/voices") / model_name
+        v = PiperVoice.load(str(mp), config_path=str(mp) + ".json")
+        _PV[model_name] = v
+    with wave.open(str(dst), "wb") as w:
+        v.synthesize_wav(text, w, syn_config=SynthesisConfig(length_scale=1.32))
+    return dst.exists()
+
+
 def line_audio(who, text):
     import hashlib
     key = hashlib.sha1(f"cast|{who}|{text}".encode()).hexdigest()[:16]
     dst = CACHE / f"{key}.wav"
     if dst.exists() and dst.stat().st_size > 2000:
         return dst
-    cfg = CAST.get(who, dict(pitch=1.0, tempo=1.0, tilt=0.0, breath=0.012, vib=0.15))
+    cfg = CAST.get(who, dict(engine="piper-f", pitch=1.0, tempo=1.0, tilt=0.0, breath=0.012, vib=0.15))
     raw = CACHE / f"{key}_raw.wav"
-    r = subprocess.run([sys.executable, str(Path(__file__).with_name("mms_worker.py")),
-                        "--text", text, "--out", str(raw), "--pitch", "1.0"],
-                       capture_output=True, text=True)
+    eng = cfg.get("engine", "piper-f")
+    if eng.startswith("piper"):
+        _piper_line(text, raw, "hi_IN-priyamvada-medium.onnx" if eng.endswith("f") else "hi_IN-pratham-medium.onnx")
+    else:
+        subprocess.run([sys.executable, str(Path(__file__).with_name("mms_worker.py")),
+                        "--text", text, "--out", str(raw), "--pitch", "1.0"], capture_output=True)
     if not raw.exists():
-        raise RuntimeError(f"tts fail {who}: {(r.stderr or '')[-100:]}")
+        raise RuntimeError(f"tts fail {who}")
     y, sr = sf.read(str(raw)); y = y.mean(1) if y.ndim > 1 else y
     y = _rubber(y.astype(np.float64), sr, cfg["pitch"], cfg["tempo"], cfg.get("form", "preserved"))
     y = _tilt(y, sr, cfg["tilt"])
