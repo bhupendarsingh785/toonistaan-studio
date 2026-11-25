@@ -17,6 +17,20 @@ OUT = ROOT / "voices" / "hindi"
 OUT.mkdir(parents=True, exist_ok=True)
 IDX = ROOT / "knowledge" / "hindi-voices.json"
 ITEMS = ["panchatantra_2604_librivox", "msw041_2605_librivox"]
+
+
+def search_items(n=12, query='language:"Hindi" AND mediatype:audio'):
+    """archive.org par Hindi audio dhoondo (audiobook, bhashan, radio)."""
+    import json as _j, urllib.parse as _up
+    q = _up.quote(query)
+    url = (f"https://archive.org/advancedsearch.php?q={q}"
+           "&fl[]=identifier&fl[]=title&fl[]=downloads&rows=60&sort[]=downloads+desc&output=json")
+    raw = _curl(url) or "{}"
+    try:
+        docs = _j.loads(raw)["response"]["docs"]
+    except Exception:
+        return []
+    return [d["identifier"] for d in docs][:n]
 SR = 24000
 
 
@@ -89,6 +103,7 @@ def measure(p: Path) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=6)
+    ap.add_argument("--search", action="store_true")
     ap.add_argument("--report", action="store_true")
     a = ap.parse_args()
     idx = json.loads(IDX.read_text(encoding="utf-8")) if IDX.exists() else []
@@ -98,11 +113,15 @@ def main() -> int:
                           "rows": idx}, ensure_ascii=False, indent=1))
         return 0
     got = 0
-    for item in ITEMS:
+    items = ITEMS
+    if a.n > 10:
+        items = list(dict.fromkeys(ITEMS + search_items(a.n // 2)))
+        print("items:", len(items))
+    for item in items:
         for name, size, lic in files_of(item):
             if got >= a.n:
                 break
-            p = clip(item, name, start=20 + got * 5, dur=25)
+            p = clip(item, name, start=20 + (got % 4) * 8, dur=25)
             if not p:
                 continue
             m = measure(p)
