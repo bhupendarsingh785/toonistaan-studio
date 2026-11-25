@@ -32,7 +32,7 @@ CACHE_VER = "v2-sr"
 CAST = {
     "गौरी":  dict(engine="piper-f", pitch=1.00, tempo=1.00, tilt=+1.0, breath=0.010, vib=0.15, form="preserved"),  # 207 Hz
     "कमला":  dict(engine="piper-f", pitch=0.93, tempo=0.97, tilt=-2.0, breath=0.014, vib=0.22, form="preserved"),  # ~192 Hz
-    "मोहन":  dict(engine="piper-f", pitch=1.30, tempo=1.05, tilt=+2.0, breath=0.012, vib=0.10, form="shifted"),    # ~269 Hz bachcha
+    "मोहन":  dict(engine="piper-f", pitch=1.16, tempo=1.02, tilt=+1.2, breath=0.010, vib=0.10, form="shifted"),    # ~269 Hz bachcha
     "हरिदास": dict(engine="piper-m", pitch=1.12, tempo=0.95, tilt=-2.5, breath=0.016, vib=0.18, form="preserved"),  # ~109 Hz
     "सरपंच": dict(engine="piper-m", pitch=1.20, tempo=0.98, tilt=-0.5, breath=0.014, vib=0.16, form="preserved"),
     "वाचक":  dict(engine="piper-m", pitch=1.15, tempo=1.00, tilt=0.0, breath=0.012, vib=0.14, form="preserved"),
@@ -236,7 +236,7 @@ def _trim(y, sr, keep=0.04):
     return y[a:b]
 
 
-def _legato(y, sr, ms=90):
+def _legato(y, sr, ms=110):
     """Chupp aur bolne ke jod par narmi (60ms) — 'ruk-ruk' ki jhatke wali cut khatam."""
     env = np.abs(y)
     k = max(3, int(0.008 * sr))
@@ -245,7 +245,7 @@ def _legato(y, sr, ms=90):
     soft = np.clip(e / (thr * 2.0 + 1e-12), 0.0, 1.0)      # 0 = chupp, 1 = bol raha
     n = max(8, int(ms / 1000 * sr))
     sm = np.convolve(soft, np.hanning(n) / np.hanning(n).sum(), mode="same")
-    gain = 0.45 + 0.55 * sm                                  # chupp me bhi 35% rehne do (cut na lage)
+    gain = 0.55 + 0.45 * sm                                  # chupp me bhi 35% rehne do (cut na lage)
     return y * gain
 
 
@@ -267,12 +267,12 @@ def _breath(sr, dur=0.22, level=0.012):
 
 # bhaav -> sur/tempo/vibrato/saans ka halka badlav (insaan bhi aise hi badalta hai)
 BHAAV = {
-    "pyaar":  dict(pitch=1.02, tempo=0.96, vib=1.45, breath=1.35, tilt=+0.8),
-    "gussa":  dict(pitch=1.09, tempo=1.10, vib=1.70, breath=1.10, tilt=+1.6),
-    "dukh":   dict(pitch=0.94, tempo=0.91, vib=1.55, breath=1.45, tilt=-1.2),
-    "khushi": dict(pitch=1.06, tempo=1.08, vib=1.25, breath=1.15, tilt=+0.6),
-    "dar":    dict(pitch=1.05, tempo=1.12, vib=1.60, breath=1.70, tilt=-0.6),
-    "hairan": dict(pitch=1.07, tempo=1.04, vib=1.30, breath=1.30, tilt=+0.4),
+    "pyaar":  dict(pitch=1.02, tempo=0.96, vib=1.22, breath=1.18, tilt=+0.8),
+    "gussa":  dict(pitch=1.09, tempo=1.10, vib=1.32, breath=1.06, tilt=+1.6),
+    "dukh":   dict(pitch=0.94, tempo=0.91, vib=1.26, breath=1.22, tilt=-1.2),
+    "khushi": dict(pitch=1.06, tempo=1.08, vib=1.14, breath=1.10, tilt=+0.6),
+    "dar":    dict(pitch=1.05, tempo=1.12, vib=1.28, breath=1.30, tilt=-0.6),
+    "hairan": dict(pitch=1.07, tempo=1.04, vib=1.18, breath=1.16, tilt=+0.4),
     "normal": dict(),
 }
 
@@ -296,7 +296,7 @@ def _bhaav_of(tag: str, text: str) -> str:
     return "normal"
 
 
-def build(script: Path, out: Path, gap=0.07, scene_gap=0.20):
+def build(script: Path, out: Path, gap=0.05, scene_gap=0.14):
     lines = []
     for l in script.read_text(encoding="utf-8").splitlines():
         if l.strip().startswith(("#", "[", "(", "{")):
