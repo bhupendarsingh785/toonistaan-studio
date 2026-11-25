@@ -1,0 +1,1321 @@
+# ASTRA Awaaz System — CODE MAP
+
+Files: **606**  •  Functions: **3318**
+
+## app  (1 files)
+- `app/main.py` — 72 lines — astra-audio — chhota FastAPI wrapper (Catalyst AppSail / kisi bhi host ke liye).
+  - functions: _run, health, render, job, audio, home
+
+## astra  (22 files)
+- `astra/library.py` — 19974 lines — ASTRA LOCAL LIBRARY — asli recordings jo hum khud rakhte hain (best quality, sabse pehle).
+  - functions: _index, entries, info, _ff, pick_footsteps, speed_for, find, _variant, fetch
+- `astra/astra.py` — 752 lines — ASTRA — Universal Sound Creation Engine (offline, bina internet, bina API key)
+  - functions: T, noise, lp, hp, bp, env_ad, _place, norm, reverb, distance, stereo, footstep, footsteps, leaves_rustle …
+  - classes: SoundRequest, SoundResult
+- `astra/cinema.py` — 621 lines — ASTRA CINEMA — kahani se "audio drama" (Pocket FM jaisa), ek hi command me.
+  - functions: sh, read_wav, write_wav, norm, place, _pan_for, place_pan, tts, sfx_limit, build, main
+- `astra/real_audio.py` — 372 lines — ASTRA REAL AUDIO — asli recording wali awaazein (Freesound), bina key bhi chalta hai.
+  - functions: _ff, _http_get, mixkit_list, fetch_mixkit, _clean_key, have_key, _clean_name, _dur_score, _license_ok, _get, search, _download, fetch, normalize_lufs
+- `astra/hindi_natural.py` — 308 lines — ASTRA — Hindi ko bolne ke kabil banana (Sarvam se seekha hua).
+  - functions: _two, _hundreds, number_to_hindi, _decimal_to_hindi, _time_words, normalize_text, dehinglish, prosody_chunks, naturalize
+- `astra/vocal_light.py` — 289 lines — ASTRA — Vocal Light: awaaz ki jaanch BINA torch/whisper ke.
+  - functions: ff, load, frames, mfcc, vad_mask, pitch_track, vector_of, slice_vector, voice_vector, similarity, speakers, prosody, report, main
+- `astra/music_maker.py` — 282 lines — ASTRA — Music Maker: maujooda tracks ko tod-marod kar NAYA music banao.
+  - functions: ff, _abs, run, dur, layer, chain, _cut, splice, build, slow, make_mood, main
+- `astra/score.py` — 278 lines — ASTRA — Auto Score: poori kahani ke liye background music khud banata hai.
+  - functions: ff, run, load, dur, best_window, make_bed, pick, build_score, main
+- `astra/music_match.py` — 233 lines — ASTRA — Music Match: do music ko "milakar" jodna (sirf kaatna nahi).
+  - functions: ff, run, load, dur, profile, best_cut, cut_stretch, smart_join, main
+- `astra/guard.py` — 222 lines — ASTRA GUARD — galti se ya kisi aur se kuch delete na ho.
+  - functions: _protected, git, deleted_in_last_commit, count_files, check, missing_vs_snapshot, restore, snapshot, verify, hook_install, main
+- `astra/make_missing.py` — 219 lines — ASTRA — Make Missing: jo sounds internet par theek nahi milte, khud banao.
+  - functions: ff, env_adsr, band_noise, stick_slip, rope, rope_knot, cloth_rustle, leaves_dry, ladder_wood, wood_creak, save, main
+- `astra/music_probe.py` — 204 lines — ASTRA — Music Probe: naam nahi, awaaz sun kar bhaav pehchano.
+  - functions: ff, load, analyse, main
+- `astra/beat_mix.py` — 198 lines — ASTRA — Beat Mix: asli mixing (beat se beat milakar), sirf crossfade nahi.
+  - functions: ff, run, decode, info, key_distance, cut_on_beat, mix, main
+- `astra/server.py` — 186 lines — ASTRA SERVER — kahani likho, audio drama banao (web app, FastAPI).
+  - functions: conn, init_db, health, sounds, make_sound, list_stories, create_story, get_story, update_story, delete_story, render_story, home
+  - classes: StoryIn, SoundIn
+- `astra/action_brain.py` — 150 lines — ASTRA — Action Brain (v0.16 ka action foley, hamare library se juda).
+  - functions: _resolves, suggest_lines, missing_actions
+- `astra/clean_library.py` — 134 lines — ASTRA — library saaf karne wala tool (khud chal jata hai).
+  - functions: ff, _key, load_mark, save_mark, clean_one, main
+- `astra/story_check.py` — 132 lines — ASTRA STORY CHECK — kahani banane se PEHLE samajh lo (galat cheez baad me pakadna mehnga hai).
+  - functions: _line_parts, main
+- `astra/music_engine.py` — 121 lines — Original procedural music generator (12 moods) — ASTRA ke liye adapted.
+  - functions: _freq, _env, _voice, generate_music
+- `astra/vocal_check.py` — 121 lines — ASTRA — Vocal Check: render ke baad awaaz ki jaanch (bina torch, pitch-based).
+  - functions: _lines, _pitch_of, check, main
+- `astra/story_brain.py` — 119 lines — ASTRA — Story Brain (v0.11 ka story intelligence, safe wrapper).
+  - functions: _allowed, _ok_in_env, suggest_lines, mood_of
+- `astra/dedupe_library.py` — 118 lines — ASTRA — duplicate (do baar bheji gayi) recordings hatao.
+  - functions: ff, fingerprint, main
+- `astra/qa_gate.py` — 83 lines — ASTRA — QA gate (v0.11.0 ka technical quality check, safe wrapper).
+  - functions: _ensure_ffmpeg, run_qa, main
+
+## astra_audio  (23 files)
+- `astra_audio/story_mix.py` — 352 lines
+  - functions: _finite_number, _rms_db, _resample, _smooth_envelope, _active_rms_db, _activity_envelope, _scene_gain_curve, mix_story
+- `astra_audio/real_library.py` — 317 lines — Real-file audio library indexing and safe production-spec assembly.
+  - functions: _sha256, _filename_hints, index_audio_library, build_production_spec, produce_story_audio
+- `astra_audio/tts_sarvam.py` — 308 lines — Sarvam Bulbul REST TTS adapter with per-character voice continuity.
+  - functions: split_tts_text, extract_script_segments, synthesize_script, make_workflow_adapter
+  - classes: SarvamTTS
+- `astra_audio/story_intelligence.py` — 307 lines
+  - functions: _environment, _norm, _matches, _emotion, _scene_heading, _timecode_seconds, _speaker_line, analyze_script_text, analyze_script_file, build_reviewable_mix_spec
+- `astra_audio/cli.py` — 205 lines
+  - functions: main
+- `astra_audio/vocal_intelligence.py` — 204 lines — Optional deep-learning vocal intelligence adapters for ASTRA.
+  - functions: backend_status, _require_file, _transcribe, _diarize, _speaker_embeddings, _attach_speakers, _emotion_classify, analyze_vocal_file, save_vocal_report
+- `astra_audio/asset_matching.py` — 176 lines — Conservative catalog matching for story sound events.
+  - functions: _tokens, _load_catalog, _event_terms, match_assets, make_workflow_adapter
+- `astra_audio/analyzer.py` — 150 lines
+  - functions: _db, _frame_rms, _spectral_features, _timeline, analyze_array, analyze_audio
+- `astra_audio/processor.py` — 144 lines
+  - functions: _filter_sos, _spectral_denoise, process_audio
+  - classes: ProcessingOptions
+- `astra_audio/soundscape_planner.py` — 138 lines — World-general, reviewable story soundscape planner.
+  - functions: _hits, plan_soundscape, plan_soundscape_file
+- `astra_audio/story_production.py` — 130 lines — Single-pass story-to-audio review planner.
+  - functions: prepare_story_audio, prepare_story_audio_file
+- `astra_audio/action_foley.py` — 122 lines — Action-chain Foley planner for story-driven physical interactions.
+  - functions: _find, analyze_action_chains
+- `astra_audio/io.py` — 121 lines
+  - functions: probe_audio, load_audio, save_wav, save_json_atomic
+- `astra_audio/quality_check.py` — 109 lines
+  - functions: _db, _chunked_true_peak, quality_check
+- `astra_audio/workflow.py` — 86 lines — Fail-closed orchestration contracts for the standalone ASTRA audio workflow.
+  - classes: StageResult, WorkflowError, AudioWorkflow
+- `astra_audio/vocal_dataset.py` — 68 lines — Consent-aware dataset manifest builder for future voice-model fine-tuning.
+  - functions: build_voice_dataset_manifest
+- `astra_audio/audit.py` — 54 lines
+  - functions: sha256_file, audit_folder
+- `astra_audio/acoustic_map.py` — 48 lines
+  - functions: build_acoustic_map
+- `astra_audio/library.py` — 35 lines
+  - functions: sha256_file
+  - classes: AssetWorkspace
+- `astra_audio/policy.py` — 29 lines — Conservative context policy. Tags are hints, never automatic truth.
+  - functions: build_policy
+  - classes: AudioPolicy
+- `astra_audio/adapters.py` — 17 lines — Optional AI adapter contracts. No model/API is bundled or required.
+  - classes: AudioUnderstandingAdapter, SourceSeparationAdapter, SpeechEnhancementAdapter
+- `astra_audio/quality.py` — 15 lines — Before/after quality gate: technical indicators only, not perceptual truth.
+  - functions: compare_reports
+- `astra_audio/__init__.py` — 1 lines
+
+## astra_intelligence  (1 files)
+- `astra_intelligence/__init__.py` — 5 lines — Isolated, free-first ASTRA intelligence evolution add-on.
+
+## astra_intelligence/dataset  (2 files)
+- `astra_intelligence/dataset/prepare.py` — 93 lines — Validate, deduplicate and split ASTRA SFT data with provenance safeguards.
+  - functions: _canonical, load_and_validate, split_by_group, write_jsonl, prepare, main
+  - classes: DatasetError
+- `astra_intelligence/dataset/__init__.py` — 0 lines
+
+## astra_intelligence/evaluation  (2 files)
+- `astra_intelligence/evaluation/benchmark.py` — 32 lines — Run deterministic exact-match benchmark over a model adapter command.
+  - functions: run, main
+- `astra_intelligence/evaluation/quality_gate.py` — 28 lines — Compare candidate model reports against a baseline; fail closed on regressions.
+  - functions: compare_reports
+  - classes: GateResult
+
+## astra_intelligence/security  (1 files)
+- `astra_intelligence/security/free_only.py` — 15 lines — Fail-closed policy: this release never provisions paid compute or APIs.
+  - functions: authorize_resource
+  - classes: ResourcePolicy, PaidResourceBlocked
+
+## astra_intelligence/training  (1 files)
+- `astra_intelligence/training/train_lora.py` — 87 lines — Opt-in real LoRA/QLoRA SFT trainer. Requires a user-selected open-weight model.
+  - functions: main
+
+## backup/world_v1  (7 files)
+- `backup/world_v1/duniya.py` — 859 lines — Duniya engine (world sound) — Seetal / ASTRA ke liye, 100% local.
+  - functions: db2a, a2db, sos_bp, sos_lp, sos_hp, filt, pink, smooth_rand, env_ar, add_at, pan_mono, place, place_wide, outdoor_reverb …
+  - classes: Library
+- `backup/world_v1/awaazein.py` — 281 lines — Awaazein — rozmarra ki duniya ki procedural awaazein (100% local, koi recording nahi).
+  - functions: _bp, _lp, _hp, F, norm, T, sil, modal, phone_ring_old, mobile_ring, phone_vibrate, phone_pickup, phone_hangup, message_tone …
+- `backup/world_v1/harkat.py` — 273 lines — Harkat (motion) + Bhaav (emotion) — kirdaar aur duniya ki har harkat ki awaaz. 100% local, procedural.
+  - functions: _bp, _lp, _hp, F, norm, crackle, step, scuff, paw_cycle, twig, fall, jump, splash, wolf_howl …
+- `backup/world_v1/spotting.py` — 258 lines — Spotting — kahani padh kar "cue sheet" banana: kaun si awaaz, kis pal, kahan, kab tak.
+  - functions: load_events, _rx, _pos, has, first_pos, t_at, find_stop, spot_rules, place_timeline, weather_timeline, spot_llm, parse_llm, merge, log_missing …
+- `backup/world_v1/rachna.py` — 255 lines — Rachna — ek baar seekhi awaaz se hazaaron naye roop (100% local).
+  - functions: rules, load_learned, is_learned, all_embeds, situation_from_text, params_for, repitch, tilt, fade, make_events, make_texture, fingerprint, novelty, load_limits …
+- `backup/world_v1/seekho.py` — 216 lines — Seekho — ek recording se awaaz ka "DNA" seekhna (100% local).
+  - functions: load, trim, embed, similarity, embed_fmax, analyse, learn, learn_library
+- `backup/world_v1/world_qa.py` — 88 lines — World QA — audio_judge.py ke saath chalne wale naye gate (PASS / WARN / FAIL).
+  - functions: decode, lufs, tri, judge
+
+## blender  (1 files)
+- `blender/make_hero.py` — 254 lines
+  - functions: mat, lin, obj_from_bm, smooth, hand, cloth_from_body
+
+## checker  (1 files)
+- `checker/audio_gate.py` — 353 lines — audio_gate.py — RELEASE GATE (system se ALAG): jab tak audio insaan jaisi na ho, bahar nahi jaayegi.
+  - functions: load, _praat, scan, judge, emotion_check, fix, gate, _log, selftest, main
+
+## engines/EDGE  (76 files)
+- `engines/EDGE/cinematic_audio/astra_audio/story_mix.py` — 363 lines
+  - functions: _finite_number, _rms_db, _resample, _smooth_envelope, _active_rms_db, _activity_envelope, _scene_gain_curve, mix_story
+- `engines/EDGE/cinematic_audio/astra_audio/real_library.py` — 317 lines — Real-file audio library indexing and safe production-spec assembly.
+  - functions: _sha256, _filename_hints, index_audio_library, build_production_spec, produce_story_audio
+- `engines/EDGE/cinematic_audio/astra_audio/tts_sarvam.py` — 308 lines — Sarvam Bulbul REST TTS adapter with per-character voice continuity.
+  - functions: split_tts_text, extract_script_segments, synthesize_script, make_workflow_adapter
+  - classes: SarvamTTS
+- `engines/EDGE/cinematic_audio/astra_audio/story_intelligence.py` — 307 lines
+  - functions: _environment, _norm, _matches, _emotion, _scene_heading, _timecode_seconds, _speaker_line, analyze_script_text, analyze_script_file, build_reviewable_mix_spec
+- `engines/EDGE/browser_agent_v08.py` — 298 lines — v0.8 independent deep research browser agent.
+  - functions: utc, terms, score, quality, robots_ok, _add, discover, fetch, research, agent_status
+  - classes: Extractor, Source
+- `engines/EDGE/cinematic_audio/astra_audio/cli.py` — 288 lines
+  - functions: main
+- `engines/EDGE/browser_agent.py` — 240 lines — Autonomous, engine-local web research agent.
+  - functions: _robots, _terms, _score, _search_retry, _search, _fetch, research, agent_status
+  - classes: _TextExtractor, Source
+- `engines/EDGE/app.py` — 229 lines
+  - functions: dump, scan, models, collect, profiles, render, render_story_command, show_errors, resolve_error, inspect, preflight, new_report, deep_analysis_command, phonology_command …
+- `engines/EDGE/agent_cognition.py` — 227 lines — Evidence-grounded multi-role cognition for the independent Hindi voice agents.
+  - functions: _load_dotenv, _config, backend_status, _chat, _json_from_text, plan_research_queries, _sentences, offline_evidence_analysis, analyze_sources, load_sources
+- `engines/EDGE/cinematic_audio/astra_audio/editor.py` — 222 lines — Non-destructive AI-assisted audio editing primitives for ASTRA.
+  - functions: _read, _write, inspect_audio, cut_audio, _resample_channels, join_audio, apply_effects, separate_stems, replace_vocals_with_hindi, execute_project
+- `engines/EDGE/agent_evolution.py` — 214 lines — Persistent, evidence-grounded evolution loop for one ASTRA engine agent.
+  - functions: _tokens, _now, self_test
+  - classes: AgentEvolution
+- `engines/EDGE/cinematic_audio/astra_audio/vocal_intelligence.py` — 204 lines — Optional deep-learning vocal intelligence adapters for ASTRA.
+  - functions: backend_status, _require_file, _transcribe, _diarize, _speaker_embeddings, _attach_speakers, _emotion_classify, analyze_vocal_file, save_vocal_report
+- `engines/EDGE/open_source_learning.py` — 186 lines — Non-blocking, evidence-first open-source TTS research connector.
+  - functions: _now, _extract, _collect, _write_status, start_svara_learning, learning_status, load_open_source_records
+  - classes: _Text
+- `engines/EDGE/cinematic_audio/astra_audio/asset_matching.py` — 176 lines — Conservative catalog matching for story sound events.
+  - functions: _tokens, _load_catalog, _event_terms, match_assets, make_workflow_adapter
+- `engines/EDGE/cinematic_audio/tests/test_story_mix.py` — 173 lines
+  - classes: StoryMixTests
+- `engines/EDGE/cinematic_audio/astra_audio/analyzer.py` — 150 lines
+  - functions: _db, _frame_rms, _spectral_features, _timeline, analyze_array, analyze_audio
+- `engines/EDGE/cinematic_audio/astra_audio/processor.py` — 144 lines
+  - functions: _filter_sos, _spectral_denoise, process_audio
+  - classes: ProcessingOptions
+- `engines/EDGE/cinematic_audio/astra_audio/soundscape_planner.py` — 138 lines — World-general, reviewable story soundscape planner.
+  - functions: _hits, plan_soundscape, plan_soundscape_file
+- `engines/EDGE/cinematic_audio/astra_audio/story_production.py` — 130 lines — Single-pass story-to-audio review planner.
+  - functions: prepare_story_audio, prepare_story_audio_file
+- `engines/EDGE/intelligence_agent.py` — 127 lines — Engine-local autonomous research, evidence memory and continual-improvement loop.
+  - functions: utc, run_cycle, autopilot
+  - classes: IntelligenceMemory
+- `engines/EDGE/cinematic_audio/astra_audio/soundstage.py` — 124 lines — Narrative-aware cinematic soundstage: smooth spatial automation + existing story mixer.
+  - functions: _finite, _curve, _smooth, _resample, _spatialize, render_soundstage
+- `engines/EDGE/hindi_core.py` — 123 lines — Hindi text preparation and structured character/dialogue analysis.
+  - functions: normalize_hindi, language_diagnostics, stable_id, _speaker_line, scan_script, scan_file
+- `engines/EDGE/cinematic_audio/astra_audio/action_foley.py` — 122 lines — Action-chain Foley planner for story-driven physical interactions.
+  - functions: _find, analyze_action_chains
+- `engines/EDGE/cinematic_audio/astra_audio/io.py` — 121 lines
+  - functions: probe_audio, load_audio, save_wav, save_json_atomic
+- `engines/EDGE/dialogue_renderer.py` — 118 lines — Character-aware rendering with sentence-level Hindi prosody planning.
+  - functions: load_voice_profiles, map_profiles_by_name, can_assemble, render_story, _reshape
+- `engines/EDGE/cinematic_audio/tests/test_engine.py` — 111 lines
+  - classes: EngineTests
+- `engines/EDGE/cinematic_audio/astra_audio/quality_check.py` — 109 lines
+  - functions: _db, _chunked_true_peak, quality_check
+- `engines/EDGE/cinematic_audio/tests/test_tts_sarvam.py` — 106 lines
+  - functions: _fake_wav_b64, test_sarvam_adapter_validates_payload_and_writes_wav, test_sarvam_adapter_refuses_overwrite_and_bad_controls, test_sarvam_adapter_requires_key_when_real_transport_used, test_split_tts_text_preserves_text_and_limit, test_script_tts_keeps_one_voice_id_per_character, test_sarvam_voice_adapter_integrates_with_audio_workflow, test_sarvam_script_generation_rolls_back_partial_clips_on_failure
+- `engines/EDGE/agent_benchmark.py` — 94 lines — Transparent, evidence-based evaluation of one browser research run.
+  - functions: _read, evaluate, fixture_self_test
+- `engines/EDGE/cinematic_audio/tests/test_story_intelligence.py` — 94 lines
+  - classes: StoryIntelligenceTests
+- `engines/EDGE/browser_research.py` — 92 lines — Engine-owned browser/research collector with conservative safety controls.
+  - functions: _robots_allowed, clean_html_text, collect, browser_collect
+- `engines/EDGE/cinematic_audio/tests/test_real_library.py` — 92 lines
+  - functions: _write, test_real_library_indexes_actual_audio_and_preserves_source, test_production_spec_requires_explicit_approval_and_timestamp, test_production_spec_blocks_unapproved_and_missing_timestamps, test_production_spec_requires_reason_for_explicit_omission, test_one_call_production_pipeline_runs_index_to_qa
+- `engines/EDGE/tests/test_agent_cognition_v10.py` — 90 lines
+  - classes: CognitionV10Tests, WebFirstV11Tests
+- `engines/EDGE/cinematic_audio/astra_audio/workflow.py` — 86 lines — Fail-closed orchestration contracts for the standalone ASTRA audio workflow.
+  - classes: StageResult, WorkflowError, AudioWorkflow
+- `engines/EDGE/tts_engine.py` — 86 lines — TTS adapters with explicit per-character voice routing and capability limits.
+  - functions: _slow_rate, render_segment
+- `engines/EDGE/performance.py` — 82 lines — Performance markup and dialogue planning.
+  - functions: parse_performance_line, _text_events, plan_script, stretch_rate
+- `engines/EDGE/hindi_understanding.py` — 79 lines — Conservative Hindi story understanding: entities, speaker map, emotion, relations and ambiguity.
+  - functions: _id, _norm, _emotion, analyze_story, save_analysis
+- `engines/EDGE/prosody_intelligence.py` — 79 lines — Context-aware Hindi performance planner. Rule-based baseline; never claims human-level emotion understanding.
+  - functions: _score, _explicit, _delivery, analyze_line, analyze_script
+- `engines/EDGE/character_voice.py` — 74 lines — Character profile planning; does not fabricate unsupported voices.
+  - functions: make_profiles, save_profiles, voice_shape
+- `engines/EDGE/cinematic_audio/tests/test_asset_matching.py` — 74 lines
+  - functions: test_matches_shankh_without_confusing_bell, test_unknown_license_never_commercial_auto_eligible, test_license_and_audition_both_required, test_no_guess_when_no_match, test_bad_catalog_and_parameters_rejected, test_bell_event_does_not_match_conch_mentioned_in_same_line, test_asset_matcher_workflow_adapter_consumes_story_understanding_output, test_asset_matcher_workflow_adapter_fails_closed_without_story_analysis, test_peacock_cry_is_not_misclassified_as_human_sobbing
+- `engines/EDGE/cinematic_audio/astra_audio/vocal_dataset.py` — 68 lines — Consent-aware dataset manifest builder for future voice-model fine-tuning.
+  - functions: build_voice_dataset_manifest
+- `engines/EDGE/cinematic_audio/tests/test_vocal_intelligence.py` — 66 lines
+  - functions: test_attach_speakers_by_maximum_overlap, test_report_never_overwrites_audio, test_missing_audio_rejected, test_backend_status_is_non_downloading, test_dataset_manifest_requires_explicit_consent, test_dataset_manifest_indexes_consented_clips
+- `engines/EDGE/hindi_phonology.py` — 58 lines — Hindi Devanagari orthography/phonology inspection (rule-based, transparent, no fake IPA).
+  - functions: graphemes, inspect_word, inspect_text
+- `engines/EDGE/cinematic_audio/tests/test_editor.py` — 56 lines
+  - functions: test_editor_rejects_vocal_output_overwriting_input, test_editor_rejects_extreme_vocal_duration_mismatch
+  - classes: EditorTests
+- `engines/EDGE/cinematic_audio/tests/test_quality_gate.py` — 55 lines
+  - classes: QualityGateTests
+- `engines/EDGE/cinematic_audio/astra_audio/audit.py` — 54 lines
+  - functions: sha256_file, audit_folder
+- `engines/EDGE/cinematic_audio/tests/test_workflow.py` — 54 lines
+  - functions: test_readiness_reports_all_unconnected_stages, test_full_workflow_runs_in_declared_order, test_missing_adapter_blocks_before_any_stage_runs, test_stage_failure_stops_following_stages, test_duplicate_and_unknown_registration_rejected
+- `engines/EDGE/audio_assembly.py` — 52 lines — Optional FFmpeg assembly for mixed per-character audio chunks and natural pauses.
+  - functions: _ffmpeg, make_silence, assemble_wav
+- `engines/EDGE/cinematic_audio/astra_audio/acoustic_map.py` — 48 lines
+  - functions: build_acoustic_map
+- `engines/EDGE/tests/test_performance.py` — 48 lines
+  - classes: PerformanceTests
+- `engines/EDGE/tests/test_v08_audio_browser.py` — 48 lines
+  - classes: V08Tests
+- `engines/EDGE/tests/test_deep_intelligence.py` — 47 lines
+  - classes: DeepIntelligenceTests
+- `engines/EDGE/tests/test_prosody_v07.py` — 45 lines
+  - classes: TestHindiProsodyV07, TestProsodyAdapterIntegration, TestRenderPipelineIntegration
+- `engines/EDGE/cinematic_audio/tools.py` — 42 lines — Per-engine cinematic story audio and deep vocal QA adapters.
+  - functions: prepare_story, plan_soundscape, plan_actions, audio_qa, vocal_backends, vocal_audit, mix_story, index_library, produce_story
+- `engines/EDGE/error_memory.py` — 42 lines — Persistent per-engine error ledger with regression-test references.
+  - classes: ErrorLedger
+- `engines/EDGE/tests/test_core.py` — 42 lines
+  - classes: CoreTests
+- `engines/EDGE/model_registry.py` — 40 lines — Local model inventory and conservative capability reporting.
+  - functions: inspect_model_file, scan_model_directories, verify_manifest
+- `engines/EDGE/cinematic_audio/tests/test_advanced.py` — 39 lines
+  - classes: AdvancedTests
+- `engines/EDGE/cinematic_audio/tests/test_action_foley.py` — 36 lines
+  - functions: test_rope_window_descent_chain_extracts_explicit_steps, test_reverse_climb_and_window_entry, test_soundscape_includes_action_chains_per_scene, test_no_invented_rope_cues_when_not_in_story
+- `engines/EDGE/tests/test_open_source_learning.py` — 36 lines
+  - classes: OpenSourceLearningTests
+- `engines/EDGE/cinematic_audio/astra_audio/library.py` — 35 lines
+  - functions: sha256_file
+  - classes: AssetWorkspace
+- `engines/EDGE/cinematic_audio/tests/test_story_production.py` — 35 lines
+  - functions: test_prepare_story_audio_combines_world_and_action_and_story, test_prepare_story_audio_matches_action_tags_without_auto_insertion, test_unknown_story_gets_generic_plan_and_no_fake_assets
+- `engines/EDGE/audio_perception.py` — 34 lines — Optional audio diagnostics and speech-recognition adapters.
+  - functions: inspect_audio, transcribe_with_faster_whisper
+- `engines/EDGE/quality_lab.py` — 34 lines — Release gates: never infer audio quality from code tests.
+  - functions: blank_report, evaluate, save_report
+- `engines/EDGE/cinematic_audio/tests/test_soundscape_planner.py` — 33 lines
+  - functions: test_world_locations_and_foley_are_not_train_specific, test_unknown_world_gets_conservative_fallback, test_no_automatic_horror_noise_from_cemetery_alone
+- `engines/EDGE/system_watchdog.py` — 32 lines — Read-only health monitor for this engine only.
+  - functions: health_report
+- `engines/EDGE/cinematic_audio/tests/test_soundstage.py` — 31 lines
+  - functions: test_soundstage_renders_spatial_tracks_and_keeps_sources, test_soundstage_rejects_bad_pan
+- `engines/EDGE/svara_bridge.py` — 31 lines — Optional Svara-TTS expressive Hindi neural backend bridge.
+  - functions: render
+- `engines/EDGE/cinematic_audio/astra_audio/policy.py` — 29 lines — Conservative context policy. Tags are hints, never automatic truth.
+  - functions: build_policy
+  - classes: AudioPolicy
+- `engines/EDGE/cinematic_audio/astra_audio/adapters.py` — 17 lines — Optional AI adapter contracts. No model/API is bundled or required.
+  - classes: AudioUnderstandingAdapter, SourceSeparationAdapter, SpeechEnhancementAdapter
+- `engines/EDGE/cinematic_audio/astra_audio/quality.py` — 15 lines — Before/after quality gate: technical indicators only, not perceptual truth.
+  - functions: compare_reports
+- `engines/EDGE/tests/test_watchdog.py` — 11 lines
+  - classes: WatchdogTests
+- `engines/EDGE/tests/test_browser_agent.py` — 9 lines
+  - classes: BrowserAgentTests
+- `engines/EDGE/tests/test_agent_benchmark.py` — 8 lines
+  - classes: AgentBenchmarkTests
+- `engines/EDGE/cinematic_audio/astra_audio/__init__.py` — 1 lines
+- `engines/EDGE/cinematic_audio/__init__.py` — 0 lines
+
+## engines/ELEVENLABS  (76 files)
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/story_mix.py` — 363 lines
+  - functions: _finite_number, _rms_db, _resample, _smooth_envelope, _active_rms_db, _activity_envelope, _scene_gain_curve, mix_story
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/real_library.py` — 317 lines — Real-file audio library indexing and safe production-spec assembly.
+  - functions: _sha256, _filename_hints, index_audio_library, build_production_spec, produce_story_audio
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/tts_sarvam.py` — 308 lines — Sarvam Bulbul REST TTS adapter with per-character voice continuity.
+  - functions: split_tts_text, extract_script_segments, synthesize_script, make_workflow_adapter
+  - classes: SarvamTTS
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/story_intelligence.py` — 307 lines
+  - functions: _environment, _norm, _matches, _emotion, _scene_heading, _timecode_seconds, _speaker_line, analyze_script_text, analyze_script_file, build_reviewable_mix_spec
+- `engines/ELEVENLABS/browser_agent_v08.py` — 298 lines — v0.8 independent deep research browser agent.
+  - functions: utc, terms, score, quality, robots_ok, _add, discover, fetch, research, agent_status
+  - classes: Extractor, Source
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/cli.py` — 288 lines
+  - functions: main
+- `engines/ELEVENLABS/browser_agent.py` — 240 lines — Autonomous, engine-local web research agent.
+  - functions: _robots, _terms, _score, _search_retry, _search, _fetch, research, agent_status
+  - classes: _TextExtractor, Source
+- `engines/ELEVENLABS/app.py` — 229 lines
+  - functions: dump, scan, models, collect, profiles, render, render_story_command, show_errors, resolve_error, inspect, preflight, new_report, deep_analysis_command, phonology_command …
+- `engines/ELEVENLABS/agent_cognition.py` — 227 lines — Evidence-grounded multi-role cognition for the independent Hindi voice agents.
+  - functions: _load_dotenv, _config, backend_status, _chat, _json_from_text, plan_research_queries, _sentences, offline_evidence_analysis, analyze_sources, load_sources
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/editor.py` — 222 lines — Non-destructive AI-assisted audio editing primitives for ASTRA.
+  - functions: _read, _write, inspect_audio, cut_audio, _resample_channels, join_audio, apply_effects, separate_stems, replace_vocals_with_hindi, execute_project
+- `engines/ELEVENLABS/agent_evolution.py` — 214 lines — Persistent, evidence-grounded evolution loop for one ASTRA engine agent.
+  - functions: _tokens, _now, self_test
+  - classes: AgentEvolution
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/vocal_intelligence.py` — 204 lines — Optional deep-learning vocal intelligence adapters for ASTRA.
+  - functions: backend_status, _require_file, _transcribe, _diarize, _speaker_embeddings, _attach_speakers, _emotion_classify, analyze_vocal_file, save_vocal_report
+- `engines/ELEVENLABS/open_source_learning.py` — 186 lines — Non-blocking, evidence-first open-source TTS research connector.
+  - functions: _now, _extract, _collect, _write_status, start_svara_learning, learning_status, load_open_source_records
+  - classes: _Text
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/asset_matching.py` — 176 lines — Conservative catalog matching for story sound events.
+  - functions: _tokens, _load_catalog, _event_terms, match_assets, make_workflow_adapter
+- `engines/ELEVENLABS/cinematic_audio/tests/test_story_mix.py` — 173 lines
+  - classes: StoryMixTests
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/analyzer.py` — 150 lines
+  - functions: _db, _frame_rms, _spectral_features, _timeline, analyze_array, analyze_audio
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/processor.py` — 144 lines
+  - functions: _filter_sos, _spectral_denoise, process_audio
+  - classes: ProcessingOptions
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/soundscape_planner.py` — 138 lines — World-general, reviewable story soundscape planner.
+  - functions: _hits, plan_soundscape, plan_soundscape_file
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/story_production.py` — 130 lines — Single-pass story-to-audio review planner.
+  - functions: prepare_story_audio, prepare_story_audio_file
+- `engines/ELEVENLABS/intelligence_agent.py` — 127 lines — Engine-local autonomous research, evidence memory and continual-improvement loop.
+  - functions: utc, run_cycle, autopilot
+  - classes: IntelligenceMemory
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/soundstage.py` — 124 lines — Narrative-aware cinematic soundstage: smooth spatial automation + existing story mixer.
+  - functions: _finite, _curve, _smooth, _resample, _spatialize, render_soundstage
+- `engines/ELEVENLABS/hindi_core.py` — 123 lines — Hindi text preparation and structured character/dialogue analysis.
+  - functions: normalize_hindi, language_diagnostics, stable_id, _speaker_line, scan_script, scan_file
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/action_foley.py` — 122 lines — Action-chain Foley planner for story-driven physical interactions.
+  - functions: _find, analyze_action_chains
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/io.py` — 121 lines
+  - functions: probe_audio, load_audio, save_wav, save_json_atomic
+- `engines/ELEVENLABS/dialogue_renderer.py` — 118 lines — Character-aware rendering with sentence-level Hindi prosody planning.
+  - functions: load_voice_profiles, map_profiles_by_name, can_assemble, render_story, _reshape
+- `engines/ELEVENLABS/cinematic_audio/tests/test_engine.py` — 111 lines
+  - classes: EngineTests
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/quality_check.py` — 109 lines
+  - functions: _db, _chunked_true_peak, quality_check
+- `engines/ELEVENLABS/cinematic_audio/tests/test_tts_sarvam.py` — 106 lines
+  - functions: _fake_wav_b64, test_sarvam_adapter_validates_payload_and_writes_wav, test_sarvam_adapter_refuses_overwrite_and_bad_controls, test_sarvam_adapter_requires_key_when_real_transport_used, test_split_tts_text_preserves_text_and_limit, test_script_tts_keeps_one_voice_id_per_character, test_sarvam_voice_adapter_integrates_with_audio_workflow, test_sarvam_script_generation_rolls_back_partial_clips_on_failure
+- `engines/ELEVENLABS/agent_benchmark.py` — 94 lines — Transparent, evidence-based evaluation of one browser research run.
+  - functions: _read, evaluate, fixture_self_test
+- `engines/ELEVENLABS/cinematic_audio/tests/test_story_intelligence.py` — 94 lines
+  - classes: StoryIntelligenceTests
+- `engines/ELEVENLABS/browser_research.py` — 92 lines — Engine-owned browser/research collector with conservative safety controls.
+  - functions: _robots_allowed, clean_html_text, collect, browser_collect
+- `engines/ELEVENLABS/cinematic_audio/tests/test_real_library.py` — 92 lines
+  - functions: _write, test_real_library_indexes_actual_audio_and_preserves_source, test_production_spec_requires_explicit_approval_and_timestamp, test_production_spec_blocks_unapproved_and_missing_timestamps, test_production_spec_requires_reason_for_explicit_omission, test_one_call_production_pipeline_runs_index_to_qa
+- `engines/ELEVENLABS/tests/test_agent_cognition_v10.py` — 90 lines
+  - classes: CognitionV10Tests, WebFirstV11Tests
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/workflow.py` — 86 lines — Fail-closed orchestration contracts for the standalone ASTRA audio workflow.
+  - classes: StageResult, WorkflowError, AudioWorkflow
+- `engines/ELEVENLABS/tts_engine.py` — 86 lines — TTS adapters with explicit per-character voice routing and capability limits.
+  - functions: _slow_rate, render_segment
+- `engines/ELEVENLABS/performance.py` — 82 lines — Performance markup and dialogue planning.
+  - functions: parse_performance_line, _text_events, plan_script, stretch_rate
+- `engines/ELEVENLABS/hindi_understanding.py` — 79 lines — Conservative Hindi story understanding: entities, speaker map, emotion, relations and ambiguity.
+  - functions: _id, _norm, _emotion, analyze_story, save_analysis
+- `engines/ELEVENLABS/prosody_intelligence.py` — 79 lines — Context-aware Hindi performance planner. Rule-based baseline; never claims human-level emotion understanding.
+  - functions: _score, _explicit, _delivery, analyze_line, analyze_script
+- `engines/ELEVENLABS/character_voice.py` — 74 lines — Character profile planning; does not fabricate unsupported voices.
+  - functions: make_profiles, save_profiles, voice_shape
+- `engines/ELEVENLABS/cinematic_audio/tests/test_asset_matching.py` — 74 lines
+  - functions: test_matches_shankh_without_confusing_bell, test_unknown_license_never_commercial_auto_eligible, test_license_and_audition_both_required, test_no_guess_when_no_match, test_bad_catalog_and_parameters_rejected, test_bell_event_does_not_match_conch_mentioned_in_same_line, test_asset_matcher_workflow_adapter_consumes_story_understanding_output, test_asset_matcher_workflow_adapter_fails_closed_without_story_analysis, test_peacock_cry_is_not_misclassified_as_human_sobbing
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/vocal_dataset.py` — 68 lines — Consent-aware dataset manifest builder for future voice-model fine-tuning.
+  - functions: build_voice_dataset_manifest
+- `engines/ELEVENLABS/cinematic_audio/tests/test_vocal_intelligence.py` — 66 lines
+  - functions: test_attach_speakers_by_maximum_overlap, test_report_never_overwrites_audio, test_missing_audio_rejected, test_backend_status_is_non_downloading, test_dataset_manifest_requires_explicit_consent, test_dataset_manifest_indexes_consented_clips
+- `engines/ELEVENLABS/hindi_phonology.py` — 58 lines — Hindi Devanagari orthography/phonology inspection (rule-based, transparent, no fake IPA).
+  - functions: graphemes, inspect_word, inspect_text
+- `engines/ELEVENLABS/cinematic_audio/tests/test_editor.py` — 56 lines
+  - functions: test_editor_rejects_vocal_output_overwriting_input, test_editor_rejects_extreme_vocal_duration_mismatch
+  - classes: EditorTests
+- `engines/ELEVENLABS/cinematic_audio/tests/test_quality_gate.py` — 55 lines
+  - classes: QualityGateTests
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/audit.py` — 54 lines
+  - functions: sha256_file, audit_folder
+- `engines/ELEVENLABS/cinematic_audio/tests/test_workflow.py` — 54 lines
+  - functions: test_readiness_reports_all_unconnected_stages, test_full_workflow_runs_in_declared_order, test_missing_adapter_blocks_before_any_stage_runs, test_stage_failure_stops_following_stages, test_duplicate_and_unknown_registration_rejected
+- `engines/ELEVENLABS/audio_assembly.py` — 52 lines — Optional FFmpeg assembly for mixed per-character audio chunks and natural pauses.
+  - functions: _ffmpeg, make_silence, assemble_wav
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/acoustic_map.py` — 48 lines
+  - functions: build_acoustic_map
+- `engines/ELEVENLABS/tests/test_performance.py` — 48 lines
+  - classes: PerformanceTests
+- `engines/ELEVENLABS/tests/test_v08_audio_browser.py` — 48 lines
+  - classes: V08Tests
+- `engines/ELEVENLABS/tests/test_deep_intelligence.py` — 47 lines
+  - classes: DeepIntelligenceTests
+- `engines/ELEVENLABS/tests/test_prosody_v07.py` — 44 lines
+  - classes: TestHindiProsodyV07, TestProsodyAdapterIntegration, TestRenderPipelineIntegration
+- `engines/ELEVENLABS/cinematic_audio/tools.py` — 42 lines — Per-engine cinematic story audio and deep vocal QA adapters.
+  - functions: prepare_story, plan_soundscape, plan_actions, audio_qa, vocal_backends, vocal_audit, mix_story, index_library, produce_story
+- `engines/ELEVENLABS/error_memory.py` — 42 lines — Persistent per-engine error ledger with regression-test references.
+  - classes: ErrorLedger
+- `engines/ELEVENLABS/tests/test_core.py` — 42 lines
+  - classes: CoreTests
+- `engines/ELEVENLABS/model_registry.py` — 40 lines — Local model inventory and conservative capability reporting.
+  - functions: inspect_model_file, scan_model_directories, verify_manifest
+- `engines/ELEVENLABS/cinematic_audio/tests/test_advanced.py` — 39 lines
+  - classes: AdvancedTests
+- `engines/ELEVENLABS/cinematic_audio/tests/test_action_foley.py` — 36 lines
+  - functions: test_rope_window_descent_chain_extracts_explicit_steps, test_reverse_climb_and_window_entry, test_soundscape_includes_action_chains_per_scene, test_no_invented_rope_cues_when_not_in_story
+- `engines/ELEVENLABS/tests/test_open_source_learning.py` — 36 lines
+  - classes: OpenSourceLearningTests
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/library.py` — 35 lines
+  - functions: sha256_file
+  - classes: AssetWorkspace
+- `engines/ELEVENLABS/cinematic_audio/tests/test_story_production.py` — 35 lines
+  - functions: test_prepare_story_audio_combines_world_and_action_and_story, test_prepare_story_audio_matches_action_tags_without_auto_insertion, test_unknown_story_gets_generic_plan_and_no_fake_assets
+- `engines/ELEVENLABS/audio_perception.py` — 34 lines — Optional audio diagnostics and speech-recognition adapters.
+  - functions: inspect_audio, transcribe_with_faster_whisper
+- `engines/ELEVENLABS/quality_lab.py` — 34 lines — Release gates: never infer audio quality from code tests.
+  - functions: blank_report, evaluate, save_report
+- `engines/ELEVENLABS/cinematic_audio/tests/test_soundscape_planner.py` — 33 lines
+  - functions: test_world_locations_and_foley_are_not_train_specific, test_unknown_world_gets_conservative_fallback, test_no_automatic_horror_noise_from_cemetery_alone
+- `engines/ELEVENLABS/system_watchdog.py` — 32 lines — Read-only health monitor for this engine only.
+  - functions: health_report
+- `engines/ELEVENLABS/cinematic_audio/tests/test_soundstage.py` — 31 lines
+  - functions: test_soundstage_renders_spatial_tracks_and_keeps_sources, test_soundstage_rejects_bad_pan
+- `engines/ELEVENLABS/svara_bridge.py` — 31 lines — Optional Svara-TTS expressive Hindi neural backend bridge.
+  - functions: render
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/policy.py` — 29 lines — Conservative context policy. Tags are hints, never automatic truth.
+  - functions: build_policy
+  - classes: AudioPolicy
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/adapters.py` — 17 lines — Optional AI adapter contracts. No model/API is bundled or required.
+  - classes: AudioUnderstandingAdapter, SourceSeparationAdapter, SpeechEnhancementAdapter
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/quality.py` — 15 lines — Before/after quality gate: technical indicators only, not perceptual truth.
+  - functions: compare_reports
+- `engines/ELEVENLABS/tests/test_watchdog.py` — 11 lines
+  - classes: WatchdogTests
+- `engines/ELEVENLABS/tests/test_browser_agent.py` — 9 lines
+  - classes: BrowserAgentTests
+- `engines/ELEVENLABS/tests/test_agent_benchmark.py` — 8 lines
+  - classes: AgentBenchmarkTests
+- `engines/ELEVENLABS/cinematic_audio/astra_audio/__init__.py` — 1 lines
+- `engines/ELEVENLABS/cinematic_audio/__init__.py` — 0 lines
+
+## engines/ESPEAK  (76 files)
+- `engines/ESPEAK/cinematic_audio/astra_audio/story_mix.py` — 363 lines
+  - functions: _finite_number, _rms_db, _resample, _smooth_envelope, _active_rms_db, _activity_envelope, _scene_gain_curve, mix_story
+- `engines/ESPEAK/cinematic_audio/astra_audio/real_library.py` — 317 lines — Real-file audio library indexing and safe production-spec assembly.
+  - functions: _sha256, _filename_hints, index_audio_library, build_production_spec, produce_story_audio
+- `engines/ESPEAK/cinematic_audio/astra_audio/tts_sarvam.py` — 308 lines — Sarvam Bulbul REST TTS adapter with per-character voice continuity.
+  - functions: split_tts_text, extract_script_segments, synthesize_script, make_workflow_adapter
+  - classes: SarvamTTS
+- `engines/ESPEAK/cinematic_audio/astra_audio/story_intelligence.py` — 307 lines
+  - functions: _environment, _norm, _matches, _emotion, _scene_heading, _timecode_seconds, _speaker_line, analyze_script_text, analyze_script_file, build_reviewable_mix_spec
+- `engines/ESPEAK/browser_agent_v08.py` — 298 lines — v0.8 independent deep research browser agent.
+  - functions: utc, terms, score, quality, robots_ok, _add, discover, fetch, research, agent_status
+  - classes: Extractor, Source
+- `engines/ESPEAK/cinematic_audio/astra_audio/cli.py` — 288 lines
+  - functions: main
+- `engines/ESPEAK/browser_agent.py` — 240 lines — Autonomous, engine-local web research agent.
+  - functions: _robots, _terms, _score, _search_retry, _search, _fetch, research, agent_status
+  - classes: _TextExtractor, Source
+- `engines/ESPEAK/app.py` — 229 lines
+  - functions: dump, scan, models, collect, profiles, render, render_story_command, show_errors, resolve_error, inspect, preflight, new_report, deep_analysis_command, phonology_command …
+- `engines/ESPEAK/agent_cognition.py` — 227 lines — Evidence-grounded multi-role cognition for the independent Hindi voice agents.
+  - functions: _load_dotenv, _config, backend_status, _chat, _json_from_text, plan_research_queries, _sentences, offline_evidence_analysis, analyze_sources, load_sources
+- `engines/ESPEAK/cinematic_audio/astra_audio/editor.py` — 222 lines — Non-destructive AI-assisted audio editing primitives for ASTRA.
+  - functions: _read, _write, inspect_audio, cut_audio, _resample_channels, join_audio, apply_effects, separate_stems, replace_vocals_with_hindi, execute_project
+- `engines/ESPEAK/agent_evolution.py` — 214 lines — Persistent, evidence-grounded evolution loop for one ASTRA engine agent.
+  - functions: _tokens, _now, self_test
+  - classes: AgentEvolution
+- `engines/ESPEAK/cinematic_audio/astra_audio/vocal_intelligence.py` — 204 lines — Optional deep-learning vocal intelligence adapters for ASTRA.
+  - functions: backend_status, _require_file, _transcribe, _diarize, _speaker_embeddings, _attach_speakers, _emotion_classify, analyze_vocal_file, save_vocal_report
+- `engines/ESPEAK/open_source_learning.py` — 186 lines — Non-blocking, evidence-first open-source TTS research connector.
+  - functions: _now, _extract, _collect, _write_status, start_svara_learning, learning_status, load_open_source_records
+  - classes: _Text
+- `engines/ESPEAK/cinematic_audio/astra_audio/asset_matching.py` — 176 lines — Conservative catalog matching for story sound events.
+  - functions: _tokens, _load_catalog, _event_terms, match_assets, make_workflow_adapter
+- `engines/ESPEAK/cinematic_audio/tests/test_story_mix.py` — 173 lines
+  - classes: StoryMixTests
+- `engines/ESPEAK/cinematic_audio/astra_audio/analyzer.py` — 150 lines
+  - functions: _db, _frame_rms, _spectral_features, _timeline, analyze_array, analyze_audio
+- `engines/ESPEAK/cinematic_audio/astra_audio/processor.py` — 144 lines
+  - functions: _filter_sos, _spectral_denoise, process_audio
+  - classes: ProcessingOptions
+- `engines/ESPEAK/cinematic_audio/astra_audio/soundscape_planner.py` — 138 lines — World-general, reviewable story soundscape planner.
+  - functions: _hits, plan_soundscape, plan_soundscape_file
+- `engines/ESPEAK/cinematic_audio/astra_audio/story_production.py` — 130 lines — Single-pass story-to-audio review planner.
+  - functions: prepare_story_audio, prepare_story_audio_file
+- `engines/ESPEAK/intelligence_agent.py` — 127 lines — Engine-local autonomous research, evidence memory and continual-improvement loop.
+  - functions: utc, run_cycle, autopilot
+  - classes: IntelligenceMemory
+- `engines/ESPEAK/cinematic_audio/astra_audio/soundstage.py` — 124 lines — Narrative-aware cinematic soundstage: smooth spatial automation + existing story mixer.
+  - functions: _finite, _curve, _smooth, _resample, _spatialize, render_soundstage
+- `engines/ESPEAK/hindi_core.py` — 123 lines — Hindi text preparation and structured character/dialogue analysis.
+  - functions: normalize_hindi, language_diagnostics, stable_id, _speaker_line, scan_script, scan_file
+- `engines/ESPEAK/cinematic_audio/astra_audio/action_foley.py` — 122 lines — Action-chain Foley planner for story-driven physical interactions.
+  - functions: _find, analyze_action_chains
+- `engines/ESPEAK/cinematic_audio/astra_audio/io.py` — 121 lines
+  - functions: probe_audio, load_audio, save_wav, save_json_atomic
+- `engines/ESPEAK/dialogue_renderer.py` — 118 lines — Character-aware rendering with sentence-level Hindi prosody planning.
+  - functions: load_voice_profiles, map_profiles_by_name, can_assemble, render_story, _reshape
+- `engines/ESPEAK/cinematic_audio/tests/test_engine.py` — 111 lines
+  - classes: EngineTests
+- `engines/ESPEAK/cinematic_audio/astra_audio/quality_check.py` — 109 lines
+  - functions: _db, _chunked_true_peak, quality_check
+- `engines/ESPEAK/cinematic_audio/tests/test_tts_sarvam.py` — 106 lines
+  - functions: _fake_wav_b64, test_sarvam_adapter_validates_payload_and_writes_wav, test_sarvam_adapter_refuses_overwrite_and_bad_controls, test_sarvam_adapter_requires_key_when_real_transport_used, test_split_tts_text_preserves_text_and_limit, test_script_tts_keeps_one_voice_id_per_character, test_sarvam_voice_adapter_integrates_with_audio_workflow, test_sarvam_script_generation_rolls_back_partial_clips_on_failure
+- `engines/ESPEAK/agent_benchmark.py` — 94 lines — Transparent, evidence-based evaluation of one browser research run.
+  - functions: _read, evaluate, fixture_self_test
+- `engines/ESPEAK/cinematic_audio/tests/test_story_intelligence.py` — 94 lines
+  - classes: StoryIntelligenceTests
+- `engines/ESPEAK/browser_research.py` — 92 lines — Engine-owned browser/research collector with conservative safety controls.
+  - functions: _robots_allowed, clean_html_text, collect, browser_collect
+- `engines/ESPEAK/cinematic_audio/tests/test_real_library.py` — 92 lines
+  - functions: _write, test_real_library_indexes_actual_audio_and_preserves_source, test_production_spec_requires_explicit_approval_and_timestamp, test_production_spec_blocks_unapproved_and_missing_timestamps, test_production_spec_requires_reason_for_explicit_omission, test_one_call_production_pipeline_runs_index_to_qa
+- `engines/ESPEAK/tests/test_agent_cognition_v10.py` — 90 lines
+  - classes: CognitionV10Tests, WebFirstV11Tests
+- `engines/ESPEAK/cinematic_audio/astra_audio/workflow.py` — 86 lines — Fail-closed orchestration contracts for the standalone ASTRA audio workflow.
+  - classes: StageResult, WorkflowError, AudioWorkflow
+- `engines/ESPEAK/tts_engine.py` — 86 lines — TTS adapters with explicit per-character voice routing and capability limits.
+  - functions: _slow_rate, render_segment
+- `engines/ESPEAK/performance.py` — 82 lines — Performance markup and dialogue planning.
+  - functions: parse_performance_line, _text_events, plan_script, stretch_rate
+- `engines/ESPEAK/hindi_understanding.py` — 79 lines — Conservative Hindi story understanding: entities, speaker map, emotion, relations and ambiguity.
+  - functions: _id, _norm, _emotion, analyze_story, save_analysis
+- `engines/ESPEAK/prosody_intelligence.py` — 79 lines — Context-aware Hindi performance planner. Rule-based baseline; never claims human-level emotion understanding.
+  - functions: _score, _explicit, _delivery, analyze_line, analyze_script
+- `engines/ESPEAK/character_voice.py` — 74 lines — Character profile planning; does not fabricate unsupported voices.
+  - functions: make_profiles, save_profiles, voice_shape
+- `engines/ESPEAK/cinematic_audio/tests/test_asset_matching.py` — 74 lines
+  - functions: test_matches_shankh_without_confusing_bell, test_unknown_license_never_commercial_auto_eligible, test_license_and_audition_both_required, test_no_guess_when_no_match, test_bad_catalog_and_parameters_rejected, test_bell_event_does_not_match_conch_mentioned_in_same_line, test_asset_matcher_workflow_adapter_consumes_story_understanding_output, test_asset_matcher_workflow_adapter_fails_closed_without_story_analysis, test_peacock_cry_is_not_misclassified_as_human_sobbing
+- `engines/ESPEAK/cinematic_audio/astra_audio/vocal_dataset.py` — 68 lines — Consent-aware dataset manifest builder for future voice-model fine-tuning.
+  - functions: build_voice_dataset_manifest
+- `engines/ESPEAK/cinematic_audio/tests/test_vocal_intelligence.py` — 66 lines
+  - functions: test_attach_speakers_by_maximum_overlap, test_report_never_overwrites_audio, test_missing_audio_rejected, test_backend_status_is_non_downloading, test_dataset_manifest_requires_explicit_consent, test_dataset_manifest_indexes_consented_clips
+- `engines/ESPEAK/hindi_phonology.py` — 58 lines — Hindi Devanagari orthography/phonology inspection (rule-based, transparent, no fake IPA).
+  - functions: graphemes, inspect_word, inspect_text
+- `engines/ESPEAK/cinematic_audio/tests/test_editor.py` — 56 lines
+  - functions: test_editor_rejects_vocal_output_overwriting_input, test_editor_rejects_extreme_vocal_duration_mismatch
+  - classes: EditorTests
+- `engines/ESPEAK/cinematic_audio/tests/test_quality_gate.py` — 55 lines
+  - classes: QualityGateTests
+- `engines/ESPEAK/cinematic_audio/astra_audio/audit.py` — 54 lines
+  - functions: sha256_file, audit_folder
+- `engines/ESPEAK/cinematic_audio/tests/test_workflow.py` — 54 lines
+  - functions: test_readiness_reports_all_unconnected_stages, test_full_workflow_runs_in_declared_order, test_missing_adapter_blocks_before_any_stage_runs, test_stage_failure_stops_following_stages, test_duplicate_and_unknown_registration_rejected
+- `engines/ESPEAK/audio_assembly.py` — 52 lines — Optional FFmpeg assembly for mixed per-character audio chunks and natural pauses.
+  - functions: _ffmpeg, make_silence, assemble_wav
+- `engines/ESPEAK/cinematic_audio/astra_audio/acoustic_map.py` — 48 lines
+  - functions: build_acoustic_map
+- `engines/ESPEAK/tests/test_performance.py` — 48 lines
+  - classes: PerformanceTests
+- `engines/ESPEAK/tests/test_v08_audio_browser.py` — 48 lines
+  - classes: V08Tests
+- `engines/ESPEAK/tests/test_deep_intelligence.py` — 47 lines
+  - classes: DeepIntelligenceTests
+- `engines/ESPEAK/tests/test_prosody_v07.py` — 44 lines
+  - classes: TestHindiProsodyV07, TestProsodyAdapterIntegration, TestRenderPipelineIntegration
+- `engines/ESPEAK/cinematic_audio/tools.py` — 42 lines — Per-engine cinematic story audio and deep vocal QA adapters.
+  - functions: prepare_story, plan_soundscape, plan_actions, audio_qa, vocal_backends, vocal_audit, mix_story, index_library, produce_story
+- `engines/ESPEAK/error_memory.py` — 42 lines — Persistent per-engine error ledger with regression-test references.
+  - classes: ErrorLedger
+- `engines/ESPEAK/tests/test_core.py` — 42 lines
+  - classes: CoreTests
+- `engines/ESPEAK/model_registry.py` — 40 lines — Local model inventory and conservative capability reporting.
+  - functions: inspect_model_file, scan_model_directories, verify_manifest
+- `engines/ESPEAK/cinematic_audio/tests/test_advanced.py` — 39 lines
+  - classes: AdvancedTests
+- `engines/ESPEAK/cinematic_audio/tests/test_action_foley.py` — 36 lines
+  - functions: test_rope_window_descent_chain_extracts_explicit_steps, test_reverse_climb_and_window_entry, test_soundscape_includes_action_chains_per_scene, test_no_invented_rope_cues_when_not_in_story
+- `engines/ESPEAK/tests/test_open_source_learning.py` — 36 lines
+  - classes: OpenSourceLearningTests
+- `engines/ESPEAK/cinematic_audio/astra_audio/library.py` — 35 lines
+  - functions: sha256_file
+  - classes: AssetWorkspace
+- `engines/ESPEAK/cinematic_audio/tests/test_story_production.py` — 35 lines
+  - functions: test_prepare_story_audio_combines_world_and_action_and_story, test_prepare_story_audio_matches_action_tags_without_auto_insertion, test_unknown_story_gets_generic_plan_and_no_fake_assets
+- `engines/ESPEAK/audio_perception.py` — 34 lines — Optional audio diagnostics and speech-recognition adapters.
+  - functions: inspect_audio, transcribe_with_faster_whisper
+- `engines/ESPEAK/quality_lab.py` — 34 lines — Release gates: never infer audio quality from code tests.
+  - functions: blank_report, evaluate, save_report
+- `engines/ESPEAK/cinematic_audio/tests/test_soundscape_planner.py` — 33 lines
+  - functions: test_world_locations_and_foley_are_not_train_specific, test_unknown_world_gets_conservative_fallback, test_no_automatic_horror_noise_from_cemetery_alone
+- `engines/ESPEAK/system_watchdog.py` — 32 lines — Read-only health monitor for this engine only.
+  - functions: health_report
+- `engines/ESPEAK/cinematic_audio/tests/test_soundstage.py` — 31 lines
+  - functions: test_soundstage_renders_spatial_tracks_and_keeps_sources, test_soundstage_rejects_bad_pan
+- `engines/ESPEAK/svara_bridge.py` — 31 lines — Optional Svara-TTS expressive Hindi neural backend bridge.
+  - functions: render
+- `engines/ESPEAK/cinematic_audio/astra_audio/policy.py` — 29 lines — Conservative context policy. Tags are hints, never automatic truth.
+  - functions: build_policy
+  - classes: AudioPolicy
+- `engines/ESPEAK/cinematic_audio/astra_audio/adapters.py` — 17 lines — Optional AI adapter contracts. No model/API is bundled or required.
+  - classes: AudioUnderstandingAdapter, SourceSeparationAdapter, SpeechEnhancementAdapter
+- `engines/ESPEAK/cinematic_audio/astra_audio/quality.py` — 15 lines — Before/after quality gate: technical indicators only, not perceptual truth.
+  - functions: compare_reports
+- `engines/ESPEAK/tests/test_watchdog.py` — 11 lines
+  - classes: WatchdogTests
+- `engines/ESPEAK/tests/test_browser_agent.py` — 9 lines
+  - classes: BrowserAgentTests
+- `engines/ESPEAK/tests/test_agent_benchmark.py` — 8 lines
+  - classes: AgentBenchmarkTests
+- `engines/ESPEAK/cinematic_audio/astra_audio/__init__.py` — 1 lines
+- `engines/ESPEAK/cinematic_audio/__init__.py` — 0 lines
+
+## engines/PIPER  (78 files)
+- `engines/PIPER/cinematic_audio/astra_audio/story_mix.py` — 363 lines
+  - functions: _finite_number, _rms_db, _resample, _smooth_envelope, _active_rms_db, _activity_envelope, _scene_gain_curve, mix_story
+- `engines/PIPER/cinematic_audio/astra_audio/real_library.py` — 317 lines — Real-file audio library indexing and safe production-spec assembly.
+  - functions: _sha256, _filename_hints, index_audio_library, build_production_spec, produce_story_audio
+- `engines/PIPER/cinematic_audio/astra_audio/tts_sarvam.py` — 308 lines — Sarvam Bulbul REST TTS adapter with per-character voice continuity.
+  - functions: split_tts_text, extract_script_segments, synthesize_script, make_workflow_adapter
+  - classes: SarvamTTS
+- `engines/PIPER/cinematic_audio/astra_audio/story_intelligence.py` — 307 lines
+  - functions: _environment, _norm, _matches, _emotion, _scene_heading, _timecode_seconds, _speaker_line, analyze_script_text, analyze_script_file, build_reviewable_mix_spec
+- `engines/PIPER/browser_agent_v08.py` — 298 lines — v0.8 independent deep research browser agent.
+  - functions: utc, terms, score, quality, robots_ok, _add, discover, fetch, research, agent_status
+  - classes: Extractor, Source
+- `engines/PIPER/cinematic_audio/astra_audio/cli.py` — 288 lines
+  - functions: main
+- `engines/PIPER/app.py` — 257 lines
+  - functions: dump, scan, models, collect, profiles, render, render_story_command, show_errors, resolve_error, inspect, preflight, new_report, deep_analysis_command, phonology_command …
+- `engines/PIPER/browser_agent.py` — 240 lines — Autonomous, engine-local web research agent.
+  - functions: _robots, _terms, _score, _search_retry, _search, _fetch, research, agent_status
+  - classes: _TextExtractor, Source
+- `engines/PIPER/piper_indicf5_backend.py` — 236 lines — Optional IndicF5 reference-voice backend for the Piper project.
+  - functions: normalize_hindi_text, apply_pronunciation_overrides, split_hindi_text, load_voice_profile
+  - classes: VoiceProfileError, RenderResult, IndicF5Backend
+- `engines/PIPER/agent_cognition.py` — 227 lines — Evidence-grounded multi-role cognition for the independent Hindi voice agents.
+  - functions: _load_dotenv, _config, backend_status, _chat, _json_from_text, plan_research_queries, _sentences, offline_evidence_analysis, analyze_sources, load_sources
+- `engines/PIPER/cinematic_audio/astra_audio/editor.py` — 222 lines — Non-destructive AI-assisted audio editing primitives for ASTRA.
+  - functions: _read, _write, inspect_audio, cut_audio, _resample_channels, join_audio, apply_effects, separate_stems, replace_vocals_with_hindi, execute_project
+- `engines/PIPER/agent_evolution.py` — 214 lines — Persistent, evidence-grounded evolution loop for one ASTRA engine agent.
+  - functions: _tokens, _now, self_test
+  - classes: AgentEvolution
+- `engines/PIPER/cinematic_audio/astra_audio/vocal_intelligence.py` — 204 lines — Optional deep-learning vocal intelligence adapters for ASTRA.
+  - functions: backend_status, _require_file, _transcribe, _diarize, _speaker_embeddings, _attach_speakers, _emotion_classify, analyze_vocal_file, save_vocal_report
+- `engines/PIPER/open_source_learning.py` — 186 lines — Non-blocking, evidence-first open-source TTS research connector.
+  - functions: _now, _extract, _collect, _write_status, start_svara_learning, learning_status, load_open_source_records
+  - classes: _Text
+- `engines/PIPER/cinematic_audio/astra_audio/asset_matching.py` — 176 lines — Conservative catalog matching for story sound events.
+  - functions: _tokens, _load_catalog, _event_terms, match_assets, make_workflow_adapter
+- `engines/PIPER/cinematic_audio/tests/test_story_mix.py` — 173 lines
+  - classes: StoryMixTests
+- `engines/PIPER/cinematic_audio/astra_audio/analyzer.py` — 150 lines
+  - functions: _db, _frame_rms, _spectral_features, _timeline, analyze_array, analyze_audio
+- `engines/PIPER/cinematic_audio/astra_audio/processor.py` — 144 lines
+  - functions: _filter_sos, _spectral_denoise, process_audio
+  - classes: ProcessingOptions
+- `engines/PIPER/cinematic_audio/astra_audio/soundscape_planner.py` — 138 lines — World-general, reviewable story soundscape planner.
+  - functions: _hits, plan_soundscape, plan_soundscape_file
+- `engines/PIPER/cinematic_audio/astra_audio/story_production.py` — 130 lines — Single-pass story-to-audio review planner.
+  - functions: prepare_story_audio, prepare_story_audio_file
+- `engines/PIPER/intelligence_agent.py` — 127 lines — Engine-local autonomous research, evidence memory and continual-improvement loop.
+  - functions: utc, run_cycle, autopilot
+  - classes: IntelligenceMemory
+- `engines/PIPER/cinematic_audio/astra_audio/soundstage.py` — 124 lines — Narrative-aware cinematic soundstage: smooth spatial automation + existing story mixer.
+  - functions: _finite, _curve, _smooth, _resample, _spatialize, render_soundstage
+- `engines/PIPER/hindi_core.py` — 123 lines — Hindi text preparation and structured character/dialogue analysis.
+  - functions: normalize_hindi, language_diagnostics, stable_id, _speaker_line, scan_script, scan_file
+- `engines/PIPER/cinematic_audio/astra_audio/action_foley.py` — 122 lines — Action-chain Foley planner for story-driven physical interactions.
+  - functions: _find, analyze_action_chains
+- `engines/PIPER/cinematic_audio/astra_audio/io.py` — 121 lines
+  - functions: probe_audio, load_audio, save_wav, save_json_atomic
+- `engines/PIPER/dialogue_renderer.py` — 118 lines — Character-aware rendering with sentence-level Hindi prosody planning.
+  - functions: load_voice_profiles, map_profiles_by_name, can_assemble, render_story, _reshape
+- `engines/PIPER/cinematic_audio/tests/test_engine.py` — 111 lines
+  - classes: EngineTests
+- `engines/PIPER/cinematic_audio/astra_audio/quality_check.py` — 109 lines
+  - functions: _db, _chunked_true_peak, quality_check
+- `engines/PIPER/cinematic_audio/tests/test_tts_sarvam.py` — 106 lines
+  - functions: _fake_wav_b64, test_sarvam_adapter_validates_payload_and_writes_wav, test_sarvam_adapter_refuses_overwrite_and_bad_controls, test_sarvam_adapter_requires_key_when_real_transport_used, test_split_tts_text_preserves_text_and_limit, test_script_tts_keeps_one_voice_id_per_character, test_sarvam_voice_adapter_integrates_with_audio_workflow, test_sarvam_script_generation_rolls_back_partial_clips_on_failure
+- `engines/PIPER/tests/test_piper_indicf5_backend.py` — 104 lines
+  - classes: FakeModel, FakeInt16Model, IndicF5AdapterTests
+- `engines/PIPER/agent_benchmark.py` — 94 lines — Transparent, evidence-based evaluation of one browser research run.
+  - functions: _read, evaluate, fixture_self_test
+- `engines/PIPER/cinematic_audio/tests/test_story_intelligence.py` — 94 lines
+  - classes: StoryIntelligenceTests
+- `engines/PIPER/browser_research.py` — 92 lines — Engine-owned browser/research collector with conservative safety controls.
+  - functions: _robots_allowed, clean_html_text, collect, browser_collect
+- `engines/PIPER/cinematic_audio/tests/test_real_library.py` — 92 lines
+  - functions: _write, test_real_library_indexes_actual_audio_and_preserves_source, test_production_spec_requires_explicit_approval_and_timestamp, test_production_spec_blocks_unapproved_and_missing_timestamps, test_production_spec_requires_reason_for_explicit_omission, test_one_call_production_pipeline_runs_index_to_qa
+- `engines/PIPER/tests/test_agent_cognition_v10.py` — 90 lines
+  - classes: CognitionV10Tests, WebFirstV11Tests
+- `engines/PIPER/cinematic_audio/astra_audio/workflow.py` — 86 lines — Fail-closed orchestration contracts for the standalone ASTRA audio workflow.
+  - classes: StageResult, WorkflowError, AudioWorkflow
+- `engines/PIPER/tts_engine.py` — 86 lines — TTS adapters with explicit per-character voice routing and capability limits.
+  - functions: _slow_rate, render_segment
+- `engines/PIPER/performance.py` — 82 lines — Performance markup and dialogue planning.
+  - functions: parse_performance_line, _text_events, plan_script, stretch_rate
+- `engines/PIPER/hindi_understanding.py` — 79 lines — Conservative Hindi story understanding: entities, speaker map, emotion, relations and ambiguity.
+  - functions: _id, _norm, _emotion, analyze_story, save_analysis
+- `engines/PIPER/prosody_intelligence.py` — 79 lines — Context-aware Hindi performance planner. Rule-based baseline; never claims human-level emotion understanding.
+  - functions: _score, _explicit, _delivery, analyze_line, analyze_script
+- `engines/PIPER/character_voice.py` — 74 lines — Character profile planning; does not fabricate unsupported voices.
+  - functions: make_profiles, save_profiles, voice_shape
+- `engines/PIPER/cinematic_audio/tests/test_asset_matching.py` — 74 lines
+  - functions: test_matches_shankh_without_confusing_bell, test_unknown_license_never_commercial_auto_eligible, test_license_and_audition_both_required, test_no_guess_when_no_match, test_bad_catalog_and_parameters_rejected, test_bell_event_does_not_match_conch_mentioned_in_same_line, test_asset_matcher_workflow_adapter_consumes_story_understanding_output, test_asset_matcher_workflow_adapter_fails_closed_without_story_analysis, test_peacock_cry_is_not_misclassified_as_human_sobbing
+- `engines/PIPER/cinematic_audio/astra_audio/vocal_dataset.py` — 68 lines — Consent-aware dataset manifest builder for future voice-model fine-tuning.
+  - functions: build_voice_dataset_manifest
+- `engines/PIPER/cinematic_audio/tests/test_vocal_intelligence.py` — 66 lines
+  - functions: test_attach_speakers_by_maximum_overlap, test_report_never_overwrites_audio, test_missing_audio_rejected, test_backend_status_is_non_downloading, test_dataset_manifest_requires_explicit_consent, test_dataset_manifest_indexes_consented_clips
+- `engines/PIPER/hindi_phonology.py` — 58 lines — Hindi Devanagari orthography/phonology inspection (rule-based, transparent, no fake IPA).
+  - functions: graphemes, inspect_word, inspect_text
+- `engines/PIPER/cinematic_audio/tests/test_editor.py` — 56 lines
+  - functions: test_editor_rejects_vocal_output_overwriting_input, test_editor_rejects_extreme_vocal_duration_mismatch
+  - classes: EditorTests
+- `engines/PIPER/cinematic_audio/tests/test_quality_gate.py` — 55 lines
+  - classes: QualityGateTests
+- `engines/PIPER/cinematic_audio/astra_audio/audit.py` — 54 lines
+  - functions: sha256_file, audit_folder
+- `engines/PIPER/cinematic_audio/tests/test_workflow.py` — 54 lines
+  - functions: test_readiness_reports_all_unconnected_stages, test_full_workflow_runs_in_declared_order, test_missing_adapter_blocks_before_any_stage_runs, test_stage_failure_stops_following_stages, test_duplicate_and_unknown_registration_rejected
+- `engines/PIPER/audio_assembly.py` — 52 lines — Optional FFmpeg assembly for mixed per-character audio chunks and natural pauses.
+  - functions: _ffmpeg, make_silence, assemble_wav
+- `engines/PIPER/cinematic_audio/astra_audio/acoustic_map.py` — 48 lines
+  - functions: build_acoustic_map
+- `engines/PIPER/tests/test_performance.py` — 48 lines
+  - classes: PerformanceTests
+- `engines/PIPER/tests/test_v08_audio_browser.py` — 48 lines
+  - classes: V08Tests
+- `engines/PIPER/tests/test_deep_intelligence.py` — 47 lines
+  - classes: DeepIntelligenceTests
+- `engines/PIPER/tests/test_prosody_v07.py` — 44 lines
+  - classes: TestHindiProsodyV07, TestProsodyAdapterIntegration, TestRenderPipelineIntegration
+- `engines/PIPER/cinematic_audio/tools.py` — 42 lines — Per-engine cinematic story audio and deep vocal QA adapters.
+  - functions: prepare_story, plan_soundscape, plan_actions, audio_qa, vocal_backends, vocal_audit, mix_story, index_library, produce_story
+- `engines/PIPER/error_memory.py` — 42 lines — Persistent per-engine error ledger with regression-test references.
+  - classes: ErrorLedger
+- `engines/PIPER/tests/test_core.py` — 42 lines
+  - classes: CoreTests
+- `engines/PIPER/model_registry.py` — 40 lines — Local model inventory and conservative capability reporting.
+  - functions: inspect_model_file, scan_model_directories, verify_manifest
+- `engines/PIPER/cinematic_audio/tests/test_advanced.py` — 39 lines
+  - classes: AdvancedTests
+- `engines/PIPER/cinematic_audio/tests/test_action_foley.py` — 36 lines
+  - functions: test_rope_window_descent_chain_extracts_explicit_steps, test_reverse_climb_and_window_entry, test_soundscape_includes_action_chains_per_scene, test_no_invented_rope_cues_when_not_in_story
+- `engines/PIPER/tests/test_open_source_learning.py` — 36 lines
+  - classes: OpenSourceLearningTests
+- `engines/PIPER/cinematic_audio/astra_audio/library.py` — 35 lines
+  - functions: sha256_file
+  - classes: AssetWorkspace
+- `engines/PIPER/cinematic_audio/tests/test_story_production.py` — 35 lines
+  - functions: test_prepare_story_audio_combines_world_and_action_and_story, test_prepare_story_audio_matches_action_tags_without_auto_insertion, test_unknown_story_gets_generic_plan_and_no_fake_assets
+- `engines/PIPER/audio_perception.py` — 34 lines — Optional audio diagnostics and speech-recognition adapters.
+  - functions: inspect_audio, transcribe_with_faster_whisper
+- `engines/PIPER/quality_lab.py` — 34 lines — Release gates: never infer audio quality from code tests.
+  - functions: blank_report, evaluate, save_report
+- `engines/PIPER/cinematic_audio/tests/test_soundscape_planner.py` — 33 lines
+  - functions: test_world_locations_and_foley_are_not_train_specific, test_unknown_world_gets_conservative_fallback, test_no_automatic_horror_noise_from_cemetery_alone
+- `engines/PIPER/system_watchdog.py` — 32 lines — Read-only health monitor for this engine only.
+  - functions: health_report
+- `engines/PIPER/cinematic_audio/tests/test_soundstage.py` — 31 lines
+  - functions: test_soundstage_renders_spatial_tracks_and_keeps_sources, test_soundstage_rejects_bad_pan
+- `engines/PIPER/svara_bridge.py` — 31 lines — Optional Svara-TTS expressive Hindi neural backend bridge.
+  - functions: render
+- `engines/PIPER/cinematic_audio/astra_audio/policy.py` — 29 lines — Conservative context policy. Tags are hints, never automatic truth.
+  - functions: build_policy
+  - classes: AudioPolicy
+- `engines/PIPER/cinematic_audio/astra_audio/adapters.py` — 17 lines — Optional AI adapter contracts. No model/API is bundled or required.
+  - classes: AudioUnderstandingAdapter, SourceSeparationAdapter, SpeechEnhancementAdapter
+- `engines/PIPER/cinematic_audio/astra_audio/quality.py` — 15 lines — Before/after quality gate: technical indicators only, not perceptual truth.
+  - functions: compare_reports
+- `engines/PIPER/tests/test_watchdog.py` — 11 lines
+  - classes: WatchdogTests
+- `engines/PIPER/tests/test_browser_agent.py` — 9 lines
+  - classes: BrowserAgentTests
+- `engines/PIPER/tests/test_agent_benchmark.py` — 8 lines
+  - classes: AgentBenchmarkTests
+- `engines/PIPER/cinematic_audio/astra_audio/__init__.py` — 1 lines
+- `engines/PIPER/cinematic_audio/__init__.py` — 0 lines
+
+## engines/SARVAM  (8 files)
+- `engines/SARVAM/browser_agent_v08.py` — 318 lines — v0.8 independent deep research browser agent.
+  - functions: _identity, utc, terms, score, quality, robots_ok, _add, discover, fetch, research, agent_status
+  - classes: Extractor, Source
+- `engines/SARVAM/agent_cognition.py` — 270 lines — Evidence-grounded multi-role cognition for the independent Hindi voice agents.
+  - functions: _load_dotenv, _identity, _config, backend_status, _chat, _json_from_text, plan_research_queries, _sentences, offline_evidence_analysis, analyze_sources, load_sources
+- `engines/SARVAM/agent_evolution.py` — 214 lines — Persistent, evidence-grounded evolution loop for one ASTRA engine agent.
+  - functions: _tokens, _now, self_test
+  - classes: AgentEvolution
+- `engines/SARVAM/open_source_learning.py` — 188 lines — Non-blocking, evidence-first open-source TTS research connector.
+  - functions: _now, _extract, _collect, _write_status, start_svara_learning, learning_status, load_open_source_records
+  - classes: _Text
+- `engines/SARVAM/intelligence_agent.py` — 140 lines — Engine-local autonomous research, evidence memory and continual-improvement loop.
+  - functions: utc, run_cycle, autopilot
+  - classes: IntelligenceMemory
+- `engines/SARVAM/youtube_research.py` — 105 lines — Engine-local YouTube research: public metadata/captions only; never downloads video/audio.
+  - functions: video_id, _captions, research_youtube
+- `engines/SARVAM/browser_research.py` — 92 lines — Engine-owned browser/research collector with conservative safety controls.
+  - functions: _robots_allowed, clean_html_text, collect, browser_collect
+- `engines/SARVAM/agent_runtime.py` — 70 lines — Independent command-line runtime for one ASTRA learning engine.
+  - functions: status, main
+
+## indicf5  (1 files)
+- `indicf5/indicf5_render.py` — 150 lines — IndicF5 se Hindi awaaz — ek hi file, saaf-saaf.
+  - functions: _need, check_only, build_model, render, main
+
+## indicf5_fix_v1  (2 files)
+- `indicf5_fix_v1/indicf5_render.py` — 244 lines — Robust IndicF5 Hindi renderer.
+  - functions: _token, _import_check, check_only, _download_assets, _normalise_state_dict, _load_safetensors, build_model, render, main
+- `indicf5_fix_v1/test_indicf5_render.py` — 34 lines
+  - classes: StateDictTests
+
+## space  (1 files)
+- `space/app.py` — 68 lines — astra-audio — HF Space (sirf FastAPI + uvicorn, koi gradio nahi).
+  - functions: gpu, health, render, job, home
+
+## studio  (19 files)
+- `studio/puppet.py` — 465 lines — Toonistaan 2D Puppet engine (free, CPU): ek poori-body kirdaar tasveer ko haddiyon par baandh kar chalana.
+  - functions: _seg_dist, _rot_about, _signed, pose_at, blink_at, get_puppet, composite_actor
+  - classes: Puppet
+- `studio/sfx_extra.py` — 415 lines — Toonistaan extra SFX — kahani ke saath chalne wali asli awaazein (bina internet, numpy).
+  - functions: t, env, _noise, _lp, _bp, _hp, coins, phone_ring, gate_open, gate_close, footsteps, heartbeat, paper, crowd …
+- `studio/motion_core.py` — 409 lines — TOONISTAAN HUMAN MOTION CORE (CPU-first, bina AI ke ganit se animation) — puppet.py ke upar.
+  - functions: _lerp_pose, _smooth, _noise
+  - classes: Prop, Actor, Stage
+- `studio/motion.py` — 403 lines — Toonistaan motion engine (free, CPU, bina GPU): ek tasveer ko chalti-firti scene banata hai.
+  - functions: ensure_models, mouth_curve, normalise_mouth, person_mask, clean_plate, blink_track, cam_params, warp, render_scene
+  - classes: Talker, FX
+- `studio/story_video.py` — 338 lines — Kahani video banao (koi bhi lambai: 1 min se 10 min tak, jitne scene utni lambi).
+  - functions: load_wav, _fallback_card, html_png, cam_filter, _abs_actor, scene_mouth_by_voice, scene_mouth, render_clip, ts
+- `studio/gen_assets.py` — 232 lines — Server-side: free scene images (Pollinations) + Hindi voices (Piper) for an episode JSON.
+  - functions: ai_enhance, prompt_for, _voice_by_tool, _mkvoice, voice_for, fetch
+- `studio/world_engine.py` — 204 lines — ASTRA Real World Engine (additive, non-invasive cue planner).
+  - functions: _line_parts, _duration_for, _event_matches, plan_world, main
+- `studio/sfx.py` — 151 lines — Free sound effects + music bed, sirf numpy se (internet ki zarurat nahi).
+  - functions: save, t, env, noise, lowpass, whoosh, footstep, footsteps, chime, sparkle, boom, thunder, wind, leaves …
+- `studio/body_check.py` — 138 lines — Poori body aur haath ki tracking (free, offline: OpenCV + MediaPipe ONNX models, opencv_zoo se).
+  - functions: _load, _d, analyse, draw
+- `studio/ai.py` — 117 lines — Toonistaan AI layer — bina key bhi chalta hai, key ho to behtar hota hai.
+  - functions: _post, _gemini, _openrouter, _groq, _hf, have_any_key, ask, enhance_image_prompt
+- `studio/check_images.py` — 113 lines — Toonistaan Image Checker: tasveeron ki mashini jaanch (bina internet, OpenCV + YuNet face model).
+  - functions: ahash
+- `studio/animate_talk.py` — 112 lines — Tasveer ko 'zinda' karo (free, offline): awaaz ke saath munh hilna (lip-sync), aankh jhapakna,
+  - functions: eye_mask, blink_amt
+- `studio/assemble.py` — 68 lines — Episode jodo: frames + awaaz + SFX + music (ducking) + .srt  ->  MP4
+  - functions: srt_time, write_srt, main
+- `studio/direction.py` — 67 lines — Direction: har line ka bhaav (emotion) aur action. Line likhne ke 3 tareeke (sab chalte hain):
+  - functions: detect_emotion, parse_line, prosody
+- `studio/make_gpu_notebook.py` — 66 lines — Episode JSON + scene tasveerein -> ek Kaggle/Colab notebook (free GPU) jo har scene ki tasveer ko
+- `studio/tts.py` — 30 lines — Hindi awaaz banao. Kram: edge-tts (free, internet) -> warna khamosh placeholder + saaf sandesh.
+  - functions: edge, silence, speak
+- `studio/contact_sheet.py` — 14 lines — Saari scene images ek sheet par (naam ke saath) taaki jaldi jaanch ho sake.
+- `studio/unpack_exec.py` — 13 lines — Server se aayi files kholo: ample_server_exec output mein `@@naam` + base64 lines.
+- `studio/make_episode.py` — 12 lines — Ek command, poora episode:  python make_episode.py episode.json
+
+## studio/models  (6 files)
+- `studio/models/mp_persondet.py` — 2366 lines
+  - classes: MPPersonDet
+- `studio/models/mp_palmdet.py` — 2121 lines
+  - classes: MPPalmDet
+- `studio/models/handpose_estimation_mediapipe_demo.py` — 356 lines
+  - functions: visualize
+  - classes: GestureClassification
+- `studio/models/pose_estimation_mediapipe_demo.py` — 253 lines
+  - functions: visualize
+- `studio/models/mp_handpose.py` — 200 lines
+  - classes: MPHandPose
+- `studio/models/mp_pose.py` — 179 lines
+  - classes: MPPose
+
+## tests  (35 files)
+- `tests/test_voice_clone.py` — 282 lines
+  - functions: test_enroll_needs_consent, test_enroll_and_list, test_enroll_rejects_empty_transcript, test_speak_reports_backend_and_failures, test_no_backend_means_failure_not_fake_success, test_parse_line_emotion_tag_forms, test_enroll_from_media_uses_extract, test_enroll_from_media_needs_transcript, test_voice_name_path_traversal_rejected, test_reference_audio_is_normalised_to_wav, test_empty_script_fails_clearly, test_long_form_manifest_and_master_wav, test_revoked_voice_listed_as_blocked, test_xtts_model_cached_once_per_process …
+- `tests/test_engine_bus.py` — 170 lines
+  - functions: _caps, test_register_and_status, test_split_script_reads_character_and_emotion, test_split_script_breaks_long_line, test_plan_keeps_one_voice_per_character, test_plan_sends_emotion_to_capable_engine, test_run_retries_on_next_engine_when_one_fails, test_run_marks_failure_when_no_engine_works, test_partial_progress_is_saved, test_default_four_engines, test_engines_can_message_each_other, test_broadcast_reaches_all_other_engines, test_heartbeat_marks_engine_down, test_emotion_detected_when_no_tag …
+- `tests/test_deep_learning_v35.py` — 129 lines
+  - functions: _make_ref, test_emotion_reference_requires_both_consent_and_same_speaker, test_emotion_reference_saved_and_loaded, test_indicf5_uses_matching_emotion_prompt_only_when_registered, test_xtts_does_not_claim_emotion_conditioning, test_ecapa_module_exposes_unavailable_without_speechbrain, test_speaker_similarity_has_no_default_identity_decision, test_emotion_reference_change_invalidates_voice_fingerprint, test_emotion_reference_path_escape_is_blocked, test_base_voice_reference_path_escape_is_blocked
+- `tests/test_engine_router.py` — 120 lines
+  - functions: test_parse_story_named_and_narrator, test_parse_story_ignores_comments_and_blanks, test_choose_engine_first_ready_wins, test_choose_engine_none_ready, test_status_covers_all_four_plus_sarvam, test_plan_uses_ready_engine_for_every_line, test_plan_marks_none_when_nothing_ready, test_render_line_falls_back_on_failure, test_render_line_reports_all_failures, test_render_story_counts_and_reports, test_problems_lists_only_not_ready, test_problems_empty_when_all_ready, test_parallel_render_keeps_order, test_bench_reports_timings
+- `tests/test_llm_bridge.py` — 71 lines
+  - functions: test_status_covers_all_providers, test_custom_without_base_is_not_ready, test_chat_falls_back, test_chat_raises_when_all_fail, test_no_provider_ready, test_groq_default_model_is_not_retired, test_remember_writes_knowledge
+- `tests/test_vocal_intelligence.py` — 66 lines
+  - functions: test_attach_speakers_by_maximum_overlap, test_report_never_overwrites_audio, test_missing_audio_rejected, test_backend_status_is_non_downloading, test_dataset_manifest_requires_explicit_consent, test_dataset_manifest_indexes_consented_clips
+- `tests/test_safety_and_data.py` — 59 lines
+  - functions: test_intelligence_status_reads_config, test_intelligence_status_counts_examples
+  - classes: SafetyTests
+- `tests/test_tts_guard.py` — 59 lines
+  - functions: _wav, test_audio_ok_accepts_normal, test_audio_ok_rejects_silence, test_audio_ok_rejects_tiny, test_render_uses_cache_second_time, test_render_retries_then_raises
+- `tests/test_world_engine.py` — 59 lines
+  - classes: WorldEngineTests
+- `tests/test_sarvam_keys.py` — 55 lines
+  - functions: _clean, test_twelve_keys_read, test_duplicate_not_repeated, test_quota_dead_key_goes_last, test_state_file_has_no_key_only_hash, test_reset_clears
+- `tests/test_bhavna.py` — 54 lines
+  - functions: test_detect_dukh, test_detect_gussa_with_marks, test_detect_pyaar, test_neutral_when_nothing_matches, test_prosody_changes_with_emotion, test_every_emotion_has_hindi_name_and_example, test_show_unknown_raises, test_style_gives_pitch_pace_energy_gap, test_style_unknown_emotion_is_neutral
+- `tests/test_library_add.py` — 54 lines
+  - functions: _wav, test_slug_is_clean, test_check_reports_missing_and_duplicate, test_add_skips_unknown_file, test_register_adds_comma_safely, test_fingerprint_similarity_flags_duplicate
+- `tests/test_render_cache.py` — 49 lines
+  - functions: test_key_is_stable_and_sensitive, test_put_then_get_returns_file, test_get_missing_file_drops_entry, test_clear_removes_everything
+- `tests/test_story_audio.py` — 41 lines
+  - functions: test_story_has_characters_and_emotions, test_two_characters_used, test_bed_assets_exist, test_events_assets_exist, test_single_mode_exists, test_merge_lines_reduces_segments, test_gap_is_small
+- `tests/test_voice_match.py` — 41 lines
+  - functions: _tone, test_same_pitch_high_cosine, test_different_pitch_detected, test_speech_ratio_between_0_and_1, test_check_verdict_is_honest
+- `tests/test_free_api.py` — 40 lines
+  - functions: test_chunks_respect_limit, test_style_defaults_without_key, test_provider_registry_has_google, test_no_words_fails_honestly, test_learned_style_ignores_dry_run
+- `tests/test_world_scape.py` — 39 lines
+  - functions: test_plan_detects_jungle_river_rain, test_plan_detects_ground_and_props, test_missing_assets_are_reported_not_hidden, test_duck_curve_has_between_expression, test_duck_curve_without_dialogue_is_plain_volume, test_build_writes_cues
+- `tests/test_deep_audit.py` — 38 lines
+  - functions: test_clean_text_strips_control_chars, test_cache_key_ignores_output_path, test_cache_hit_copies_to_requested_path, test_audit_tests_registry
+- `tests/test_teacher_student.py` — 38 lines
+  - functions: test_plan_counts_calls, test_learn_needs_meta, test_learn_from_synthetic_meta, test_provider_prefers_learned
+- `tests/test_world_tests.py` — 38 lines
+  - functions: test_matrix_cases_include_all_methods, test_boundary_lengths_present, test_mutation_rejects_broken_audio, test_world_tests_has_six_methods, test_piper_does_not_print_traceback
+- `tests/test_consent.py` — 37 lines
+  - functions: test_consent_record_and_revoke_blocks_use, test_missing_consent_fails_closed, test_corrupt_consent_fails_closed, test_wrong_scope_fails_closed
+- `tests/test_action_foley.py` — 36 lines
+  - functions: test_rope_window_descent_chain_extracts_explicit_steps, test_reverse_climb_and_window_entry, test_soundscape_includes_action_chains_per_scene, test_no_invented_rope_cues_when_not_in_story
+- `tests/test_engine_setup.py` — 36 lines
+  - functions: test_engines_registry_has_core_plus_key, test_report_shape, test_elevenlabs_without_key_is_honest, test_edge_has_library_path, test_core_engines_defined
+- `tests/test_v34_quality.py` — 36 lines
+  - functions: test_speaker_and_emotion_prefix_orders, test_hindi_combining_sequence_not_split_apart, test_audio_qa_passes_clean_wav, test_audio_qa_rejects_silence, test_text_scores_detect_hindi_text_errors, test_preflight_does_not_claim_inference_verified
+- `tests/test_story_production.py` — 35 lines
+  - functions: test_prepare_story_audio_combines_world_and_action_and_story, test_prepare_story_audio_matches_action_tags_without_auto_insertion, test_unknown_story_gets_generic_plan_and_no_fake_assets
+- `tests/test_engine_stress.py` — 33 lines
+  - functions: test_text_guard_blocks_nonsense, test_router_rejects_before_cache, test_cache_rejects_silent_file, test_stress_result_shape
+- `tests/test_emotion_render.py` — 32 lines — Bhaav asar karta hai ya nahi — asli render par naap (piper offline).
+  - functions: _dur, test_emotion_changes_speed_and_pitch
+- `tests/test_voice_extract.py` — 32 lines
+  - functions: test_best_window_picks_loud_part, test_best_window_short_audio_returns_all, test_transcribe_reports_reason_when_missing
+- `tests/test_astra.py` — 31 lines — ASTRA server + engine tests (bina internet).
+  - functions: test_engine_generates_all, test_server_endpoints
+- `tests/test_regressions.py` — 31 lines
+  - classes: AudioRegressionTests
+- `tests/test_system_check.py` — 29 lines
+  - functions: test_rows_have_shape, test_verdict_is_honest, test_library_check_reports_counts, test_modules_all_import
+- `tests/test_script_pipeline.py` — 28 lines
+  - functions: test_long_line_split_keeps_order_and_emotion, test_speaker_and_emotion_tags, test_blank_and_comment_lines_ignored, test_minimum_chunk_size_guard
+- `tests/test_voice_validate.py` — 24 lines
+  - functions: test_repo_voices_are_valid, test_invalid_speaker_detected, test_missing_file_reports_error
+- `tests/test_key_guard.py` — 23 lines
+  - functions: test_patterns_catch_elevenlabs_style, test_patterns_ignore_placeholder, test_scan_shape, test_repo_is_clean
+- `tests/test_worktmp_load.py` — 23 lines
+  - functions: test_work_tmp_is_big_disk_not_tmp, test_espeak_render_counter_exists, test_espeak_library_lock_is_rlock_safe, test_piper_lock_exists
+
+## tools  (129 files)
+- `tools/kram.py` — 1429 lines — kram.py — Seetal/ASTRA ka poora naksha: 100 module, 896 function, har ek apne level par.
+  - functions: _merge_extra, maalik_report, _modname, naksha, jaanch, purana
+- `tools/voice_provider.py` — 1273 lines — ASTRA VOICE PROVIDERS — awaaz ke liye kai raste (bina key bhi chalta hai).
+  - functions: eleven_key, have_eleven, _post, _load_voices, _kism, age_filters, fit_to_target, shape_age, voice_cast, sarvam_keys, sarvam_key, _piper_dir, have_piper, _piper_model …
+- `tools/duniya.py` — 861 lines — PURANA ENGINE (legacy) — naya engine tools/world/duniya.py hai. Ye file sirf record ke liye rakhi hai.
+  - functions: db2a, a2db, sos_bp, sos_lp, sos_hp, filt, pink, smooth_rand, env_ar, add_at, pan_mono, place, place_wide, outdoor_reverb …
+  - classes: LegacyLibrary
+- `tools/sutradhar.py` — 825 lines — sutradhar.py — Seetal/ASTRA ka EK hi raasta (master pipeline).
+  - functions: get_fn, wire, _db, _mono, loop_score, _lufs_ffmpeg, lufs_target, _channels, _lufs_approx, pakki_jaanch, _shape, _stage, space_voice, time_of_day …
+  - classes: Hisaab, StageFail
+- `tools/voice_clone.py` — 733 lines — ASTRA Voice Clone — kisi ki bhi awaaz copy karke poori script usi awaaz me.
+  - functions: _atomic_json, backend_status, pick_backend, reference_quality, _voice_dir, _normalise_reference, enroll_from_media, enroll, list_voices, load_voice, clear_backend_cache, _get_xtts_model, _canonical_emotion, add_emotion_reference …
+  - classes: ConsentMissing, Voice
+- `tools/audio_read6.py` — 502 lines — Audio Read v6 — har chhoti-badi awaaz ko pehchano, samjho, aur seekho.
+  - functions: ffmpeg, decode, stft, event_features, classify, learn_event, knn_label, vad, f0_of, f0_track, emotion, read, selftest, main
+- `tools/kram_extra.py` — 485 lines — kram_extra.py — naye module aur nayi functions ka level (bada naksha chhede bina).
+- `tools/self_improve.py` — 480 lines — self_improve.py v2 — audio ko gehra samajhne wala loop (bina GPU, numpy + optional praat).
+  - functions: load, _f0, _env, _speech_mask, deep, cpp, lra_db, flux, formant_track, diagnose, _delta, log_run, learn, _vec …
+- `tools/story_local.py` — 459 lines — Local Story — sirf apne system se audio (Sarvam nahi): Piper + apni ambience + apna mix.
+  - functions: ffmpeg_bin, breath, _hp, _stereo, line_emotion, breath_plan, _presence, room_tone, bhaav_prosody, _voice, line_check, synth_line, load, group_script …
+- `tools/music_make2.py` — 450 lines — Beat Engine v2 — majboot, layered, stereo, arrangement ke saath.
+  - functions: ffmpeg, kick, snare, hat, tabla, pluck, pad_chord, riser, impact, shelf, hpf, compress, stereo_widen, _fftconv …
+- `tools/audio_pro.py` — 444 lines — audio_pro.py — jo 6 kaam system me nahi the (ab naap ke saath):
+  - functions: denoise, restore, occlude, stream_chunks, diarize, adr, _frames, adr_dtw, _test
+- `tools/voice_clone_lite.py` — 416 lines — voice_clone_lite.py — bina GPU, bina bhaari model: apni awaaz ki nakal (profile match).
+  - functions: load, f0_track, envelope, hnr_db, mcd, profile_of, _pitch_shift_fast, _pitch_shift, _match_envelope, profile_quality, convert, _piper_line, enroll, speak …
+- `tools/engine_router.py` — 403 lines — ASTRA Engine Router — chaaron engine ek darwaze se.
+  - functions: active_order, _ffmpeg, _which, engine_status, ready_engines, choose_engine, load_voices, parse_story, build_plan, _call_provider, _fix_format, _guarded, render_line, render_story_parallel …
+  - classes: EngineState, Plan
+- `tools/audio_read5.py` — 402 lines — Audio Read v5 — recheck kiya, bugs theek, aur gehra kiya.
+  - functions: ffmpeg, decode, stft, istft, separate, vad_merge, f0_of, lpc_formants, chroma_key, tempo_of, events_of, emotion, read, selftest …
+- `tools/system_doctor.py` — 369 lines — System Doctor — poore private system ka self-check. Har check naap ke saath PASS/WARN/FAIL.
+  - functions: add, c_voices, c_brain, c_smooth, c_ground, c_world, c_catalog, c_model, c_engines, c_tools, c_qa_thresholds, c_judge_smoke, c_selftest, c_world_engine …
+- `tools/research_connect.py` — 364 lines — Research Connect — agents ke liye asli internet (bina key, bina paid API).
+  - functions: _get, _clean, search_ddg, search_wiki, search_github, search_arxiv, wiki_extract, search_news, search_wiki_hi, search_ddg_lite, search_bing, search_all, search_for_agent, health …
+- `tools/audio_read3.py` — 353 lines — Audio Read v3 — deep research wala padhne ka system (numpy only).
+  - functions: ffmpeg, decode, mel_fb, stft_mag, mfcc, f0_of, lpc_formants, kmeans, read, timeline, main
+- `tools/loop_maker.py` — 335 lines — loop_maker.py — jo awaaz library me nahi hai, wo KHUD banao (natural, seamless).
+  - functions: pink, _band_mask, retint, walk, reverb, _norm, _seamless, reference, features, _bed, room, wind, rain, river …
+- `tools/audio_judge.py` — 332 lines — Audio Judge v2 — apni audio ko poora jaanchne wala nyayadhish.
+  - functions: ffmpeg, decode, voice_only, f0_track, acoustics, background, asr_words, norm_words, wer, judge, main
+- `tools/llm_bridge.py` — 329 lines — ASTRA LLM Bridge v2 — backward-compatible, resilient OpenAI-compatible gateway.
+  - functions: _spec, _key, _valid_base, _request, _probe, status, ready_providers, _post, _content, _retryable, _attempt_chat, chat, remember, cmd_status …
+  - classes: ProviderState
+- `tools/space.py` — 326 lines — space.py v2 — jagah ko MAHSUUS karana: doori, disha, deewarein, goonj.
+  - functions: _band, air_cutoff, _air_absorb, _late_reverb, _early, place_acoustic, place_acoustic_3d, place_moving, measure, _burst, _test, _demo, main
+- `tools/system_audit.py` — 323 lines — system_audit.py — poora system ek saath chalta hai ya nahi, aur koi hissa door to nahi.
+  - functions: mods, _name, parse, imports_of, graph, referenced, reachable, collisions, wires, smoke, _toplevel_imports, cycles, level_order, signature_check …
+- `tools/music_make.py` — 311 lines — Beat + Sur engine — apni beats aur apne saaton swar (bina kisi sample ke).
+  - functions: ffmpeg, kick, snare, hat, tabla, pluck, pad, reverb, scale_freqs, build, write_audio, main
+- `tools/awaaz.py` — 310 lines — Toonistaan AWAAZ tool — likha hua → awaaz (insan jaisi, smooth).
+  - functions: clean_af, ffmpeg, _cache_path, _providers, engine_report, _edge, _chunks, _pause_for, bolo, bolo_natural, main
+- `tools/fast_story.py` — 309 lines — fast_story.py — kahani ko JALDI banao (user ko intezaar na karna pade).
+  - functions: _lines, _mms_line, _pitch_to, _tts_fast, _voice, _bed, build, _loc, main
+- `tools/story_audio.py` — 288 lines — Story Audio — kahani + background + bhaav, ek hi file me (cinematic).
+  - functions: _ff, _dur, merge_lines, _trim_silence, render_single, render_lines, build, main
+- `tools/bug_hunt.py` — 277 lines — bug_hunt.py v2 — system ko saaf karne wala jaanchta + seekhne wala filter.
+  - functions: files, _inside_with, _depth, check, load_base, save_base, fix_file, main
+- `tools/audio_read.py` — 275 lines — Audio Read v2 — audio ko theek se padho: kab, kya, kaun, kitni der.
+  - functions: ffmpeg, decode, frames, f0_frame, segments, speakers, events, bed_timeline, read, timeline_text, main
+- `tools/audio_read4.py` — 274 lines — Audio Read v4 — andar kya chal raha hai: awaaz, music, background, mahaul.
+  - functions: ffmpeg, decode, stft, istft, stems, chroma, tempo_of, vad, f0_of, emotion_of, read, main
+- `tools/song_read.py` — 260 lines — Song Read — Hindi gaane ko padho: taal, sur, chords, dhol pattern, structure.
+  - functions: ffmpeg, decode, spec, tempo, chroma_of, key_scale, drum_pattern, structure, vocal_f0, read, main
+- `tools/voice_train.py` — 260 lines — voice_train.py — insaan ki har tarah ki awaaz par training (man/woman/bachcha/budha/baby...).
+  - functions: _piper, _load, _shift, feats, tts_rows, real_rows, decide, main
+- `tools/creature_train.py` — 259 lines — creature_train.py — jeev-jantu/pakshi/kide ki awaaz se system ko train karo.
+  - functions: keywords, decode, features_multi, features, build, train, main
+- `tools/story_from_md.py` — 257 lines — story_from_md.py — markdown kahani ko hamare script format me badlo (kirdaar pehchan ke).
+  - functions: clean, sentences, speaker_for, convert, intro_only, no_narrator, merge_same, split_commas, apply_pov, write_script, stats, main
+- `tools/sound_resolver.py` — 242 lines — sound_resolver.py — EK darwaza: shabd se awaaz tak (pehchano → chuno → banao → laao).
+  - functions: _index, _tag_for, from_library, from_synth, verify_audio, from_web, resolve, demo, main
+- `tools/voice_checker.py` — 239 lines — voice_checker.py — apni awaaz khud jaanchne wala checker (insaan ke naap se).
+  - functions: load, measure, judge, show, learn_baseline, main
+- `tools/private_train.py` — 238 lines — private_train.py — apne PRIVATE system ko poori library par train karo.
+  - functions: load_audited, load_clips, decode, feats, train, main
+- `tools/cast_build.py` — 234 lines — cast_build.py — har kirdaar ki ALAG awaaz, smooth aur realistic.
+  - functions: _ff, _rubber, _tilt, _life, _piper_line, line_audio, _trim, _legato, _breath, build, main
+- `tools/awaaz_studio.py` — 229 lines — Toonistaan AWAAZ STUDIO — Pocket FM jaisi "insan wali" awaaz, poore mahaul ke saath.
+  - functions: sh, dur_of, read_wav, write_wav, breath, ambience, music_bed, sunao, main
+- `tools/test_real_audio.py` — 216 lines — test_real_audio.py — ASLI recording par poora test (banayi hui awaaz par nahi).
+  - functions: load, pick, rms, floor_db, test_denoise, test_restore, test_occlude, test_diarize, test_adr, test_stream, test_spatial, main
+- `tools/bhaav_v2.py` — 213 lines — bhaav_v2.py — bhaav ko GEHRA karo: 4 knob se 12 knob, aur character ke hisaab se.
+  - functions: style, _piper, apply_prosody, _measure, test, main
+- `tools/engine_bus.py` — 209 lines — Engine Bus — chaar engines ke "agents" ko ek hi bus par jodo.
+  - functions: _wav_ok, probe_piper, probe_espeak, probe_edge, probe_elevenlabs, route, bus_send, bus_demo, main
+- `tools/self_listen.py` — 204 lines — Self Listen — apni audio ko KHUD sun kar jaancho (ASR + acoustics).
+  - functions: ffmpeg, decode, norm, words, wer, f0_of, _f0_frame, acoustics, asr, run, main
+- `tools/library_add.py` — 200 lines — Library Add — nayi awaaz library me daalo (duplicate na aaye).
+  - functions: _ff, _sha, library_hashes, slug, convert, duration, fingerprint, similarity, find_duplicate, register, add, check, main
+- `tools/coverage_audio.py` — 198 lines — coverage_audio.py — audio engine ki har kaam ki sach me jaanch (dohraav se bachne ke liye).
+  - functions: sources, funcs_of, has_func, check_real, check, main
+- `tools/sound_id3.py` — 198 lines — Sound ID v3 — MFCC + spectral contrast + chroma + F0 contour (category pehchan).
+  - functions: ffmpeg, load, _fb, features, knn, main
+- `tools/free_api.py` — 197 lines — Free API — bina key wali TTS (aaj: Google Translate TTS), ek hi darwaza.
+  - functions: _ff, _style, _chunks, _apply_style, _has_words, google, have, speak, main
+- `tools/scene_env.py` — 197 lines — scene_env.py — kahani ki JAGAH/TIME/MOSAM/KHATRA samajh kar vatavaran chuno.
+  - functions: _hits, analyse, beds_for, plan, schedule, report, main
+- `tools/teacher_student.py` — 196 lines — Teacher–Student — ElevenLabs se **seekho**, phir apne engine par lagao.
+  - functions: _ff, measure, plan, collect, learn, dry_run, main
+- `tools/engine_setup.py` — 194 lines — Engine Setup — chaaron engine ko install karo, chala kar dekho, sach batao.
+  - functions: _pip, ensure_piper_model, test_piper, test_espeak, test_edge, test_free, test_elevenlabs, setup, main
+- `tools/build_system_doc.py` — 192 lines
+  - functions: table, bullets, code, _save
+- `tools/deep_audit.py` — 192 lines — Deep Audit — jo tarike abhi tak try nahi kiye (fuzz, idempotency, race, injection).
+  - functions: _sha, t_fuzz, t_idempotent, t_race, t_injection, t_import, t_leak, t_disk, main
+- `tools/smooth_real.py` — 191 lines — smooth_real.py — TTS ki robotic feel hatao, asli insaan jaisa "dhang" laao.
+  - functions: _profile, pitch_drift, debuzz, widen_pitch, trim_short_gaps, smooth, _measure, selftest, main
+- `tools/test_matrix.py` — 188 lines — Test Matrix — duniya ke purane testing tarike, hazaaron combination par.
+  - functions: _probe, make_cases, run_case, metamorphic, golden_master, main
+- `tools/mms_story.py` — 187 lines — mms_story.py — MMS-VITS (Hindi) se kahani: piper se kam robotic.
+  - functions: model, _ff, line_audio, build, main
+- `tools/world_scape.py` — 185 lines — World Scape — kahani se asli duniya ki awaaz (aankh band karke mehsoos ho).
+  - functions: _hits, plan_scene, duck_curve, build, main
+- `tools/sound_id2.py` — 184 lines — Sound ID v2 — MFCC + band energies + kNN (asli pehchan, naap ke saath).
+  - functions: ffmpeg, load, _mel_filterbank, features, train, knn, main
+- `tools/voice_preview.py` — 182 lines — ASTRA — awaaz ka preview (edge-tts, free, koi API key nahi).
+  - functions: _ff, _say, _speak_natural, make, main
+- `tools/world_tests.py` — 182 lines — World Tests — duniya ke industry/AI tarike, ek hi jagah.
+  - functions: _probe, differential, soak, pairwise, mutation_lite, regression, risk_based, main
+- `tools/recognize.py` — 180 lines — recognize.py — training ka ASLI istemaal: awaaz sun kar batao kya hai.
+  - functions: _load, _decode, feats, _predict, rule_label, recognize, selftest, main
+- `tools/sound_id.py` — 174 lines — Sound ID — asli awaaz ki "fingerprint" seekho, phir pehchano (kaun si awaaz hai).
+  - functions: ffmpeg, load, features, train, identify, main
+- `tools/browser_mesh.py` — 173 lines — Browser Mesh — chaar browser agent aapas me baat karke data laate hain.
+  - functions: negotiate, _run_agent, mesh, main
+- `tools/bhavna.py` — 172 lines — Bhaav — Hindi bhaavon ki samajh (pehchan + asar + misaal).
+  - functions: detect, prosody, style, list_all, show, main
+- `tools/harvest_voices.py` — 172 lines — harvest_voices.py — duniya ke public platforms se INSANON ki awaaz jama karo (training ke liye).
+  - functions: _ff, decode, quality, group_of, harvest, report, main
+- `tools/story_scene.py` — 172 lines — Story Scene Planner — kahani ki **jagah** aur **duri** samajh kar awaaz lagana.
+  - functions: _has, plan, main
+- `tools/emotion_read.py` — 169 lines — Emotion Read — asli insaan ke bhaav: darr, hasi, gussa, dukh, josh, normal.
+  - functions: ffmpeg, decode, f0_med, modulation, emotion_scored, emotion_of, read, main
+- `tools/audio_profile.py` — 166 lines — Audio Profile — kisi bhi audio ko padho: bolne ka andaaz, sur, tune, background.
+  - functions: ffmpeg, load, f0_track, profile, main
+- `tools/prosody_real.py` — 165 lines — prosody_real.py — ASLI insanon ki awaaz se seekho, TTS ko waisa banao.
+  - functions: decode, stats, learn, show, test, main
+- `tools/asr_gate.py` — 163 lines — ASR Gate — awaaz ko wapas padh kar dekho: shabd/akshar sahi bole gaye ya nahi.
+  - functions: _ffmpeg, load16k, model, _phone_dist, cer, judge, main
+- `tools/auto_label.py` — 160 lines — auto_label.py — clip ko SUN kar label lagao (naam par bharosa nahi).
+  - functions: decode, asr_has_words, evidence, decide, main
+- `tools/regression.py` — 159 lines — regression.py — ek command me poori jaanch (kuch bhi chhoota na rahe).
+  - functions: add, check_space, check_narration, check_recognize, check_clone, check_structure, check_render, main
+- `tools/voice_ab.py` — 157 lines — Voice A/B — kaunsi setting sabse insaan jaisi hai (naap kar, andaza nahi).
+  - functions: _keys, _render, _measure, main
+- `tools/voice_extract.py` — 156 lines — Voice Extract — video ya audio se awaaz nikaalo, saaf karo, reference banao.
+  - functions: _ff, _load, extract_audio, clean_audio, best_window, transcribe, best_windows, run, main
+- `tools/system_check.py` — 154 lines — System Check — poore system ki ek report (PASS/FAIL), andaza nahi.
+  - functions: _row, check_engines, check_bus, check_cache, check_library, check_modules, check_tests, run_all, main
+- `tools/render_cache.py` — 150 lines — Render Cache — ek hi line dobara banane par paisa aur time bachao.
+  - functions: key_for, _load, _save, _usable, get, put, stats, clear, main
+- `tools/sound_synth.py` — 148 lines — Sound Synth — apni awaaz khud banao (kisi sample ke bina), signature ke hisaab se.
+  - functions: ffmpeg, _band, wolf_growl, dog_bark, cricket, rain, river, leaves_steps, main
+- `tools/selftest_suite.py` — 147 lines — Selftest Suite — apne hi tools ki accuracy naapo (ground truth ke saath).
+  - functions: wav, results, main
+- `tools/fetch_real_audio.py` — 146 lines — fetch_real_audio.py — asli recording web se laao (test ke liye, Wikimedia Commons).
+  - functions: _curl, _get, search, fetch, main
+- `tools/horror_read.py` — 146 lines — Horror Read — darr wale show ka blueprint: kab tension, kab scream, kab khamoshi.
+  - functions: ffmpeg, decode, block_stats, mode_of, read, main
+- `tools/private_train_clean.py` — 139 lines — private_train_clean.py — private model ko SAAAF data par train karo.
+  - functions: anchors, main
+- `tools/engine_adopt.py` — 131 lines — Engine Adopt — naya engine/audio aaye to: kya lena hai, kya chhodna hai (naap ke saath).
+  - functions: ffmpeg, load, measure, verdict, main
+- `tools/sound_catalog.py` — 128 lines — Sound Catalog — Swag ke bheje hue saare background sounds ko padho aur suchi banao.
+  - functions: ffmpeg, feats, cat_of, quality, main
+- `tools/engine_load.py` — 126 lines — Engine Load — kathin kaam par engine kitna smooth hai (speed + sahi).
+  - functions: _dur_rms, run, main
+- `tools/harmonic_clean.py` — 126 lines — harmonic_clean.py — TTS ki "kharaash" kam, awaaz saaf (insaan jaisi).
+  - functions: f0_track, clean, measure, selftest, main
+- `tools/render_manifest.py` — 126 lines — Render Manifest — har render ka pura record (provenance), tri-state QA ke saath.
+  - functions: sha, qa_audio, build, check, main
+- `tools/engine_stress.py` — 125 lines — Engine Stress — chaar engine par ek hi tarah ke kathin test (bug dhoondhne ke liye).
+  - functions: _ff, _audio, _render, stress_engine, main
+- `tools/render_final.py` — 122 lines — render_final.py — insaan jaisi kahani: piper + PSOLA intonation + micro-variation + nadi bed.
+  - functions: voice, load, synth, trim, contour_for, micro, river_bed, main
+- `tools/sarvam_keys.py` — 121 lines — Sarvam Keys — 6 ID tak rotation (coin khatam ho to agla, dead key yaad rakho).
+  - functions: _hash, all_keys, _load, _save, order, mark_ok, mark_quota_dead, reset, status, main
+- `tools/tts_guard.py` — 121 lines — TTS Guard — cache + retry + quality check, ek hi jagah.
+  - functions: audio_ok, render, main
+  - classes: BadAudio
+- `tools/agent_brief.py` — 120 lines — agent_brief.py — chaar agent/browser ko system ka ASLI haal do.
+  - functions: _run, _last_manifest, build, queries, main
+- `tools/sarvam_story.py` — 120 lines — sarvam_story.py — expressive Hindi kahani (Sarvam bulbul), har line bhaav ke saath.
+  - functions: _ff, load, trim, piper_line, sarvam_line, river_bed, main
+- `tools/script_pipeline.py` — 117 lines — ASTRA script planner: Unicode-safe chunking and explicit speaker/emotion metadata.
+  - functions: _strip_emotion, parse_script_line, _graphemes, _hard_split_token, _split_oversize, prepare_script, prepare_file, main
+- `tools/story_soundmap.py` — 117 lines — Story Sound Map — kahani ki HAR cheez ki awaaz, deep level.
+  - functions: find, analyse, main
+- `tools/voice_match.py` — 117 lines — Voice Match — "kitna match hua" ka imandar naap.
+  - functions: _load, f0_median, mfcc_cosine, speech_ratio, check, main
+- `tools/voice_guru.py` — 111 lines — Voice Guru — teaching.json se har engine ka config banao aur audio ki jaanch karo.
+  - functions: teach, export, qa, main
+- `tools/clone_cast.py` — 109 lines — clone_cast.py — har kirdaar ke liye ASLI insaan ki awaaz chuno (cloning ke liye).
+  - functions: _files, build, show, main
+- `tools/system_activate.py` — 106 lines — System Activate — har module ko jagao aur jaancho: import, entry point, wiring, smoke test.
+  - functions: modules, text_of, audit, main
+- `tools/audio_learn.py` — 98 lines — Audio Learn — Swag ke bheje audio se seekho aur apne cast ko sudharo.
+  - functions: advice, main
+- `tools/cloud_tts.py` — 97 lines — cloud_tts.py — natural awaaz ke liye cloud TTS (piper local, par robotic).
+  - functions: status, _curl, sarvam_say, eleven_say, say, main
+- `tools/listen.py` — 94 lines — Listen — Swag ka bheja audio padho, note banao, aur yaad rakho.
+  - functions: main
+- `tools/loop_reference.py` — 93 lines — loop_reference.py — asli recordings se naap le, ki "natural" kaisa hota hai.
+  - functions: features, main
+- `tools/speaker_verification.py` — 92 lines — Optional ECAPA-TDNN speaker-consistency scoring for ASTRA.
+  - functions: _load_model, _waveform, cosine_similarity, main
+- `tools/render_river.py` — 89 lines — render_river.py — kahani + nadi (kal-kal) background, seedha aur saaf.
+  - functions: voice, load, trim, loop, river_bed, main
+- `tools/asr_cache.py` — 88 lines — ASR Cache — audio ko chhote tukdon me transcribe karke cache karta hai (tez + resumable).
+  - functions: ffmpeg, decode, transcribe, main
+- `tools/hindi_text.py` — 86 lines — hindi_text.py — bolne se pehle text ko THEEK karo (Hindi uchcharan ke liye).
+  - functions: num_to_hindi, _year, normalize, main
+- `tools/intelligence_status.py` — 86 lines — ASTRA Intelligence (training foundation) ka status — read-only.
+  - functions: _config, _count, status, main
+- `tools/evaluate_generation.py` — 84 lines — Evaluate an ASTRA generation manifest with objective audio QA and optional ASR.
+  - functions: _norm, _edit_distance, text_scores, evaluate, main
+- `tools/zero_baseline.py` — 84 lines — zero_baseline.py — ZERO point yaad rakho aur usse neeche mat jaane do.
+  - functions: load, show, metrics, check, restore, main
+- `tools/key_guard.py` — 83 lines — Key Guard — koi API key galti se repo me na aaye (ElevenLabs private rahe).
+  - functions: tracked_files, scan, main
+- `tools/sfx.py` — 81 lines — Compatibility sound module for ASTRA's older audio-studio imports.
+  - functions: t, noise, lowpass, wind, music
+- `tools/ffbin.py` — 80 lines — ffbin.py — poore system ke liye EK jagah se ffmpeg/ffprobe.
+  - functions: _bundled, _make_shim, ensure
+- `tools/voice_learn.py` — 80 lines — Voice Learn — asli insaan ke naap se har engine ko tune karo (bina Sarvam).
+  - functions: engine_settings, check, main
+- `tools/agent_intel.py` — 79 lines — agent_intel.py — chaar agent/browser ko system ka haal de kar KAAM karwao.
+  - functions: main
+- `tools/asr_check.py` — 77 lines — asr_check.py — clips me insaan ki awaaz hai ya nahi, whisper se check karo.
+  - functions: main
+- `tools/narration_clean.py` — 68 lines — narration_clean.py — vachak (narrator) awaaz ka shabd nahi likhega.
+  - functions: strip_sounds, clean_script, main
+- `tools/clarity.py` — 66 lines — clarity.py — awaaz ko saaf/crisp karne ki chain (naap par tika hua).
+  - functions: clarity, main
+- `tools/build_content_index.py` — 65 lines — build_content_index.py — clips ko CONTENT se index karo (naam se nahi).
+  - functions: _load, main
+- `tools/consent.py` — 63 lines — Fail-closed consent ledger for ASTRA voice profiles.
+  - functions: _atomic_json, record_consent, revoke_consent, assert_consent_active
+- `tools/mms_worker.py` — 62 lines — mms_worker.py — ek line MMS-VITS se banao (alag process me — memory saaf rehti hai).
+  - functions: main
+- `tools/voice_validate.py` — 62 lines — Voice Validate — voices.json ke Sarvam speakers sahi hain ya nahi.
+  - functions: check, main
+- `tools/engine_bench.py` — 55 lines — Engine Bench — kaun engine kitna tez hai (asli naap, andaza nahi).
+  - functions: bench, main
+- `tools/engine_sync.py` — 50 lines — Engine Sync v2 — ek brain se charon engines ke folder (samajhne layak Hindi).
+  - functions: main
+- `tools/sound_pick.py` — 50 lines — Sound Pick — script ke shabd se best background file chuno (catalog se).
+  - functions: pick
+- `tools/audio_qa.py` — 46 lines — Streaming WAV quality diagnostics for ASTRA generated audio.
+  - functions: inspect_wav
+- `tools/mms_clean.py` — 41 lines — mms_clean.py — bina background, bina artefact: sirf saaf awaaz.
+- `tools/audio_decode.py` — 37 lines
+  - functions: decode
+- `tools/preflight.py` — 32 lines — Truthful ASTRA runtime preflight. Installed != model downloaded != inference verified.
+  - functions: _has, report, main
+- `tools/worktmp.py` — 32 lines — Work Tmp — /tmp (chhota, 64 MB) ki jagah /scratch ka bada temp.
+  - functions: work_tmp, clean, free_mb
+- `tools/pronounce_test.py` — 31 lines
+  - functions: main
+- `tools/__init__.py` — 0 lines
+
+## tools/drama  (5 files)
+- `tools/drama/scene_audio.py` — 198 lines — scene_audio.py — layer 5: duniya ki layers (base + close + far + movement).
+  - functions: _ff, _content_index, _from_content, find, make_loop, find_or_make, load, loop_to, build
+- `tools/drama/drama.py` — 136 lines — drama.py — poora local audio-drama engine (6 layers), ek hi command.
+  - functions: _ff, load, voice, say, trim, main
+- `tools/drama/prosody.py` — 42 lines — prosody.py — layer 3: bhaav + kirdaar -> performance instructions (bina LLM, bina API).
+  - functions: plan, plan_all
+- `tools/drama/script_parse.py` — 33 lines — script_parse.py — scene JSON ko lines me todo (layer 1).
+  - functions: parse, load
+- `tools/drama/__init__.py` — 1 lines — drama package — ASTRA audio engine ka hissa.
+
+## tools/local_story  (14 files)
+- `tools/local_story/story_local.py` — 485 lines — Local Story — sirf apne system se audio (Sarvam nahi): Piper + apni ambience + apna mix.
+  - functions: ffmpeg_bin, breath, _hp, _stereo, line_emotion, breath_plan, _presence, room_tone, bhaav_prosody, _voice, line_check, synth_line, load, group_script …
+- `tools/local_story/voice_fx.py` — 341 lines — Voice FX — robotic awaaz ko insaani banane ke liye (numpy, koi library nahi).
+  - functions: _stft, _istft, _envelope, formant_shift, _sola, pitch_shift_sola, pitch_shift_formant, humanize, breath, warm, room, smooth_chain, pitch_resample, trim_silence …
+- `tools/local_story/horror_story.py` — 188 lines — Horror story demo — sab apna: piper awaaz + apni synth awaazein (jeev, zameen, mahaul).
+  - functions: ffmpeg, synth_line, trim, compress_gaps, eq_warm, build
+- `tools/local_story/shabd_live.py` — 160 lines — Shabd Live — line banate hi shabd ki jaanch + sudhaar (aadhe/adhoore shabd ka ilaaj).
+  - functions: risky, variants, _model, _say, _hear, _cer, best, main
+- `tools/local_story/real_bed.py` — 149 lines — Real Bed — asli recordings se background (synthetic nahi).
+  - functions: find, _ff, load_mono, loop_to, band, speech_like, make_bed
+- `tools/local_story/ambience.py` — 139 lines — Apni ambience — bina kisi sample ke (numpy se): barish, hawa, jhingur, nadi.
+  - functions: _noise, rain, wind, crickets, river, pad_chords, birds, footsteps, air, _band, _steps, steps_dirt, steps_concrete, steps_leaves …
+- `tools/local_story/praat_pitch.py` — 137 lines — praat_pitch.py v2 — Praat (parselmouth) se sur ka curve, shabd ko bina tode.
+  - functions: _praat, f0_track, measure, apply_curve, syllable_curve, selftest
+- `tools/local_story/nat_story.py` — 114 lines — nat_story.py — seedha, saaf, insaan jaisi awaaz wali kahani (koi formant/robot FX nahi).
+  - functions: voice, say, load, trim, bed, main
+- `tools/local_story/hindi_shabd.py` — 93 lines — Hindi Shabd-Mala — shabd ki jaanch + TTS-safe likhai (piper/koi bhi engine).
+  - functions: _syllables, check, respell, report
+- `tools/local_story/prosody_plan.py` — 72 lines — prosody_plan.py — local prosody planner (layer 2). Bina LLM, bina API.
+  - functions: _is_content, plan_line, plan_script
+- `tools/local_story/psola.py` — 69 lines — psola.py — TD-PSOLA (sahi tareeka): sur badlo, awaaz ka rang waisa hi rahe.
+  - functions: f0_track, shift
+- `tools/local_story/ground_demo.py` — 54 lines — Ground demo — ek hi kahani me teen zameen: kachchi mitti, sookhe patte, pakka farash.
+  - functions: main
+- `tools/local_story/respell.py` — 35 lines — Respell — piper ke Hindi G2P ki pakki galtiyon ka ilaaj.
+  - functions: respell
+- `tools/local_story/__init__.py` — 1 lines — local_story package — ASTRA audio engine ka hissa.
+
+## tools/realtime  (9 files)
+- `tools/realtime/live.py` — 451 lines — Live — banate waqt hi poori jaanch aur turant sudhaar (real-time checker + auto-fix), 100% local.
+  - functions: log, post, _bh_slim, main
+  - classes: EspeakTTS, PiperTTS, LiveChecker
+- `tools/realtime/bhaav.py` — 401 lines — Bhaav — line me kaun sa bhaav CHAHIYE, kitna AAYA, aur kis SHABD par kitna zor/lambai/sur/ruka — phir sudhaar 
+  - functions: rules, _has, target, prosody, deviation, estimate, word_spans, word_measure, judge_words, correction, sculpt, end_contour, analyse, describe
+  - classes: BhaavYaad
+- `tools/realtime/akshar.py` — 246 lines — Akshar — Hindi ko akshar (syllable cluster) me todna, do line ka akshar-akshar milaan, aur galti ki kism batan
+  - functions: is_cons, is_matra, is_vowel, is_mod, normalize, split_akshar, tokens, parts, classify, classify_all, _sub_cost, align, _merge_schwa, compare …
+- `tools/realtime/gates.py` — 125 lines — Gates — har line ki awaaz ki turant jaanch (< 50 ms) + wahin sudhaar.
+  - functions: _frames, db, f0_period, echo_score, centroid_voiced, inner_gaps, presence, allowed_gaps, excess_gaps, check, apply_fix
+- `tools/realtime/sudhaar.py` — 95 lines — Sudhaar — galti pakdi gayi to turant theek karna, aur jo tareeka kaam aaya use yaad rakhna.
+  - functions: _replace_first_akshar, candidates, order_by_learning, apply_word
+  - classes: Lexicon
+- `tools/realtime/nirantarta.py` — 92 lines — Nirantarta — har kirdaar ki awaaz poori kahani (aur agli kahaniyon) me ek jaisi rahe.
+  - functions: features
+  - classes: Profiles
+- `tools/realtime/bahi.py` — 89 lines — Bahi (galti ka khaata) — system ko yaad rahe ki KIS ENGINE/AWAAZ ko KIS AKSHAR me galti hoti hai.
+  - classes: Bahi
+- `tools/realtime/kaan.py` — 73 lines — Kaan (sunna) — line bante hi use sun kar likhna (ASR), 100% local.
+  - functions: make_ear
+  - classes: FasterWhisperEar, CacheEar, SimulatedEar
+- `tools/realtime/__init__.py` — 1 lines — realtime package — ASTRA audio engine ka hissa.
+
+## tools/world  (8 files)
+- `tools/world/duniya.py` — 1039 lines — Duniya engine (world sound) — Seetal / ASTRA ke liye, 100% local.
+  - functions: db2a, a2db, sos_bp, sos_lp, sos_hp, filt, pink, smooth_rand, env_ar, add_at, pan_mono, place, place_wide, outdoor_reverb …
+  - classes: Library
+- `tools/world/awaazein.py` — 281 lines — Awaazein — rozmarra ki duniya ki procedural awaazein (100% local, koi recording nahi).
+  - functions: _bp, _lp, _hp, F, norm, T, sil, modal, phone_ring_old, mobile_ring, phone_vibrate, phone_pickup, phone_hangup, message_tone …
+- `tools/world/harkat.py` — 273 lines — Harkat (motion) + Bhaav (emotion) — kirdaar aur duniya ki har harkat ki awaaz. 100% local, procedural.
+  - functions: _bp, _lp, _hp, F, norm, crackle, step, scuff, paw_cycle, twig, fall, jump, splash, wolf_howl …
+- `tools/world/spotting.py` — 258 lines — Spotting — kahani padh kar "cue sheet" banana: kaun si awaaz, kis pal, kahan, kab tak.
+  - functions: load_events, _rx, _pos, has, first_pos, t_at, find_stop, spot_rules, place_timeline, weather_timeline, spot_llm, parse_llm, merge, log_missing …
+- `tools/world/rachna.py` — 255 lines — Rachna — ek baar seekhi awaaz se hazaaron naye roop (100% local).
+  - functions: rules, load_learned, is_learned, all_embeds, situation_from_text, params_for, repitch, tilt, fade, make_events, make_texture, fingerprint, novelty, load_limits …
+- `tools/world/seekho.py` — 216 lines — Seekho — ek recording se awaaz ka "DNA" seekhna (100% local).
+  - functions: load, trim, embed, similarity, embed_fmax, analyse, learn, learn_library
+- `tools/world/world_qa.py` — 88 lines — World QA — audio_judge.py ke saath chalne wale naye gate (PASS / WARN / FAIL).
+  - functions: decode, lufs, tri, judge
+- `tools/world/__init__.py` — 1 lines — world package — ASTRA audio engine ka hissa.
+
+## youtube_studio  (1 files)
+- `youtube_studio/studio.py` — 438 lines — YouTube Studio Autopilot - koi extra package nahi chahiye (sirf Python 3.9+).
+  - functions: die, load_config, save_config, channel, write_secret, client_creds, token_path, http, log, read_log, cmd_add_channel, cmd_auth_url, cmd_auth_finish, access_token …
