@@ -37,6 +37,12 @@ CAST = {
     "सरपंच": dict(engine="piper-m", pitch=1.20, tempo=0.98, tilt=-0.5, breath=0.014, vib=0.16, form="preserved"),
     "वाचक":  dict(engine="piper-m", pitch=1.15, tempo=1.00, tilt=0.0, breath=0.012, vib=0.14, form="preserved"),
     "भेड़िया": dict(engine="piper-m", pitch=0.90, tempo=0.88, tilt=-3.0, breath=0.030, vib=0.30, form="preserved"),
+    "रमेश":  dict(engine="piper-m", pitch=1.05, tempo=0.98, tilt=-1.0, breath=0.014, vib=0.16, form="preserved"),   # beech umar aadmi
+    "सुनीता": dict(engine="piper-f", pitch=0.88, tempo=0.95, tilt=-1.5, breath=0.015, vib=0.20, form="preserved"),  # beech umar aurat
+    "चंपा":  dict(engine="piper-f", pitch=0.80, tempo=0.90, tilt=-2.5, breath=0.018, vib=0.26, form="preserved"),   # dadi
+    "बिट्टू": dict(engine="piper-f", pitch=1.24, tempo=1.04, tilt=+2.0, breath=0.010, vib=0.12, form="shifted"),     # chhota ladka
+    "गुडिया": dict(engine="piper-f", pitch=1.20, tempo=1.03, tilt=+1.8, breath=0.010, vib=0.13, form="shifted"),    # chhoti ladki
+    "रीना":  dict(engine="piper-f", pitch=1.06, tempo=1.00, tilt=+0.8, breath=0.012, vib=0.17, form="preserved"),   # jawan ladki
 }
 
 
@@ -313,6 +319,16 @@ _F_WALE = {"फीस": "फ़ीस", "फोन": "फ़ोन", "फोट�
            "फायदा": "फ़ायदा", "फिजूल": "फ़िजूल", "फ़ीस": "फ़ीस"}
 
 
+
+def _drift(who: str, text: str) -> dict:
+    """Har line par halka sur/raftaar ka badlav (0.985-1.015) — machine jaisa flat nahi lagta."""
+    import hashlib
+    h = int(hashlib.sha1(f"{who}|{text}".encode()).hexdigest()[:8], 16)
+    pv = 1.0 + ((h % 61) - 30) / 2000.0        # 0.985 .. 1.015
+    tv = 1.0 + (((h >> 8) % 41) - 20) / 2000.0  # 0.990 .. 1.010
+    return {"pitch": pv, "tempo": tv}
+
+
 def bolne_layak(text: str) -> str:
     """Piper/eSpeak Hindi ke liye uchcharan theek karo (shabd tootne se bachao)."""
     for a, b in _NUKTA_HATAO.items():
@@ -322,7 +338,7 @@ def bolne_layak(text: str) -> str:
     return text
 
 
-def build(script: Path, out: Path, gap=0.03, scene_gap=0.12):
+def build(script: Path, out: Path, gap=0.02, scene_gap=0.09):
     lines = []
     for l in script.read_text(encoding="utf-8").splitlines():
         if l.strip().startswith(("#", "[", "(", "{")):
@@ -348,7 +364,10 @@ def build(script: Path, out: Path, gap=0.03, scene_gap=0.12):
         if len(parts) > 1:
             ys = []
             for pi_, part in enumerate(parts):
-                yy, sr_ = sf.read(str(line_audio(who, part, BHAAV.get(bhaav))))
+                _ex = dict(BHAAV.get(bhaav) or {}); _d = _drift(who, part)
+                for _k in ("pitch", "tempo"):
+                    _ex[_k] = _ex.get(_k, 1.0) * _d[_k]
+                yy, sr_ = sf.read(str(line_audio(who, part, _ex)))
                 yy = yy.mean(1) if yy.ndim > 1 else yy
                 yy = _trim(yy.astype(np.float64), sr_)
                 ys.append(yy)
@@ -356,7 +375,10 @@ def build(script: Path, out: Path, gap=0.03, scene_gap=0.12):
                     ys.append(np.zeros(int(0.07 * SR)))
             y = np.concatenate(ys); sr = SR
         else:
-            y, sr = sf.read(str(line_audio(who, text, BHAAV.get(bhaav))))
+            _ex = dict(BHAAV.get(bhaav) or {}); _d = _drift(who, text)
+            for _k in ("pitch", "tempo"):
+                _ex[_k] = _ex.get(_k, 1.0) * _d[_k]
+            y, sr = sf.read(str(line_audio(who, text, _ex)))
             y = y.mean(1) if y.ndim > 1 else y
             y = y.astype(np.float64)
         y = _trim(y, sr)                       # khaali hissa kaato
