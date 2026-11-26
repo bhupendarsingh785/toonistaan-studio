@@ -957,20 +957,23 @@ def doctor(cfg):
                        "%s (%d file, %d hisse)" % (d, nfiles, len(chunks))))
         checks.append(("  %-26s %s" % ("Gemini API key", "optional"), "local brain me zarurat nahi"))
     else:
-        checks.append(("  %-26s %s" % ("Gemini API key", "OK" if key else "MISSING"),
-                       "aistudio.google.com/apikey"))
-        if not key:
+        checks.append(("  %-26s %s" % ("Gemini API key", "optional" if brain == "local" else ("OK" if key else "MISSING")),
+                       "local brain me zarurat nahi" if brain == "local" else "aistudio.google.com/apikey"))
+        if not key and brain != "local":
             problems += 1
     for line, why in checks:
         print("%s  (%s)" % (line, why))
-    if key:
+    if key and brain != "local":
         models, raw = list_models(key)
         if "_error" in raw:
-            print("\n  API check FAIL: %s %s" % (raw["_error"], raw.get("_body", "")[:160]))
+            print("\n  API check FAIL: %s" % raw["_error"])
+            print("  (key galat ya adhoori hai - local brain par isse farak nahi padta)")
             problems += 1
         else:
             print("\n  API OK. %d models available." % len(models))
             print("  Selected model: %s" % pick_model(key, cfg))
+    elif brain == "local":
+        print("\n  Gemini API check skip - aap local brain par ho (key ki zarurat nahi).")
     print("\n  Config : %s" % CONFIG_PATH)
     print("  Memory : %s (%d facts, %d notes)" % (MEMORY_PATH, len(load_memory()["facts"]),
                                                   len(load_memory()["notes"])))
