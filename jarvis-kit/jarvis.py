@@ -352,6 +352,9 @@ def start_llama(cfg):
             last_err = "server 2 minute me ready nahi hua"
         log("llama attempt %d fail: %s" % (i, last_err))
         stop_llama()
+        if "CANNOT LINK" in last_err or "cannot locate symbol" in last_err:
+            return False, ("llama-server binary toota hua hai (libc++ link error). "
+                           "Fix: bash setup_local.sh --build")
     return False, "server band ho gaya. Error: %s (poora log: %s)" % (last_err or "unknown", LLAMA_LOG)
 
 

@@ -1,7 +1,8 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # JARVIS local brain setup - permanent free, no API key, no internet, no dependency
-# Chalao:  bash setup_local.sh          (halka model, ~1.1 GB, 4GB RAM phone)
-#          bash setup_local.sh 3        (behtar model, ~2.1 GB, 6GB+ RAM phone)
+# Chalao:  bash setup_local.sh            (halka model ~1.1 GB, 4GB RAM phone)
+#          bash setup_local.sh 3          (behtar model ~2.1 GB, 6GB+ RAM phone)
+#          bash setup_local.sh --build    (llama-server khud compile karo - link error ka pakka fix)
 set -u
 
 BOLD=$'\033[1m'; DIM=$'\033[2m'; GREEN=$'\033[32m'; RED=$'\033[31m'; YEL=$'\033[33m'; OFF=$'\033[0m'
@@ -10,12 +11,16 @@ warn() { echo "${YEL}  [!]${OFF} $*"; }
 die()  { echo "${RED}  [X]${OFF} $*"; exit 1; }
 step() { echo; echo "${BOLD}$*${OFF}"; }
 
-SIZE="${1:-1.5}"
-case "$SIZE" in
-  1.5|15) SIZE=1.5 ;;
-  3|30)   SIZE=3 ;;
-  *) die "Use: bash setup_local.sh 1.5   ya   bash setup_local.sh 3" ;;
-esac
+SIZE=1.5
+FORCE_BUILD=0
+for a in "$@"; do
+  case "$a" in
+    3|30) SIZE=3 ;;
+    1.5|15) SIZE=1.5 ;;
+    --build|build) FORCE_BUILD=1 ;;
+    *) die "Use: bash setup_local.sh [1.5|3] [--build]" ;;
+  esac
+done
 
 case "${PREFIX:-}" in
   *com.termux*) ;;
@@ -30,34 +35,65 @@ mkdir -p "$MODELS" "$DATA"
 echo "${BOLD}JARVIS local brain - phone me hi model${OFF}"
 echo "${DIM}Zero internet, zero API key, zero kharcha. Model sirf ek baar download hota hai.${OFF}"
 
-# 1. tools
-step "1/5  Tools"
+server_ok() {
+  llama-server --version >/dev/null 2>&1
+}
+
+build_from_source() {
+  step "llama.cpp source se build (15-40 minute, ek baar)"
+  echo "  ${DIM}Phone charge par rakho, screen on rakho, Termux band na karo.${OFF}"
+  pkg install -y git cmake make clang >/dev/null 2>&1 || die "build tools install nahi hue"
+  if [ ! -d "$HOME/llama.cpp/.git" ]; then
+    git clone --depth 1 https://github.com/ggerganov/llama.cpp "$HOME/llama.cpp" || die "git clone fail (internet?)"
+  fi
+  cd "$HOME/llama.cpp" || die "llama.cpp folder nahi mila"
+  cmake -B build -DCMAKE_BUILD_TYPE=Release -DLLAMA_CURL=OFF >/dev/null 2>&1 \
+    || die "cmake fail - screenshot bhejo"
+  cmake --build build --config Release -j"$(nproc)" >/dev/null 2>&1 \
+    || die "build fail - screenshot bhejo"
+  mkdir -p "$PREFIX/bin"
+  if [ -f build/bin/llama-server ]; then
+    cp build/bin/llama-server "$PREFIX/bin/llama-server"
+  elif [ -f build/bin/server ]; then
+    cp build/bin/server "$PREFIX/bin/llama-server"
+  else
+    die "binary nahi bana - screenshot bhejo"
+  fi
+  chmod +x "$PREFIX/bin/llama-server"
+  cd "$DIR" || true
+  server_ok && ok "llama-server build ho gaya" || die "build hua par chal nahi raha - screenshot bhejo"
+}
+
+# 1. tools + working llama-server
+step "1/5  llama.cpp (model chalane wala engine)"
 pkg install -y curl >/dev/null 2>&1 || warn "curl install me dikkat"
 command -v curl >/dev/null 2>&1 || die "curl nahi mila: pkg install curl"
 
-if command -v llama-server >/dev/null 2>&1; then
-  ok "llama-server pehle se hai"
+if [ "$FORCE_BUILD" = "1" ]; then
+  build_from_source
+elif command -v llama-server >/dev/null 2>&1 && server_ok; then
+  ok "llama-server chal raha hai: $(llama-server --version 2>&1 | head -1)"
 else
-  echo "  llama.cpp install kar raha hoon (Termux package)..."
-  if pkg install -y llama-cpp >/dev/null 2>&1 && command -v llama-server >/dev/null 2>&1; then
-    ok "llama-cpp package install ho gaya"
+  if ! command -v llama-server >/dev/null 2>&1; then
+    echo "  llama-cpp install kar raha hoon..."
+    pkg install -y llama-cpp >/dev/null 2>&1 || warn "package nahi mila"
+  fi
+  if command -v llama-server >/dev/null 2>&1 && server_ok; then
+    ok "llama-server install ho gaya"
   else
-    warn "llama-cpp package nahi mila - source se build karunga (10-25 minute, ek baar)"
-    pkg install -y git cmake make clang >/dev/null 2>&1 || die "build tools install nahi hue"
-    if [ ! -d "$HOME/llama.cpp" ]; then
-      git clone --depth 1 https://github.com/ggerganov/llama.cpp "$HOME/llama.cpp" || die "git clone fail"
+    warn "llama-server toota hua hai (link error) - libc++ update try kar raha hoon"
+    pkg update -y >/dev/null 2>&1 || true
+    pkg upgrade -y >/dev/null 2>&1 || true
+    pkg install -y libc++ libandroid-support >/dev/null 2>&1 || true
+    if command -v llama-server >/dev/null 2>&1 && server_ok; then
+      ok "libc++ update se theek ho gaya"
+    else
+      warn "package wala binary theek nahi hua - source se build karunga"
+      build_from_source
     fi
-    cd "$HOME/llama.cpp" || die "folder nahi mila"
-    cmake -B build -DCMAKE_BUILD_TYPE=Release -DLLAMA_CURL=OFF >/dev/null 2>&1 || die "cmake fail"
-    cmake --build build --config Release -j"$(nproc)" >/dev/null 2>&1 || die "build fail"
-    mkdir -p "$PREFIX/bin"
-    cp build/bin/llama-server "$PREFIX/bin/" 2>/dev/null || cp build/bin/server "$PREFIX/bin/llama-server" 2>/dev/null \
-      || die "llama-server binary nahi bana"
-    ok "llama-server build ho gaya"
-    cd "$DIR" || true
   fi
 fi
-command -v llama-server >/dev/null 2>&1 || die "llama-server nahi mila. Manually: pkg install llama-cpp"
+server_ok || die "llama-server kaam nahi kar raha. Chalao: bash setup_local.sh --build"
 
 # 2. model
 step "2/5  Model download (ek baar, phir hamesha offline)"
@@ -69,14 +105,16 @@ else
   NEED_GB=1.1; RAM_GB=4
 fi
 MODEL="$MODELS/model.gguf"
+MIN_BYTES=300000000
 
-if [ -f "$MODEL" ]; then
-  ok "model pehle se hai: $MODEL"
+if [ -f "$MODEL" ] && [ "$(stat -c %s "$MODEL" 2>/dev/null || echo 0)" -gt "$MIN_BYTES" ]; then
+  ok "model pehle se hai: $MODEL ($(du -h "$MODEL" | cut -f1))"
 else
+  [ -f "$MODEL" ] && warn "purana model file adhoora tha - dobara download"
   FREE=$(df -Pk "$MODELS" | awk 'NR==2 {print int($4/1024/1024)}')
   echo "  Chahiye: ${NEED_GB} GB  |  free: ${FREE} GB  |  phone RAM: ${RAM_GB} GB+ behtar"
   [ "$FREE" -lt 3 ] && warn "jagah kam hai - purani files hatao, phir dobara chalao"
-  echo "  Download shuru (resume support hai, beech me ruk jaye to dobara chalao):"
+  echo "  Download shuru (resume support hai, ruk jaye to dobara chalao):"
   curl -L --fail --continue-at - --progress-bar -o "$MODEL.part" "$URL" \
     || die "download fail - internet check karo, phir yahi command dobara chalao"
   mv "$MODEL.part" "$MODEL"
