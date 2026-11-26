@@ -42,6 +42,7 @@ CONFIG_PATH = os.path.join(JARVIS_DIR, "config.json")
 MEMORY_PATH = os.path.join(JARVIS_DIR, "memory.json")
 KEY_PATH = os.path.join(JARVIS_DIR, "key.txt")
 LOG_PATH = os.path.join(JARVIS_DIR, "jarvis.log")
+LLAMA_LOG = os.path.join(JARVIS_DIR, "llama.log")
 AUDIO_PATH = os.path.join(JARVIS_DIR, "mic.m4a")
 API_ROOT = "https://generativelanguage.googleapis.com/v1beta"
 
@@ -290,14 +291,28 @@ def llama_alive(cfg):
         return False
 
 
+def llama_tail(lines=6):
+    try:
+        with open(LLAMA_LOG, "r", encoding="utf-8", errors="ignore") as f:
+            data = [l.strip() for l in f.read().splitlines() if l.strip()]
+        return " | ".join(data[-lines:])[-400:]
+    except OSError:
+        return ""
+
+
 def start_llama(cfg):
     """Local model server ko zarurat par shuru karo. (ok, message)"""
     global _LLAMA_PROC
+    ensure_dirs()
     if llama_alive(cfg):
         return True, "already running"
     model = local_model_path(cfg)
     if not os.path.exists(model):
         return False, ("model file nahi mili: %s - chalao: bash setup_local.sh" % model)
+    size_gb = os.path.getsize(model) / 1e9
+    if size_gb < 0.3:
+        return False, ("model file adhoori hai (%.2f GB) - download dobara karo: "
+                       "bash setup_local.sh" % size_gb)
     binary = None
     for cand in ("llama-server", "llama-server-static", "llamafile"):
         if have(cand):
@@ -306,21 +321,38 @@ def start_llama(cfg):
     if not binary:
         return False, "llama-server nahi mila - chalao: bash setup_local.sh"
     threads = max(2, min(6, os.cpu_count() or 4))
-    cmd = [binary, "-m", model, "-c", str(int(cfg.get("n_ctx", 4096))),
-           "--host", "127.0.0.1", "--port", str(llama_port(cfg)), "-t", str(threads)]
-    try:
-        _LLAMA_PROC = subprocess.Popen(cmd, stdout=subprocess.DEVNULL,
-                                       stderr=subprocess.DEVNULL)
-    except OSError as exc:
-        return False, "server start nahi hua: %s" % exc
-    print("  (local model load ho raha hai, 10-60 second...)")
-    for _ in range(120):
-        if llama_alive(cfg):
-            return True, "started"
-        if _LLAMA_PROC.poll() is not None:
-            return False, "server turant band ho gaya - model file ya RAM check karo"
-        time.sleep(1)
-    return False, "server 2 minute me ready nahi hua"
+    nctx = int(cfg.get("n_ctx", 4096))
+    port = str(llama_port(cfg))
+    attempts = [
+        [binary, "-m", model, "-c", str(nctx), "--host", "127.0.0.1", "--port", port,
+         "-t", str(threads), "-ngl", "0"],
+        [binary, "-m", model, "-c", str(min(2048, nctx)), "--port", port, "-t", str(threads)],
+        [binary, "-m", model, "-c", str(min(1024, nctx)), "--port", port, "-t", "2"],
+    ]
+    last_err = ""
+    for i, cmd in enumerate(attempts, 1):
+        try:
+            with open(LLAMA_LOG, "w", encoding="utf-8") as logf:
+                logf.write("CMD: %s\n" % " ".join(cmd))
+                logf.flush()
+                _LLAMA_PROC = subprocess.Popen(cmd, stdout=logf, stderr=subprocess.STDOUT)
+        except OSError as exc:
+            last_err = "server start nahi hua: %s" % exc
+            continue
+        if i == 1:
+            print("  (local model load ho raha hai, 10-60 second...)")
+        for _ in range(120):
+            if llama_alive(cfg):
+                return True, "started"
+            if _LLAMA_PROC.poll() is not None:
+                last_err = llama_tail()
+                break
+            time.sleep(1)
+        else:
+            last_err = "server 2 minute me ready nahi hua"
+        log("llama attempt %d fail: %s" % (i, last_err))
+        stop_llama()
+    return False, "server band ho gaya. Error: %s (poora log: %s)" % (last_err or "unknown", LLAMA_LOG)
 
 
 def stop_llama():
@@ -943,8 +975,9 @@ def doctor(cfg):
     if brain == "local":
         model = local_model_path(cfg)
         exists = os.path.exists(model)
+        size = "%.2f GB" % (os.path.getsize(model) / 1e9) if exists else "-"
         checks.append(("  %-26s %s" % ("local model", "OK" if exists else "MISSING"),
-                       os.path.basename(model)))
+                       "%s, %s" % (os.path.basename(model), size)))
         if not exists:
             problems += 1
         checks.append(("  %-26s %s" % ("llama-server", "OK" if (have("llama-server") or have("llamafile")) else "MISSING"),
@@ -978,6 +1011,12 @@ def doctor(cfg):
     print("  Memory : %s (%d facts, %d notes)" % (MEMORY_PATH, len(load_memory()["facts"]),
                                                   len(load_memory()["notes"])))
     print("  Log    : %s" % LOG_PATH)
+    if brain == "local" and have("llama-server"):
+        ok_v, ver = termux("llama-server", "--version", timeout=20)
+        print("  llama-server: %s" % (ver.splitlines()[0][:70] if ver else "?"))
+        tail = llama_tail(4)
+        if tail:
+            print("  last llama log: %s" % tail)
     if problems:
         print("\n%d cheez theek karni hai - upar dekho ya guide ka troubleshooting section." % problems)
         return 1
