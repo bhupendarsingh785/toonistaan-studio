@@ -38,10 +38,10 @@ CAST = {
     "वाचक":  dict(engine="piper-m", pitch=1.15, tempo=1.00, tilt=0.0, breath=0.012, vib=0.14, form="preserved"),
     "भेड़िया": dict(engine="piper-m", pitch=0.90, tempo=0.88, tilt=-3.0, breath=0.030, vib=0.30, form="preserved"),
     "रमेश":  dict(engine="piper-m", pitch=1.05, tempo=0.98, tilt=-1.0, breath=0.014, vib=0.16, form="preserved"),   # beech umar aadmi
-    "सुनीता": dict(engine="piper-f", pitch=0.88, tempo=0.95, tilt=-1.5, breath=0.015, vib=0.20, form="preserved"),  # beech umar aurat
-    "चंपा":  dict(engine="piper-f", pitch=0.80, tempo=0.90, tilt=-2.5, breath=0.018, vib=0.26, form="preserved"),   # dadi
-    "बिट्टू": dict(engine="piper-f", pitch=1.24, tempo=1.04, tilt=+2.0, breath=0.010, vib=0.12, form="shifted"),     # chhota ladka
-    "गुडिया": dict(engine="piper-f", pitch=1.20, tempo=1.03, tilt=+1.8, breath=0.010, vib=0.13, form="shifted"),    # chhoti ladki
+    "सुनीता": dict(engine="piper-f", pitch=0.94, tempo=0.97, tilt=-1.5, breath=0.015, vib=0.20, form="preserved"),  # beech umar aurat
+    "चंपा":  dict(engine="piper-f", pitch=0.90, tempo=0.94, tilt=-2.5, breath=0.018, vib=0.26, form="preserved"),   # dadi
+    "बिट्टू": dict(engine="piper-f", pitch=1.12, tempo=1.03, tilt=+1.5, breath=0.010, vib=0.12, form="preserved"),     # chhota ladka
+    "गुडिया": dict(engine="piper-f", pitch=1.10, tempo=1.02, tilt=+1.5, breath=0.010, vib=0.13, form="preserved"),    # chhoti ladki
     "रीना":  dict(engine="piper-f", pitch=1.06, tempo=1.00, tilt=+0.8, breath=0.012, vib=0.17, form="preserved"),   # jawan ladki
 }
 
@@ -246,7 +246,7 @@ def _trim(y, sr, keep=0.05):
     return y[a:b]
 
 
-def _legato(y, sr, ms=130):
+def _legato(y, sr, ms=110):
     """Chupp aur bolne ke jod par narmi (60ms) — 'ruk-ruk' ki jhatke wali cut khatam."""
     env = np.abs(y)
     k = max(3, int(0.008 * sr))
@@ -324,8 +324,8 @@ def _drift(who: str, text: str) -> dict:
     """Har line par halka sur/raftaar ka badlav (0.985-1.015) — machine jaisa flat nahi lagta."""
     import hashlib
     h = int(hashlib.sha1(f"{who}|{text}".encode()).hexdigest()[:8], 16)
-    pv = 1.0 + ((h % 61) - 30) / 2000.0        # 0.985 .. 1.015
-    tv = 1.0 + (((h >> 8) % 41) - 20) / 2000.0  # 0.990 .. 1.010
+    pv = 1.0
+    tv = 1.0
     return {"pitch": pv, "tempo": tv}
 
 
@@ -338,7 +338,7 @@ def bolne_layak(text: str) -> str:
     return text
 
 
-def build(script: Path, out: Path, gap=0.02, scene_gap=0.09):
+def build(script: Path, out: Path, gap=0.05, scene_gap=0.14):
     lines = []
     for l in script.read_text(encoding="utf-8").splitlines():
         if l.strip().startswith(("#", "[", "(", "{")):
