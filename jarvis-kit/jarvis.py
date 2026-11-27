@@ -1854,6 +1854,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --brain gemini wapas cloud brain par
   python jarvis.py --index        aapke data folder ka index banao/dikhao
   python jarvis.py --setkey groq  kisi bhi provider ki key save karo (gemini/groq/openrouter)
+  python jarvis.py --test         kaunsi key chal rahi hai + kitni tez (seconds)
   python jarvis.py --self "kya badalna hai"   khud ka code badle (backup + test ke saath)
   python jarvis.py --selfcheck    apna code theek hai ya nahi
   python jarvis.py --restore      pichhla backup wapas laao
@@ -1933,6 +1934,41 @@ def main(argv):
         except OSError:
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
+        return 0
+    if argv[0] == "--test":
+        cfg = load_config()
+        gkey = load_key()
+        order = [x.strip() for x in str(cfg.get("providers", "gemini,groq,openrouter,local")).split(",") if x.strip()]
+        print("Provider test (har ek ko 'hi' bhej raha hoon):\n")
+        for prov in order:
+            if prov == "local":
+                srv = find_server(cfg)
+                ok_v, ver = server_version(srv)
+                print("  %-12s %s" % ("local", "engine OK" if ok_v else "engine nahi mila"))
+                continue
+            t0 = time.time()
+            try:
+                if prov == "gemini":
+                    if not gkey:
+                        print("  %-12s key nahi hai" % prov)
+                        continue
+                    payload = {"contents": [{"role": "user", "parts": [{"text": "hi"}]}],
+                               "generationConfig": {"maxOutputTokens": 20}}
+                    resp = api_call("/models/%s:generateContent" % pick_model(gkey, cfg), payload, key=gkey, timeout=40)
+                    ok = "_error" not in resp and bool(model_text(resp))
+                    info = resp.get("_error", "") if not ok else model_text(resp)[:40]
+                else:
+                    pkey = load_provider_key(prov)
+                    if not pkey:
+                        print("  %-12s key nahi hai" % prov)
+                        continue
+                    txt = openai_chat(prov, [{"role": "user", "content": "hi"}], cfg, pkey, timeout=40)
+                    ok = bool(txt)
+                    info = txt[:40] if ok else "fail"
+                print("  %-12s %s  %.1fs  %s" % (prov, "OK  " if ok else "FAIL", time.time() - t0,
+                                                 info.replace("\n", " ")))
+            except Exception as exc:
+                print("  %-12s FAIL  %s" % (prov, exc))
         return 0
     if argv[0] == "--self":
         cfg = load_config()
