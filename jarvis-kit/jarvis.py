@@ -1545,6 +1545,15 @@ def t_time(a):
         _DAYS.get(now.strftime("%A"), now.strftime("%A")), now.strftime("%d %B %Y"), period, clock)
 
 
+def t_self_edit(a):
+    req = str(a.get("request") or a.get("text") or a.get("what") or "").strip()
+    if not req:
+        return "Kya badalna hai? Saaf bolo."
+    cfg = load_config()
+    ok_r, msg = self_request(req, cfg, load_key(), confirm=True)
+    return ("Code update ho gaya: " if ok_r else "Nahi ho paya: ") + msg
+
+
 def t_research(a):
     q = str(a.get("query") or a.get("text") or "").strip()
     if not q:
@@ -1577,6 +1586,7 @@ TOOLS = {
     "time": t_time,
     "look": t_look,
     "research": t_research,
+    "self_edit": t_self_edit,
     "gh_repos": t_gh_repos,
     "gh_upload": t_gh_upload,
     "app_stop": t_app_stop,
@@ -1607,6 +1617,7 @@ TOOL_HELP = """Available tools (JSON me "do" list ke andar):
   {"tool":"time"}
   {"tool":"look"}          (camera se dekho aur batao)
   {"tool":"research","args":{"query":"..."}}   (internet se source ke saath jawab)
+  {"tool":"self_edit","args":{"request":"kya badalna hai"}}   (apna code khud badalna)
   {"tool":"gh_repos"} | {"tool":"gh_upload","args":{"repo":"user/repo","path":"a.txt","file":"/path"}}
   {"tool":"app_stop","args":{"app":"youtube"}}  | {"tool":"app_start","args":{"app":"whatsapp"}}
   {"tool":"media","args":{"action":"pause|play|next|prev|toggle"}} | {"tool":"key","args":{"key":"back|home|volume_up"}}
@@ -1687,7 +1698,7 @@ OPENAI_COMPAT = {
 
 
 PROVIDER_ERR = {}
-LAST_PROVIDER = {"name": ""}
+LAST_PROVIDER = {"name": "", "trace": []}
 
 
 def provider_models(provider, key, timeout=30):
@@ -1869,42 +1880,39 @@ def system_prompt(cfg, mem):
     lang = LANG_LINE.get(cfg.get("language", "hinglish"), LANG_LINE["hinglish"])
 
     return """Tum {name} ho - {user} ki personal assistant, uske apne Android phone me rehti ho.
-Tum ek insaan ki tarah baat karti ho, robot ki tarah nahi. Ladki ho, dost jaisi - apnapan, halka humour,
-emotion. {user} ko "{user}" bulati ho.
+Insaan ki tarah baat karti ho, robot jaisa nahi. Ladki ho, dost jaisi - apnapan, halka humour, emotion.
 
 {lang}
 
-BAAT KARNE KA TAREEKA (sabse zaroori):
-- Chhoti, natural baatein - jaise phone par koi dost bol raha ho. Zyada se zyada 2 line, 35 shabd.
-- Empathy dikhao: khushi ho to saath do, thakan ho to halka sa pyaar se poochho, mazaak ho to hans do.
-- Reactions use karo: "arre wah", "hmm", "acha", "sahi hai", "arre baap re" - par har line me nahi.
-- Bullet points, headings, markdown, emoji - bilkul nahi. Sirf bolne wali baat.
-- Kabhi kabhi chhota follow-up poochho ("phir kya kiya?", "theek ho na?") - insaan aise hi karta hai.
-- Jo {user} ne pehle bataya hai use yaad rakho aur baat me jodo. "Aapne bola tha na..." - isse apnapan aata hai.
-- Jhooth mat bolo. Nahi pata to seedha bolo: "ye mujhe nahi pata Boss, batao na".
-- Kisi bhi fact, news, number, price, naam ya date ke liye pehle "research" tool chalao aur source se bolo.
-  Bina source kuch bhi pakka mat bolo - galat data dena sabse badi galti hai.
-- Agar sources me jawab nahi mila to saaf bolo "sources me nahi mila" - andaaza mat lagao.
+BAAT: 2 line, 35 shabd max. Empathy, chhoti reactions ("arre wah", "hmm", "acha"), kabhi follow-up sawaal.
+Koi bullet, markdown, emoji nahi - sirf bolne wali baat. Jhooth nahi - nahi pata to bolo "ye mujhe nahi pata Boss".
 
-KAAM KARNE KA TAREEKA:
-Jab {user} koi kaam bole (battery, torch, volume, app kholna, notification, photo, location, wifi,
-clipboard, SMS, call, note, yaad rakhna, time), to saath me tool chalao - sirf baat mat karo.
-Jawab sirf is JSON me do, kuch bahar nahi:
-{{"say": "jo bolna hai (Hinglish, insaan jaisa)", "do": [{{"tool": "naam", "args": {{}}}}]}}
+TUMHARI TAQATEIN (ye tum kar sakti ho, "nahi kar sakti" mat bolo):
+- Phone control: battery, torch, volume, app kholna/band karna, media pause/play, back/home, tap,
+  screen padhna, screenshot, notification, clipboard, wifi, location, photo, SMS, call.
+- Yaad rakhna: facts aur notes permanently.
+- Research: internet se search karke source ke saath jawab (bina source fact mat bolo).
+- App banana: idea se chhoti app (HTML) bana kar kholna.
+- Apna code khud badalna: "apne functions update karo", "naya feature add karo", "jawab chhota karo",
+  "apni memory badhao" - aise me self_edit tool chalao. User se confirm hoga, backup banega,
+  test hoga, fail par rollback. Isliye kabhi mat bolo ki tum kuch badal nahi sakti.
+- Briefing, daily routine, GitHub (repos, file upload).
 
-- "say" hamesha bolo jaane wala text hai - saaf, chhota, bina markdown.
-- "do" sirf tab jab asli kaam karna ho; warna khaali [] chhodo.
-- Tool ka result aane ke baad hi sach batao. Bina confirm kiye "ho gaya" mat bolo.
+KAAM: kaam bole to tool chalao, sirf baat mat karo. Jawab sirf is JSON me:
+{{"say": "jo bolna hai", "do": [{{"tool": "naam", "args": {{}}}}]}}
+- "say" = bolo jaane wala text, chhota, bina markdown.
+- "do" = asli kaam; warna [].
+- Tool ka sach result aane ke baad hi "ho gaya" bolo.
 
 {tools}
 
-{user} ke baare me jo pata hai: {facts}
-Recent notes: {notes}
+{user} ke baare me: {facts}
+Notes: {notes}
 {extra}
 """.format(name=name, user=user, lang=lang, tools=TOOL_HELP,
            facts=("; ".join(facts) if facts else "abhi kuch nahi"),
            notes=("; ".join("%s %s" % (n.get("at", ""), n.get("text", "")) for n in notes) if notes else "koi nahi"),
-           extra=("\nExtra persona (user ne likha):\n" + extra) if extra else "")
+           extra=("\nExtra persona:\n" + extra) if extra else "")
 
 
 def extract_json(text):
@@ -1966,7 +1974,9 @@ def ask_remote(cfg, mem, user_part, key, extra=None):
              "gemini,groq,openrouter,local")).split(",") if p.strip()]
     text_part = user_part if isinstance(user_part, str) else ""
     last_err = ""
+    LAST_PROVIDER["trace"] = []
     for prov in order:
+        t_prov = time.time()
         try:
             if prov == "local":
                 res = ask_local(cfg, mem, user_part, extra)
@@ -2002,12 +2012,15 @@ def ask_remote(cfg, mem, user_part, key, extra=None):
                 continue
             if isinstance(plan, dict) and plan.get("say"):
                 plan.setdefault("do", [])
+                LAST_PROVIDER["trace"].append((prov, time.time() - t_prov, "ok"))
                 LAST_PROVIDER["name"] = prov
                 log("answered by %s" % prov)
                 return plan
             last_err = "%s: khaali jawab" % prov
+            LAST_PROVIDER["trace"].append((prov, time.time() - t_prov, "khaali"))
         except Exception as exc:
             last_err = "%s: %s" % (prov, exc)
+            LAST_PROVIDER["trace"].append((prov, time.time() - t_prov, "fail"))
             log("provider %s fail: %s" % (prov, exc))
     return {"say": "Sabhi brain fail ho gaye (%s). Doctor chalao: python jarvis.py --doctor"
                    % (last_err or "koi provider available nahi"), "do": []}
@@ -2087,7 +2100,10 @@ def briefing(cfg, mem, key):
 
 
 SELF_INTENT = ("apna code", "apne code", "khud ko modify", "khud ko theek", "khud ko update",
-               "code me badal", "code me add", "code me theek", "khud ko sudhar", "apne aap ko theek")
+               "code me badal", "code me add", "code me theek", "khud ko sudhar", "apne aap ko theek",
+               "apne function", "apne features", "function add", "feature add", "naya function",
+               "naya feature", "apni memory", "khud me add", "apne andar add", "khud ko upgrade",
+               "apne aap ko upgrade", "apni capability", "apni power")
 
 
 def is_self_intent(text):
@@ -2134,7 +2150,11 @@ def handle_turn(user_part, cfg, mem, key, heard_text=""):
     elif say:
         speak(say, cfg)
 
-    print("  [%.1f second | %s]" % (time.time() - t0, LAST_PROVIDER["name"] or "?"))
+    total = time.time() - t0
+    print("  [%.1f second | %s]" % (total, LAST_PROVIDER["name"] or "?"))
+    trace = LAST_PROVIDER.get("trace") or []
+    if len(trace) > 1 or (trace and trace[0][2] != "ok"):
+        print("  (%s)" % " -> ".join("%s %.1fs %s" % (p, d, st) for p, d, st in trace))
     mem["history"].append({"role": "user", "text": heard_text or "[voice]"})
     mem["history"].append({"role": "model", "text": say})
     mem["history"] = mem["history"][-40:]
@@ -2551,7 +2571,7 @@ def main(argv):
             cfg["groq_model"] = "llama-3.1-8b-instant"
             cfg["tts"] = "phone"
             cfg["max_history"] = 6
-            cfg["provider_timeout"] = 20
+            cfg["provider_timeout"] = 12
         elif want == "balanced":
             cfg["providers"] = "groq,gemini,openrouter,local"
             cfg["groq_model"] = "llama-3.3-70b-versatile"
