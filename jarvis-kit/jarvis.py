@@ -1340,6 +1340,23 @@ def pick_groq_model(cfg, key):
     return cfg.get("groq_model", "")
 
 
+def pick_openrouter_model(cfg, key):
+    """OpenRouter ke free models me se ek chuno."""
+    ids = provider_models("openrouter", key)
+    free = [i for i in ids if i.endswith(":free")]
+    if not free:
+        return cfg.get("openrouter_model", "")
+    for pref in ("llama-3.3-70b", "qwen", "gemma", "mistral", "deepseek"):
+        for i in free:
+            if pref in i.lower():
+                cfg["openrouter_model"] = i
+                save_config(cfg)
+                return i
+    cfg["openrouter_model"] = free[0]
+    save_config(cfg)
+    return free[0]
+
+
 def openai_chat(provider, messages, cfg, key, timeout=None):
     """Groq / OpenRouter / Mistral - sab OpenAI jaisa hi hai. Error PROVIDER_ERR me."""
     url, model_key = OPENAI_COMPAT[provider]
@@ -1537,6 +1554,9 @@ def ask_remote(cfg, mem, user_part, key, extra=None):
                     raw = openai_chat(prov, msgs, cfg, pkey)
                 if not raw and prov == "groq":
                     if pick_groq_model(cfg, pkey):
+                        raw = openai_chat(prov, msgs, cfg, pkey)
+                if not raw and prov == "openrouter":
+                    if pick_openrouter_model(cfg, pkey):
                         raw = openai_chat(prov, msgs, cfg, pkey)
                 plan = extract_json(raw) if raw else None
                 if not isinstance(plan, dict) and raw:
@@ -2027,6 +2047,8 @@ def main(argv):
                     print("  %-12s key %d bytes" % (prov, len(pkey)))
                     if prov == "groq":
                         pick_groq_model(cfg, pkey)
+                    elif prov == "openrouter":
+                        pick_openrouter_model(cfg, pkey)
                     txt = openai_chat(prov, [{"role": "user", "content": "hi"}], cfg, pkey, timeout=40)
                     ok = bool(txt)
                     info = txt[:40] if ok else PROVIDER_ERR.get(prov, "fail")[:90]
