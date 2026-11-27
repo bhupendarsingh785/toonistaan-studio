@@ -33,6 +33,7 @@ import subprocess
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 import zipfile
 import wave
@@ -547,6 +548,191 @@ def speak(text, cfg, force_gemini=False):
 
 
 # ----------------------------------------------------------------------------
+# RESEARCH - internet se source ke saath jawab (galat data se bachne ke liye)
+# ----------------------------------------------------------------------------
+
+def http_get(url, timeout=25, limit=400000):
+    req = urllib.request.Request(url, headers={
+        "User-Agent": "Mozilla/5.0 (Linux; Android 13) Jarvis/1.0",
+        "Accept-Language": "en-IN,hi;q=0.9,en;q=0.8"})
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        return resp.read(limit).decode("utf-8", "ignore")
+
+
+def html_to_text(html):
+    html = re.sub(r"(?is)<(script|style|noscript)[^>]*>.*?</\1>", " ", html)
+    html = re.sub(r"(?s)<[^>]+>", " ", html)
+    html = html.replace("&nbsp;", " ").replace("&amp;", "&").replace("&quot;", '"')
+    html = html.replace("&lt;", "<").replace("&gt;", ">").replace("&#39;", "'")
+    return re.sub(r"\s+", " ", html).strip()
+
+
+def ddg_search(query, limit=5):
+    """DuckDuckGo HTML se results (koi API key nahi)."""
+    out = []
+    try:
+        html = http_get("https://html.duckduckgo.com/html/?q=" + urllib.parse.quote(query))
+    except Exception as exc:
+        log("ddg fail: %s" % exc)
+        return out
+    for m in re.finditer(r'<a[^>]+class="result__a"[^>]+href="([^"]+)"[^>]*>(.*?)</a>', html, re.S):
+        url, title = m.group(1), html_to_text(m.group(2))
+        if "uddg=" in url:
+            try:
+                url = urllib.parse.unquote(re.search(r"uddg=([^&]+)", url).group(1))
+            except Exception:
+                pass
+        if url.startswith("http") and not any(h["url"] == url for h in out):
+            out.append({"title": title[:120] or url.split("/")[2], "url": url})
+        if len(out) >= limit:
+            break
+    if out:
+        return out
+    # lite endpoint (alag HTML)
+    try:
+        lite = http_get("https://lite.duckduckgo.com/lite/?q=" + urllib.parse.quote(query))
+    except Exception as exc:
+        log("ddg lite fail: %s" % exc)
+        return out
+    for enc in re.findall(r"uddg=([^&\"]+)", lite):
+        url = urllib.parse.unquote(enc)
+        if url.startswith("http") and not any(h["url"] == url for h in out):
+            out.append({"title": url.split("/")[2], "url": url})
+        if len(out) >= limit:
+            break
+    return out
+
+
+def wiki_search(query, lang="en", limit=3):
+    out = []
+    try:
+        data = json.loads(http_get(
+            "https://%s.wikipedia.org/w/api.php?action=query&list=search&format=json&srlimit=%d&srsearch=%s"
+            % (lang, limit, urllib.parse.quote(query))))
+        for item in (data.get("query", {}).get("search") or [])[:limit]:
+            title = item.get("title", "")
+            out.append({"title": title,
+                        "url": "https://%s.wikipedia.org/wiki/%s" % (lang, urllib.parse.quote(title.replace(" ", "_")))})
+    except Exception as exc:
+        log("wiki fail: %s" % exc)
+    return out
+
+
+def fetch_page(url, chars=3500):
+    try:
+        return html_to_text(http_get(url))[:chars]
+    except Exception as exc:
+        log("fetch fail %s: %s" % (url, exc))
+        return ""
+
+
+def research(query, cfg, key, sources_n=3):
+    """Search -> pages padho -> source ke saath jawab. (answer, sources)"""
+    hits = ddg_search(query) or wiki_search(query) or wiki_search(query, "hi")
+    if not hits:
+        return ("Mujhe iske bare me koi bharosemand source nahi mila Boss, isliye kuch bana kar nahi bataungi.", [])
+    notes, used = [], []
+    for h in hits[:sources_n]:
+        text = fetch_page(h["url"])
+        if len(text) < 200:
+            continue
+        notes.append("[%d] %s (%s)\n%s" % (len(used) + 1, h["title"], h["url"], text[:1800]))
+        used.append(h)
+    if not notes:
+        return ("Sources khule nahi Boss, abhi bata nahi sakti. Thodi der baad try karein?", [])
+    ask = ("Sirf neeche diye sources ke aadhar par jawab do. Jo sources me nahi hai wo mat bolo. "
+           "Har baat ke aage [1], [2] jaisa source number lagao. Agar sources me jawab nahi hai to "
+           "saaf likho: 'sources me ye nahi mila'.\n\nSawaal: %s\n\nSources:\n%s" % (query, "\n\n".join(notes)))
+    ans = ask_text(cfg, key, "Tum ek careful researcher ho. Sirf diye gaye sources par bharosa karo. "
+                             "Bullet points nahi, chhoti Hinglish lines me bolo (max 5 line).", ask, max_tokens=900)
+    if not ans:
+        return ("Research ke liye koi brain available nahi tha Boss.", used)
+    plan = extract_json(ans)
+    if isinstance(plan, dict) and plan.get("say"):
+        ans = str(plan["say"])
+    return strip_markdown(ans)[:1200], used
+
+
+# ----------------------------------------------------------------------------
+# APP BUILDER - idea se chhoti app (single file HTML) phone me hi
+# ----------------------------------------------------------------------------
+
+def build_app(idea, cfg, key):
+    """Idea se single-file HTML app banao aur browser me kholo."""
+    projects = os.path.join(os.path.dirname(SELF_PATH), "projects")
+    os.makedirs(projects, exist_ok=True)
+    ask = ("Ek single-file HTML app banao is idea ke liye: %s\n"
+           "Rules: ek hi HTML file, CSS aur JS andar inline, mobile-first, Hinglish UI labels, "
+           "no external CDN, no build step. Sirf poora HTML code do, koi explanation nahi." % idea)
+    code = ask_text(cfg, key, "You write complete, working single-file HTML apps. Output only HTML.",
+                    ask, max_tokens=3000)
+    if not code or "<html" not in code.lower():
+        return None, "model se poora HTML nahi mila"
+    code = re.sub(r"^```(?:html)?", "", code.strip())
+    code = re.sub(r"```$", "", code).strip()
+    slug = re.sub(r"[^a-z0-9]+", "-", idea.lower())[:40].strip("-") or "app"
+    path = os.path.join(projects, slug + ".html")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(code)
+    termux("termux-open-url", "file://" + path, timeout=20)
+    return path, ""
+
+
+# ----------------------------------------------------------------------------
+# GITHUB - token se repos, files (REST API)
+# ----------------------------------------------------------------------------
+
+def gh_api(path, method="GET", body=None, token=""):
+    url = "https://api.github.com" + path
+    data = json.dumps(body).encode() if body else None
+    req = urllib.request.Request(url, data=data, method=method, headers={
+        "Authorization": "Bearer %s" % token, "Accept": "application/vnd.github+json",
+        "User-Agent": UA, "Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=40) as resp:
+            return json.loads(resp.read().decode("utf-8", "ignore")), ""
+    except urllib.error.HTTPError as exc:
+        msg = ""
+        try:
+            msg = exc.read().decode("utf-8", "ignore")[:200]
+        except Exception:
+            pass
+        return None, "HTTP %s %s" % (exc.code, msg)
+    except Exception as exc:
+        return None, str(exc)
+
+
+def gh_token():
+    return load_provider_key("github")
+
+
+def t_gh_repos(a):
+    tok = gh_token()
+    if not tok:
+        return "GitHub token nahi hai (--setkey github)"
+    data, err = gh_api("/user/repos?per_page=10&sort=updated", token=tok)
+    if not data:
+        return "GitHub: %s" % err
+    return ", ".join(r.get("full_name", "?") for r in data[:10])
+
+
+def t_gh_upload(a):
+    tok = gh_token()
+    if not tok:
+        return "GitHub token nahi hai (--setkey github)"
+    repo = str(a.get("repo", "")).strip()
+    path = str(a.get("path", "")).strip()
+    src = os.path.expanduser(str(a.get("file", "")))
+    if not (repo and path and os.path.exists(src)):
+        return "repo, path aur file chahiye"
+    with open(src, "rb") as f:
+        content = base64.b64encode(f.read()).decode()
+    body = {"message": a.get("message", "jarvis upload"), "content": content}
+    data, err = gh_api("/repos/%s/contents/%s" % (repo, path), "PUT", body, tok)
+    return "Upload ho gaya: %s/%s" % (repo, path) if data else "Upload fail: %s" % err
+
+
+# ----------------------------------------------------------------------------
 # LOCAL BRAIN - phone me hi model, zero internet, zero paisa, zero dependency
 # ----------------------------------------------------------------------------
 
@@ -901,6 +1087,7 @@ ROUTES = [
     (("torch", "flashlight", "batti"), "torch"),
     (("time kya", "kitne baje", "samay kya", "date kya", "tarikh"), "time"),
     (("kya hai ye", "ye kya hai", "dekho", "dekh kar batao", "padh kar batao", "camera se dekh"), "look"),
+    (("research karo", "search karo", "internet se dekho", "khoj karo", "google karo"), "research"),
     (("wifi", "internet kaisa"), "wifi"),
     (("location", "kahan hoon", "meri jagah"), "location"),
     (("vibrate", "hila do"), "vibrate"),
@@ -1189,6 +1376,17 @@ def t_time(a):
         _DAYS.get(now.strftime("%A"), now.strftime("%A")), now.strftime("%d %B %Y"), period, clock)
 
 
+def t_research(a):
+    q = str(a.get("query") or a.get("text") or "").strip()
+    if not q:
+        return "Kya research karna hai?"
+    cfg = load_config()
+    ans, used = research(q, cfg, load_key())
+    if used:
+        ans += " (sources: %s)" % ", ".join(h["url"] for h in used[:3])
+    return ans
+
+
 TOOLS = {
     "battery": t_battery,
     "torch": t_torch,
@@ -1209,6 +1407,9 @@ TOOLS = {
     "note_list": t_note_list,
     "time": t_time,
     "look": t_look,
+    "research": t_research,
+    "gh_repos": t_gh_repos,
+    "gh_upload": t_gh_upload,
 }
 
 RISKY = {"sms", "call"}
@@ -1228,7 +1429,9 @@ TOOL_HELP = """Available tools (JSON me "do" list ke andar):
   {"tool":"remember","args":{"fact":"..."}}
   {"tool":"note_add","args":{"text":"..."}} | {"tool":"note_list","args":{"count":5}}
   {"tool":"time"}
-  {"tool":"look"}          (camera se dekho aur batao)"""
+  {"tool":"look"}          (camera se dekho aur batao)
+  {"tool":"research","args":{"query":"..."}}   (internet se source ke saath jawab)
+  {"tool":"gh_repos"} | {"tool":"gh_upload","args":{"repo":"user/repo","path":"a.txt","file":"/path"}}"""
 
 
 def run_tool(name, args, cfg):
@@ -1497,6 +1700,9 @@ BAAT KARNE KA TAREEKA (sabse zaroori):
 - Kabhi kabhi chhota follow-up poochho ("phir kya kiya?", "theek ho na?") - insaan aise hi karta hai.
 - Jo {user} ne pehle bataya hai use yaad rakho aur baat me jodo. "Aapne bola tha na..." - isse apnapan aata hai.
 - Jhooth mat bolo. Nahi pata to seedha bolo: "ye mujhe nahi pata Boss, batao na".
+- Kisi bhi fact, news, number, price, naam ya date ke liye pehle "research" tool chalao aur source se bolo.
+  Bina source kuch bhi pakka mat bolo - galat data dena sabse badi galti hai.
+- Agar sources me jawab nahi mila to saaf bolo "sources me nahi mila" - andaaza mat lagao.
 
 KAAM KARNE KA TAREEKA:
 Jab {user} koi kaam bole (battery, torch, volume, app kholna, notification, photo, location, wifi,
@@ -1989,6 +2195,9 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --test         kaunsi key chal rahi hai + kitni tez (seconds)
   python jarvis.py --voices       chaar female voices sun kar chuno
   python jarvis.py --persona "..." apni pasand ka behaviour likho (file me jodta hai)
+  python jarvis.py --research "topic"  internet se source ke saath jawab
+  python jarvis.py --build "idea"      chhoti app banao (single HTML, browser me khulegi)
+  python jarvis.py --daily             subah ka routine: briefing + notes + vault
   python jarvis.py --self "kya badalna hai"   khud ka code badle (backup + test ke saath)
   python jarvis.py --selfcheck    apna code theek hai ya nahi
   python jarvis.py --restore      pichhla backup wapas laao
@@ -2048,7 +2257,7 @@ def main(argv):
     if argv[0] == "--setkey":
         import getpass
         prov = (argv[1] if len(argv) > 1 else "").strip().lower()
-        if prov not in ("gemini", "groq", "openrouter", "mistral"):
+        if prov not in ("gemini", "groq", "openrouter", "mistral", "github"):
             print("Use: python jarvis.py --setkey groq   (ya gemini / openrouter / mistral)")
             return 1
         try:
@@ -2068,6 +2277,44 @@ def main(argv):
         except OSError:
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
+        return 0
+    if argv[0] == "--research":
+        q = " ".join(argv[1:]).strip()
+        if not q:
+            print("Use: python jarvis.py --research \"topic\"")
+            return 1
+        cfg = load_config()
+        print("Research: %s\n" % q)
+        ans, used = research(q, cfg, load_key())
+        print(ans)
+        if used:
+            print("\nSources:")
+            for i, h in enumerate(used, 1):
+                print("  [%d] %s\n      %s" % (i, h["title"][:70], h["url"]))
+        return 0
+    if argv[0] == "--build":
+        idea = " ".join(argv[1:]).strip()
+        if not idea:
+            print("Use: python jarvis.py --build \"ek expense tracker app\"")
+            return 1
+        cfg = load_config()
+        print("App ban raha hai: %s" % idea)
+        path, err = build_app(idea, cfg, load_key())
+        if path:
+            print("Ban gaya: %s" % path)
+            print("Browser me khul gaya hoga. Chaho to GitHub par bhejo: --gh-upload")
+            return 0
+        print("Nahi bana: %s" % err)
+        return 1
+    if argv[0] == "--daily":
+        cfg = load_config()
+        mem = load_memory()
+        print(briefing(cfg, mem, load_key()))
+        if mem.get("notes"):
+            print("\nNotes:")
+            for n in mem["notes"][-5:]:
+                print("  - %s: %s" % (n.get("at", ""), n.get("text", "")))
+        print("\nData vault: %s" % data_dir(cfg))
         return 0
     if argv[0] == "--persona":
         cfg = load_config()
