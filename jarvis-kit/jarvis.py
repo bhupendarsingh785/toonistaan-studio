@@ -2055,10 +2055,11 @@ def ask_gemini(cfg, mem, user_part, key, extra=None):
         },
     }
     model = pick_model(key, cfg)
-    resp = api_call("/models/%s:generateContent" % model, payload, key=key)
-    if "_error" in resp and any(k in str(resp.get("_error", "")) for k in ("503", "timeout")):
-        time.sleep(2)
-        resp = api_call("/models/%s:generateContent" % model, payload, key=key)
+    gtimeout = int(cfg.get("provider_timeout", 25))
+    resp = api_call("/models/%s:generateContent" % model, payload, key=key, timeout=gtimeout)
+    if "_error" in resp and "503" in str(resp.get("_error", "")):
+        time.sleep(1)
+        resp = api_call("/models/%s:generateContent" % model, payload, key=key, timeout=gtimeout)
     if "_error" in resp:
         # model purana ho gaya ho sakta hai - dobara chuno
         cfg["model"] = ""
