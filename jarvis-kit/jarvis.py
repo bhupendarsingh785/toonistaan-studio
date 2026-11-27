@@ -592,13 +592,20 @@ def local_route(text):
     return None
 
 
+HINGLISH_WORDS = ("hai", "hoon", "par", "karo", "kar ", "bata", "nahi", "aap", "boss",
+                  "abhi", "gaya", "gayi", "raha", "rahi", "hua", "hain", "mujhe", "aapka")
+
+
+def looks_hinglish(text):
+    t = (text or "").lower()
+    return any(w in t for w in HINGLISH_WORDS)
+
+
 def hinglish_fallback(tool, result):
     res = str(result).strip()
     low = res.lower()
-    if tool == "battery":
-        return "%s Boss." % res
-    if tool == "time":
-        return "%s Boss." % res
+    if tool in ("battery", "time"):
+        return "%s Boss." % res.rstrip(".")
     if tool == "torch":
         return "Torch %s Boss." % ("on" if "on" in low else "off")
     return "%s Boss." % res
@@ -621,7 +628,8 @@ def ask_local(cfg, mem, user_part, extra=None):
         parsed = extract_json(say)
         if isinstance(parsed, dict) and parsed.get("say"):
             say = strip_markdown(str(parsed["say"]))
-        if not say or say.lower().startswith("{") or len(say) > 200:
+        if (not say) or say.lower().startswith("{") or len(say) > 200 \
+                or not looks_hinglish(say) or say.strip().rstrip(".") == str(result).strip().rstrip("."):
             say = hinglish_fallback(tool, result)
         return {"say": say, "do": []}
     chunks, _nfiles, _cached = build_index(cfg)
@@ -653,8 +661,14 @@ def t_battery(a):
     data, err = termux_json("termux-battery-status")
     if data is None:
         return "Battery status nahi mila: %s" % err
-    return "Battery %s%%, %s, temperature %s C" % (
-        data.get("percentage"), data.get("status", "?"), data.get("temperature", "?"))
+    pct = data.get("percentage")
+    plugged = str(data.get("plugged", "")).upper()
+    status = str(data.get("status", "")).upper()
+    charging = ("CHARG" in status) or (plugged not in ("UNPLUGGED", "", "NONE"))
+    line = "Battery %s%% hai, %s" % (pct, "charging par hai" if charging else "charging par nahi hai")
+    if data.get("temperature") not in (None, "?"):
+        line += ", temperature %s C" % data.get("temperature")
+    return line
 
 
 def t_torch(a):
@@ -789,9 +803,18 @@ def t_note_list(a):
     return " | ".join("%s: %s" % (n.get("at", ""), n.get("text", "")) for n in notes)
 
 
+_DAYS = {"Monday": "Somwar", "Tuesday": "Mangalwar", "Wednesday": "Budhwar",
+         "Thursday": "Guruwar", "Friday": "Shukrawar", "Saturday": "Shaniwar",
+         "Sunday": "Ravivar"}
+
+
 def t_time(a):
     now = datetime.now()
-    return now.strftime("%A, %d %B %Y, %I:%M %p")
+    h = now.hour
+    period = "subah" if h < 12 else ("dopahar" if h < 17 else ("shaam" if h < 21 else "raat"))
+    clock = now.strftime("%I:%M").lstrip("0")
+    return "Abhi %s, %s, %s %s baje hain" % (
+        _DAYS.get(now.strftime("%A"), now.strftime("%A")), now.strftime("%d %B %Y"), period, clock)
 
 
 TOOLS = {
