@@ -291,6 +291,49 @@ def llama_alive(cfg):
         return False
 
 
+def find_server(cfg):
+    """llama-server binary kahan hai - pehle apna shipped binary, phir PATH."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    cands = []
+    if cfg.get("llama_binary"):
+        cands.append(os.path.expanduser(cfg["llama_binary"]))
+    cands.append(os.path.join(here, "engine", "llama-server"))
+    cands.append(os.path.join(here, "bin", "llama-server"))
+    cands.append(os.path.expanduser("~/jarvis/engine/llama-server"))
+    cands.append(os.path.expanduser("~/jarvis/bin/llama-server"))
+    for c in cands:
+        if os.path.exists(c) and os.access(c, os.X_OK):
+            return c
+    for name in ("llama-server", "llama-server-static", "llamafile"):
+        found = shutil.which(name)
+        if found:
+            return found
+    return None
+
+
+def server_env(binary):
+    """Bundled engine ke saath uske .so files dhoondhne ke liye env."""
+    env = dict(os.environ)
+    if binary:
+        d = os.path.dirname(os.path.abspath(binary))
+        if os.path.isdir(d) and any(f.startswith("libllama") or f.startswith("libggml")
+                                   for f in os.listdir(d)):
+            old = env.get("LD_LIBRARY_PATH", "")
+            env["LD_LIBRARY_PATH"] = d + (":" + old if old else "")
+    return env
+
+
+def server_version(binary):
+    """(ok, text) - binary chal raha hai ya nahi."""
+    if not binary:
+        return False, ""
+    try:
+        proc = subprocess.run([binary, "--version"], capture_output=True, text=True,
+                              timeout=25, env=server_env(binary))
+        txt = ((proc.stdout or "") + (proc.stderr or "")).strip()
+        return (proc.returncode == 0 and "CANNOT LINK" not in txt), txt
+    except Exception:
+        return False, ""
 def llama_tail(lines=6):
     try:
         with open(LLAMA_LOG, "r", encoding="utf-8", errors="ignore") as f:
@@ -313,13 +356,10 @@ def start_llama(cfg):
     if size_gb < 0.3:
         return False, ("model file adhoori hai (%.2f GB) - download dobara karo: "
                        "bash setup_local.sh" % size_gb)
-    binary = None
-    for cand in ("llama-server", "llama-server-static", "llamafile"):
-        if have(cand):
-            binary = cand
-            break
+    binary = find_server(cfg)
     if not binary:
-        return False, "llama-server nahi mila - chalao: bash setup_local.sh"
+        return False, ("engine (llama-server) nahi mila - chalao: "
+                       "bash install_engine.sh  (ready-made binary, compile nahi)")
     threads = max(2, min(6, os.cpu_count() or 4))
     nctx = int(cfg.get("n_ctx", 4096))
     port = str(llama_port(cfg))
@@ -335,7 +375,8 @@ def start_llama(cfg):
             with open(LLAMA_LOG, "w", encoding="utf-8") as logf:
                 logf.write("CMD: %s\n" % " ".join(cmd))
                 logf.flush()
-                _LLAMA_PROC = subprocess.Popen(cmd, stdout=logf, stderr=subprocess.STDOUT)
+                _LLAMA_PROC = subprocess.Popen(cmd, stdout=logf, stderr=subprocess.STDOUT,
+                                               env=server_env(binary))
         except OSError as exc:
             last_err = "server start nahi hua: %s" % exc
             continue
@@ -983,18 +1024,12 @@ def doctor(cfg):
                        "%s, %s" % (os.path.basename(model), size)))
         if not exists:
             problems += 1
-        ver_ok, ver_txt = False, ""
-        if have("llama-server") or have("llamafile"):
-            try:
-                proc = subprocess.run(["llama-server", "--version"], capture_output=True,
-                                      text=True, timeout=25)
-                ver_txt = ((proc.stdout or "") + (proc.stderr or "")).strip()
-                ver_ok = proc.returncode == 0 and "CANNOT LINK" not in ver_txt
-            except Exception:
-                ver_ok = False
-        state = "OK" if ver_ok else ("BROKEN" if have("llama-server") else "MISSING")
+        server = find_server(cfg)
+        ver_ok, ver_txt = server_version(server)
+        state = "OK" if ver_ok else ("BROKEN" if server else "MISSING")
         checks.append(("  %-26s %s" % ("llama-server", state),
-                       "chal raha hai" if ver_ok else "fix: bash setup_local.sh --build"))
+                       ("chal raha hai: " + os.path.basename(server)) if ver_ok
+                       else "fix: bash install_engine.sh"))
         if not ver_ok:
             problems += 1
         d = data_dir(cfg)
@@ -1024,8 +1059,8 @@ def doctor(cfg):
     print("  Memory : %s (%d facts, %d notes)" % (MEMORY_PATH, len(load_memory()["facts"]),
                                                   len(load_memory()["notes"])))
     print("  Log    : %s" % LOG_PATH)
-    if brain == "local" and have("llama-server"):
-        ok_v, ver = termux("llama-server", "--version", timeout=20)
+    if brain == "local" and find_server(cfg):
+        ok_v, ver = server_version(find_server(cfg))
         print("  llama-server: %s" % (ver.splitlines()[0][:70] if ver else "?"))
         tail = llama_tail(4)
         if tail:

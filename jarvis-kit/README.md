@@ -33,6 +33,14 @@ python jarvis.py --doctor   # kuch kaam na kare to pehle yahi chalao
 
 ## Permanent free mode (koi API key nahi)
 
+**Aasan raasta (phone par koi compile nahi)** - ready-made engine:
+
+```bash
+cd ~/jarvis && curl -fsSL https://raw.githubusercontent.com/bhupendarsingh785/toonistaan-studio/main/jarvis-kit/install_engine.sh | bash
+```
+
+**Ya khud compile karna ho** (20-45 min, phone par load):
+
 ```bash
 cd ~/jarvis
 bash setup_local.sh        # 1.1 GB model, 4GB RAM phone
