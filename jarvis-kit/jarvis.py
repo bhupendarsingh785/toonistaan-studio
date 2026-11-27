@@ -59,7 +59,7 @@ DEFAULT_CONFIG = {
     "listen_seconds": 8,
     "voice_lang": "hi-IN",
     "tts": "gemini",             # gemini (emotional) | phone (robotic, fast) | auto
-    "tts_style": "warm, friendly, smiling, expressive, like a close female friend talking in Hindi, natural pauses, never robotic",
+    "tts_style": "sweet, warm and clear female voice. Speak Hindi/Hinglish with correct, crisp pronunciation and a gentle smile in the voice. Natural emotion and small pauses at commas, moderate speed, never flat or robotic. Every word should be clearly understandable.",
     "gemini_voice": "Kore",      # Kore, Aoede, Leda, Zephyr (female-ish)
     "tts_model": "gemini-2.5-flash-preview-tts",
     "voice_pitch": 1.15,         # phone TTS ki awaaz thodi patli (ladki jaisi)
@@ -2360,7 +2360,8 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --index        aapke data folder ka index banao/dikhao
   python jarvis.py --setkey groq  kisi bhi provider ki key save karo (gemini/groq/openrouter)
   python jarvis.py --test         kaunsi key chal rahi hai + kitni tez (seconds)
-  python jarvis.py --voices       chaar female voices sun kar chuno
+  python jarvis.py --voices       saaton female voices sun kar chuno
+  python jarvis.py --say "text"   koi bhi line bol kar sunao (voice test)
   python jarvis.py --persona "..." apni pasand ka behaviour likho (file me jodta hai)
   python jarvis.py --adb "command"     poore phone par adb command (setup_adb.sh ke baad)
   python jarvis.py --research "topic"  internet se source ke saath jawab
@@ -2514,14 +2515,20 @@ def main(argv):
             f.write(text + "\n")
         print("Persona me jod diya: %s" % text)
         return 0
+    if argv[0] == "--say":
+        text = " ".join(argv[1:]).strip() or "Namaste Boss, main Jarvis hoon. Kaisi lagi meri awaaz?"
+        cfg = load_config()
+        speak(text, cfg, force_gemini=True)
+        return 0
     if argv[0] == "--voices":
         cfg = load_config()
         key = load_key()
         if not key:
             print("Gemini key nahi hai - pehle key daalo")
             return 1
-        line = "Namaste Boss, main Jarvis hoon. Aaj ka din shubh ho, bataiye kya karna hai?"
-        for v in ("Kore", "Aoede", "Leda", "Zephyr"):
+        line = ("Namaste Boss, main Jarvis hoon. Aaj mausam kitna achha hai na? "
+                "Bataiye, main aapki kya madad karun?")
+        for v in ("Kore", "Aoede", "Leda", "Callirrhoe", "Sulafat", "Despina", "Zephyr"):
             cfg["gemini_voice"] = v
             print("\n  Voice: %s" % v)
             path, err = gemini_tts(line, cfg, key)
