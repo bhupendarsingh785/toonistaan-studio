@@ -57,7 +57,8 @@ DEFAULT_CONFIG = {
     "engine": "stt",             # stt (sasta, tez) | audio (Gemini ko aawaz bhejta hai)
     "listen_seconds": 8,
     "voice_lang": "hi-IN",
-    "tts": "auto",               # auto | gemini | phone
+    "tts": "gemini",             # gemini (emotional) | phone (robotic, fast) | auto
+    "tts_style": "warm, friendly, smiling, expressive, like a close female friend talking in Hindi, natural pauses, never robotic",
     "gemini_voice": "Kore",      # Kore, Aoede, Leda, Zephyr (female-ish)
     "tts_model": "gemini-2.5-flash-preview-tts",
     "voice_pitch": 1.15,         # phone TTS ki awaaz thodi patli (ladki jaisi)
@@ -458,9 +459,11 @@ def gemini_tts(text, cfg, key):
     ensure_dirs()
     voice = cfg.get("gemini_voice", "Kore")
     model = cfg.get("tts_model", "gemini-2.5-flash-preview-tts")
-    prompt = ("Bolo jaise ek warm, friendly ladki dosti se baat kar rahi ho - natural emotion, "
-              "halki muskurahat, saaf Hindi/Hinglish uchcharan, thoda dheere aur pyaar se. "
-              "Sirf ye baat bolo: ") + text
+    style = cfg.get("tts_style") or "warm, friendly, smiling, expressive"
+    prompt = ("Speak the following line like a real person, not a text-to-speech engine. "
+              "Style: %s. Use real emotion, a smile in the voice, small natural pauses at commas, "
+              "and vary the pitch like a human conversation. Language: Hindi/Hinglish. "
+              "Say only this line:\n%s" % (style, text))
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {
@@ -1965,6 +1968,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --index        aapke data folder ka index banao/dikhao
   python jarvis.py --setkey groq  kisi bhi provider ki key save karo (gemini/groq/openrouter)
   python jarvis.py --test         kaunsi key chal rahi hai + kitni tez (seconds)
+  python jarvis.py --voices       chaar female voices sun kar chuno
   python jarvis.py --self "kya badalna hai"   khud ka code badle (backup + test ke saath)
   python jarvis.py --selfcheck    apna code theek hai ya nahi
   python jarvis.py --restore      pichhla backup wapas laao
@@ -2044,6 +2048,23 @@ def main(argv):
         except OSError:
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
+        return 0
+    if argv[0] == "--voices":
+        cfg = load_config()
+        key = load_key()
+        if not key:
+            print("Gemini key nahi hai - pehle key daalo")
+            return 1
+        line = "Namaste Boss, main Jarvis hoon. Aaj ka din shubh ho, bataiye kya karna hai?"
+        for v in ("Kore", "Aoede", "Leda", "Zephyr"):
+            cfg["gemini_voice"] = v
+            print("\n  Voice: %s" % v)
+            path, err = gemini_tts(line, cfg, key)
+            if path and play_audio(path, wav_seconds(path)):
+                print("    (suniye)")
+            else:
+                print("    fail: %s" % err)
+        print("\nPasand aayi voice set karo: python jarvis.py --config gemini_voice=Aoede")
         return 0
     if argv[0] == "--test":
         cfg = load_config()
