@@ -1302,6 +1302,7 @@ OPENAI_COMPAT = {
 
 
 PROVIDER_ERR = {}
+LAST_PROVIDER = {"name": ""}
 
 
 def provider_models(provider, key, timeout=30):
@@ -1560,6 +1561,7 @@ def ask_remote(cfg, mem, user_part, key, extra=None):
             if prov == "local":
                 res = ask_local(cfg, mem, user_part, extra)
                 if isinstance(res, dict) and res.get("say"):
+                    LAST_PROVIDER["name"] = "local"
                     return res
                 last_err = "local: jawab nahi mila"
                 continue
@@ -1590,8 +1592,8 @@ def ask_remote(cfg, mem, user_part, key, extra=None):
                 continue
             if isinstance(plan, dict) and plan.get("say"):
                 plan.setdefault("do", [])
-                if prov != "gemini":
-                    log("answered by %s" % prov)
+                LAST_PROVIDER["name"] = prov
+                log("answered by %s" % prov)
                 return plan
             last_err = "%s: khaali jawab" % prov
         except Exception as exc:
@@ -1722,7 +1724,7 @@ def handle_turn(user_part, cfg, mem, key, heard_text=""):
     elif say:
         speak(say, cfg)
 
-    print("  [%.1f second]" % (time.time() - t0))
+    print("  [%.1f second | %s]" % (time.time() - t0, LAST_PROVIDER["name"] or "?"))
     mem["history"].append({"role": "user", "text": heard_text or "[voice]"})
     mem["history"].append({"role": "model", "text": say})
     mem["history"] = mem["history"][-40:]
@@ -1858,8 +1860,9 @@ def selftest():
 def banner(cfg):
     print("=" * 46)
     print("  %s v%s  -  private, phone-only" % (cfg.get("name", "Jarvis").upper(), VERSION))
+    chain = str(cfg.get("providers", "gemini,groq,openrouter,local")) if cfg.get("brain") != "local" else "local"
     print("  brain: %s | input: %s | language: %s | voice: %s" % (
-        cfg.get("brain", "gemini"), cfg.get("engine"), cfg.get("language"),
+        chain, cfg.get("engine"), cfg.get("language"),
         (cfg.get("gemini_voice") if cfg.get("tts") in ("auto", "gemini") else "phone")))
     print("  'exit' bolo ya Ctrl+C dabao band karne ke liye")
     print("=" * 46)
