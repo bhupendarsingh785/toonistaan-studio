@@ -48,6 +48,7 @@ LOG_PATH = os.path.join(JARVIS_DIR, "jarvis.log")
 LLAMA_LOG = os.path.join(JARVIS_DIR, "llama.log")
 AUDIO_PATH = os.path.join(JARVIS_DIR, "mic.m4a")
 API_ROOT = "https://generativelanguage.googleapis.com/v1beta"
+UA = "JarvisTermux/1.0 (Android; Termux)"
 
 DEFAULT_CONFIG = {
     "name": "Jarvis",
@@ -879,7 +880,7 @@ def local_chat(messages, cfg, timeout=300):
         req = urllib.request.Request(
             "http://127.0.0.1:%d/v1/chat/completions" % llama_port(cfg),
             data=json.dumps(payload).encode("utf-8"), method="POST",
-            headers={"Content-Type": "application/json"})
+            headers={"Content-Type": "application/json", "User-Agent": UA})
         try:
             with urllib.request.urlopen(req, timeout=timeout) as resp:
                 data = json.loads(resp.read().decode("utf-8", "ignore"))
@@ -1256,7 +1257,7 @@ def api_call(path, payload=None, key="", timeout=90):
         return {"candidates": [{"content": {"parts": [{"text": '{"say":"stub reply"}'}]}}]}
     url = API_ROOT + path
     data = None
-    headers = {"x-goog-api-key": key, "Content-Type": "application/json"}
+    headers = {"x-goog-api-key": key, "Content-Type": "application/json", "User-Agent": UA}
     if payload is not None:
         data = json.dumps(payload).encode("utf-8")
     req = urllib.request.Request(url, data=data, headers=headers,
@@ -1298,8 +1299,47 @@ OPENAI_COMPAT = {
 }
 
 
+PROVIDER_ERR = {}
+
+
+def provider_models(provider, key, timeout=30):
+    """Provider ke available model naam (groq/openrouter)."""
+    base = {"groq": "https://api.groq.com/openai/v1/models",
+            "openrouter": "https://openrouter.ai/api/v1/models",
+            "mistral": "https://api.mistral.ai/v1/models"}[provider]
+    req = urllib.request.Request(base, headers={"Authorization": "Bearer %s" % key, "User-Agent": UA})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            data = json.loads(resp.read().decode("utf-8", "ignore"))
+        return [m.get("id", "") for m in (data.get("data") or []) if m.get("id")]
+    except Exception as exc:
+        PROVIDER_ERR[provider] = "models list: %s" % exc
+        return []
+
+
+def pick_groq_model(cfg, key):
+    """Groq purane model retire kar deta hai - available list se chuno."""
+    ids = provider_models("groq", key)
+    if not ids:
+        return cfg.get("groq_model", "")
+    bad = ("whisper", "tts", "guard", "embed", "vision", "audio")
+    chat = [i for i in ids if not any(b in i.lower() for b in bad)]
+    for pref in ("llama-3.3-70b-versatile", "llama-3.1-8b-instant", "llama3-70b",
+                 "mixtral", "gemma2", "qwen"):
+        for i in chat:
+            if pref in i:
+                cfg["groq_model"] = i
+                save_config(cfg)
+                return i
+    if chat:
+        cfg["groq_model"] = chat[0]
+        save_config(cfg)
+        return chat[0]
+    return cfg.get("groq_model", "")
+
+
 def openai_chat(provider, messages, cfg, key, timeout=None):
-    """Groq / OpenRouter / Mistral - sab OpenAI jaisa hi hai."""
+    """Groq / OpenRouter / Mistral - sab OpenAI jaisa hi hai. Error PROVIDER_ERR me."""
     url, model_key = OPENAI_COMPAT[provider]
     model = cfg.get(model_key) or {
         "groq": "llama-3.3-70b-versatile",
@@ -1309,12 +1349,23 @@ def openai_chat(provider, messages, cfg, key, timeout=None):
     payload = {"model": model, "messages": messages, "temperature": 0.7, "max_tokens": 400}
     req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), method="POST",
                                  headers={"Content-Type": "application/json",
+                                          "User-Agent": UA,
                                           "Authorization": "Bearer %s" % key})
     try:
         with urllib.request.urlopen(req, timeout=timeout or int(cfg.get("provider_timeout", 45))) as resp:
             data = json.loads(resp.read().decode("utf-8", "ignore"))
         return ((data.get("choices") or [{}])[0].get("message") or {}).get("content", "") or ""
+    except urllib.error.HTTPError as exc:
+        body = ""
+        try:
+            body = exc.read().decode("utf-8", "ignore")[:220]
+        except Exception:
+            pass
+        PROVIDER_ERR[provider] = "HTTP %s (model=%s) %s" % (exc.code, model, body.replace("\n", " "))
+        log("%s fail: %s" % (provider, PROVIDER_ERR[provider]))
+        return ""
     except Exception as exc:
+        PROVIDER_ERR[provider] = "%s (model=%s)" % (exc, model)
         log("%s fail: %s" % (provider, exc))
         return ""
 
@@ -1478,7 +1529,11 @@ def ask_remote(cfg, mem, user_part, key, extra=None):
                     continue
                 if not text_part:
                     continue
-                raw = openai_chat(prov, ask_messages(cfg, mem, text_part, extra), cfg, pkey)
+                msgs = ask_messages(cfg, mem, text_part, extra)
+                raw = openai_chat(prov, msgs, cfg, pkey)
+                if not raw and prov == "groq":
+                    if pick_groq_model(cfg, pkey):
+                        raw = openai_chat(prov, msgs, cfg, pkey)
                 plan = extract_json(raw) if raw else None
                 if not isinstance(plan, dict) and raw:
                     plan = {"say": strip_markdown(raw)[:400], "do": []}
@@ -1527,6 +1582,9 @@ def ask_gemini(cfg, mem, user_part, key, extra=None):
     }
     model = pick_model(key, cfg)
     resp = api_call("/models/%s:generateContent" % model, payload, key=key)
+    if "_error" in resp and "503" in str(resp.get("_error", "")):
+        time.sleep(2)
+        resp = api_call("/models/%s:generateContent" % model, payload, key=key)
     if "_error" in resp:
         # model purana ho gaya ho sakta hai - dobara chuno
         cfg["model"] = ""
@@ -1962,9 +2020,11 @@ def main(argv):
                     if not pkey:
                         print("  %-12s key nahi hai" % prov)
                         continue
+                    if prov == "groq":
+                        pick_groq_model(cfg, pkey)
                     txt = openai_chat(prov, [{"role": "user", "content": "hi"}], cfg, pkey, timeout=40)
                     ok = bool(txt)
-                    info = txt[:40] if ok else "fail"
+                    info = txt[:40] if ok else PROVIDER_ERR.get(prov, "fail")[:90]
                 print("  %-12s %s  %.1fs  %s" % (prov, "OK  " if ok else "FAIL", time.time() - t0,
                                                  info.replace("\n", " ")))
             except Exception as exc:
