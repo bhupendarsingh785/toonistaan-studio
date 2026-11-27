@@ -34,6 +34,7 @@ import time
 import urllib.error
 import urllib.request
 import zipfile
+import wave
 from datetime import datetime
 
 VERSION = "1.0"
@@ -54,7 +55,11 @@ DEFAULT_CONFIG = {
     "engine": "stt",             # stt (sasta, tez) | audio (Gemini ko aawaz bhejta hai)
     "listen_seconds": 8,
     "voice_lang": "hi-IN",
-    "tts_rate": 1.0,
+    "tts": "auto",               # auto | gemini | phone
+    "gemini_voice": "Kore",      # Kore, Aoede, Leda, Zephyr (female-ish)
+    "tts_model": "gemini-2.5-flash-preview-tts",
+    "voice_pitch": 1.15,         # phone TTS ki awaaz thodi patli (ladki jaisi)
+    "tts_rate": 0.98,
     "model": "",                 # khaali = auto (sabse achha flash model khud chunega)
     "brain": "gemini",           # gemini | local  (local = phone me hi model, zero internet, zero paisa)
     "local_model": "",          # khaali = <folder>/models/model.gguf
@@ -66,6 +71,7 @@ DEFAULT_CONFIG = {
     "speak_actions": True,       # action ka result bolkar bataye
     "max_history": 8,            # kitni purani baatein prompt me jaayein
     "confirm_risky": True,       # SMS/call se pehle poochhe
+    "briefing": True,            # shuru hote hi chhoti briefing
 }
 
 # ----------------------------------------------------------------------------
@@ -237,6 +243,89 @@ def record_audio(seconds):
         return b""
 
 
+def phone_speak(text, cfg):
+    """Phone ka TTS - female-ish pitch. Free, offline."""
+    pitch = str(cfg.get("voice_pitch", 1.15))
+    rate = str(cfg.get("tts_rate", 0.98))
+    lang = str(cfg.get("voice_lang", "hi-IN"))
+    for args in (["-l", lang, "-p", pitch, "-r", rate, "-v", "female", text],
+                 ["-l", lang, "-p", pitch, "-r", rate, text],
+                 ["-l", lang, text]):
+        ok, out = termux("termux-tts-speak", *args, timeout=180)
+        if ok:
+            return True
+    log("phone tts fail: %s" % out)
+    return False
+
+
+def gemini_tts(text, cfg, key):
+    """Gemini ka expressive voice - emotions ke saath. (path, error)"""
+    ensure_dirs()
+    voice = cfg.get("gemini_voice", "Kore")
+    model = cfg.get("tts_model", "gemini-2.5-flash-preview-tts")
+    prompt = ("Bolo jaise ek warm, friendly ladki dosti se baat kar rahi ho - natural emotion, "
+              "halki muskurahat, saaf Hindi/Hinglish uchcharan, thoda dheere aur pyaar se. "
+              "Sirf ye baat bolo: ") + text
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {
+            "responseModalities": ["AUDIO"],
+            "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voice}}},
+        },
+    }
+    resp = api_call("/models/%s:generateContent" % model, payload, key=key, timeout=120)
+    if "_error" in resp:
+        return None, "%s %s" % (resp["_error"], str(resp.get("_body", ""))[:120])
+    b64 = ""
+    try:
+        part = resp["candidates"][0]["content"]["parts"][0]
+        b64 = (part.get("inlineData") or part.get("inline_data") or {}).get("data", "")
+    except (KeyError, IndexError, TypeError):
+        pass
+    if not b64:
+        return None, "audio nahi mila"
+    try:
+        raw = base64.b64decode(b64)
+    except Exception as exc:
+        return None, "decode fail: %s" % exc
+    path = os.path.join(JARVIS_DIR, "tts.wav")
+    try:
+        with wave.open(path, "wb") as w:
+            w.setnchannels(1)
+            w.setsampwidth(2)
+            w.setframerate(24000)
+            w.writeframes(raw)
+    except Exception as exc:
+        return None, "wav fail: %s" % exc
+    return path, ""
+
+
+def play_audio(path, seconds=0):
+    if STUB:
+        return True
+    if have("ffplay"):
+        try:
+            subprocess.run(["ffplay", "-nodisp", "-autoexit", "-loglevel", "quiet", path],
+                           timeout=int(seconds) + 60)
+            return True
+        except Exception:
+            pass
+    ok, out = termux("termux-media-player", "play", path, timeout=20)
+    if not ok:
+        return False
+    time.sleep(min(max(seconds, 0.5), 120))
+    termux("termux-media-player", "stop", timeout=10)
+    return True
+
+
+def wav_seconds(path):
+    try:
+        with wave.open(path, "rb") as w:
+            return w.getnframes() / float(w.getframerate())
+    except Exception:
+        return 0.0
+
+
 def speak(text, cfg):
     text = strip_markdown(text)
     if not text:
@@ -244,10 +333,18 @@ def speak(text, cfg):
     print("\n%s: %s\n" % (cfg.get("name", "Jarvis"), text))
     if STUB:
         return
-    ok, out = termux("termux-tts-speak", "-l", str(cfg.get("voice_lang", "hi-IN")),
-                     "-r", str(cfg.get("tts_rate", 1.0)), text, timeout=120)
-    if not ok:
-        log("tts fail: %s" % out)
+    mode = str(cfg.get("tts", "auto"))
+    key = load_key()
+    if mode in ("auto", "gemini") and key:
+        path, err = gemini_tts(text, cfg, key)
+        if path:
+            if play_audio(path, wav_seconds(path)):
+                return
+            err = "play fail"
+        log("gemini tts fail (%s) - phone voice par ja raha hoon" % err)
+        if mode == "gemini":
+            print("  (Gemini voice fail: %s)" % err)
+    phone_speak(text, cfg)
 
 
 # ----------------------------------------------------------------------------
@@ -557,6 +654,7 @@ ROUTES = [
     (("battery", "batteri", "charge kitna", "charging"), "battery"),
     (("torch", "flashlight", "batti"), "torch"),
     (("time kya", "kitne baje", "samay kya", "date kya", "tarikh"), "time"),
+    (("kya hai ye", "ye kya hai", "dekho", "dekh kar batao", "padh kar batao", "camera se dekh"), "look"),
     (("wifi", "internet kaisa"), "wifi"),
     (("location", "kahan hoon", "meri jagah"), "location"),
     (("vibrate", "hila do"), "vibrate"),
@@ -736,6 +834,34 @@ def t_photo(a):
     return "Photo: %s" % path if ok else "Camera fail: %s" % out
 
 
+def t_look(a):
+    """Camera se dekho aur Gemini se Hinglish me batao (Mark-LVI ka vision, phone par)."""
+    path = os.path.join(HOME, "storage", "pictures",
+                        "look_%s.jpg" % datetime.now().strftime("%H%M%S"))
+    ok, out = termux("termux-camera-photo", "-c", "0", path, timeout=45)
+    if not ok:
+        return "Camera nahi chala: %s" % out
+    key = load_key()
+    if not key:
+        return "Photo le li (%s), par dekhne ke liye Gemini key chahiye" % path
+    try:
+        with open(path, "rb") as f:
+            b64 = base64.b64encode(f.read()).decode("ascii")
+    except OSError:
+        return "Photo padhi nahi ja saki"
+    cfg = load_config()
+    payload = {"contents": [{"role": "user", "parts": [
+        {"text": "Is photo me kya hai? Hinglish me ek chhoti line me batao (max 20 words). "
+                 "Agar photo me text likha hai to use padh kar batao."},
+        {"inlineData": {"mimeType": "image/jpeg", "data": b64}}]}]}
+    model = pick_model(key, cfg)
+    resp = api_call("/models/%s:generateContent" % model, payload, key=key, timeout=120)
+    if "_error" in resp:
+        return "Dekh nahi paya: %s" % resp["_error"]
+    txt = strip_markdown(model_text(resp))
+    return txt or "Photo me kuch samajh nahi aaya"
+
+
 def t_open_url(a):
     url = str(a.get("url", "")).strip()
     if not url.startswith(("http://", "https://", "mailto:", "tel:")):
@@ -836,6 +962,7 @@ TOOLS = {
     "note_add": t_note_add,
     "note_list": t_note_list,
     "time": t_time,
+    "look": t_look,
 }
 
 RISKY = {"sms", "call"}
@@ -854,7 +981,8 @@ TOOL_HELP = """Available tools (JSON me "do" list ke andar):
   {"tool":"call","args":{"number":"+91..."}}              (user confirm karega)
   {"tool":"remember","args":{"fact":"..."}}
   {"tool":"note_add","args":{"text":"..."}} | {"tool":"note_list","args":{"count":5}}
-  {"tool":"time"}"""
+  {"tool":"time"}
+  {"tool":"look"}          (camera se dekho aur batao)"""
 
 
 def run_tool(name, args, cfg):
@@ -950,7 +1078,7 @@ def pick_model(key, cfg):
 
 
 LANG_LINE = {
-    "hinglish": "Reply in Hinglish (Hindi in Roman script), short and natural, like a friend.",
+    "hinglish": "Reply in Hinglish (Hindi in Roman script) - warm, spoken style, like a close friend talking. Max 2 short lines. Use commas for natural pauses. Never sound like a manual.",
     "hi": "Reply in Hindi (Devanagari), short and natural.",
     "en": "Reply in simple English, short and natural.",
 }
@@ -1067,6 +1195,35 @@ def ask_model(cfg, mem, user_part, key, extra=None):
     return extract_json(model_text(resp)) or {"say": strip_markdown(model_text(resp))[:300], "do": []}
 
 
+def briefing(cfg, mem, key):
+    """Subah ki chhoti briefing - Mark-LVI ka Morning Briefing, phone ke hisaab se."""
+    now = datetime.now()
+    facts = "; ".join(mem.get("facts", [])[-8:]) or "kuch nahi"
+    notes = "; ".join(n.get("text", "") for n in mem.get("notes", [])[-4:]) or "koi note nahi"
+    ask = ("Aaj %s, %s. User: %s. Purani yaadein: %s. Recent notes: %s. "
+           "Ek chhoti Hinglish briefing do - 2 line max: aaj ka din kaisa hai aur ek cheez "
+           "jo dhyaan rakhni chahiye. Sirf bolne wali baat likho." % (
+               now.strftime("%d %B %Y"), now.strftime("%A"), cfg.get("user_name", "Boss"),
+               facts, notes))
+    if cfg.get("brain") == "local":
+        ok, msg = start_llama(cfg)
+        if not ok:
+            return "Subah bakhair %s. Local brain taiyar nahi: %s" % (cfg.get("user_name", "Boss"), msg)
+        raw = local_chat([{"role": "system", "content": local_prompt(cfg, mem, "")},
+                          {"role": "user", "content": ask}], cfg)
+        say = strip_markdown(raw or "").strip()
+    else:
+        if not key:
+            return "Subah bakhair %s. Gemini key nahi hai - setup.sh chalao." % cfg.get("user_name", "Boss")
+        payload = {"contents": [{"role": "user", "parts": [{"text": ask}]}],
+                   "generationConfig": {"temperature": 0.7, "maxOutputTokens": 200}}
+        resp = api_call("/models/%s:generateContent" % pick_model(key, cfg), payload, key=key)
+        say = strip_markdown(model_text(resp)) if "_error" not in resp else ""
+    if not say:
+        say = "Subah bakhair %s. Aaj ka din shubh ho." % cfg.get("user_name", "Boss")
+    return say
+
+
 def handle_turn(user_part, cfg, mem, key, heard_text=""):
     plan = ask_model(cfg, mem, user_part, key)
     say = strip_markdown(str(plan.get("say", "")))
@@ -1169,6 +1326,7 @@ def doctor(cfg):
     print("\n  Config : %s" % CONFIG_PATH)
     print("  Memory : %s (%d facts, %d notes)" % (MEMORY_PATH, len(load_memory()["facts"]),
                                                   len(load_memory()["notes"])))
+    print("  Voice  : %s (tts=%s, pitch=%s)" % (cfg.get("gemini_voice"), cfg.get("tts"), cfg.get("voice_pitch")))
     print("  Log    : %s" % LOG_PATH)
     if brain == "local" and have("llama-server"):
         ok_v, ver = termux("llama-server", "--version", timeout=20)
@@ -1219,8 +1377,9 @@ def selftest():
 def banner(cfg):
     print("=" * 46)
     print("  %s v%s  -  private, phone-only" % (cfg.get("name", "Jarvis").upper(), VERSION))
-    print("  brain: %s | input: %s | language: %s" % (cfg.get("brain", "gemini"),
-                                                      cfg.get("engine"), cfg.get("language")))
+    print("  brain: %s | input: %s | language: %s | voice: %s" % (
+        cfg.get("brain", "gemini"), cfg.get("engine"), cfg.get("language"),
+        (cfg.get("gemini_voice") if cfg.get("tts") in ("auto", "gemini") else "phone")))
     print("  'exit' bolo ya Ctrl+C dabao band karne ke liye")
     print("=" * 46)
 
@@ -1233,7 +1392,10 @@ def main_loop(cfg):
         return 2
     mem = load_memory()
     banner(cfg)
-    speak("Systems online, %s. Boliye." % cfg.get("user_name", "Boss"), cfg)
+    if cfg.get("briefing", True):
+        speak(briefing(cfg, mem, key), cfg)
+    else:
+        speak("Systems online, %s. Boliye." % cfg.get("user_name", "Boss"), cfg)
     idle = 0
     while True:
         try:
@@ -1317,6 +1479,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --brain local  permanent free: phone ka apna model (no key, no internet)
   python jarvis.py --brain gemini wapas cloud brain par
   python jarvis.py --index        aapke data folder ka index banao/dikhao
+  python jarvis.py --briefing     subah ki chhoti briefing
   python jarvis.py --vault        vault me kaunsi files hain
   python jarvis.py --import <path>  file/folder/zip vault me daalo (data.txt, notes.zip...)
   python jarvis.py --version
@@ -1368,6 +1531,11 @@ def main(argv):
         else:
             for ch in chunks[:3]:
                 print("  - %s: %s..." % (ch["file"], ch["text"][:70].replace("\n", " ")))
+        return 0
+    if argv[0] == "--briefing":
+        cfg = load_config()
+        say = briefing(cfg, load_memory(), load_key())
+        speak(say, cfg)
         return 0
     if argv[0] == "--import":
         if len(argv) < 2:
