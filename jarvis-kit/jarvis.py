@@ -33,6 +33,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
+import zipfile
 from datetime import datetime
 
 VERSION = "1.0"
@@ -291,49 +292,6 @@ def llama_alive(cfg):
         return False
 
 
-def find_server(cfg):
-    """llama-server binary kahan hai - pehle apna shipped binary, phir PATH."""
-    here = os.path.dirname(os.path.abspath(__file__))
-    cands = []
-    if cfg.get("llama_binary"):
-        cands.append(os.path.expanduser(cfg["llama_binary"]))
-    cands.append(os.path.join(here, "engine", "llama-server"))
-    cands.append(os.path.join(here, "bin", "llama-server"))
-    cands.append(os.path.expanduser("~/jarvis/engine/llama-server"))
-    cands.append(os.path.expanduser("~/jarvis/bin/llama-server"))
-    for c in cands:
-        if os.path.exists(c) and os.access(c, os.X_OK):
-            return c
-    for name in ("llama-server", "llama-server-static", "llamafile"):
-        found = shutil.which(name)
-        if found:
-            return found
-    return None
-
-
-def server_env(binary):
-    """Bundled engine ke saath uske .so files dhoondhne ke liye env."""
-    env = dict(os.environ)
-    if binary:
-        d = os.path.dirname(os.path.abspath(binary))
-        if os.path.isdir(d) and any(f.startswith("libllama") or f.startswith("libggml")
-                                   for f in os.listdir(d)):
-            old = env.get("LD_LIBRARY_PATH", "")
-            env["LD_LIBRARY_PATH"] = d + (":" + old if old else "")
-    return env
-
-
-def server_version(binary):
-    """(ok, text) - binary chal raha hai ya nahi."""
-    if not binary:
-        return False, ""
-    try:
-        proc = subprocess.run([binary, "--version"], capture_output=True, text=True,
-                              timeout=25, env=server_env(binary))
-        txt = ((proc.stdout or "") + (proc.stderr or "")).strip()
-        return (proc.returncode == 0 and "CANNOT LINK" not in txt), txt
-    except Exception:
-        return False, ""
 def llama_tail(lines=6):
     try:
         with open(LLAMA_LOG, "r", encoding="utf-8", errors="ignore") as f:
@@ -356,10 +314,13 @@ def start_llama(cfg):
     if size_gb < 0.3:
         return False, ("model file adhoori hai (%.2f GB) - download dobara karo: "
                        "bash setup_local.sh" % size_gb)
-    binary = find_server(cfg)
+    binary = None
+    for cand in ("llama-server", "llama-server-static", "llamafile"):
+        if have(cand):
+            binary = cand
+            break
     if not binary:
-        return False, ("engine (llama-server) nahi mila - chalao: "
-                       "bash install_engine.sh  (ready-made binary, compile nahi)")
+        return False, "llama-server nahi mila - chalao: bash setup_local.sh"
     threads = max(2, min(6, os.cpu_count() or 4))
     nctx = int(cfg.get("n_ctx", 4096))
     port = str(llama_port(cfg))
@@ -375,8 +336,7 @@ def start_llama(cfg):
             with open(LLAMA_LOG, "w", encoding="utf-8") as logf:
                 logf.write("CMD: %s\n" % " ".join(cmd))
                 logf.flush()
-                _LLAMA_PROC = subprocess.Popen(cmd, stdout=logf, stderr=subprocess.STDOUT,
-                                               env=server_env(binary))
+                _LLAMA_PROC = subprocess.Popen(cmd, stdout=logf, stderr=subprocess.STDOUT)
         except OSError as exc:
             last_err = "server start nahi hua: %s" % exc
             continue
@@ -430,6 +390,62 @@ def _read_any(path):
     return ""
 
 
+DATA_EXT = (".txt", ".md", ".markdown", ".csv", ".json", ".log", ".srt", ".vtt",
+            ".html", ".htm", ".tsv", ".pdf", ".docx")
+
+
+def import_data(src, cfg):
+    """Aapka data vault me laao - file, folder ya zip. (message, added_count)"""
+    import shutil as _sh
+    d = data_dir(cfg)
+    src = os.path.expanduser(src)
+    if not os.path.exists(src):
+        return ("Path nahi mila: %s" % src), 0
+    added = 0
+
+    def _take(path, name=None):
+        nonlocal added
+        name = name or os.path.basename(path)
+        if not name.lower().endswith(DATA_EXT):
+            return
+        dest = os.path.join(d, os.path.basename(name))
+        base, ext = os.path.splitext(dest)
+        i = 1
+        while os.path.exists(dest):
+            dest = "%s_%d%s" % (base, i, ext)
+            i += 1
+        try:
+            _sh.copyfile(path, dest)
+            added += 1
+        except OSError:
+            pass
+
+    if os.path.isdir(src):
+        for root, dirs, names in os.walk(src):
+            dirs[:] = [x for x in dirs if not x.startswith(".")]
+            for n in names:
+                if not n.startswith("."):
+                    _take(os.path.join(root, n), n)
+    elif src.lower().endswith(".zip"):
+        tmp = os.path.join(JARVIS_DIR, "_import")
+        _sh.rmtree(tmp, ignore_errors=True)
+        os.makedirs(tmp, exist_ok=True)
+        try:
+            with zipfile.ZipFile(src) as z:
+                z.extractall(tmp)
+        except Exception as exc:
+            return ("Zip khol nahi paya: %s" % exc), 0
+        for root, dirs, names in os.walk(tmp):
+            for n in names:
+                if not n.startswith("."):
+                    _take(os.path.join(root, n), n)
+        _sh.rmtree(tmp, ignore_errors=True)
+    else:
+        _take(src)
+    chunks, nfiles, _ = build_index(cfg, force=True)
+    return ("%d file vault me daali. Ab vault me %d file, %d hisse." % (added, nfiles, len(chunks))), added
+
+
 def build_index(cfg, force=False):
     """Aapke data folder ko chhote hisson me todo. (chunks, file_count, from_cache)"""
     d = data_dir(cfg)
@@ -455,13 +471,13 @@ def build_index(cfg, force=False):
     chunks = []
     for f in files:
         text = re.sub(r"\n{3,}", "\n\n", _read_any(f) or "").strip()
-        if len(text) < 40:
+        if len(text) < 20:
             continue
         base = os.path.relpath(f, d)
         size, step = 700, 600
         for i in range(0, len(text), step):
             piece = text[i:i + size].strip()
-            if len(piece) > 60:
+            if len(piece) > 25:
                 chunks.append({"file": base, "text": piece})
             if i + size >= len(text):
                 break
@@ -494,15 +510,15 @@ def retrieve(query, chunks, k=4):
     return [ch for _, ch in scored[:k]]
 
 
-LOCAL_SYSTEM = """You are {name}, a private assistant inside {user}'s Android phone. Offline, no internet.
-{lang}
-Answer in ONE short spoken sentence or two (max 40 words), plain text, no markdown.
-If the user asks for a phone action, reply with JSON only:
-{{"say":"short line","do":[{{"tool":"battery"}}]}}
-Tools: battery, torch(on), volume(level), open_app(package), notify(title,text), vibrate(ms),
-clipboard_set(text), clipboard_get, location, photo, open_url(url), wifi, sms(number,text),
-call(number), remember(fact), note_add(text), note_list(count), time.
-If you do not know, say so in one line - never invent facts.
+LOCAL_SYSTEM = """You are {name}, {user}'s private assistant on an Android phone. Offline.
+LANGUAGE RULE (most important): always answer in HINGLISH - Hindi written in English letters.
+Never answer in English only. Example answer: "Battery 46% hai Boss, charging par rakho."
+Style: one short sentence, maximum 20 words, no markdown, no emoji, no lists.
+Examples:
+  user: battery kitni hai  ->  Battery 46% hai Boss, abhi charging nahi lag rahi.
+  user: time kya hua       ->  Dopahar 1:51 baje hain Boss.
+  user: naam kya hai       ->  Mera naam {name} hai, main aapka assistant hoon.
+Never invent numbers or facts. If you do not know, say: "Ye mujhe nahi pata Boss."
 What you know about {user}: {facts}
 """
 
@@ -519,7 +535,7 @@ def local_prompt(cfg, mem, ctx):
 
 
 def local_chat(messages, cfg, timeout=300):
-    payload = {"messages": messages, "temperature": 0.6, "max_tokens": 500, "stream": False}
+    payload = {"messages": messages, "temperature": 0.35, "max_tokens": 300, "stream": False}
     for attempt in (1, 2):
         req = urllib.request.Request(
             "http://127.0.0.1:%d/v1/chat/completions" % llama_port(cfg),
@@ -537,11 +553,77 @@ def local_chat(messages, cfg, timeout=300):
     return ""
 
 
+ROUTES = [
+    (("battery", "batteri", "charge kitna", "charging"), "battery"),
+    (("torch", "flashlight", "batti"), "torch"),
+    (("time kya", "kitne baje", "samay kya", "date kya", "tarikh"), "time"),
+    (("wifi", "internet kaisa"), "wifi"),
+    (("location", "kahan hoon", "meri jagah"), "location"),
+    (("vibrate", "hila do"), "vibrate"),
+    (("clipboard", "copy kiya"), "clipboard_get"),
+    (("photo", "camera", "tasveer"), "photo"),
+    (("volume", "awaaz"), "volume"),
+    (("notes sunao", "note sunao", "notes batao"), "note_list"),
+    (("note likho", "note banao", "note add"), "note_add"),
+    (("yaad rakho", "remember"), "remember"),
+]
+
+
+def local_route(text):
+    """Chhota model JSON bhool jata hai - isliye phone ke kaam yahan seedha pakde jaate hain."""
+    t = (text or "").lower()
+    for keys, tool in ROUTES:
+        if any(k in t for k in keys):
+            args = {}
+            if tool == "torch":
+                args = {"on": not any(w in t for w in ("band", "off", "bujha"))}
+            elif tool == "volume":
+                nums = re.findall(r"\d+", t)
+                args = {"level": int(nums[0]) if nums else 8}
+            elif tool == "note_add":
+                args = {"text": re.sub(r"(?i)(note likho|note banao|note add)", "", text).strip(" :,-")}
+            elif tool == "remember":
+                args = {"fact": re.sub(r"(?i)(yaad rakho|remember)", "", text).strip(" :,-")}
+            elif tool == "vibrate":
+                args = {"ms": 400}
+            elif tool == "photo":
+                args = {"camera": 0}
+            return tool, args
+    return None
+
+
+def hinglish_fallback(tool, result):
+    res = str(result).strip()
+    low = res.lower()
+    if tool == "battery":
+        return "%s Boss." % res
+    if tool == "time":
+        return "%s Boss." % res
+    if tool == "torch":
+        return "Torch %s Boss." % ("on" if "on" in low else "off")
+    return "%s Boss." % res
+
+
 def ask_local(cfg, mem, user_part, extra=None):
     ok, msg = start_llama(cfg)
     if not ok:
         return {"say": "Local brain taiyar nahi: %s" % msg, "do": []}
     query = user_part if isinstance(user_part, str) else ""
+    routed = local_route(query) if query else None
+    if routed:
+        tool, args = routed
+        result = run_tool(tool, args, cfg)
+        msgs = [{"role": "system", "content": local_prompt(cfg, mem, "")},
+                {"role": "user", "content": ("Asli tool result: %s\nIsko Hinglish me ek chhoti line me batao "
+                                             "(max 20 words). Sirf baat likho, JSON nahi." % result)}]
+        raw = local_chat(msgs, cfg)
+        say = strip_markdown(raw or "").strip()
+        parsed = extract_json(say)
+        if isinstance(parsed, dict) and parsed.get("say"):
+            say = strip_markdown(str(parsed["say"]))
+        if not say or say.lower().startswith("{") or len(say) > 200:
+            say = hinglish_fallback(tool, result)
+        return {"say": say, "do": []}
     chunks, _nfiles, _cached = build_index(cfg)
     picked = retrieve(query, chunks, int(cfg.get("rag_top", 4)))
     ctx = "\n---\n".join("[%s] %s" % (c["file"], c["text"][:600]) for c in picked)
@@ -1024,12 +1106,18 @@ def doctor(cfg):
                        "%s, %s" % (os.path.basename(model), size)))
         if not exists:
             problems += 1
-        server = find_server(cfg)
-        ver_ok, ver_txt = server_version(server)
-        state = "OK" if ver_ok else ("BROKEN" if server else "MISSING")
+        ver_ok, ver_txt = False, ""
+        if have("llama-server") or have("llamafile"):
+            try:
+                proc = subprocess.run(["llama-server", "--version"], capture_output=True,
+                                      text=True, timeout=25)
+                ver_txt = ((proc.stdout or "") + (proc.stderr or "")).strip()
+                ver_ok = proc.returncode == 0 and "CANNOT LINK" not in ver_txt
+            except Exception:
+                ver_ok = False
+        state = "OK" if ver_ok else ("BROKEN" if have("llama-server") else "MISSING")
         checks.append(("  %-26s %s" % ("llama-server", state),
-                       ("chal raha hai: " + os.path.basename(server)) if ver_ok
-                       else "fix: bash install_engine.sh"))
+                       "chal raha hai" if ver_ok else "fix: bash setup_local.sh --build"))
         if not ver_ok:
             problems += 1
         d = data_dir(cfg)
@@ -1059,8 +1147,8 @@ def doctor(cfg):
     print("  Memory : %s (%d facts, %d notes)" % (MEMORY_PATH, len(load_memory()["facts"]),
                                                   len(load_memory()["notes"])))
     print("  Log    : %s" % LOG_PATH)
-    if brain == "local" and find_server(cfg):
-        ok_v, ver = server_version(find_server(cfg))
+    if brain == "local" and have("llama-server"):
+        ok_v, ver = termux("llama-server", "--version", timeout=20)
         print("  llama-server: %s" % (ver.splitlines()[0][:70] if ver else "?"))
         tail = llama_tail(4)
         if tail:
@@ -1206,6 +1294,8 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --brain local  permanent free: phone ka apna model (no key, no internet)
   python jarvis.py --brain gemini wapas cloud brain par
   python jarvis.py --index        aapke data folder ka index banao/dikhao
+  python jarvis.py --vault        vault me kaunsi files hain
+  python jarvis.py --import <path>  file/folder/zip vault me daalo (data.txt, notes.zip...)
   python jarvis.py --version
 """
 
@@ -1255,6 +1345,26 @@ def main(argv):
         else:
             for ch in chunks[:3]:
                 print("  - %s: %s..." % (ch["file"], ch["text"][:70].replace("\n", " ")))
+        return 0
+    if argv[0] == "--import":
+        if len(argv) < 2:
+            print("Use: python jarvis.py --import /sdcard/Download/notes.zip")
+            return 1
+        cfg = load_config()
+        msg, added = import_data(argv[1], cfg)
+        print(msg)
+        print("Vault: %s" % data_dir(cfg))
+        return 0 if added else 1
+    if argv[0] == "--vault":
+        cfg = load_config()
+        d = data_dir(cfg)
+        chunks, nfiles, _ = build_index(cfg)
+        print("Vault   : %s" % d)
+        print("Files   : %d" % nfiles)
+        print("Hisse   : %d" % len(chunks))
+        for root, dirs, names in os.walk(d):
+            for n in sorted(names):
+                print("  %s" % os.path.relpath(os.path.join(root, n), d))
         return 0
     if argv[0] == "--reset-memory":
         save_memory({"facts": [], "notes": [], "history": []})
