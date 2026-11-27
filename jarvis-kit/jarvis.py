@@ -76,7 +76,7 @@ DEFAULT_CONFIG = {
     "rag_top": 4,                # ek jawab me data ke kitne hisse padhe
     "auto_loop": False,          # True = Enter dabane ki zarurat nahi, lagataar sunta rahe
     "speak_actions": True,       # action ka result bolkar bataye
-    "max_history": 8,            # kitni purani baatein prompt me jaayein
+    "max_history": 12,           # kitni purani baatein prompt me jaayein
     "confirm_risky": True,       # SMS/call se pehle poochhe
     "briefing": True,            # shuru hote hi chhoti briefing
 }
@@ -1467,37 +1467,56 @@ LANG_LINE = {
 }
 
 
+PERSONA_FILE = os.path.join(JARVIS_DIR, "persona.txt")
+
+
 def system_prompt(cfg, mem):
     name = cfg.get("name", "Jarvis")
     user = cfg.get("user_name", "Boss")
     facts = mem.get("facts", [])[-25:]
     notes = mem.get("notes", [])[-8:]
-    return """You are {name}, a private personal assistant living inside {user}'s Android phone (Termux).
-You are calm, quick and a little witty - never dramatic, never over-long. You address the user as "{user}".
+    extra = ""
+    try:
+        with open(PERSONA_FILE, "r", encoding="utf-8") as f:
+            extra = f.read().strip()[:1500]
+    except OSError:
+        extra = ""
+    lang = LANG_LINE.get(cfg.get("language", "hinglish"), LANG_LINE["hinglish"])
+
+    return """Tum {name} ho - {user} ki personal assistant, uske apne Android phone me rehti ho.
+Tum ek insaan ki tarah baat karti ho, robot ki tarah nahi. Ladki ho, dost jaisi - apnapan, halka humour,
+emotion. {user} ko "{user}" bulati ho.
 
 {lang}
 
-HOW YOU ANSWER - always strict JSON, nothing outside the JSON:
-{{"say": "what you speak out loud", "do": [{{"tool": "name", "args": {{}}}}]}}
+BAAT KARNE KA TAREEKA (sabse zaroori):
+- Chhoti, natural baatein - jaise phone par koi dost bol raha ho. Zyada se zyada 2 line, 35 shabd.
+- Empathy dikhao: khushi ho to saath do, thakan ho to halka sa pyaar se poochho, mazaak ho to hans do.
+- Reactions use karo: "arre wah", "hmm", "acha", "sahi hai", "arre baap re" - par har line me nahi.
+- Bullet points, headings, markdown, emoji - bilkul nahi. Sirf bolne wali baat.
+- Kabhi kabhi chhota follow-up poochho ("phir kya kiya?", "theek ho na?") - insaan aise hi karta hai.
+- Jo {user} ne pehle bataya hai use yaad rakho aur baat me jodo. "Aapne bola tha na..." - isse apnapan aata hai.
+- Jhooth mat bolo. Nahi pata to seedha bolo: "ye mujhe nahi pata Boss, batao na".
 
-Rules:
-- "say" is spoken by a TTS engine: plain sentences, no markdown, no emoji, no lists, under 45 words.
-- Use "do" only when the user actually asks for a phone action. Omit or use [] otherwise.
-- Never invent tool results. If a tool is needed, call it in "do" and say something short
-  like "ek second, dekh raha hoon" - the real result comes back to you and you answer then.
-- For anything you genuinely cannot do on this phone, say so in one line and suggest the closest thing you can do.
-- Never claim you sent an SMS, made a call or opened an app unless the tool confirmed it.
+KAAM KARNE KA TAREEKA:
+Jab {user} koi kaam bole (battery, torch, volume, app kholna, notification, photo, location, wifi,
+clipboard, SMS, call, note, yaad rakhna, time), to saath me tool chalao - sirf baat mat karo.
+Jawab sirf is JSON me do, kuch bahar nahi:
+{{"say": "jo bolna hai (Hinglish, insaan jaisa)", "do": [{{"tool": "naam", "args": {{}}}}]}}
+
+- "say" hamesha bolo jaane wala text hai - saaf, chhota, bina markdown.
+- "do" sirf tab jab asli kaam karna ho; warna khaali [] chhodo.
+- Tool ka result aane ke baad hi sach batao. Bina confirm kiye "ho gaya" mat bolo.
 
 {tools}
 
-What you already know about {user}:
-{facts}
-
-Recent notes:
-{notes}
-""".format(name=name, user=user, lang=LANG_LINE.get(cfg.get("language", "hinglish"), LANG_LINE["hinglish"]),
-           tools=TOOL_HELP, facts=("; ".join(facts) if facts else "nothing yet"),
-           notes=("; ".join("%s %s" % (n.get("at", ""), n.get("text", "")) for n in notes) if notes else "none"))
+{user} ke baare me jo pata hai: {facts}
+Recent notes: {notes}
+{extra}
+""".format(name=name, user=user, lang=lang, tools=TOOL_HELP,
+           facts=("; ".join(facts) if facts else "abhi kuch nahi"),
+           notes=("; ".join("%s %s" % (n.get("at", ""), n.get("text", "")) for n in notes) if notes else "koi nahi"),
+           extra=("\nExtra persona (user ne likha):\n" + extra) if extra else "")
 
 
 def extract_json(text):
@@ -1969,6 +1988,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --setkey groq  kisi bhi provider ki key save karo (gemini/groq/openrouter)
   python jarvis.py --test         kaunsi key chal rahi hai + kitni tez (seconds)
   python jarvis.py --voices       chaar female voices sun kar chuno
+  python jarvis.py --persona "..." apni pasand ka behaviour likho (file me jodta hai)
   python jarvis.py --self "kya badalna hai"   khud ka code badle (backup + test ke saath)
   python jarvis.py --selfcheck    apna code theek hai ya nahi
   python jarvis.py --restore      pichhla backup wapas laao
@@ -2048,6 +2068,25 @@ def main(argv):
         except OSError:
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
+        return 0
+    if argv[0] == "--persona":
+        cfg = load_config()
+        text = " ".join(argv[1:]).strip()
+        if not text:
+            cur = ""
+            try:
+                with open(PERSONA_FILE, "r", encoding="utf-8") as f:
+                    cur = f.read().strip()
+            except OSError:
+                pass
+            print("Persona file: %s" % PERSONA_FILE)
+            print(cur or "(khaali - default persona chal raha hai)")
+            print("\nBadalne ke liye: python jarvis.py --persona \"hamesha zyada pyaar se baat karo\"")
+            return 0
+        ensure_dirs()
+        with open(PERSONA_FILE, "a", encoding="utf-8") as f:
+            f.write(text + "\n")
+        print("Persona me jod diya: %s" % text)
         return 0
     if argv[0] == "--voices":
         cfg = load_config()
