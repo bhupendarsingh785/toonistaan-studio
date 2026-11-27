@@ -68,7 +68,8 @@ DEFAULT_CONFIG = {
     "providers": "gemini,groq,openrouter,local",   # is order me try karega
     "groq_model": "llama-3.3-70b-versatile",
     "openrouter_model": "meta-llama/llama-3.3-70b-instruct:free",
-    "provider_timeout": 45,
+    "provider_timeout": 25,
+    "speed": "balanced",         # fast | balanced | quality
     "brain": "gemini",           # gemini | local  (local = phone me hi model, zero internet, zero paisa)
     "local_model": "",          # khaali = <folder>/models/model.gguf
     "llama_port": 8080,
@@ -168,8 +169,10 @@ def self_restore(path=""):
     return "Wapas restore kar diya: %s" % os.path.basename(src)
 
 
-def self_verify():
-    """(ok, message) - naya code chalega ya nahi."""
+def self_verify(full=None):
+    """(ok, message) - naya code chalega ya nahi. Default: fast (compile+import)."""
+    if full is None:
+        full = os.environ.get("JARVIS_SAFE") == "1"
     try:
         with open(SELF_PATH, "r", encoding="utf-8") as f:
             src = f.read()
@@ -178,6 +181,20 @@ def self_verify():
         return False, "syntax error line %s: %s" % (exc.lineno, exc.msg)
     except OSError as exc:
         return False, "file padhi nahi: %s" % exc
+    # fast check: file import ho rahi hai?
+    try:
+        proc = subprocess.run([sys.executable, "-c",
+                               "import importlib.util,sys;"
+                               "spec=importlib.util.spec_from_file_location('j',%r);"
+                               "m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)"
+                               % SELF_PATH],
+                              capture_output=True, text=True, timeout=60)
+        if proc.returncode != 0:
+            return False, "import fail: %s" % ((proc.stderr or "")[-250:])
+    except Exception as exc:
+        return False, "import check fail: %s" % exc
+    if not full:
+        return True, "ok (fast check)"
     try:
         proc = subprocess.run([sys.executable, SELF_PATH, "--selftest"],
                               capture_output=True, text=True, timeout=240)
@@ -1695,8 +1712,11 @@ def pick_groq_model(cfg, key):
         return cfg.get("groq_model", "")
     bad = ("whisper", "tts", "guard", "embed", "vision", "audio")
     chat = [i for i in ids if not any(b in i.lower() for b in bad)]
-    for pref in ("llama-3.3-70b-versatile", "llama-3.1-8b-instant", "llama3-70b",
-                 "mixtral", "gemma2", "qwen"):
+    prefs = ("llama-3.1-8b-instant", "llama-3.3-70b-versatile", "llama3-8b",
+             "gemma2-9b", "mixtral") if cfg.get("speed") == "fast" else \
+            ("llama-3.3-70b-versatile", "llama-3.1-8b-instant", "llama3-70b",
+             "mixtral", "gemma2", "qwen")
+    for pref in prefs:
         for i in chat:
             if pref in i:
                 cfg["groq_model"] = i
@@ -2362,6 +2382,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --test         kaunsi key chal rahi hai + kitni tez (seconds)
   python jarvis.py --voices       saaton female voices sun kar chuno
   python jarvis.py --say "text"   koi bhi line bol kar sunao (voice test)
+  python jarvis.py --speed fast   sabse tez mode (fast|balanced|quality)
   python jarvis.py --persona "..." apni pasand ka behaviour likho (file me jodta hai)
   python jarvis.py --adb "command"     poore phone par adb command (setup_adb.sh ke baad)
   python jarvis.py --research "topic"  internet se source ke saath jawab
@@ -2514,6 +2535,38 @@ def main(argv):
         with open(PERSONA_FILE, "a", encoding="utf-8") as f:
             f.write(text + "\n")
         print("Persona me jod diya: %s" % text)
+        return 0
+    if argv[0] == "--speed":
+        want = (argv[1] if len(argv) > 1 else "").strip().lower()
+        if want not in ("fast", "balanced", "quality"):
+            print("Use: python jarvis.py --speed fast | balanced | quality")
+            print("  fast     = sabse tez (Groq 8B + phone voice)")
+            print("  balanced = tez + emotional voice (default)")
+            print("  quality  = smart + emotional voice, thoda dheema")
+            return 1
+        cfg = load_config()
+        cfg["speed"] = want
+        if want == "fast":
+            cfg["providers"] = "groq,gemini,openrouter,local"
+            cfg["groq_model"] = "llama-3.1-8b-instant"
+            cfg["tts"] = "phone"
+            cfg["max_history"] = 6
+            cfg["provider_timeout"] = 20
+        elif want == "balanced":
+            cfg["providers"] = "groq,gemini,openrouter,local"
+            cfg["groq_model"] = "llama-3.3-70b-versatile"
+            cfg["tts"] = "auto"
+            cfg["max_history"] = 8
+            cfg["provider_timeout"] = 25
+        else:
+            cfg["providers"] = "gemini,groq,openrouter,local"
+            cfg["tts"] = "gemini"
+            cfg["max_history"] = 12
+            cfg["provider_timeout"] = 40
+        save_config(cfg)
+        print("Speed = %s" % want)
+        for k in ("providers", "groq_model", "tts", "max_history", "provider_timeout"):
+            print("  %-16s %s" % (k, cfg.get(k)))
         return 0
     if argv[0] == "--say":
         text = " ".join(argv[1:]).strip() or "Namaste Boss, main Jarvis hoon. Kaisi lagi meri awaaz?"
