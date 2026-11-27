@@ -24,6 +24,7 @@ Zero pip dependency - sirf Python standard library + Termux:API.
 """
 
 import base64
+import glob
 import json
 import os
 import re
@@ -125,6 +126,195 @@ def write_json(path, data):
         os.chmod(path, 0o600)
     except OSError:
         pass
+
+
+SELF_LOG = os.path.join(JARVIS_DIR, "selfedit.log")
+BACKUP_DIR = os.path.join(JARVIS_DIR, "backups")
+SELF_PATH = os.path.abspath(__file__)
+
+
+def _self_log(text):
+    try:
+        ensure_dirs()
+        with open(SELF_LOG, "a", encoding="utf-8") as f:
+            f.write("[%s] %s\n" % (datetime.now().strftime("%Y-%m-%d %H:%M"), text))
+    except OSError:
+        pass
+
+
+def self_backup():
+    ensure_dirs()
+    os.makedirs(BACKUP_DIR, exist_ok=True)
+    dst = os.path.join(BACKUP_DIR, "jarvis-%s.py" % datetime.now().strftime("%Y%m%d-%H%M%S"))
+    shutil.copyfile(SELF_PATH, dst)
+    return dst
+
+
+def self_restore(path=""):
+    if not os.path.isdir(BACKUP_DIR):
+        return "Koi backup nahi hai"
+    backups = sorted(glob.glob(os.path.join(BACKUP_DIR, "jarvis-*.py")))
+    if not backups:
+        return "Koi backup nahi hai"
+    src = path or backups[-1]
+    if not os.path.exists(src):
+        return "Backup nahi mila: %s" % src
+    shutil.copyfile(src, SELF_PATH)
+    _self_log("restored from %s" % src)
+    return "Wapas restore kar diya: %s" % os.path.basename(src)
+
+
+def self_verify():
+    """(ok, message) - naya code chalega ya nahi."""
+    try:
+        with open(SELF_PATH, "r", encoding="utf-8") as f:
+            src = f.read()
+        compile(src, SELF_PATH, "exec")
+    except SyntaxError as exc:
+        return False, "syntax error line %s: %s" % (exc.lineno, exc.msg)
+    except OSError as exc:
+        return False, "file padhi nahi: %s" % exc
+    try:
+        proc = subprocess.run([sys.executable, SELF_PATH, "--selftest"],
+                              capture_output=True, text=True, timeout=240)
+        if proc.returncode != 0:
+            out = (proc.stdout or "") + (proc.stderr or "")
+            return False, "selftest fail: %s" % out.strip()[-300:]
+    except Exception as exc:
+        return False, "selftest chala nahi: %s" % exc
+    return True, "ok"
+
+
+def self_apply(edits, reason="", confirm=True):
+    """Safe self-modify: backup -> apply -> compile+selftest -> fail par rollback."""
+    try:
+        with open(SELF_PATH, "r", encoding="utf-8") as f:
+            src = f.read()
+    except OSError as exc:
+        return False, "apni file padhi nahi: %s" % exc
+    new = src
+    done = []
+    for e in (edits or [])[:8]:
+        if not isinstance(e, dict):
+            continue
+        old = str(e.get("old", ""))
+        rep = str(e.get("new", ""))
+        if not old:
+            return False, "edit me 'old' khaali hai"
+        count = new.count(old)
+        if count == 0:
+            return False, "ye code apni file me nahi mila: %r" % old[:70]
+        if count > 1:
+            return False, "ye code %d jagah hai, unique nahi: %r" % (count, old[:70])
+        new = new.replace(old, rep, 1)
+        done.append(old.strip().splitlines()[0][:60])
+    if new == src:
+        return False, "koi badlav nahi mila"
+    if confirm and not STUB:
+        print("  %d badlav:" % len(done))
+        for d in done:
+            print("    - %s" % d)
+        try:
+            ans = input("  Ye code change karun? (y/n) > ").strip().lower()
+        except EOFError:
+            ans = "n"
+        if not ans.startswith("y"):
+            return False, "aapne cancel kar diya"
+    bak = self_backup()
+    try:
+        with open(SELF_PATH, "w", encoding="utf-8") as f:
+            f.write(new)
+        ok, msg = self_verify()
+        if not ok:
+            shutil.copyfile(bak, SELF_PATH)
+            _self_log("rollback: %s | reason=%s" % (msg, reason))
+            return False, "naya code fail hua (%s) - purana wapas laga diya" % msg
+    except OSError as exc:
+        try:
+            shutil.copyfile(bak, SELF_PATH)
+        except OSError:
+            pass
+        return False, "likhne me dikkat: %s" % exc
+    _self_log("applied: %s | %s" % (reason, "; ".join(done)))
+    return True, "Code update ho gaya (backup: %s)" % os.path.basename(bak)
+
+
+def ask_text(cfg, key, system, user, max_tokens=1200):
+    """Kisi bhi provider se seedha text (JSON edits ke liye)."""
+    order = [x.strip() for x in str(cfg.get("providers", "gemini,groq,openrouter")).split(",") if x.strip()]
+    for prov in order:
+        try:
+            if prov == "gemini" and key:
+                payload = {"contents": [{"role": "user", "parts": [{"text": user}]}],
+                           "systemInstruction": {"parts": [{"text": system}]},
+                           "generationConfig": {"temperature": 0.2, "maxOutputTokens": max_tokens,
+                                                "responseMimeType": "application/json"}}
+                resp = api_call("/models/%s:generateContent" % pick_model(key, cfg), payload, key=key, timeout=120)
+                if "_error" not in resp:
+                    txt = model_text(resp)
+                    if txt:
+                        return txt
+            elif prov in OPENAI_COMPAT:
+                pkey = load_provider_key(prov)
+                if not pkey:
+                    continue
+                msgs = [{"role": "system", "content": system}, {"role": "user", "content": user}]
+                txt = openai_chat(prov, msgs, cfg, pkey, timeout=90)
+                if txt:
+                    return txt
+        except Exception as exc:
+            log("ask_text %s fail: %s" % (prov, exc))
+    return ""
+
+
+def code_context(needle, lines_around=45):
+    """Request se milta-julta code hissa nikaalo, taaki model exact old-string de sake."""
+    try:
+        with open(SELF_PATH, "r", encoding="utf-8") as f:
+            lines = f.read().splitlines()
+    except OSError:
+        return ""
+    words = [w.lower() for w in _WORD.findall(needle or "") if len(w) > 3]
+    best, best_hit = 0, 0
+    for i in range(len(lines)):
+        window = " ".join(lines[i:i + lines_around]).lower()
+        hit = sum(1 for w in words if w in window)
+        if hit > best_hit:
+            best, best_hit = i, hit
+    start = max(0, best - 5)
+    chunk = lines[start:start + lines_around * 2]
+    return "\n".join(chunk)
+
+
+SELF_SYSTEM = """You edit a single Python file (jarvis.py) that runs a phone assistant.
+You must answer ONLY with JSON:
+{"note": "short Hinglish note", "edits": [{"old": "<exact existing code>", "new": "<replacement>"}]}
+Rules:
+- "old" must be copied EXACTLY from the file, character for character, and must appear only once.
+- Keep edits small. Do not rewrite the whole file.
+- Valid Python 3 only. No new pip dependencies (standard library only).
+- Do not remove safety checks, key handling, backups or the selftest.
+- If you cannot do it safely, return {"note": "nahi ho sakta kyunki ...", "edits": []}.
+"""
+
+
+def self_request(request, cfg, key, confirm=True):
+    """User ki request se code khud badlo (safe)."""
+    ctx = code_context(request)
+    if not ctx:
+        return False, "apni file padhi nahi ja saki"
+    user = ("USER REQUEST: %s\n\nFILE KA RELEVANT HISA: \n```python\n%s\n```\n\n"
+            "Ab JSON do (edits)." % (request, ctx))
+    raw = ask_text(cfg, key, SELF_SYSTEM, user)
+    plan = extract_json(raw)
+    if not isinstance(plan, dict):
+        return False, "model ne theek JSON nahi diya"
+    edits = plan.get("edits") or []
+    note = str(plan.get("note", ""))
+    if not edits:
+        return False, note or "model ne koi badlav nahi diya"
+    ok, msg = self_apply(edits, reason=request, confirm=confirm)
+    return ok, ("%s | %s" % (note, msg)).strip(" |")
 
 
 def load_config():
@@ -1377,8 +1567,26 @@ def briefing(cfg, mem, key):
     return say
 
 
+SELF_INTENT = ("apna code", "apne code", "khud ko modify", "khud ko theek", "khud ko update",
+               "code me badal", "code me add", "code me theek", "khud ko sudhar", "apne aap ko theek")
+
+
+def is_self_intent(text):
+    t = (text or "").lower()
+    return any(k in t for k in SELF_INTENT)
+
+
 def handle_turn(user_part, cfg, mem, key, heard_text=""):
     t0 = time.time()
+    if isinstance(user_part, str) and is_self_intent(user_part):
+        ok, msg = self_request(user_part, cfg, key, confirm=True)
+        say = ("Theek kar diya Boss. " if ok else "Nahi kar paya Boss. ") + msg
+        print("  [%.1f second]" % (time.time() - t0))
+        speak(say, cfg)
+        mem["history"].append({"role": "user", "text": user_part})
+        mem["history"].append({"role": "model", "text": say})
+        save_memory(mem)
+        return say
     plan = ask_model(cfg, mem, user_part, key)
     say = strip_markdown(str(plan.get("say", "")))
     actions = plan.get("do") or plan.get("actions") or []
@@ -1646,6 +1854,9 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --brain gemini wapas cloud brain par
   python jarvis.py --index        aapke data folder ka index banao/dikhao
   python jarvis.py --setkey groq  kisi bhi provider ki key save karo (gemini/groq/openrouter)
+  python jarvis.py --self "kya badalna hai"   khud ka code badle (backup + test ke saath)
+  python jarvis.py --selfcheck    apna code theek hai ya nahi
+  python jarvis.py --restore      pichhla backup wapas laao
   python jarvis.py --briefing     subah ki chhoti briefing
   python jarvis.py --vault        vault me kaunsi files hain
   python jarvis.py --import <path>  file/folder/zip vault me daalo (data.txt, notes.zip...)
@@ -1722,6 +1933,23 @@ def main(argv):
         except OSError:
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
+        return 0
+    if argv[0] == "--self":
+        cfg = load_config()
+        text = " ".join(argv[1:]).strip()
+        if not text:
+            print("Use: python jarvis.py --self \"torch tool me 5 second ka delay add karo\"")
+            return 1
+        ok, msg = self_request(text, cfg, load_key(), confirm=True)
+        print(("OK: " if ok else "NAHI: ") + msg)
+        return 0 if ok else 1
+    if argv[0] == "--selfcheck":
+        ok, msg = self_verify()
+        print("Self check: %s (%s)" % ("OK" if ok else "FAIL", msg))
+        print("Backups: %s" % (sorted(os.listdir(BACKUP_DIR))[-3:] if os.path.isdir(BACKUP_DIR) else "none"))
+        return 0 if ok else 1
+    if argv[0] == "--restore":
+        print(self_restore(argv[1] if len(argv) > 1 else ""))
         return 0
     if argv[0] == "--briefing":
         cfg = load_config()
