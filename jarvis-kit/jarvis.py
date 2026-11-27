@@ -983,9 +983,19 @@ def doctor(cfg):
                        "%s, %s" % (os.path.basename(model), size)))
         if not exists:
             problems += 1
-        checks.append(("  %-26s %s" % ("llama-server", "OK" if (have("llama-server") or have("llamafile")) else "MISSING"),
-                       "pkg install llama-cpp / setup_local.sh"))
-        if not (have("llama-server") or have("llamafile")):
+        ver_ok, ver_txt = False, ""
+        if have("llama-server") or have("llamafile"):
+            try:
+                proc = subprocess.run(["llama-server", "--version"], capture_output=True,
+                                      text=True, timeout=25)
+                ver_txt = ((proc.stdout or "") + (proc.stderr or "")).strip()
+                ver_ok = proc.returncode == 0 and "CANNOT LINK" not in ver_txt
+            except Exception:
+                ver_ok = False
+        state = "OK" if ver_ok else ("BROKEN" if have("llama-server") else "MISSING")
+        checks.append(("  %-26s %s" % ("llama-server", state),
+                       "chal raha hai" if ver_ok else "fix: bash setup_local.sh --build"))
+        if not ver_ok:
             problems += 1
         d = data_dir(cfg)
         chunks, nfiles, _ = build_index(cfg)

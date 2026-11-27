@@ -42,14 +42,14 @@ server_ok() {
 build_from_source() {
   step "llama.cpp source se build (15-40 minute, ek baar)"
   echo "  ${DIM}Phone charge par rakho, screen on rakho, Termux band na karo.${OFF}"
-  pkg install -y git cmake make clang >/dev/null 2>&1 || die "build tools install nahi hue"
+  pkg install -y git cmake make clang libc++ libandroid-support binutils >/dev/null 2>&1 || die "build tools install nahi hue"
   if [ ! -d "$HOME/llama.cpp/.git" ]; then
     git clone --depth 1 https://github.com/ggerganov/llama.cpp "$HOME/llama.cpp" || die "git clone fail (internet?)"
   fi
   cd "$HOME/llama.cpp" || die "llama.cpp folder nahi mila"
   cmake -B build -DCMAKE_BUILD_TYPE=Release -DLLAMA_CURL=OFF >/dev/null 2>&1 \
     || die "cmake fail - screenshot bhejo"
-  cmake --build build --config Release -j"$(nproc)" >/dev/null 2>&1 \
+  cmake --build build --config Release -j2 >/dev/null 2>&1 \
     || die "build fail - screenshot bhejo"
   mkdir -p "$PREFIX/bin"
   if [ -f build/bin/llama-server ]; then
