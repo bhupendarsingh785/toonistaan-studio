@@ -42,15 +42,33 @@ server_ok() {
 build_from_source() {
   step "llama.cpp source se build (15-40 minute, ek baar)"
   echo "  ${DIM}Phone charge par rakho, screen on rakho, Termux band na karo.${OFF}"
-  pkg install -y git cmake make clang libc++ libandroid-support binutils >/dev/null 2>&1 || die "build tools install nahi hue"
+  echo "  [1/4] Build tools install (clang, cmake, git) - 2 se 5 minute, screen par kuch na dikhe to normal hai..."
+  if ! pkg install -y git cmake make clang libc++ libandroid-support binutils > "$HOME/.jarvis-pkg.log" 2>&1; then
+    tail -6 "$HOME/.jarvis-pkg.log"
+    die "build tools install nahi hue (upar error dekho)"
+  fi
+  ok "build tools ready"
+
+  echo "  [2/4] llama.cpp source download (ek baar, ~50 MB)..."
   if [ ! -d "$HOME/llama.cpp/.git" ]; then
     git clone --depth 1 https://github.com/ggerganov/llama.cpp "$HOME/llama.cpp" || die "git clone fail (internet?)"
   fi
   cd "$HOME/llama.cpp" || die "llama.cpp folder nahi mila"
-  cmake -B build -DCMAKE_BUILD_TYPE=Release -DLLAMA_CURL=OFF >/dev/null 2>&1 \
-    || die "cmake fail - screenshot bhejo"
-  cmake --build build --config Release -j2 >/dev/null 2>&1 \
-    || die "build fail - screenshot bhejo"
+  ok "source ready"
+
+  echo "  [3/4] Configure (1-3 minute)..."
+  cmake -B build -DCMAKE_BUILD_TYPE=Release -DLLAMA_CURL=OFF > "$HOME/.jarvis-cmake.log" 2>&1 || {
+    tail -8 "$HOME/.jarvis-cmake.log"; die "cmake fail - screenshot bhejo"; }
+  ok "configure done"
+
+  echo "  [4/4] Compile (20-40 minute). Neeche Building/Linking lines aati rahengi - matlab kaam ho raha hai."
+  cmake --build build --config Release -j2 2>&1 | tee "$HOME/.jarvis-build.log" \
+    | grep --line-buffered -E "Building|Linking|error|Error|warning: unused" \
+    || true
+  if [ ! -f build/bin/llama-server ] && [ ! -f build/bin/server ]; then
+    tail -10 "$HOME/.jarvis-build.log" 2>/dev/null
+    die "build fail - upar error dekho, screenshot bhejo"
+  fi
   mkdir -p "$PREFIX/bin"
   if [ -f build/bin/llama-server ]; then
     cp build/bin/llama-server "$PREFIX/bin/llama-server"
