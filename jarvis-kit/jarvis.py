@@ -1274,6 +1274,8 @@ def api_call(path, payload=None, key="", timeout=90):
         return {"_error": "HTTP %s" % exc.code, "_body": body}
     except urllib.error.URLError as exc:
         return {"_error": "network: %s" % exc.reason}
+    except (TimeoutError, OSError) as exc:
+        return {"_error": "timeout: %s" % exc}
     except Exception as exc:
         return {"_error": "request fail: %s" % exc}
 
@@ -1531,6 +1533,8 @@ def ask_remote(cfg, mem, user_part, key, extra=None):
                     continue
                 msgs = ask_messages(cfg, mem, text_part, extra)
                 raw = openai_chat(prov, msgs, cfg, pkey)
+                if not raw and "timed out" in PROVIDER_ERR.get(prov, ""):
+                    raw = openai_chat(prov, msgs, cfg, pkey)
                 if not raw and prov == "groq":
                     if pick_groq_model(cfg, pkey):
                         raw = openai_chat(prov, msgs, cfg, pkey)
@@ -1582,7 +1586,7 @@ def ask_gemini(cfg, mem, user_part, key, extra=None):
     }
     model = pick_model(key, cfg)
     resp = api_call("/models/%s:generateContent" % model, payload, key=key)
-    if "_error" in resp and "503" in str(resp.get("_error", "")):
+    if "_error" in resp and any(k in str(resp.get("_error", "")) for k in ("503", "timeout")):
         time.sleep(2)
         resp = api_call("/models/%s:generateContent" % model, payload, key=key)
     if "_error" in resp:
@@ -2020,6 +2024,7 @@ def main(argv):
                     if not pkey:
                         print("  %-12s key nahi hai" % prov)
                         continue
+                    print("  %-12s key %d bytes" % (prov, len(pkey)))
                     if prov == "groq":
                         pick_groq_model(cfg, pkey)
                     txt = openai_chat(prov, [{"role": "user", "content": "hi"}], cfg, pkey, timeout=40)
