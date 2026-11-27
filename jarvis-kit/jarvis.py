@@ -61,6 +61,10 @@ DEFAULT_CONFIG = {
     "voice_pitch": 1.15,         # phone TTS ki awaaz thodi patli (ladki jaisi)
     "tts_rate": 0.98,
     "model": "",                 # khaali = auto (sabse achha flash model khud chunega)
+    "providers": "gemini,groq,openrouter,local",   # is order me try karega
+    "groq_model": "llama-3.3-70b-versatile",
+    "openrouter_model": "meta-llama/llama-3.3-70b-instruct:free",
+    "provider_timeout": 45,
     "brain": "gemini",           # gemini | local  (local = phone me hi model, zero internet, zero paisa)
     "local_model": "",          # khaali = <folder>/models/model.gguf
     "llama_port": 8080,
@@ -326,7 +330,7 @@ def wav_seconds(path):
         return 0.0
 
 
-def speak(text, cfg):
+def speak(text, cfg, force_gemini=False):
     text = strip_markdown(text)
     if not text:
         return
@@ -335,7 +339,8 @@ def speak(text, cfg):
         return
     mode = str(cfg.get("tts", "auto"))
     key = load_key()
-    if mode in ("auto", "gemini") and key:
+    use_gemini = (mode == "gemini") or (mode == "auto" and force_gemini)
+    if use_gemini and key:
         path, err = gemini_tts(text, cfg, key)
         if path:
             if play_audio(path, wav_seconds(path)):
@@ -1082,6 +1087,48 @@ def api_call(path, payload=None, key="", timeout=90):
         return {"_error": "request fail: %s" % exc}
 
 
+def load_provider_key(name):
+    """Gemini ke alawa doosre providers ki key (file ya env)."""
+    env = {"groq": "GROQ_API_KEY", "openrouter": "OPENROUTER_API_KEY",
+           "mistral": "MISTRAL_API_KEY", "cerebras": "CEREBRAS_API_KEY"}.get(name)
+    if env and os.environ.get(env):
+        return os.environ[env].strip()
+    path = os.path.join(JARVIS_DIR, "%s.txt" % name)
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return f.read().strip()
+    except OSError:
+        return ""
+
+
+OPENAI_COMPAT = {
+    "groq": ("https://api.groq.com/openai/v1/chat/completions", "groq_model"),
+    "openrouter": ("https://openrouter.ai/api/v1/chat/completions", "openrouter_model"),
+    "mistral": ("https://api.mistral.ai/v1/chat/completions", "mistral_model"),
+}
+
+
+def openai_chat(provider, messages, cfg, key, timeout=None):
+    """Groq / OpenRouter / Mistral - sab OpenAI jaisa hi hai."""
+    url, model_key = OPENAI_COMPAT[provider]
+    model = cfg.get(model_key) or {
+        "groq": "llama-3.3-70b-versatile",
+        "openrouter": "meta-llama/llama-3.3-70b-instruct:free",
+        "mistral": "mistral-small-latest",
+    }[provider]
+    payload = {"model": model, "messages": messages, "temperature": 0.7, "max_tokens": 400}
+    req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), method="POST",
+                                 headers={"Content-Type": "application/json",
+                                          "Authorization": "Bearer %s" % key})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout or int(cfg.get("provider_timeout", 45))) as resp:
+            data = json.loads(resp.read().decode("utf-8", "ignore"))
+        return ((data.get("choices") or [{}])[0].get("message") or {}).get("content", "") or ""
+    except Exception as exc:
+        log("%s fail: %s" % (provider, exc))
+        return ""
+
+
 def list_models(key):
     data = api_call("/models?pageSize=200", key=key, timeout=45)
     if "_error" in data:
@@ -1205,10 +1252,69 @@ def model_text(resp):
     return "\n".join(out).strip()
 
 
+def ask_messages(cfg, mem, user_text, extra=None):
+    """Kisi bhi provider ke liye system + history + user."""
+    msgs = [{"role": "system", "content": system_prompt(cfg, mem)}]
+    for turn in mem.get("history", [])[-int(cfg.get("max_history", 8)):]:
+        msgs.append({"role": "assistant" if turn.get("role") == "model" else "user",
+                     "content": str(turn.get("text", ""))[:600]})
+    msgs.append({"role": "user", "content": user_text})
+    if extra:
+        msgs.append({"role": "user", "content": extra})
+    return msgs
+
+
+def ask_remote(cfg, mem, user_part, key, extra=None):
+    """Gemini -> Groq -> OpenRouter -> local, jo pehle chale."""
+    order = [p.strip() for p in str(cfg.get("providers",
+             "gemini,groq,openrouter,local")).split(",") if p.strip()]
+    text_part = user_part if isinstance(user_part, str) else ""
+    last_err = ""
+    for prov in order:
+        try:
+            if prov == "local":
+                res = ask_local(cfg, mem, user_part, extra)
+                if isinstance(res, dict) and res.get("say"):
+                    return res
+                last_err = "local: jawab nahi mila"
+                continue
+            if prov == "gemini":
+                if not key:
+                    continue
+                plan = ask_gemini(cfg, mem, user_part, key, extra)
+            elif prov in OPENAI_COMPAT:
+                pkey = load_provider_key(prov)
+                if not pkey:
+                    continue
+                if not text_part:
+                    continue
+                raw = openai_chat(prov, ask_messages(cfg, mem, text_part, extra), cfg, pkey)
+                plan = extract_json(raw) if raw else None
+                if not isinstance(plan, dict) and raw:
+                    plan = {"say": strip_markdown(raw)[:400], "do": []}
+            else:
+                continue
+            if isinstance(plan, dict) and plan.get("say"):
+                plan.setdefault("do", [])
+                if prov != "gemini":
+                    log("answered by %s" % prov)
+                return plan
+            last_err = "%s: khaali jawab" % prov
+        except Exception as exc:
+            last_err = "%s: %s" % (prov, exc)
+            log("provider %s fail: %s" % (prov, exc))
+    return {"say": "Sabhi brain fail ho gaye (%s). Doctor chalao: python jarvis.py --doctor"
+                   % (last_err or "koi provider available nahi"), "do": []}
+
+
 def ask_model(cfg, mem, user_part, key, extra=None):
     """Ek turn: user_part (text ya inline audio) -> model JSON."""
     if cfg.get("brain") == "local":
         return ask_local(cfg, mem, user_part, extra)
+    return ask_remote(cfg, mem, user_part, key, extra)
+
+
+def ask_gemini(cfg, mem, user_part, key, extra=None):
     contents = []
     for turn in mem.get("history", [])[-int(cfg.get("max_history", 8)):]:
         role = "user" if turn.get("role") == "user" else "model"
@@ -1238,7 +1344,7 @@ def ask_model(cfg, mem, user_part, key, extra=None):
         model = pick_model(key, cfg)
         resp = api_call("/models/%s:generateContent" % model, payload, key=key)
     if "_error" in resp:
-        return {"say": "Network ya API me dikkat hai: %s" % resp["_error"], "do": []}
+        return None
     return extract_json(model_text(resp)) or {"say": strip_markdown(model_text(resp))[:300], "do": []}
 
 
@@ -1272,6 +1378,7 @@ def briefing(cfg, mem, key):
 
 
 def handle_turn(user_part, cfg, mem, key, heard_text=""):
+    t0 = time.time()
     plan = ask_model(cfg, mem, user_part, key)
     say = strip_markdown(str(plan.get("say", "")))
     actions = plan.get("do") or plan.get("actions") or []
@@ -1300,6 +1407,7 @@ def handle_turn(user_part, cfg, mem, key, heard_text=""):
     elif say:
         speak(say, cfg)
 
+    print("  [%.1f second]" % (time.time() - t0))
     mem["history"].append({"role": "user", "text": heard_text or "[voice]"})
     mem["history"].append({"role": "model", "text": say})
     mem["history"] = mem["history"][-40:]
@@ -1374,6 +1482,15 @@ def doctor(cfg):
     print("  Memory : %s (%d facts, %d notes)" % (MEMORY_PATH, len(load_memory()["facts"]),
                                                   len(load_memory()["notes"])))
     print("  Voice  : %s (tts=%s, pitch=%s)" % (cfg.get("gemini_voice"), cfg.get("tts"), cfg.get("voice_pitch")))
+    order = [x.strip() for x in str(cfg.get("providers", "gemini,groq,openrouter,local")).split(",") if x.strip()]
+    print("  Brain chain: %s" % " -> ".join(order))
+    for prov in order:
+        if prov == "local":
+            print("    %-12s %s" % ("local", "ready" if find_server(cfg) else "engine nahi mila"))
+        elif prov == "gemini":
+            print("    %-12s %s" % ("gemini", "key saved" if load_key() else "key nahi hai"))
+        else:
+            print("    %-12s %s" % (prov, "key saved" if load_provider_key(prov) else "key nahi hai (free)"))
     print("  Log    : %s" % LOG_PATH)
     if brain == "local":
         srv = find_server(cfg)
@@ -1442,7 +1559,7 @@ def main_loop(cfg):
     mem = load_memory()
     banner(cfg)
     if cfg.get("briefing", True):
-        speak(briefing(cfg, mem, key), cfg)
+        speak(briefing(cfg, mem, key), cfg, force_gemini=True)
     else:
         speak("Systems online, %s. Boliye." % cfg.get("user_name", "Boss"), cfg)
     idle = 0
@@ -1528,6 +1645,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --brain local  permanent free: phone ka apna model (no key, no internet)
   python jarvis.py --brain gemini wapas cloud brain par
   python jarvis.py --index        aapke data folder ka index banao/dikhao
+  python jarvis.py --setkey groq  kisi bhi provider ki key save karo (gemini/groq/openrouter)
   python jarvis.py --briefing     subah ki chhoti briefing
   python jarvis.py --vault        vault me kaunsi files hain
   python jarvis.py --import <path>  file/folder/zip vault me daalo (data.txt, notes.zip...)
@@ -1581,10 +1699,34 @@ def main(argv):
             for ch in chunks[:3]:
                 print("  - %s: %s..." % (ch["file"], ch["text"][:70].replace("\n", " ")))
         return 0
+    if argv[0] == "--setkey":
+        import getpass
+        prov = (argv[1] if len(argv) > 1 else "").strip().lower()
+        if prov not in ("gemini", "groq", "openrouter", "mistral"):
+            print("Use: python jarvis.py --setkey groq   (ya gemini / openrouter / mistral)")
+            return 1
+        try:
+            k = getpass.getpass("%s key paste karo: " % prov).strip()
+        except (EOFError, KeyboardInterrupt):
+            print()
+            return 1
+        if not k:
+            print("Khaali key - kuch nahi badla")
+            return 1
+        ensure_dirs()
+        path = KEY_PATH if prov == "gemini" else os.path.join(JARVIS_DIR, "%s.txt" % prov)
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(k)
+        try:
+            os.chmod(path, 0o600)
+        except OSError:
+            pass
+        print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
+        return 0
     if argv[0] == "--briefing":
         cfg = load_config()
         say = briefing(cfg, load_memory(), load_key())
-        speak(say, cfg)
+        speak(say, cfg, force_gemini=True)
         return 0
     if argv[0] == "--import":
         if len(argv) < 2:
