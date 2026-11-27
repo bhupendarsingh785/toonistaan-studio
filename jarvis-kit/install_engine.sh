@@ -19,6 +19,15 @@ tar -xzf "$DIR/engine.tar.gz" -C "$ENG" || { echo "${RED}extract fail${OFF}"; ex
 rm -f "$DIR/engine.tar.gz"
 chmod +x "$ENG/llama-server"
 export LD_LIBRARY_PATH="$ENG"
+
+echo "  jarvis.py update (naya version)..."
+if curl -fsSL -o "$DIR/jarvis.py.new" "$RAW/jarvis.py"; then
+  mv "$DIR/jarvis.py.new" "$DIR/jarvis.py"
+  echo "  ${GREEN}[OK]${OFF} jarvis.py update ho gaya"
+else
+  rm -f "$DIR/jarvis.py.new"
+  echo "  ${YEL}[!]${OFF} jarvis.py update fail - purana hi rahega"
+fi
 echo
 if OUT=$("$ENG/llama-server" --version 2>&1) && [ -n "$OUT" ]; then
   echo "$OUT" | head -2
