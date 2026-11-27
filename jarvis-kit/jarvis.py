@@ -80,6 +80,7 @@ DEFAULT_CONFIG = {
     "max_history": 12,           # kitni purani baatein prompt me jaayein
     "confirm_risky": True,       # SMS/call se pehle poochhe
     "briefing": True,            # shuru hote hi chhoti briefing
+    "adb_serial": "",            # setup_adb.sh ke baad khud bhar jata hai
 }
 
 # ----------------------------------------------------------------------------
@@ -545,6 +546,155 @@ def speak(text, cfg, force_gemini=False):
         if mode == "gemini":
             print("  (Gemini voice fail: %s)" % err)
     phone_speak(text, cfg)
+
+
+# ----------------------------------------------------------------------------
+# PHONE CONTROL (self-ADB) - koi bhi app band/chalu, button dabana, screen padhna
+# ----------------------------------------------------------------------------
+
+APP_MAP = {
+    "youtube": "com.google.android.youtube",
+    "whatsapp": "com.whatsapp",
+    "instagram": "com.instagram.android",
+    "facebook": "com.facebook.katana",
+    "chrome": "com.android.chrome",
+    "camera": "com.android.camera",
+    "settings": "com.android.settings",
+    "gmail": "com.google.android.gm",
+    "maps": "com.google.android.apps.maps",
+    "spotify": "com.spotify.music",
+    "telegram": "org.telegram.messenger",
+    "playstore": "com.android.vending",
+    "gallery": "com.google.android.apps.photos",
+    "phone": "com.google.android.dialer",
+    "messages": "com.google.android.apps.messaging",
+    "x": "com.twitter.android",
+    "twitter": "com.twitter.android",
+    "netflix": "com.netflix.mediaclient",
+    "hotstar": "in.startv.hotstar",
+    "paytm": "net.one97.paytm",
+    "phonepe": "com.phonepe.app",
+    "gpay": "com.google.android.apps.nbu.paisa.user",
+    "zomato": "com.application.zomato",
+    "swiggy": "in.swiggy.android",
+}
+
+KEYS = {"home": "3", "back": "4", "recent": "187", "power": "26", "volume_up": "24",
+        "volume_down": "25", "mute": "164", "play_pause": "85", "play": "126", "pause": "127",
+        "next": "87", "prev": "88", "enter": "66", "delete": "67", "search": "84",
+        "wake": "224", "sleep": "223", "screenshot": "120"}
+
+
+def adb_serial(cfg):
+    if cfg.get("adb_serial"):
+        return str(cfg["adb_serial"])
+    ok, out = termux("adb", "devices", timeout=20)
+    if not ok:
+        return ""
+    for line in out.splitlines():
+        if "\tdevice" in line:
+            return line.split("\t")[0].strip()
+    return ""
+
+
+def adb_shell(cmd, cfg=None, timeout=25):
+    """ADB ke through phone me shell command. (ok, output)"""
+    cfg = cfg or load_config()
+    if not have("adb"):
+        return False, "adb nahi mila - pkg install android-tools"
+    serial = adb_serial(cfg)
+    if not serial:
+        return False, "adb device connected nahi hai - bash setup_adb.sh"
+    ok, out = termux("adb", "-s", serial, "shell", cmd, timeout=timeout)
+    return ok, out
+
+
+def adb_ready(cfg=None):
+    cfg = cfg or load_config()
+    if not have("adb"):
+        return False, "adb install nahi hai"
+    if not adb_serial(cfg):
+        return False, "phone paired nahi hai"
+    ok, out = adb_shell("echo jarvis_ok", cfg, timeout=15)
+    return (ok and "jarvis_ok" in out), (out or "no answer")
+
+
+def pkg_from(text):
+    t = (text or "").lower()
+    for name, pkg in APP_MAP.items():
+        if name in t:
+            return pkg
+    return ""
+
+
+def t_app_stop(a):
+    pkg = str(a.get("package") or "").strip() or pkg_from(str(a.get("app", "")))
+    if not pkg:
+        return "Kaunsa app band karna hai? Naam bolo (youtube, whatsapp...)"
+    ok, out = adb_shell("am force-stop %s" % pkg)
+    if not ok:
+        return "Band nahi kar paya: %s" % out
+    return "%s band kar diya" % pkg
+
+
+def t_app_start(a):
+    pkg = str(a.get("package") or "").strip() or pkg_from(str(a.get("app", "")))
+    if not pkg:
+        return "Kaunsa app kholna hai?"
+    ok, out = adb_shell("monkey -p %s -c android.intent.category.LAUNCHER 1" % pkg)
+    if ok and "No activities" not in out:
+        return "%s khol diya" % pkg
+    return t_open_app({"package": pkg})
+
+
+def t_key(a):
+    key = str(a.get("key") or a.get("name") or "").strip().lower()
+    code = KEYS.get(key, key if key.isdigit() else "")
+    if not code:
+        return "Key samajh nahi aayi: %s" % key
+    ok, out = adb_shell("input keyevent %s" % code)
+    return ("%s dabaya" % (key or code)) if ok else "Key nahi chali: %s" % out
+
+
+def t_media(a):
+    act = str(a.get("action") or a.get("what") or "").strip().lower()
+    code = {"pause": "127", "play": "126", "toggle": "85", "stop": "86",
+            "next": "87", "prev": "88", "mute": "164"}.get(act, "85")
+    ok, out = adb_shell("input keyevent %s" % code)
+    return ("Media %s" % act) if ok else "Media control fail: %s" % out
+
+
+def t_tap(a):
+    try:
+        x, y = int(a.get("x", 0)), int(a.get("y", 0))
+    except (TypeError, ValueError):
+        return "x aur y number chahiye"
+    ok, out = adb_shell("input tap %d %d" % (x, y))
+    return "Tap (%d,%d)" % (x, y) if ok else "Tap fail: %s" % out
+
+
+def t_screen(a):
+    """Screen par kya likha hai - uiautomator se padho."""
+    ok, out = adb_shell("uiautomator dump /sdcard/ui.xml >/dev/null 2>&1; cat /sdcard/ui.xml",
+                        timeout=35)
+    if not ok or "<" not in out:
+        return "Screen padh nahi paya: %s" % (out or "khaali")[:120]
+    texts = [t for t in re.findall(r'text="([^"]{2,60})"', out) if t.strip()]
+    seen, uniq = set(), []
+    for t in texts:
+        if t not in seen:
+            seen.add(t)
+            uniq.append(t)
+    return "Screen par: " + " | ".join(uniq[:15]) if uniq else "Screen par koi text nahi"
+
+
+def t_screenshot(a):
+    path = os.path.join(HOME, "storage", "pictures", "screen_%s.png" %
+                        datetime.now().strftime("%H%M%S"))
+    ok, out = adb_shell("screencap -p /sdcard/screen.png && cp /sdcard/screen.png %s" % path)
+    if not ok:
+        return "Screenshot fail: %s" % out
+    return "Screenshot: %s" % path
 
 
 # ----------------------------------------------------------------------------
@@ -1088,6 +1238,8 @@ ROUTES = [
     (("time kya", "kitne baje", "samay kya", "date kya", "tarikh"), "time"),
     (("kya hai ye", "ye kya hai", "dekho", "dekh kar batao", "padh kar batao", "camera se dekh"), "look"),
     (("research karo", "search karo", "internet se dekho", "khoj karo", "google karo"), "research"),
+    (("band karo", "band kar do", "close karo", "kill karo"), "app_stop"),
+    (("pause karo", "rok do", "play karo", "next gaana", "pichhla gaana"), "media"),
     (("wifi", "internet kaisa"), "wifi"),
     (("location", "kahan hoon", "meri jagah"), "location"),
     (("vibrate", "hila do"), "vibrate"),
@@ -1410,6 +1562,13 @@ TOOLS = {
     "research": t_research,
     "gh_repos": t_gh_repos,
     "gh_upload": t_gh_upload,
+    "app_stop": t_app_stop,
+    "app_start": t_app_start,
+    "key": t_key,
+    "media": t_media,
+    "tap": t_tap,
+    "screen": t_screen,
+    "screenshot": t_screenshot,
 }
 
 RISKY = {"sms", "call"}
@@ -1431,7 +1590,10 @@ TOOL_HELP = """Available tools (JSON me "do" list ke andar):
   {"tool":"time"}
   {"tool":"look"}          (camera se dekho aur batao)
   {"tool":"research","args":{"query":"..."}}   (internet se source ke saath jawab)
-  {"tool":"gh_repos"} | {"tool":"gh_upload","args":{"repo":"user/repo","path":"a.txt","file":"/path"}}"""
+  {"tool":"gh_repos"} | {"tool":"gh_upload","args":{"repo":"user/repo","path":"a.txt","file":"/path"}}
+  {"tool":"app_stop","args":{"app":"youtube"}}  | {"tool":"app_start","args":{"app":"whatsapp"}}
+  {"tool":"media","args":{"action":"pause|play|next|prev|toggle"}} | {"tool":"key","args":{"key":"back|home|volume_up"}}
+  {"tool":"screen"} (screen par kya likha hai) | {"tool":"tap","args":{"x":540,"y":1200}}"""
 
 
 def run_tool(name, args, cfg):
@@ -2026,6 +2188,11 @@ def doctor(cfg):
     print("\n  Config : %s" % CONFIG_PATH)
     print("  Memory : %s (%d facts, %d notes)" % (MEMORY_PATH, len(load_memory()["facts"]),
                                                   len(load_memory()["notes"])))
+    try:
+        adb_ok, adb_msg = adb_ready(cfg)
+    except Exception:
+        adb_ok, adb_msg = False, "?"
+    print("  Phone control: %s (%s)" % ("ADB ready" if adb_ok else "nahi", str(adb_msg)[:40]))
     print("  Voice  : %s (tts=%s, pitch=%s)" % (cfg.get("gemini_voice"), cfg.get("tts"), cfg.get("voice_pitch")))
     order = [x.strip() for x in str(cfg.get("providers", "gemini,groq,openrouter,local")).split(",") if x.strip()]
     print("  Brain chain: %s" % " -> ".join(order))
@@ -2195,6 +2362,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --test         kaunsi key chal rahi hai + kitni tez (seconds)
   python jarvis.py --voices       chaar female voices sun kar chuno
   python jarvis.py --persona "..." apni pasand ka behaviour likho (file me jodta hai)
+  python jarvis.py --adb "command"     poore phone par adb command (setup_adb.sh ke baad)
   python jarvis.py --research "topic"  internet se source ke saath jawab
   python jarvis.py --build "idea"      chhoti app banao (single HTML, browser me khulegi)
   python jarvis.py --daily             subah ka routine: briefing + notes + vault
@@ -2278,6 +2446,17 @@ def main(argv):
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
         return 0
+    if argv[0] == "--adb":
+        cmd = " ".join(argv[1:]).strip()
+        if not cmd:
+            ok_r, out = adb_ready()
+            print("ADB ready: %s (%s)" % (ok_r, out))
+            print("Use: python jarvis.py --adb \"input keyevent 3\"")
+            return 0 if ok_r else 1
+        cfg = load_config()
+        ok_r, out = adb_shell(cmd, cfg)
+        print(out or ("OK" if ok_r else "fail"))
+        return 0 if ok_r else 1
     if argv[0] == "--research":
         q = " ".join(argv[1:]).strip()
         if not q:
