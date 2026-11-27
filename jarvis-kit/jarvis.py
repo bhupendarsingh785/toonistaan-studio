@@ -1357,6 +1357,31 @@ def pick_openrouter_model(cfg, key):
     return free[0]
 
 
+def openrouter_try(cfg, key, messages):
+    """429/404 par doosre free model par switch karke dobara try."""
+    txt = openai_chat("openrouter", messages, cfg, key)
+    if txt:
+        return txt
+    err = PROVIDER_ERR.get("openrouter", "")
+    if not any(c in err for c in ("429", "404", "502", "503")):
+        return ""
+    tried = [cfg.get("openrouter_model", "")]
+    ids = [i for i in provider_models("openrouter", key) if i.endswith(":free")]
+    for mid in ids:
+        if mid in tried:
+            continue
+        cfg["openrouter_model"] = mid
+        save_config(cfg)
+        txt = openai_chat("openrouter", messages, cfg, key)
+        if txt:
+            log("openrouter switched to %s" % mid)
+            return txt
+        tried.append(mid)
+        if len(tried) >= 4:
+            break
+    return ""
+
+
 def openai_chat(provider, messages, cfg, key, timeout=None):
     """Groq / OpenRouter / Mistral - sab OpenAI jaisa hi hai. Error PROVIDER_ERR me."""
     url, model_key = OPENAI_COMPAT[provider]
@@ -1557,7 +1582,7 @@ def ask_remote(cfg, mem, user_part, key, extra=None):
                         raw = openai_chat(prov, msgs, cfg, pkey)
                 if not raw and prov == "openrouter":
                     if pick_openrouter_model(cfg, pkey):
-                        raw = openai_chat(prov, msgs, cfg, pkey)
+                        raw = openrouter_try(cfg, pkey, msgs)
                 plan = extract_json(raw) if raw else None
                 if not isinstance(plan, dict) and raw:
                     plan = {"say": strip_markdown(raw)[:400], "do": []}
@@ -2049,7 +2074,10 @@ def main(argv):
                         pick_groq_model(cfg, pkey)
                     elif prov == "openrouter":
                         pick_openrouter_model(cfg, pkey)
-                    txt = openai_chat(prov, [{"role": "user", "content": "hi"}], cfg, pkey, timeout=40)
+                    if prov == "openrouter":
+                        txt = openrouter_try(cfg, pkey, [{"role": "user", "content": "hi"}])
+                    else:
+                        txt = openai_chat(prov, [{"role": "user", "content": "hi"}], cfg, pkey, timeout=40)
                     ok = bool(txt)
                     info = txt[:40] if ok else PROVIDER_ERR.get(prov, "fail")[:90]
                 print("  %-12s %s  %.1fs  %s" % (prov, "OK  " if ok else "FAIL", time.time() - t0,
