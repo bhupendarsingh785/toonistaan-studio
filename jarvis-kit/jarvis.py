@@ -3478,6 +3478,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --collect "topic"   internet se data laakar vault me daalo
   python jarvis.py --auto-collect  jo kami hai wo khud web se laao
   python jarvis.py --queue "topic"  seekhne ke liye topic queue me daalo
+  python jarvis.py --queue-clean   queue se bakwaas topics hatao
   python jarvis.py --learn [N]    vault ki files se seekho (dimaag me)
   python jarvis.py --teach "..."  seedha sikhao (style ya yaad)
   python jarvis.py --diag         apna system check karo (kya dikkat hai)
@@ -3891,10 +3892,13 @@ def learn_from_vault(cfg, key, limit=8):
     if not files:
         return True, "sab files pehle se seekh li hain"
     todo = files[:limit]
-    print("  %d file baaki hain, %d abhi seekh rahi hoon..." % (len(files), len(todo)))
+    quiet = QUIET["on"]
+    if not quiet:
+        print("  %d file baaki hain, %d abhi seekh rahi hoon..." % (len(files), len(todo)))
     done = 0
     for idx, fname in enumerate(todo, 1):
-        print("  [%d/%d] %s ..." % (idx, len(todo), fname[:55]), end="", flush=True)
+        if not quiet:
+            print("  [%d/%d] %s ..." % (idx, len(todo), fname[:55]), end="", flush=True)
         text = " ".join(c["text"] for c in chunks if c.get("file") == fname)[:4000]
         if len(text) < 60:
             continue
@@ -3903,14 +3907,16 @@ def learn_from_vault(cfg, key, limit=8):
         out = ask_text(cfg, key, "Tum ek document summarizer ho.", prompt + "\n\n" + text, max_tokens=300)
         out = strip_markdown(out or "").strip()
         if not out:
-            print(" skip (jawab nahi mila)")
+            if not quiet:
+                print(" skip (jawab nahi mila)")
             continue
         for line in [x.strip(" -*•") for x in out.splitlines() if x.strip()][:3]:
             if len(line) > 12:
                 brain_add("facts", "[%s] %s" % (fname[:24], line[:150]))
         learned.add(fname)
         done += 1
-        print(" ok (%d point)" % min(3, len([x for x in out.splitlines() if x.strip()])))
+        if not quiet:
+            print(" ok (%d point)" % min(3, len([x for x in out.splitlines() if x.strip()])))
     b = load_brain()
     b["learned_files"] = sorted(learned)[-500:]
     save_brain(b)
@@ -3974,10 +3980,29 @@ def daemon_mode(cfg, port=8080):
 QUEUE_PATH = os.path.join(JARVIS_DIR, "collect_queue.json")
 
 
+Q_MARKERS = ("?", "kya", "kaise", "kaun", "kab", "kahan", "kitna", "kitni", "kitne",
+             "batao", "kya hai", "\u0915\u094d\u092f\u093e", "\u0915\u0948\u0938\u0947", "\u0915\u094c\u0928",
+             "\u0915\u092c", "\u0915\u0939\u093e\u0901", "\u0915\u093f\u0924\u0928\u093e", "\u092c\u0924\u093e\u0913")
+
+
+def looks_like_query(text):
+    t = (text or "").strip().lower()
+    words = t.split()
+    if len(words) < 3 or len(words) > 30:
+        return False
+    if not any(m in t for m in Q_MARKERS):
+        return False
+    # bakwaas filler hatao
+    junk = ("सुबह में", "रात में", "खाना बन", "मम्मी", "पापा", "ladki aa", "khana ban")
+    if any(j in t for j in junk):
+        return False
+    return True
+
+
 def queue_topic(topic, cfg=None):
     """Jis cheez ka jawab nahi pata, use apne aap seekhne ke liye queue me daalo."""
     topic = re.sub(r"\s+", " ", str(topic or "")).strip()[:160]
-    if len(topic) < 8:
+    if len(topic) < 8 or not looks_like_query(topic):
         return False
     q = read_json(QUEUE_PATH, [])
     if not isinstance(q, list):
@@ -4520,6 +4545,12 @@ def main(argv):
         except OSError:
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
+        return 0
+    if argv[0] == "--queue-clean":
+        q = read_json(QUEUE_PATH, [])
+        keep = [x for x in (q if isinstance(q, list) else []) if looks_like_query(str(x.get("topic", "")))]
+        write_json(QUEUE_PATH, keep)
+        print("Queue saaf: %d hataye, %d bache" % (len(q) - len(keep) if isinstance(q, list) else 0, len(keep)))
         return 0
     if argv[0] == "--queue":
         cfg = load_config()
