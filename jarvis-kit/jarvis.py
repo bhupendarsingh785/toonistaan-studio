@@ -1086,6 +1086,15 @@ def _ask_digits(prompt, min_len=4, max_len=6):
     return ""
 
 
+def port_open(host, port, timeout=3):
+    import socket as _s
+    try:
+        with _s.create_connection((host, int(port)), timeout=timeout):
+            return True
+    except Exception:
+        return False
+
+
 def adb_auto(cfg):
     """ADB pairing: port khud (mDNS) ya poochh kar, code ek baar, phir save."""
     if not have("adb"):
@@ -1124,10 +1133,30 @@ def adb_auto(cfg):
             if m:
                 ip = m.group(1)
         target = "%s:%s" % (ip, pport)
-    print("\npairing %s ..." % target)
-    ok_p, out_p = termux("adb", "pair", target, code, timeout=60)
-    print("  -> %s" % str(out_p)[:160])
-    if "Successfully paired" not in str(out_p):
+    base_ip = target.split(":")[0]
+    hosts = []
+    for h in ("127.0.0.1", base_ip, "localhost"):
+        if h and h not in hosts:
+            hosts.append(h)
+    print("\nPort khula hai? ", end="")
+    reach = [h for h in hosts if port_open(h, pport)]
+    print(" | ".join("%s:%s %s" % (h, pport, "OPEN" if h in reach else "band") for h in hosts))
+    if not reach:
+        print("  Koi host reachable nahi - Wireless debugging popup khula hai? Wi-Fi on hai?")
+        print("  (Agar phone hotspot par hai to doosra Wi-Fi try karo)")
+        return False
+    paired = False
+    out_p = ""
+    for h in reach:
+        target = "%s:%s" % (h, pport)
+        print("pairing %s ..." % target)
+        ok_p, out_p = termux("adb", "pair", target, code, timeout=60)
+        print("  -> %s" % str(out_p)[:160])
+        if "Successfully paired" in str(out_p):
+            paired = True
+            base_ip = h
+            break
+    if not paired:
         print("\nPair nahi hua. Sabse aam wajah: code expire (popup dobara kholo) "
               "ya port galat. Dobara: python jarvis.py --adb-auto")
         return False
@@ -1137,8 +1166,12 @@ def adb_auto(cfg):
     if not conn:
         cport = _ask_digits("Connect port (Wireless debugging screen ka port, 5 ank): ", 4, 5)
         if cport:
-            base_ip = target.split(":")[0]
-            conn = "%s:%s" % (base_ip, cport)
+            for h in ([base_ip] + [x for x in ("127.0.0.1",) if x != base_ip]):
+                if port_open(h, cport):
+                    conn = "%s:%s" % (h, cport)
+                    break
+            if not conn:
+                conn = "%s:%s" % (base_ip, cport)
     if not conn:
         print("Connect port nahi mila - pairing ho gayi, par connect nahi hua.")
         return False
