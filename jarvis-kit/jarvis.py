@@ -67,8 +67,8 @@ DEFAULT_CONFIG = {
     "tts_style": "a real human woman speaking naturally, not a text-to-speech engine. Sweet, warm, clear Hindi/Hinglish pronunciation with slight breath, natural intonation and a soft smile in the voice. Speak Hindi/Hinglish with correct, crisp pronunciation and a gentle smile in the voice. Natural emotion and small pauses at commas, moderate speed, never flat or robotic. Every word should be clearly understandable.",
     "gemini_voice": "Kore",      # Kore, Aoede, Leda, Zephyr (female-ish)
     "tts_model": "gemini-2.5-flash-preview-tts",
-    "voice_pitch": 1.15,         # phone TTS ki awaaz thodi patli (ladki jaisi)
-    "tts_rate": 0.98,
+    "voice_pitch": 1.12,         # phone TTS ki awaaz thodi patli (ladki jaisi)
+    "tts_rate": 0.95,
     "model": "",                 # khaali = auto (sabse achha flash model khud chunega)
     "providers": "gemini,groq,openrouter,local",   # is order me try karega
     "groq_model": "llama-3.3-70b-versatile",
@@ -83,7 +83,7 @@ DEFAULT_CONFIG = {
     "rag_top": 4,                # ek jawab me data ke kitne hisse padhe
     "stt_lang": "hi",            # sunne ki bhasha (hi = Hindi/Hinglish, en = English)
     "human_touch": True,
-    "pauses": True,               # asli thehraav (saans/soch)         # insan jaisa touch (hansi, hmm, saans)
+    "pauses": False,              # ek hi baar me bolo (chop-chop nahi)         # insan jaisa touch (hansi, hmm, saans)
     "behaviour": {"relation": "boss", "age": "jawan", "place": "ghar", "laugh": True, "backchannel": True},
     "human_touch": True,
     "behaviour": {"relation": "boss", "age": "jawan", "place": "ghar", "laugh": True, "backchannel": True},
@@ -2928,86 +2928,47 @@ def ask_messages(cfg, mem, user_text, extra=None):
     return msgs
 
 
+CHAT_WORDS = ("kaisi ho", "kaise ho", "tum kaisi", "thanks", "shukriya", "theek hai",
+              "awaaz achi nahi", "awaaz achhi nahi", "voice achi nahi", "awaaz theek nahi",
+              "bura laga", "samajh nahi", "nahi samajh", "kya kar rahi", "kya kar rahi ho",
+              "tumhara naam", "kaun ho tum")
+
+
 def data_context(query, cfg, k=None):
-    """Vault se relevant hisse - har provider ke liye (source ke saath)."""
-    if not query:
+    """Vault se sirf tab hisse do jab sawaal sach me data ka ho (warna khaali)."""
+    q_raw = (query or "").strip()
+    if len(q_raw) < 12:
+        return ""
+    low = q_raw.lower()
+    if any(w in low for w in CHAT_WORDS):
         return ""
     try:
         chunks, _n, _c = build_index(cfg)
-        picked = retrieve(query, chunks, int(k or cfg.get("rag_top", 4)))
     except Exception as exc:
         log("data_context fail: %s" % exc)
         return ""
+    q = _tokens(q_raw)
+    if len(q) < 2:
+        return ""
+    scored = []
+    for ch in chunks:
+        toks = _tokens(ch.get("text", ""))
+        if not toks:
+            continue
+        common = q & toks
+        if len(common) < 2:
+            continue
+        coverage = len(common) / float(len(q))
+        if coverage < 0.34:
+            continue
+        scored.append((coverage + len(common) / 40.0, ch))
+    scored.sort(key=lambda x: -x[0])
+    picked = [c for _sc, c in scored[:int(k or 2)]]
     if not picked:
         return ""
-    # sirf tab do jab match kaafi strong ho (warna general sawaal kharab ho jata hai)
-    q = _tokens(query)
-    strong = any(len(q & _tokens(c.get("text", ""))) >= 2 for c in picked)
-    if not strong and len(q) > 2:
-        return ""
-    lines = []
-    for c in picked:
-        lines.append("[%s] %s" % (c.get("file", "?"), c.get("text", "")[:700]))
-    return ("USER KE APNE DATA SE (ye asli files hain):\n"
-            + "\n---\n".join(lines)
-            + "\n\nNIYAM: jawab sirf in hisson se do. Jo inme nahi hai wo mat banao. "
-              "Agar jawab in hisson me nahi mila to saaf bolo: 'data me ye nahi mila'. "
-              "Jawab ke saath file ka naam batao.")
-
-
-ANSWER_CACHE = {}
-
-
-def _cache_key(text, cfg):
-    return (str(cfg.get("providers", "")), (text or "").strip().lower()[:200])
-
-
-def ask_parallel(cfg, mem, user_part, key, extra=None, timeout=25):
-    """Groq aur Gemini ko saath bhejo - jo pehle jawab de wahi le lo."""
-    text_part = user_part if isinstance(user_part, str) else ""
-    if not text_part:
-        return None
-    dctx = data_context(text_part, cfg)
-    extra2 = (extra + "\n\n" + dctx) if (extra and dctx) else (extra or dctx)
-    msgs = ask_messages(cfg, mem, text_part, extra2)
-    results = {}
-    errs = {}
-
-    def run(prov):
-        try:
-            if prov == "groq":
-                pk = load_provider_key("groq")
-                if not pk:
-                    return
-                raw = openai_chat("groq", msgs, cfg, pk, timeout=timeout)
-                plan = extract_json(raw) if raw else None
-                if isinstance(plan, dict) and plan.get("say"):
-                    results["groq"] = plan
-            elif prov == "gemini":
-                if not key:
-                    return
-                plan = ask_gemini(cfg, mem, user_part, key, extra2)
-                if isinstance(plan, dict) and plan.get("say"):
-                    results["gemini"] = plan
-        except Exception as exc:
-            errs[prov] = str(exc)[:80]
-
-    threads = [threading.Thread(target=run, args=(p,), daemon=True) for p in ("groq", "gemini")]
-    for t in threads:
-        t.start()
-    deadline = time.time() + timeout
-    while time.time() < deadline:
-        for prov in ("groq", "gemini"):
-            if prov in results:
-                plan = results[prov]
-                plan.setdefault("do", [])
-                LAST_PROVIDER["name"] = prov + "+race"
-                LAST_PROVIDER["trace"] = [(prov, round(time.time() - (deadline - timeout), 2), "ok")]
-                return plan
-        if not any(t.is_alive() for t in threads):
-            break
-        time.sleep(0.08)
-    return None
+    lines = ["[%s] %s" % (c.get("file", "?"), c.get("text", "")[:450]) for c in picked]
+    return ("USER KE DATA SE (sirf inhi par bharosa karo):\n" + "\n---\n".join(lines)
+            + "\n\nNIYAM: jawab sirf in hisson se do. Jo nahi mila to saaf bolo 'data me ye nahi mila'.")
 
 
 def ask_remote(cfg, mem, user_part, key, extra=None):
@@ -3338,7 +3299,7 @@ def handle_turn(user_part, cfg, mem, key, heard_text="", voice=False):
         log("learn fail: %s" % exc)
     mem["history"].append({"role": "user", "text": heard_text or "[voice]"})
     mem["history"].append({"role": "model", "text": say})
-    mem["history"] = mem["history"][-40:]
+    mem["history"] = mem["history"][-12:]
     save_memory(mem)
     return say
 
