@@ -78,6 +78,7 @@ DEFAULT_CONFIG = {
     "n_ctx": 4096,
     "data_dir": "~/jarvis/data", # aapka data yahan rakho - .txt .md .csv .json .srt .pdf
     "rag_top": 4,                # ek jawab me data ke kitne hisse padhe
+    "stt_lang": "hi",            # sunne ki bhasha (hi = Hindi/Hinglish, en = English)
     "auto_loop": False,          # True = Enter dabane ki zarurat nahi, lagataar sunta rahe
     "speak_actions": True,       # action ka result bolkar bataye
     "max_history": 8,            # kitni purani baatein prompt me jaayein
@@ -268,25 +269,36 @@ def self_apply(edits, reason="", confirm=True):
     return True, "Code update ho gaya (backup: %s)" % os.path.basename(bak)
 
 
-def groq_transcribe(wav_bytes, key, cfg=None):
-    """Groq Whisper se audio -> text. Free tier, bahut fast. (text, err)"""
+def _has_arabic(text):
+    return any("\u0600" <= ch <= "\u06FF" for ch in (text or ""))
+
+
+def groq_transcribe(wav_bytes, key, cfg=None, lang=None):
+    """Groq Whisper se audio -> text. (text, err)"""
     if not wav_bytes or not key:
         return "", "audio/key nahi"
+    cfg = cfg or {}
+    lang = lang if lang is not None else (cfg.get("stt_lang") or "hi")
+    model = cfg.get("stt_model") or "whisper-large-v3"
     boundary = "----jarvisboundary7x"
     parts = []
+
     def field(name, value):
         parts.append(("--%s\r\nContent-Disposition: form-data; name=\"%s\"\r\n\r\n%s\r\n"
                       % (boundary, name, value)).encode("utf-8"))
+
     parts.append(("--%s\r\nContent-Disposition: form-data; name=\"file\"; filename=\"a.wav\"\r\n"
                   "Content-Type: audio/wav\r\n\r\n" % boundary).encode("utf-8"))
     parts.append(wav_bytes)
     parts.append(b"\r\n")
-    model = (cfg or {}).get("stt_model") or "whisper-large-v3"
     field("model", model)
     field("response_format", "json")
     field("temperature", "0")
-    field("prompt", "Hinglish conversation: user Hindi aur English mix karke bolta hai. "
-                    "Names, numbers aur English words jaisa bola gaya hai waisa hi likho.")
+    if lang:
+        field("language", lang)
+    field("prompt", "Hinglish baat-cheet. Hindi aur English mila hua. "
+                    "Example: haan boss, main sun rahi hoon. Kal subah 6 baje uthna hai. "
+                    "Naam aur English shabd jaisa bola gaya waisa hi likho.")
     parts.append(("--%s--\r\n" % boundary).encode("utf-8"))
     body = b"".join(parts)
     req = urllib.request.Request("https://api.groq.com/openai/v1/audio/transcriptions",
@@ -297,7 +309,13 @@ def groq_transcribe(wav_bytes, key, cfg=None):
     try:
         with urllib.request.urlopen(req, timeout=90) as resp:
             data = json.loads(resp.read().decode("utf-8", "ignore"))
-        return (data.get("text") or "").strip(), ""
+        txt = (data.get("text") or "").strip()
+        if _has_arabic(txt) and lang != "ur":
+            log("stt urdu script aaya - dobara hindi me")
+            txt2, err2 = groq_transcribe(wav_bytes, key, cfg, lang="hi")
+            if txt2 and not _has_arabic(txt2):
+                return txt2, ""
+        return txt, ""
     except urllib.error.HTTPError as exc:
         msg = ""
         try:
