@@ -321,6 +321,57 @@ Rules:
 """
 
 
+PENDING_EDIT = {"edits": [], "reason": "", "preview": ""}
+
+
+def self_prepare(request, cfg, key, use_research=True):
+    """Model se edits maango (apply nahi). Browser me preview dikhane ke liye.
+    (ok, note, pending_dict)"""
+    ctx = code_context(request)
+    if not ctx:
+        return False, "apni file padhi nahi ja saki", {}
+    sources = ""
+    if use_research and len(request) > 18 and cfg.get("self_research", True):
+        try:
+            ans, used = research(request, cfg, key, sources_n=2)
+            if used:
+                sources = "\n\nRESEARCH (in sources se seekho, par code khud likho):\n" + \
+                          "\n".join("[%d] %s - %s" % (i + 1, h.get("title", "")[:60], h.get("url", ""))
+                                    for i, h in enumerate(used[:2]))
+        except Exception as exc:
+            log("self research fail: %s" % exc)
+    user = ("USER REQUEST: %s%s\n\nFILE KA RELEVANT HISA:\n```python\n%s\n```\n\nAb JSON do (edits)."
+            % (request, sources, ctx))
+    raw = ask_text(cfg, key, SELF_SYSTEM, user, max_tokens=1500)
+    plan = extract_json(raw)
+    if not isinstance(plan, dict):
+        return False, "model ne theek JSON nahi diya", {}
+    edits = [e for e in (plan.get("edits") or []) if isinstance(e, dict)]
+    note = str(plan.get("note", "")).strip()
+    if not edits:
+        return False, (note or "model ne koi badlav nahi diya"), {}
+    # pehle se check: old strings file me hain?
+    try:
+        with open(SELF_PATH, "r", encoding="utf-8") as f:
+            src = f.read()
+    except OSError as exc:
+        return False, "file padhi nahi: %s" % exc, {}
+    lines = []
+    for e in edits[:8]:
+        old = str(e.get("old", ""))
+        cnt = src.count(old)
+        if cnt == 0:
+            return False, "model ka code file me nahi mila (dobara try karo)", {}
+        if cnt > 1:
+            return False, "model ka code %d jagah hai (unique nahi)" % cnt, {}
+        new = str(e.get("new", ""))
+        lines.append("- %s\n  -> %s" % (old.strip().splitlines()[0][:70],
+                                         (new.strip().splitlines()[0][:70] or "(hata diya)")))
+    preview = "%d badlav\n%s" % (len(edits), "\n".join(lines))
+    pend = {"edits": edits, "reason": request, "preview": preview}
+    return True, (note or "Badlav taiyar hai"), pend
+
+
 def self_request(request, cfg, key, confirm=True):
     """User ki request se code khud badlo (safe)."""
     ctx = code_context(request)
@@ -2078,7 +2129,9 @@ SELF_INTENT = ("apna code", "apne code", "khud ko modify", "khud ko theek", "khu
                "code me badal", "code me add", "code me theek", "khud ko sudhar", "apne aap ko theek",
                "apne function", "apne features", "function add", "feature add", "naya function",
                "naya feature", "apni memory", "khud me add", "apne andar add", "khud ko upgrade",
-               "apne aap ko upgrade", "apni capability", "apni power")
+               "apne aap ko upgrade", "apni capability", "apni power",
+               "technology builder", "khud ko capable", "apne aap ko capable",
+               "apne andar", "naya tool", "tool add", "khud ko behtar")
 
 
 def is_self_intent(text):
@@ -2420,6 +2473,13 @@ footer{padding:9px 9px calc(9px + env(safe-area-inset-bottom));background:var(--
 #mic.rec{background:#c0392b;color:#fff;animation:pl 1.1s infinite}
 @keyframes pl{0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,.6)}50%{box-shadow:0 0 0 12px rgba(192,57,43,0)}}
 #send{background:var(--acc);color:#04191c}
+.pend{margin:0 10px 8px;padding:11px;border:1px solid #2a6b74;border-radius:12px;background:#0f2a30;display:none}
+.pend.on{display:block}
+.pend pre{margin:6px 0;font-size:11.5px;color:#bfe6ea;white-space:pre-wrap;max-height:150px;overflow:auto}
+.pend .row{display:flex;gap:8px;margin-top:8px}
+.pend button{flex:1;padding:9px;border-radius:9px;border:none;font-size:13px;font-weight:600}
+.pend .yes{background:var(--acc);color:#04191c}
+.pend .no{background:#1b3a44;color:var(--txt)}
 .chips{display:flex;gap:6px;overflow-x:auto;padding:7px 10px 0;background:var(--pnl)}
 .chip{flex:0 0 auto;font-size:12px;padding:7px 11px;border-radius:15px;background:#16303a;color:var(--acc);border:1px solid #22414c}
 #sht{position:fixed;inset:0;background:rgba(3,10,12,.9);display:none;z-index:9;padding:16px;overflow-y:auto}
@@ -2443,6 +2503,8 @@ footer{padding:9px 9px calc(9px + env(safe-area-inset-bottom));background:var(--
   <input id="txt" placeholder="Likhо ya mic dabao..." autocomplete="off">
   <button id="send">➤</button>
 </footer>
+<div class="pend" id="pend"><b>Code badlav taiyar</b><pre id="pv"></pre>
+ <div class="row"><button class="yes" id="apply">Lagao</button><button class="no" id="cancel">Cancel</button></div></div>
 <div id="sht"><div class="card">
   <h2>Setup</h2>
   Ye page aapke phone me chal rahe JARVIS se juda hai (<code>Termux</code> me <code>python jarvis.py --serve</code>).
@@ -2485,6 +2547,7 @@ async function send(text){
     const r=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
     const j=await r.json(); th.remove();
     if(j.say){bub(j.say,'bot'); tm(((Date.now()-t0)/1000).toFixed(1)+' · '+(j.provider||'?')); say(j.say);}
+    if(j.pending){$('#pv').textContent=j.preview||'';$('#pend').classList.add('on');}
     else bub('Dikkat: '+(j.error||'jawab nahi mila'),'bot');
   }catch(e){th.remove();bub('Server se baat nahi hui. Termux me --serve chal raha hai?','bot');}
   busy=false;
@@ -2503,6 +2566,12 @@ $('#mic').onclick=()=>{
   rec.onresult=ev=>send(ev.results[0][0].transcript);
   rec.start();
 };
+$('#apply').onclick=async()=>{
+  $('#pend').classList.remove('on'); bub('badlav laga rahi hoon...','bot','think');
+  const r=await fetch('/apply',{method:'POST'}); const j=await r.json();
+  bub((j.ok?'Ho gaya: ':'Nahi hua: ')+(j.say||''),'bot'); say(j.say||'');
+};
+$('#cancel').onclick=()=>{$('#pend').classList.remove('on');fetch('/cancel',{method:'POST'});bub('Cancel kar diya.','bot');};
 bub('Namaste Boss. Boliye ya likhiye.','bot');
 </script></body></html>"""
 
@@ -2547,10 +2616,33 @@ def serve(cfg, port=8080):
             except Exception:
                 self._send(400, json.dumps({"error": "bad json"}))
                 return
+            if self.path == "/apply":
+                if not PENDING_EDIT.get("edits"):
+                    self._send(200, json.dumps({"error": "koi badlav pending nahi"}))
+                    return
+                ok_r, msg = self_apply(PENDING_EDIT.get("edits"), reason=PENDING_EDIT.get("reason", ""),
+                                       confirm=False)
+                PENDING_EDIT.update({"edits": [], "reason": "", "preview": ""})
+                self._send(200, json.dumps({"ok": ok_r, "say": msg}))
+                return
+            if self.path == "/cancel":
+                PENDING_EDIT.update({"edits": [], "reason": "", "preview": ""})
+                self._send(200, json.dumps({"ok": True, "say": "Cancel kar diya"}))
+                return
             if self.path == "/chat":
                 text = str(body.get("text", "")).strip()
                 if not text:
                     self._send(400, json.dumps({"error": "khaali"}))
+                    return
+                if is_self_intent(text):
+                    t0 = time.time()
+                    ok_r, note, pend = self_prepare(text, cfg, key)
+                    if pend:
+                        PENDING_EDIT.update(pend)
+                    self._send(200, json.dumps({"say": note, "pending": bool(pend),
+                                                "preview": pend.get("preview", ""),
+                                                "provider": "self-edit",
+                                                "seconds": round(time.time() - t0, 1)}))
                     return
                 t0 = time.time()
                 try:
