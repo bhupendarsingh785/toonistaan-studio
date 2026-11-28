@@ -1,15 +1,60 @@
 {
  "facts": [
   "mera channel SWAG hai",
-  "mujhe Bhupendar bulaya karo"
+  "mujhe Bhupendar bulaya karo",
+  "[1794325377146_4422005_4.] Employee Bhupendra (Apprentice Trainee) ka Oct-2026 ke liye net pay Rs. 16,064 hai. Is mahine ki total earnings Rs. 16,064 thi, jinme stipend, holiday",
+  "[AGENTS.md] 1. Kisi bhi kaam ko \"ho gaya\" tabhi bolo jab aapne usse khud chalakar dekha ho aur uska screenshot ya log jaisa saboot ho. 2. Code likhne se pehle use",
+  "[ASTRA-Awaaz-System-Zero-] 1. ASTRA ka 'Zero' baseline (kahani-cast-v8.mp3) ek approved standard hai jisse neeche jaana mana hai aur tools/zero baseline.py se naye audio ko comp",
+  "[Advanced_AI_Agent_Bluepr] Agent ek LLM (dimaag) aur external tools (haath) ka combination hai jo loop mein kaam karta hai, jahan zyada tools milenge to utna hi complex output b",
+  "[Agent_Platform_Plan (1).] Agent Google Drive aur Docs jaise tools ko khud chalana sikh sakta hai, lekin naye account banane, payment karna ya pehli baar 'Allow' dabane ke liye",
+  "[Backup-codes-arjunsingh5] Ye codes sirf ek hi baar use ho sakte hain, isliye unhe kisi safe jagah par save karke rakho. Agar aapko aur backup codes chahiye hain toh link par vi",
+  "[Contract.pdf] Apprentice Bhupendra (General category) ke liye Decency Facilities Management Pvt Ltd ke saath 12 mahine ka Packhouse Worker apprenticeship contract b",
+  "[JARVIS_Phone_Setup_Guide] Is guide me Termux aur free Gemini API ka use karke phone par ek private JARVIS banane ka poora step-by-step tareeka sikhaya gaya hai. Aapka data (not",
+  "[Developer_Agent_Blueprin] 1. Developer Agent ka ek hi kaam hai kisi bhi idea ko aisa working software banana jo bina uski madad ke bhi chale aur jiska har failure mode likh ke",
+  "[Developer_Agent_Blueprin] Yeh AI developer agent kisi bhi idea ko ek working aur independent software mein badalta hai jo bina agent ke bhi chal sake. Success ka matlab yeh hai",
+  "[README (1).md] 1. JARVIS ek privacy-focused, phone-only AI assistant hai jo Termux par chalta hai aur poora code sirf jarvis.py ek hi file me hota hai. 2. Setup kurn",
+  "[README-data.txt] Apne notes, scripts aur ideas jaisi files (.txt, .md, .pdf etc.) is folder me rakho aur python jarvis.py --index command se unhe index karo. JARVIS in",
+  "[README.md] Yeh ek free, open-source browser-based design aur video editor hai jisme koi login, ads ya watermark nahi hai aur poora kaam ek hi index.html file se",
+  "[README_1.md] 1. Termux aur GitHub Actions ka use karke aap bina PC ke seedha phone se 'dost' app ka APK build aur download kar sakte hain. 2. Pehli baar app kholne",
+  "[SWAG-agent-context.md] SWAG News ek automated India-first news portal hai jo plain HTML/CSS/JS aur Python stack par chalta hai, lekin abhi tak deploy nahi hua kyunki GitHub",
+  "[TOONISTAAN_ADVANCED_DEEP] 1. v1.3.19 Phase 1F ZIP immutable baseline hai, isliye ise kabhi overwrite na karein aur har naya phase alag working copy/branch me develop karke naye",
+  "[Toonistaan Deep Learning] Deep learning ka bhaari kaam (3D model, video, awaaz) free Kaggle GPU par karna hai kyunki 2 GB Ample server sirf rendering aur jodne ke liye kaafi ha",
+  "[Toonistaan Deep Learning] 1. Deep learning ka bhari kaam (3D models, video) Kaggle ki free T4 GPUs par karna hai, jabki 2GB Ample server sirf jodne aur final rendering ke liye",
+  "[YOUME-FIXES.md] Photo validation me poori base64 string check karni shuru ho gayi hai taaki XSS se account chori roki ja sake. Login fail tracking ab username ke saat",
+  "[YOUME-LOGIN-MAZBOOT.md] 1. Login ab signed cookies se chalta hai jisse server restart ke baad bhi session poora rehta hai aur ek hi browser me do alag accounts ke tabs saath"
  ],
  "style": [
   "hamesha chhoti line me jawab do"
  ],
  "lessons": [],
- "skills": [],
+ "skills": [
+  "data collect kiya: ISRO Chandrayaan 4 mission details (3 source)",
+  "data collect kiya: Chandrayaan 4 launch date (3 source)"
+ ],
  "stats": {
-  "turns": 14
+  "turns": 48
  },
- "updated": "2026-11-28 13:15"
+ "updated": "2026-11-28 17:52",
+ "learned_files": [
+  "1794325377146_4422005_4.pdf",
+  "AGENTS.md",
+  "ASTRA-Awaaz-System-Zero-Document.docx",
+  "Advanced_AI_Agent_Blueprint.md",
+  "Agent_Platform_Plan (1).docx",
+  "Backup-codes-arjunsingh505115.txt",
+  "Contract.pdf",
+  "Developer_Agent_Blueprint (1).docx",
+  "Developer_Agent_Blueprint.docx",
+  "JARVIS_Phone_Setup_Guide.pdf",
+  "README (1).md",
+  "README-data.txt",
+  "README.md",
+  "README_1.md",
+  "SWAG-agent-context.md",
+  "TOONISTAAN_ADVANCED_DEEP_LEARNING_MASTER_PLAN.md",
+  "Toonistaan Deep Learning Research (Nov 2026) (1).pdf",
+  "Toonistaan Deep Learning Research (Nov 2026).pdf",
+  "YOUME-FIXES.md",
+  "YOUME-LOGIN-MAZBOOT.md"
+ ]
 }
