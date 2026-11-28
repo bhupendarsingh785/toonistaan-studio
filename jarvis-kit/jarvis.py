@@ -2851,6 +2851,7 @@ Sirf wahi likho jo user ko bolna hai. Jawab sirf is JSON me:
 {user} ke baare me: {facts}
 Notes: {notes}
 {brain}
+{awareness}
 {vault}
 {mode}
 {extra}
@@ -2858,6 +2859,7 @@ Notes: {notes}
            facts=("; ".join(facts) if facts else "abhi kuch nahi"),
            notes=("; ".join("%s %s" % (n.get("at", ""), n.get("text", "")) for n in notes) if notes else "koi nahi"),
            brain=brain_summary(cfg),
+           awareness=awareness_line(cfg),
            relation=behaviour_cfg(cfg).get("relation", "boss"),
            place=behaviour_cfg(cfg).get("place", "ghar"),
            vault=("AAPKA DATA: " + vault_summary(cfg, 12)),
@@ -3302,6 +3304,18 @@ def handle_turn(user_part, cfg, mem, key, heard_text="", voice=False):
     elif say:
         speak(say, cfg)
 
+    try:
+        low_u = (heard_text or "").lower()
+        if any(w in low_u for w in ("shabash", "wah", "achha kaam", "badhiya", "thank", "dhanyavad", "love you")):
+            state_event("praised", 1.0, heard_text[:80])
+        elif any(w in low_u for w in ("bakwas", "kharab", "kaam nahi", "bewakoof", "ganda", "faltu")):
+            state_event("scolded", 1.0, heard_text[:80])
+        if actions and done_lines:
+            state_event("success" if len(done_lines) >= len(actions) else "fail", 0.6,
+                        "%d kaam" % len(done_lines))
+        state_event("long_work", 0.25)
+    except Exception as exc:
+        log("state event fail: %s" % exc)
     total = time.time() - t0
     print("  [%.1f second | %s]" % (total, LAST_PROVIDER["name"] or "?"))
     trace = LAST_PROVIDER.get("trace") or []
@@ -3743,6 +3757,8 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --vault-clean  duplicate file hatao aur index saaf karo
   python jarvis.py --deep "topic" [--project] [--include] [--push]
                                   bada research: report + project + apne andar tool + GitHub
+  python jarvis.py --state          andar ki haalat (mood, energy, shareer)
+  python jarvis.py --feel praised   bhaav badlo (success/fail/praised/scolded/rest)
   python jarvis.py --agent new "Naam" "role"    naya agent banao
   python jarvis.py --agent list                 saare agents
   python jarvis.py --agent run <slug> "kaam"    agent ko kaam do
@@ -4196,6 +4212,11 @@ def learn_from_vault(cfg, key, limit=8):
         done += 1
         if not quiet:
             print(" ok (%d point)" % min(3, len([x for x in out.splitlines() if x.strip()])))
+    try:
+        if done:
+            state_event("learned", min(3.0, done / 5.0), "%d file" % done)
+    except Exception:
+        pass
     b = load_brain()
     b["learned_files"] = sorted(learned)[-500:]
     save_brain(b)
@@ -4758,6 +4779,171 @@ def agent_run(slug, task, cfg, key, max_steps=2):
     return True, strip_markdown(final or "")[:600] or "Ho gaya."
 
 
+# ---------------------------------------------------------------- Awareness + feelings
+STATE_PATH = os.path.join(JARVIS_DIR, "state.json")
+JOURNAL_PATH = os.path.join(JARVIS_DIR, "journal.jsonl")
+
+STATE_DEFAULT = {
+    # PAD model: pleasure (-1..1), arousal (0..1), dominance (0..1)
+    "pleasure": 0.35, "arousal": 0.45, "dominance": 0.5,
+    "energy": 0.8, "stress": 0.2, "confidence": 0.6, "drive": 0.75,
+    "updated": "", "mood_name": "shaant",
+}
+
+
+def state_load():
+    st = dict(STATE_DEFAULT)
+    st.update(read_json(STATE_PATH, {}) or {})
+    return st
+
+
+def state_save(st):
+    st["updated"] = datetime.now().strftime("%Y-%m-%d %H:%M")
+    write_json(STATE_PATH, st)
+
+
+def state_mood_name(st):
+    if st["pleasure"] > 0.5 and st["arousal"] > 0.55:
+        return "khush aur josh me"
+    if st["pleasure"] > 0.4:
+        return "khush"
+    if st["stress"] > 0.65:
+        return "thodi tension me"
+    if st["pleasure"] < -0.2:
+        return "udaas"
+    if st["energy"] < 0.3:
+        return "thaki hui"
+    if st["confidence"] > 0.75:
+        return "aatmavishwas bhara"
+    return "shaant"
+
+
+def state_event(kind, amount=1.0, note=""):
+    """Kuch hua to bhaav badlo (asli event se)."""
+    try:
+        amount = float(amount)
+    except (TypeError, ValueError):
+        amount = 1.0
+    st = state_load()
+    k = (kind or "").lower()
+    if k == "success":
+        st["pleasure"] += 0.10 * amount
+        st["confidence"] += 0.08 * amount
+        st["drive"] += 0.05 * amount
+        st["stress"] -= 0.05 * amount
+    elif k == "fail":
+        st["pleasure"] -= 0.12 * amount
+        st["confidence"] -= 0.10 * amount
+        st["stress"] += 0.12 * amount
+        st["drive"] += 0.03 * amount
+    elif k == "praised":
+        st["pleasure"] += 0.18 * amount
+        st["confidence"] += 0.10 * amount
+        st["arousal"] += 0.10 * amount
+    elif k == "scolded":
+        st["pleasure"] -= 0.16 * amount
+        st["stress"] += 0.14 * amount
+        st["confidence"] -= 0.08 * amount
+    elif k == "long_work":
+        st["energy"] -= 0.08 * amount
+        st["stress"] += 0.05 * amount
+    elif k == "rest":
+        st["energy"] += 0.15 * amount
+        st["stress"] -= 0.10 * amount
+    elif k == "learned":
+        st["pleasure"] += 0.08 * amount
+        st["confidence"] += 0.06 * amount
+    for key in ("pleasure", "arousal", "dominance", "energy", "stress", "confidence", "drive"):
+        st[key] = max(0.0, min(1.0, st[key])) if key != "pleasure" else max(-1.0, min(1.0, st[key]))
+    st["mood_name"] = state_mood_name(st)
+    state_save(st)
+    if note:
+        journal_add("bhaav", "%s: %s" % (kind, note[:120]))
+    return st
+
+
+def journal_add(kind, text):
+    try:
+        with open(JOURNAL_PATH, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"at": datetime.now().strftime("%Y-%m-%d %H:%M"),
+                                "kind": kind, "text": str(text)[:400]}, ensure_ascii=False) + "\n")
+    except OSError:
+        pass
+
+
+def journal_tail(n=15):
+    try:
+        with open(JOURNAL_PATH, "r", encoding="utf-8") as f:
+            lines = f.readlines()[-n:]
+        return [json.loads(x) for x in lines if x.strip()]
+    except Exception:
+        return []
+
+
+def body_read():
+    """Phone ko apna shareer samjho: battery = energy, garam = thakan, net = connection."""
+    b = {"battery": None, "charging": False, "temp": None, "net": False}
+    try:
+        ok, out = termux("termux-battery-status", timeout=15)
+        data = json.loads(out) if ok else {}
+        b["battery"] = data.get("percentage")
+        b["charging"] = str(data.get("status", "")).upper() in ("CHARGING", "FULL")
+        b["temp"] = data.get("temperature")
+    except Exception:
+        pass
+    try:
+        ok_n, _o = termux("ping", "-c", "1", "-W", "2", "1.1.1.1", timeout=8)
+        b["net"] = bool(ok_n)
+    except Exception:
+        pass
+    return b
+
+
+def awareness_line(cfg=None):
+    """Andar ki haalat ka ek line - prompt me jaata hai."""
+    st = state_load()
+    b = body_read()
+    bits = []
+    bits.append("mood: %s (khushi %.2f, josh %.2f, atmavishwas %.2f)"
+                % (st["mood_name"], st["pleasure"], st["arousal"], st["confidence"]))
+    if b["battery"] is not None:
+        if b["battery"] < 20 and not b["charging"]:
+            bits.append("meri energy kam hai (%d%%, charge par nahi) - chhoti baat par chhoti tarah jawab do"
+                        % b["battery"])
+        elif b["charging"]:
+            bits.append("main charge par hoon (%d%%)" % b["battery"])
+    if b["temp"] and b["temp"] > 40:
+        bits.append("main garam ho rahi hoon (%.0f°C) - bhaari kaam se bachna" % b["temp"])
+    if not b["net"]:
+        bits.append("mera internet nahi hai - sirf apne data se jawab do")
+    if st["stress"] > 0.6:
+        bits.append("main thodi tension me hoon - dheeme aur saaf bolo")
+    if st["energy"] < 0.3:
+        bits.append("main thak gayi hoon")
+    if st["drive"] > 0.8:
+        bits.append("mujhe kaam karne ka josh hai")
+    return "; ".join(bits)
+
+
+def state_show():
+    st = state_load()
+    b = body_read()
+    print("ANDAR KI HAALAT (%s)" % st.get("updated", "?"))
+    print("  mood        : %s" % st["mood_name"])
+    print("  khushi      : %.2f   josh: %.2f   control: %.2f" % (st["pleasure"], st["arousal"], st["dominance"]))
+    print("  energy      : %.2f   stress: %.2f   atmavishwas: %.2f   drive: %.2f"
+          % (st["energy"], st["stress"], st["confidence"], st["drive"]))
+    print("\nSHAREER (phone)")
+    print("  battery     : %s%s" % (b["battery"], "% (charging)" if b["charging"] else "%"))
+    print("  temperature : %s" % (("%.1f C" % b["temp"]) if b["temp"] else "?"))
+    print("  internet    : %s" % ("hai" if b["net"] else "nahi hai"))
+    j = journal_tail(8)
+    if j:
+        print("\nDIL KI BAAT (journal)")
+        for x in j:
+            print("  [%s] %s: %s" % (x.get("at", ""), x.get("kind", ""), str(x.get("text", ""))[:90]))
+
+
 def serve(cfg, port=8080):
     """Browser control panel - Termux ke saare tools browser se chalte hain."""
     from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -5042,6 +5228,19 @@ def main(argv):
         except OSError:
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
+        return 0
+    if argv[0] == "--state":
+        state_show()
+        return 0
+    if argv[0] == "--feel":
+        args = " ".join(argv[1:]).strip()
+        if not args:
+            print("Use: python jarvis.py --feel praised|success|fail|scolded|rest|learned [note]")
+            return 1
+        parts = args.split(" ", 1)
+        st = state_event(parts[0], 1.0, parts[1] if len(parts) > 1 else "")
+        print("mood ab: %s (khushi %.2f, stress %.2f, energy %.2f)"
+              % (st["mood_name"], st["pleasure"], st["stress"], st["energy"]))
         return 0
     if argv[0] == "--agent":
         cfg = load_config()
