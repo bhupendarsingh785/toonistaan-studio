@@ -25,6 +25,7 @@ Zero pip dependency - sirf Python standard library + Termux:API.
 
 import base64
 import glob
+import hashlib
 import json
 import os
 import platform
@@ -1442,6 +1443,20 @@ DATA_EXT = (".txt", ".md", ".markdown", ".csv", ".json", ".log", ".srt", ".vtt",
             ".css", ".xml", ".yaml", ".yml", ".ini", ".conf", ".sh")
 
 
+IMPORT_HASHES = os.path.join(JARVIS_DIR, "import_hashes.json")
+
+
+def _file_hash(path):
+    h = hashlib.sha256()
+    try:
+        with open(path, "rb") as f:
+            for chunk in iter(lambda: f.read(65536), b""):
+                h.update(chunk)
+        return h.hexdigest()[:24]
+    except OSError:
+        return ""
+
+
 def import_data(src, cfg):
     """Aapka data vault me laao - file, folder ya zip. (message, added_count)"""
     import shutil as _sh
@@ -1451,10 +1466,15 @@ def import_data(src, cfg):
         return ("Path nahi mila: %s" % src), 0
     added = 0
 
+    seen_hashes = read_json(IMPORT_HASHES, {})
+
     def _take(path, name=None):
-        nonlocal added
+        nonlocal added, seen_hashes
         name = name or os.path.basename(path)
         if not name.lower().endswith(DATA_EXT):
+            return
+        fh = _file_hash(path)
+        if fh and fh in seen_hashes:
             return
         dest = os.path.join(d, os.path.basename(name))
         base, ext = os.path.splitext(dest)
@@ -1465,6 +1485,8 @@ def import_data(src, cfg):
         try:
             _sh.copyfile(path, dest)
             added += 1
+            if fh:
+                seen_hashes[fh] = os.path.basename(dest)
         except OSError:
             pass
 
@@ -1491,7 +1513,12 @@ def import_data(src, cfg):
     else:
         _take(src)
     chunks, nfiles, _ = build_index(cfg, force=True)
-    return ("%d file vault me daali. Ab vault me %d file, %d hisse." % (added, nfiles, len(chunks))), added
+    try:
+        write_json(IMPORT_HASHES, seen_hashes)
+    except Exception:
+        pass
+    return ("%d nayi file vault me daali (duplicate skip). Ab vault me %d file, %d hisse."
+            % (added, nfiles, len(chunks))), added
 
 
 def chunk_text(text, fname, size=900, overlap=150):
@@ -1560,101 +1587,6 @@ def build_index(cfg, force=False):
     write_json(cache_path, {"sig": sig, "files": newmap, "chunks": chunks})
     log("index: %d file (%d cached), %d chunks" % (len(files), reused, len(chunks)))
     return chunks, len(files), False
-
-
-def import_data(src, cfg):
-    """Aapka data vault me laao - file, folder ya zip. (message, added_count)"""
-    import shutil as _sh
-    d = data_dir(cfg)
-    src = os.path.expanduser(src)
-    if not os.path.exists(src):
-        return ("Path nahi mila: %s" % src), 0
-    added = 0
-
-    def _take(path, name=None):
-        nonlocal added
-        name = name or os.path.basename(path)
-        if not name.lower().endswith(DATA_EXT):
-            return
-        dest = os.path.join(d, os.path.basename(name))
-        base, ext = os.path.splitext(dest)
-        i = 1
-        while os.path.exists(dest):
-            dest = "%s_%d%s" % (base, i, ext)
-            i += 1
-        try:
-            _sh.copyfile(path, dest)
-            added += 1
-        except OSError:
-            pass
-
-    if os.path.isdir(src):
-        for root, dirs, names in os.walk(src):
-            dirs[:] = [x for x in dirs if not x.startswith(".")]
-            for n in names:
-                if not n.startswith("."):
-                    _take(os.path.join(root, n), n)
-    elif src.lower().endswith(".zip"):
-        tmp = os.path.join(JARVIS_DIR, "_import")
-        _sh.rmtree(tmp, ignore_errors=True)
-        os.makedirs(tmp, exist_ok=True)
-        try:
-            with zipfile.ZipFile(src) as z:
-                z.extractall(tmp)
-        except Exception as exc:
-            return ("Zip khol nahi paya: %s" % exc), 0
-        for root, dirs, names in os.walk(tmp):
-            for n in names:
-                if not n.startswith("."):
-                    _take(os.path.join(root, n), n)
-        _sh.rmtree(tmp, ignore_errors=True)
-    else:
-        _take(src)
-    chunks, nfiles, _ = build_index(cfg, force=True)
-    return ("%d file vault me daali. Ab vault me %d file, %d hisse." % (added, nfiles, len(chunks))), added
-
-
-def build_index(cfg, force=False):
-    """Aapke data folder ko chhote hisson me todo. (chunks, file_count, from_cache)"""
-    d = data_dir(cfg)
-    cache_path = os.path.join(JARVIS_DIR, "index.json")
-    files = []
-    for root, dirs, names in os.walk(d):
-        dirs[:] = [x for x in dirs if not x.startswith(".")]
-        for n in names:
-            if not n.startswith("."):
-                files.append(os.path.join(root, n))
-    files.sort()
-    sig = []
-    for f in files:
-        try:
-            st = os.stat(f)
-            sig.append("%s|%d|%d" % (f, st.st_size, int(st.st_mtime)))
-        except OSError:
-            pass
-    if not force:
-        cached = read_json(cache_path, {})
-        if isinstance(cached, dict) and cached.get("sig") == sig and cached.get("chunks"):
-            return cached["chunks"], len(files), True
-    chunks = []
-    for f in files:
-        text = re.sub(r"\n{3,}", "\n\n", _read_any(f) or "").strip()
-        if len(text) < 20:
-            continue
-        base = os.path.relpath(f, d)
-        size, step = 700, 600
-        for i in range(0, len(text), step):
-            piece = text[i:i + size].strip()
-            if len(piece) > 25:
-                chunks.append({"file": base, "text": piece})
-            if i + size >= len(text):
-                break
-    chunks = chunks[:4000]
-    write_json(cache_path, {"sig": sig, "chunks": chunks})
-    return chunks, len(files), False
-
-
-_WORD = re.compile(r"[A-Za-z\u0900-\u097F]+|\d+")
 
 
 def _tokens(text):
@@ -3188,6 +3120,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --speed fast   sabse tez mode (fast|balanced|quality)
   python jarvis.py --persona "..." apni pasand ka behaviour likho (file me jodta hai)
   python jarvis.py --import-all /sdcard/Download   poore folder ka data vault me
+  python jarvis.py --vault-clean  duplicate file hatao aur index saaf karo
   python jarvis.py --teach "..."  seedha sikhao (style ya yaad)
   python jarvis.py --diag         apna system check karo (kya dikkat hai)
   python jarvis.py --mind show    apna dimaag dekho (facts, style, sabak)
@@ -3808,6 +3741,30 @@ def main(argv):
         except OSError:
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
+        return 0
+    if argv[0] == "--vault-clean":
+        cfg = load_config()
+        d = data_dir(cfg)
+        seen, removed = {}, 0
+        for n in sorted(os.listdir(d)):
+            fp = os.path.join(d, n)
+            if not os.path.isfile(fp) or n.startswith("."):
+                continue
+            fh = _file_hash(fp)
+            if not fh:
+                continue
+            if fh in seen:
+                try:
+                    os.remove(fp)
+                    removed += 1
+                    print("  hataya: %s (duplicate of %s)" % (n, seen[fh]))
+                except OSError:
+                    pass
+            else:
+                seen[fh] = n
+        write_json(IMPORT_HASHES, seen)
+        chunks, nfiles, _ = build_index(cfg, force=True)
+        print("\n%d duplicate hataye. Vault: %d file, %d hisse" % (removed, nfiles, len(chunks)))
         return 0
     if argv[0] == "--import-all":
         cfg = load_config()
