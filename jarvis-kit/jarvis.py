@@ -1346,8 +1346,37 @@ TEXT_EXT = {".txt", ".md", ".markdown", ".csv", ".json", ".log", ".srt", ".vtt",
             ".html", ".htm", ".tsv"}
 
 
+def _read_docx(path):
+    try:
+        with zipfile.ZipFile(path) as z:
+            xml = z.read("word/document.xml").decode("utf-8", "ignore")
+        xml = re.sub(r"</w:p>", "\n", xml)
+        xml = re.sub(r"<[^>]+>", " ", xml)
+        return re.sub(r"[ \t]+", " ", xml).strip()
+    except Exception:
+        return ""
+
+
+def _read_xlsx(path):
+    try:
+        with zipfile.ZipFile(path) as z:
+            names = [n for n in z.namelist() if n.startswith("xl/sharedStrings") or
+                     re.match(r"xl/worksheets/sheet\d+\.xml", n)]
+            out = []
+            for n in names:
+                xml = z.read(n).decode("utf-8", "ignore")
+                out.append(re.sub(r"<[^>]+>", " ", xml))
+            return re.sub(r"[ \t]+", " ", " ".join(out)).strip()
+    except Exception:
+        return ""
+
+
 def _read_any(path):
     ext = os.path.splitext(path)[1].lower()
+    if ext == ".docx":
+        return _read_docx(path)
+    if ext in (".xlsx", ".xlsm"):
+        return _read_xlsx(path)
     if ext in TEXT_EXT:
         try:
             with open(path, "r", encoding="utf-8", errors="ignore") as f:
