@@ -3701,6 +3701,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --vault-clean  duplicate file hatao aur index saaf karo
   python jarvis.py --deep "topic" [--project] [--include] [--push]
                                   bada research: report + project + apne andar tool + GitHub
+  python jarvis.py --pack voice|youtube|agent   ready-made topic list (12 topics)
   python jarvis.py --collect-plan "domain"   bahar ke 20 naye research topics banao
   python jarvis.py --topics [a,b,c]    topic list dekho / apne topic daalo
   python jarvis.py --bulk 5            list se 5 topic ka web data laao (resumable)
@@ -4500,6 +4501,64 @@ def deep_research(topic, cfg, key, build=False, sub_n=4, verbose=True,
 TOPICS_PATH = os.path.join(JARVIS_DIR, "topics.json")
 
 
+TOPIC_PACKS = {
+    "voice": [
+        "real-time Hindi speech emotion recognition models 2026",
+        "low-resource Indian language speech datasets 2026",
+        "Hinglish code-switching speech recognition challenges",
+        "multilingual voice cloning techniques for Indian languages",
+        "emotional speech synthesis prosody control methods",
+        "quantization of transformer models for on-device inference",
+        "noise robust ASR for noisy Indian environments",
+        "speaker diarization for Hindi conversations",
+        "laughter and nonverbal vocalization detection in speech",
+        "turn-taking prediction in conversational AI",
+        "text to speech naturalness evaluation metrics",
+        "on-device speech recognition on Android phones",
+    ],
+    "youtube": [
+        "YouTube algorithm ranking signals 2026",
+        "YouTube Shorts monetization rules 2026",
+        "YouTube retention curve optimization techniques",
+        "thumbnail click through rate optimization research",
+        "YouTube channel growth case studies Indian creators",
+        "YouTube analytics metrics explained watch time",
+        "YouTube SEO keyword research method",
+        "YouTube community tab engagement strategy",
+        "YouTube copyright claims and fair use India",
+        "YouTube monetization requirements India 2026",
+        "YouTube sponsorship pricing for small channels",
+        "Instagram reels algorithm 2026 growth",
+    ],
+    "agent": [
+        "autonomous AI agent architecture patterns 2026",
+        "tool calling and function calling best practices",
+        "retrieval augmented generation chunking strategies",
+        "agent memory systems long term recall",
+        "self improving agents code generation loops",
+        "multi agent orchestration frameworks comparison",
+        "prompt injection defense for agents",
+        "small language models on device performance",
+        "vector search without external APIs lightweight",
+        "agent evaluation benchmarks and metrics",
+        "local LLM inference optimization Android",
+        "AI assistant privacy on device data storage",
+    ],
+}
+
+
+def pack_add(name):
+    name = (name or "").lower()
+    if name not in TOPIC_PACKS:
+        return 0, []
+    data = topics_load()
+    existing = {t.lower() for t in data["topics"]}
+    added = [t for t in TOPIC_PACKS[name] if t.lower() not in existing]
+    data["topics"].extend(added)
+    topics_save(data)
+    return len(added), added
+
+
 def topics_load():
     data = read_json(TOPICS_PATH, {"topics": [], "done": []})
     if not isinstance(data, dict):
@@ -4840,6 +4899,17 @@ def main(argv):
         except OSError:
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
+        return 0
+    if argv[0] == "--pack":
+        if len(argv) < 2 or argv[1] in ("list", "-l"):
+            print("Packs: %s" % ", ".join(TOPIC_PACKS))
+            print("Use: python jarvis.py --pack voice")
+            return 0
+        n_add, added = pack_add(argv[1])
+        print("%s pack: %d naye topic" % (argv[1], n_add))
+        for t in added:
+            print("  - " + t[:85])
+        print("\nAb: python jarvis.py --bulk 5")
         return 0
     if argv[0] == "--collect-plan":
         cfg = load_config()
