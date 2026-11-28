@@ -1,0 +1,71 @@
+INSAN KA BEHAVIOUR — POORA NAKSHA
+========================================
+
+Ye file batati hai ki insan ke behaviour ke kitne hisse hote hain aur unke liye kya seekhna hai.
+
+1. AWAAZ (bolna)
+  - bolne ki raftaar (pace) — 120-160 shabd/minute normal
+  - sur (pitch) — mard 85-180 Hz, aurat 165-255 Hz, bachcha 250-400 Hz
+  - utraar-chadhav (intonation) — sawal par aakhir me upar, khabar me neeche
+  - thehraav (pause) — 0.3-0.7s saans, 0.8-1.2s soch
+  - zordaar-shabd (stress) — jis shabd par zor, wahi matlab
+  - surili leh (prosody) — khush, udaas, gussa, pyaar sabki alag leh
+
+2. HASNA
+  - khilkhilana (bachcha), thahaka (bada aadmi), dheemi hansi (sharm)
+  - hansi ke beech saans lena — asli hansi me 4-6 'ha' phir saans
+  - majboori ki hansi (awkward) — chhoti, bina saans
+
+3. RONA / DUKH
+  - sookhi rona (aansu bina), phoot padna, sisakna
+  - aawaz tutna — gale me bhaari pan
+  - saans ka kaanpna — rone me saans tut-tut kar aati hai
+
+4. GUSSA / DARR
+  - aawaz chadhti hai, raftaar badhti hai, saans tez
+  - darr me aawaz dheemi aur kaanpti hai
+  - cheekh — alag hai gusse ki cheekh aur darr ki cheekh
+
+5. BAAT-CHEET KA TAREEKA (conversation)
+  - baari-baari bolna (turn-taking) — 200ms ke andar jawab
+  - suniye-phir-boliye (backchannel) — 'haan', 'hmm', 'achha'
+  - tokna (interruption) — kabhi pyaar se, kabhi bezaar se
+  - sawal-jawab ka jod — jawab me sawal ka shabd dohrana
+
+6. SHAREER KI BAAT (nonverbal)
+  - muskuraye bina bolna — aawaz me hi muskaan aati hai
+  - haath, aankh, sar hilana — aawaz ke saath
+  - doori — paas ka insan dheeme, door ka uncha bolta hai
+
+7. RISHTE KE HISAB SE
+  - maa-bachcha, dost-dost, ustaad-chhatra, boss-naukar, ajnabi
+  - har rishte me alag shabd, alag thehraav, alag pyaar
+
+8. UMAR KE HISAB SE
+  - bachcha (2-6), bada bachcha (7-12), kishor (13-19), jawan, aadhi umar, buzurg (60+)
+  - har umar me saans, raftaar, sur alag
+
+9. JAGAH KE HISAB SE
+  - ghar (aaram se), bazaar (uncha), mandir (dheema), aspataal (fis fis)
+  - har jagah ki apni awaaz aur thehraav
+
+10. BHAV (emotion) — 8 buniyaadi
+  - khushi, udaasi, gussa, darr, hairani, ghin, pyaar, sharm
+  - in sabke saath awaaz ki speed, sur aur saans badalte hain
+
+KAUN SE PAPER KIS BAARE ME (top):
+    60  code-switching speech
+    60  speaker diarization
+    60  multimodal emotion recognition
+    56  laughter
+    49  human behavior modeling
+    34  emotional speech synthesis
+    31  gaze behaviour
+    25  elderly speech
+    12  politeness language
+    12  accent dialect
+     7  nonverbal behaviour
+     6  social robot interaction
+     5  facial expression emotion
+     3  turn-taking conversation
+     3  group conversation dynamics
