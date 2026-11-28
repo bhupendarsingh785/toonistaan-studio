@@ -281,8 +281,10 @@ def groq_transcribe(wav_bytes, key, cfg=None):
                   "Content-Type: audio/wav\r\n\r\n" % boundary).encode("utf-8"))
     parts.append(wav_bytes)
     parts.append(b"\r\n")
-    field("model", "whisper-large-v3-turbo")
+    model = (cfg or {}).get("stt_model") or "whisper-large-v3"
+    field("model", model)
     field("response_format", "json")
+    field("temperature", "0")
     field("prompt", "Hinglish conversation: user Hindi aur English mix karke bolta hai. "
                     "Names, numbers aur English words jaisa bola gaya hai waisa hi likho.")
     parts.append(("--%s--\r\n" % boundary).encode("utf-8"))
@@ -293,7 +295,7 @@ def groq_transcribe(wav_bytes, key, cfg=None):
                                           "Content-Type": "multipart/form-data; boundary=%s" % boundary,
                                           "User-Agent": UA})
     try:
-        with urllib.request.urlopen(req, timeout=60) as resp:
+        with urllib.request.urlopen(req, timeout=90) as resp:
             data = json.loads(resp.read().decode("utf-8", "ignore"))
         return (data.get("text") or "").strip(), ""
     except urllib.error.HTTPError as exc:
@@ -3179,13 +3181,28 @@ function wavB64(samples, rate){
   for(let i=0;i<u8.length;i++) bin+=String.fromCharCode(u8[i]);
   return btoa(bin);
 }
+function trimNorm(a, rate){
+  // shuru/ant ka khamosh hissa hatao aur volume normal karo
+  const thr=0.012;
+  let s0=0, s1=a.length-1;
+  for(let i=0;i<a.length;i++){ if(Math.abs(a[i])>thr){ s0=Math.max(0,i-Math.round(rate*0.08)); break; } }
+  for(let i=a.length-1;i>=0;i--){ if(Math.abs(a[i])>thr){ s1=Math.min(a.length-1,i+Math.round(rate*0.15)); break; } }
+  if(s1-s0 < rate*0.3) return a;
+  let peak=0;
+  for(let i=s0;i<=s1;i++) peak=Math.max(peak, Math.abs(a[i]));
+  const gain = peak>0.05 ? Math.min(3.0, 0.85/peak) : 1.0;
+  const out=new Float32Array(s1-s0+1);
+  for(let i=0;i<out.length;i++) out[i]=a[s0+i]*gain;
+  return out;
+}
 async function flushAudio(){
   if(!buf.length || sending) return;
   const rate = actx ? actx.sampleRate : 48000;
   const total=buf.reduce((a,b)=>a+b.length,0);
   if(total < rate*0.5){ buf=[]; silenceMs=0; window.__t0=0; return; }
-  const all=new Float32Array(total); let off=0;
-  for(const b of buf){ all.set(b,off); off+=b.length; }
+  const raw=new Float32Array(total); let off=0;
+  for(const b of buf){ raw.set(b,off); off+=b.length; }
+  const all=trimNorm(raw, rate);
   buf=[]; silenceMs=0; sending=true; $('#mic').classList.remove('rec');
   const tStt=Date.now();
   try{
