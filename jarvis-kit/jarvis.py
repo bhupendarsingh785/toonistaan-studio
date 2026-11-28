@@ -2593,18 +2593,36 @@ def is_self_intent(text):
     return any(k in t for k in SELF_INTENT)
 
 
+WAKE_VARIANTS = ("jarvis", "jarvish", "jarviz", "jarwis", "jarvas", "jaarvis",
+                 "\u091c\u093e\u0930\u094d\u0935\u093f\u0938", "\u091c\u093e\u0930\u0935\u093f\u0938",
+                 "\u091c\u0930\u094d\u0935\u093f\u0938", "\u091c\u093e\u0930\u094d\u0935\u0940\u0938")
+
+CMD_WORDS = ("battery", "torch", "volume", "time", "samay", "baje", "kholo", "khol do", "band karo",
+             "band kar", "pause", "play", "next", "screenshot", "screen", "photo", "note", "yaad",
+             "research", "search", "dhoondo", "kya hai", "batao", "bata do", "kaise", "kitna",
+             "kitni", "karo", "chalao", "suno", "upgrade", "diagnose", "dikkat", "problem",
+             "\u092c\u0924\u093e\u0913", "\u0915\u094d\u092f\u093e", "\u0915\u0948\u0938\u0947", "\u0915\u093f\u0924\u0928\u093e",
+             "\u0915\u0930\u094b", "\u0916\u094b\u0932\u094b", "\u092c\u0902\u0926")
+
+
 def wake_ok(text, cfg):
-    """Background baaton ko ignore karo - sirf wake word wali baat lo."""
+    """Background baaton ko ignore karo, par apni baat kabhi na chhodo."""
     ww = str(cfg.get("wake_word") or "").strip().lower()
     if not ww:
         return True, text
-    low = (text or "").lower()
-    if ww not in low:
-        return False, text
-    cleaned = re.sub(re.escape(ww), " ", low, count=1)
-    # original text se wake word hatao (case safe)
-    out = re.sub(re.escape(ww), "", text, count=1, flags=re.I).strip(" ,.-!")
-    return True, (out or text)
+    raw = (text or "").strip()
+    low = raw.lower()
+    flat = re.sub(r"[^\w\u0900-\u097F]+", "", low)      # spaces/punct hatao
+    if any(v in low or v in flat for v in WAKE_VARIANTS):
+        out = raw
+        for v in WAKE_VARIANTS:
+            out = re.sub(v, " ", out, flags=re.I)
+        out = re.sub(r"\s+", " ", out).strip(" ,.-!?")
+        return True, (out or raw)
+    # wake word nahi mila - agar saaf command jaisi baat hai to phir bhi sun lo
+    if any(w in low for w in CMD_WORDS) or len(low.split()) >= 5:
+        return True, raw
+    return False, raw
 
 
 def handle_turn(user_part, cfg, mem, key, heard_text="", voice=False):
