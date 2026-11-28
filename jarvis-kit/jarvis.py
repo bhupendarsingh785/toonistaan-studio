@@ -732,6 +732,11 @@ def speak(text, cfg, force_gemini=False):
         print("\n%s: %s\n" % (cfg.get("name", "Jarvis"), text))
         return
 
+    if use_gemini and key and TTS_COOL["until"] > time.time():
+        use_gemini = False
+        if not TTS_COOL["told"]:
+            print("  (Gemini voice ka quota khatam hai - phone ki awaaz use kar rahi hoon)")
+            TTS_COOL["told"] = True
     if use_gemini and key:
         print("  (awaaz ban rahi hai...)")
         path, err = gemini_tts(text, cfg, key)
@@ -741,6 +746,9 @@ def speak(text, cfg, force_gemini=False):
                 print()
                 return
             err = "play fail"
+        if "429" in str(err) or "quota" in str(err).lower():
+            TTS_COOL["until"] = time.time() + 1800
+            print("  (Gemini voice quota khatam - 30 min phone voice. Billing on karo to wapas aayegi)")
         log("gemini tts fail (%s) - phone voice par ja raha hoon" % err)
         if mode == "gemini":
             print("  (Gemini voice fail: %s)" % err)
@@ -1904,6 +1912,7 @@ OPENAI_COMPAT = {
 
 PROVIDER_ERR = {}
 PROVIDER_COOL = {}   # provider -> unix time tak skip
+TTS_COOL = {"until": 0, "told": False}
 LAST_PROVIDER = {"name": "", "trace": []}
 
 
@@ -2125,10 +2134,10 @@ Notes: {notes}
            facts=("; ".join(facts) if facts else "abhi kuch nahi"),
            notes=("; ".join("%s %s" % (n.get("at", ""), n.get("text", "")) for n in notes) if notes else "koi nahi"),
            brain=brain_summary(cfg),
-           mode=("Aap BROWSER PANEL me ho: aapki awaaz browser khud bajata hai (TTS), matlab aap bol sakti ho. "
-                 "Kabhi mat kaho ki aap bol nahi sakti ya sirf text de sakti ho. Phone ke hardware tools "
-                 "(battery, torch, app) bhi aapke paas hain kyunki aap phone ke andar chal rahi ho."
-                 if SERVE_MODE["on"] else ""),
+           mode=("AAPKI AWAAZ HAI: aap jo 'say' likhti ho wo phone TTS ya Gemini voice se bol kar sunaya jata hai. "
+                 "Kabhi mat kaho ki 'main text hoon', 'awaaz nahi de sakti' ya 'awaaz ka code nahi hai' - "
+                 "aap bol sakti ho. Phone ke hardware tools (battery, torch, app) bhi aapke paas hain. "
+                 + ("Aap browser panel me ho, awaaz browser bajata hai." if SERVE_MODE["on"] else "")),
            extra=("\nExtra persona:\n" + extra) if extra else "")
 
 
@@ -2757,6 +2766,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --say "text"   koi bhi line bol kar sunao (voice test)
   python jarvis.py --speed fast   sabse tez mode (fast|balanced|quality)
   python jarvis.py --persona "..." apni pasand ka behaviour likho (file me jodta hai)
+  python jarvis.py --teach "..."  seedha sikhao (style ya yaad)
   python jarvis.py --diag         apna system check karo (kya dikkat hai)
   python jarvis.py --mind show    apna dimaag dekho (facts, style, sabak)
   python jarvis.py --mind push    dimaag GitHub par save (personal database)
@@ -3289,6 +3299,20 @@ def main(argv):
         except OSError:
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
+        return 0
+    if argv[0] == "--teach":
+        cfg = load_config()
+        text = " ".join(argv[1:]).strip()
+        if not text:
+            b = load_brain()
+            print("Sikhane ka tareeka: python jarvis.py --teach \"hamesha chhoti line me jawab do\"")
+            print("Agar 'hamesha/always/aise bolo' likhoge to STYLE me jayega, warna YAAD me.")
+            print("\nAbhi dimaag me: %d facts, %d style, %d sabak" % (len(b["facts"]), len(b["style"]), len(b["lessons"])))
+            return 0
+        low = text.lower()
+        kind = "style" if any(k in low for k in ("hamesha", "always", "aise bolo", "aisa bolo", "tone", "style")) else "facts"
+        brain_add(kind, text)
+        print("Sikh liya (%s): %s" % (kind, text))
         return 0
     if argv[0] == "--diag":
         deep = "--deep" in argv
