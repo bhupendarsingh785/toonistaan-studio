@@ -4715,8 +4715,17 @@ def agent_run(slug, task, cfg, key, max_steps=2):
     if not a:
         return False, "agent nahi mila: %s (--agent list)" % slug
     tool_names = a.get("tools") or list(TOOLS.keys())
-    tool_help = "\n".join("- %s: %s" % (k, v.get("desc", "")[:60])
-                          for k, v in TOOLS.items() if k in tool_names)
+    lines = []
+    for k in tool_names:
+        if k not in TOOLS:
+            continue
+        desc = ""
+        for hl in TOOL_HELP.splitlines():
+            if k in hl and "tool" in hl:
+                desc = hl.strip()[:80]
+                break
+        lines.append("- %s %s" % (k, desc))
+    tool_help = "\n".join(lines) or ", ".join(t for t in tool_names if t in TOOLS)
     persona = ("Tum %s ho. %s\nSirf in tools ka use karo:\n%s\n"
                "Jawab JSON me: {\"say\": \"...\", \"do\": [{\"tool\": \"naam\", \"args\": {}}]}"
                % (a.get("name", slug), a.get("role", ""), tool_help))
