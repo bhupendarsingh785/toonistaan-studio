@@ -3815,6 +3815,17 @@ def collect_topic(topic, cfg, key, n=3):
     hits = []
     try:
         hits = ddg_search(topic, limit=n + 2) or wiki_search(topic)
+        if not hits:
+            short = " ".join(topic.split()[:3])
+            hits = wiki_search(short) or wiki_search(short, "hi")
+        if not hits:
+            # aakhri koshish: wikipedia direct
+            q = urllib.parse.quote(topic.replace(" ", "_")[:60])
+            for lang in ("en", "hi"):
+                page = fetch_page("https://%s.wikipedia.org/wiki/%s" % (lang, q), 6000)
+                if page and len(page) > 400:
+                    hits = [{"title": topic, "url": "https://%s.wikipedia.org/wiki/%s" % (lang, q)}]
+                    break
     except Exception as exc:
         return False, "search fail: %s" % exc
     if not hits:
@@ -4085,12 +4096,22 @@ def push_project(pdir, repo=None, path_prefix="jarvis-kit/projects"):
 
 
 def include_in_self(topic, report, cfg, key, confirm=True):
-    """Research se apne andar naya capability add karo (self-edit)."""
+    """Research se apne andar naya capability add karo (self-edit). Retry ke saath."""
     lines = [x.strip() for x in (report or "").splitlines() if len(x.strip()) > 20][:8]
-    req = ("Is research ke aadhar par mujhme ek naya chhota tool add karo jo user ke liye useful ho. "
-           "Tool ka naam angrezi, kaam saaf, aur args simple rakho. "
-           "Topic: %s. Research ke mukhya point: %s" % (topic[:80], " | ".join(lines)[:900]))
-    return self_request(req, cfg, key, confirm=confirm)
+    base = ("Is research ke aadhar par mujhme ek naya chhota tool add karo. "
+            "Topic: %s. Research ke point: %s" % (topic[:80], " | ".join(lines)[:700]))
+    ok_i, msg = self_request(base, cfg, key, confirm=confirm)
+    if ok_i:
+        return True, msg
+    # retry: chhota aur saaf request
+    base2 = ("Ek naya tool add karo: naam angrezi me, kaam ek line me, args simple dict. "
+             "Topic: %s" % topic[:60])
+    ok2, msg2 = self_request(base2, cfg, key, confirm=confirm)
+    if ok2:
+        return True, msg2
+    return False, ("model ne code nahi diya (%s). Aap seedha bolo: "
+                   "python jarvis.py --self \"naya tool add karo: %s\""
+                   % ((msg or msg2)[:80], topic[:40]))
 
 
 def deep_research(topic, cfg, key, build=False, sub_n=4, verbose=True,
