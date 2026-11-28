@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1416">
+<title>JARVIS</title>
+<style>
+  :root{--bg:#0b1416;--panel:#12212a;--accent:#37c2c9;--txt:#e8f4f6;--dim:#7fa0a8;--user:#1b3a44;}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+       height:100dvh;display:flex;flex-direction:column;overscroll-behavior:none}
+  header{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--panel);border-bottom:1px solid #1d3540}
+  header .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+  header h1{font-size:15px;margin:0;font-weight:600;letter-spacing:.4px}
+  header .sp{flex:1}
+  header button{background:transparent;border:1px solid #2a4a55;color:var(--dim);border-radius:8px;padding:6px 10px;font-size:12px}
+  #chat{flex:1;overflow-y:auto;padding:14px 12px 6px;display:flex;flex-direction:column;gap:10px}
+  .msg{max-width:85%;padding:10px 13px;border-radius:14px;line-height:1.45;font-size:14.5px;white-space:pre-wrap;word-wrap:break-word}
+  .me{align-self:flex-end;background:var(--user);border-bottom-right-radius:4px}
+  .bot{align-self:flex-start;background:var(--panel);border:1px solid #1d3540;border-bottom-left-radius:4px}
+  .bot.think{color:var(--dim);font-style:italic}
+  .time{font-size:10.5px;color:var(--dim);margin:2px 6px}
+  footer{padding:10px 10px calc(10px + env(safe-area-inset-bottom));background:var(--panel);border-top:1px solid #1d3540;display:flex;gap:8px;align-items:center}
+  #txt{flex:1;background:#0e1c22;border:1px solid #24414c;color:var(--txt);border-radius:22px;padding:12px 15px;font-size:15px;outline:none}
+  #mic,#send{width:48px;height:48px;border-radius:50%;border:none;display:grid;place-items:center;font-size:20px}
+  #mic{background:#1b3a44;color:var(--accent)}
+  #mic.rec{background:#c0392b;color:#fff;animation:pulse 1.1s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,.6)}50%{box-shadow:0 0 0 12px rgba(192,57,43,0)}}
+  #send{background:var(--accent);color:#04191c}
+  #sheet{position:fixed;inset:0;background:rgba(3,10,12,.86);display:none;z-index:20;overflow-y:auto;padding:18px}
+  #sheet.on{display:block}
+  .card{background:var(--panel);border:1px solid #22414c;border-radius:14px;padding:16px;max-width:520px;margin:0 auto}
+  .card h2{margin:0 0 12px;font-size:15px;color:var(--accent)}
+  label{display:block;font-size:12px;color:var(--dim);margin:10px 0 4px}
+  input,select{width:100%;background:#0e1c22;border:1px solid #24414c;color:var(--txt);border-radius:9px;padding:10px;font-size:14px}
+  .row{display:flex;gap:8px;margin-top:14px}
+  .row button{flex:1;padding:11px;border-radius:10px;border:none;font-size:14px;font-weight:600}
+  .save{background:var(--accent);color:#04191c}
+  .close{background:#1b3a44;color:var(--txt)}
+  .hint{font-size:11.5px;color:var(--dim);line-height:1.5;margin-top:10px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .chip{font-size:12px;padding:7px 11px;border-radius:16px;background:#16303a;color:var(--accent);border:1px solid #22414c}
+</style>
+</head>
+<body>
+<header>
+  <span class="dot"></span><h1 id="title">JARVIS</h1><span class="sp"></span>
+  <button id="gear">⚙ Setup</button>
+</header>
+
+<div id="chat"></div>
+
+<footer>
+  <button id="mic" aria-label="Bolo">🎙</button>
+  <input id="txt" placeholder="Likhо ya mic dabao..." autocomplete="off">
+  <button id="send" aria-label="Bhejo">➤</button>
+</footer>
+
+<div id="sheet">
+  <div class="card">
+    <h2>Setup (ek baar)</h2>
+    <label>Provider</label>
+    <select id="prov">
+      <option value="gemini">Google Gemini (free key)</option>
+      <option value="groq">Groq (free, fast)</option>
+      <option value="openrouter">OpenRouter (free models)</option>
+    </select>
+    <label>API key</label>
+    <input id="key" type="password" placeholder="AQ... / AIza... / gsk_... / sk-or-...">
+    <label>Model (khaali chhodo = default)</label>
+    <input id="model" placeholder="gemini-flash-latest / llama-3.1-8b-instant">
+    <label>Awaaz</label>
+    <select id="voice"><option value="">Phone ki default awaaz</option></select>
+    <label>Bhasha</label>
+    <select id="lang">
+      <option value="hinglish">Hinglish (Roman)</option>
+      <option value="hi">Hindi (Devanagari)</option>
+      <option value="en">English</option>
+    </select>
+    <div class="row">
+      <button class="save" id="saveCfg">Save</button>
+      <button class="close" id="closeCfg">Band karo</button>
+    </div>
+    <div class="hint">
+      Key sirf aapke phone me (browser storage) rehti hai. Free key:
+      aistudio.google.com/apikey · console.groq.com/keys · openrouter.ai/keys<br><br>
+      Chrome me kholne ke baad menu → <b>"Add to Home screen"</b> → icon ban jayega, phir ek tap me app.
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const cfgKey = 'jarvis_cfg_v1', memKey = 'jarvis_mem_v1';
+let cfg = JSON.parse(localStorage.getItem(cfgKey) || '{}');
+let mem = JSON.parse(localStorage.getItem(memKey) || '{"facts":[],"history":[]}');
+let busy = false;
+
+/* ---------- UI ---------- */
+function bubble(text, who, cls) {
+  const d = document.createElement('div');
+  d.className = 'msg ' + who + (cls ? ' ' + cls : '');
+  d.textContent = text;
+  $('#chat').appendChild(d);
+  $('#chat').scrollTop = $('#chat').scrollHeight;
+  return d;
+}
+function stamp(sec) {
+  const d = document.createElement('div');
+  d.className = 'time'; d.textContent = sec + 's';
+  $('#chat').appendChild(d);
+  $('#chat').scrollTop = $('#chat').scrollHeight;
+}
+
+/* ---------- config ---------- */
+function openCfg() {
+  $('#prov').value = cfg.provider || 'gemini';
+  $('#key').value = cfg.key || '';
+  $('#model').value = cfg.model || '';
+  $('#lang').value = cfg.lang || 'hinglish';
+  fillVoices(cfg.voice || '');
+  $('#sheet').classList.add('on');
+}
+$('#gear').onclick = openCfg;
+$('#closeCfg').onclick = () => $('#sheet').classList.remove('on');
+$('#saveCfg').onclick = () => {
+  cfg = {provider: $('#prov').value, key: $('#key').value.trim(), model: $('#model').value.trim(),
+         voice: $('#voice').value, lang: $('#lang').value};
+  localStorage.setItem(cfgKey, JSON.stringify(cfg));
+  $('#sheet').classList.remove('on');
+  if (!cfg.key) openCfg();
+  else bubble('Setup save ho gaya. Ab boliye ya likhiye.', 'bot');
+};
+
+function fillVoices(sel) {
+  const v = $('#voice'); v.innerHTML = '<option value="">Phone ki default awaaz</option>';
+  const voices = speechSynthesis.getVoices() || [];
+  voices.filter(x => /hi|en-IN|en_US|en-GB/i.test(x.lang)).forEach(x => {
+    const o = document.createElement('option');
+    o.value = x.name; o.textContent = x.name + ' (' + x.lang + ')';
+    if (x.name === sel) o.selected = true;
+    v.appendChild(o);
+  });
+}
+speechSynthesis.onvoiceschanged = () => fillVoices(cfg.voice || '');
+
+/* ---------- prompt ---------- */
+function systemPrompt() {
+  const lang = cfg.lang === 'hi' ? 'Hindi (Devanagari)' : cfg.lang === 'en' ? 'simple English' : 'Hinglish (Hindi in Roman letters)';
+  const facts = (mem.facts || []).slice(-15).join('; ') || 'kuch nahi';
+  return `Tum Jarvis ho - user ki personal assistant, uske phone ke browser me.
+Insaan ki tarah baat karo: chhoti line (max 2), empathy, halki reactions, koi markdown/bullet/emoji nahi.
+Bhasha: ${lang}.
+Jhooth mat bolo - nahi pata to "ye mujhe nahi pata Boss" bolo. Numbers/price/news bina source pakka mat batao.
+User ke baare me: ${facts}
+Agar user "yaad rakho ..." bole to short reply do, memory app khud save kar lega.`;
+}
+
+/* ---------- memory ---------- */
+function saveMem() {
+  mem.history = (mem.history || []).slice(-20);
+  mem.facts = (mem.facts || []).slice(-60);
+  localStorage.setItem(memKey, JSON.stringify(mem));
+}
+function grabFact(text) {
+  const m = text.match(/(?:yaad rakho|remember)[:\s]+(.{3,120})/i);
+  if (m) { mem.facts.push(m[1].trim()); saveMem(); }
+}
+
+/* ---------- providers ---------- */
+async function callGemini(msgs) {
+  const model = cfg.model || 'gemini-flash-latest';
+  const body = {
+    systemInstruction: {parts: [{text: systemPrompt()}]},
+    contents: msgs.map(m => ({role: m.role === 'assistant' ? 'model' : 'user', parts: [{text: m.content}]})),
+    generationConfig: {temperature: 0.7, maxOutputTokens: 400}
+  };
+  const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+    method: 'POST', headers: {'Content-Type': 'application/json', 'x-goog-api-key': cfg.key},
+    body: JSON.stringify(body)
+  });
+  const j = await r.json();
+  if (j.error) throw new Error(j.error.message || 'Gemini error');
+  const parts = j.candidates?.[0]?.content?.parts || [];
+  return parts.map(p => p.text || '').join('').trim();
+}
+async function callOpenAI(url, model) {
+  const msgs = [{role: 'system', content: systemPrompt()},
+    ...(mem.history || []).slice(-10).map(m => ({role: m.role, content: m.content}))];
+  const r = await fetch(url, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + cfg.key},
+    body: JSON.stringify({model, messages: msgs, temperature: 0.7, max_tokens: 400})
+  });
+  const j = await r.json();
+  if (j.error) throw new Error(j.error.message || 'API error');
+  return (j.choices?.[0]?.message?.content || '').trim();
+}
+async function ask(userText) {
+  mem.history = mem.history || [];
+  const msgs = [...mem.history, {role: 'user', content: userText}];
+  if (cfg.provider === 'groq')
+    return callOpenAI('https://api.groq.com/openai/v1/chat/completions', cfg.model || 'llama-3.1-8b-instant');
+  if (cfg.provider === 'openrouter')
+    return callOpenAI('https://openrouter.ai/api/v1/chat/completions', cfg.model || 'meta-llama/llama-3.3-70b-instruct:free');
+  return callGemini(msgs);
+}
+
+/* ---------- speak ---------- */
+function speak(text) {
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    const voices = speechSynthesis.getVoices() || [];
+    const want = cfg.voice ? voices.find(v => v.name === cfg.voice) : null;
+    const hi = voices.find(v => /hi[-_]IN/i.test(v.lang));
+    const pick = want || hi || voices[0];
+    if (pick) u.voice = pick;
+    u.lang = pick ? pick.lang : (cfg.lang === 'en' ? 'en-IN' : 'hi-IN');
+    u.rate = 1.0; u.pitch = 1.15;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+/* ---------- send ---------- */
+async function send(text) {
+  text = (text || '').trim();
+  if (!text || busy) return;
+  if (!cfg.key) { openCfg(); return; }
+  busy = true;
+  bubble(text, 'me');
+  $('#txt').value = '';
+  grabFact(text);
+  const think = bubble('soch rahi hoon...', 'bot', 'think');
+  const t0 = Date.now();
+  try {
+    const reply = await ask(text);
+    think.remove();
+    if (!reply) throw new Error('khaali jawab aaya');
+    bubble(reply, 'bot');
+    stamp(((Date.now() - t0) / 1000).toFixed(1));
+    speak(reply);
+    mem.history.push({role: 'user', content: text}, {role: 'assistant', content: reply});
+    saveMem();
+  } catch (e) {
+    think.remove();
+    bubble('Dikkat: ' + (e.message || e), 'bot');
+  }
+  busy = false;
+}
+
+/* ---------- input ---------- */
+$('#send').onclick = () => send($('#txt').value);
+$('#txt').addEventListener('keydown', e => { if (e.key === 'Enter') send($('#txt').value); });
+
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null;
+$('#mic').onclick = () => {
+  if (!SR) { bubble('Is browser me mic support nahi hai. Chrome use karo.', 'bot'); return; }
+  if (rec) { rec.stop(); return; }
+  rec = new SR();
+  rec.lang = cfg.lang === 'en' ? 'en-IN' : 'hi-IN';
+  rec.interimResults = false;
+  rec.maxAlternatives = 1;
+  rec.onstart = () => $('#mic').classList.add('rec');
+  rec.onend = () => { $('#mic').classList.remove('rec'); rec = null; };
+  rec.onerror = e => { $('#mic').classList.remove('rec'); rec = null; bubble('Mic error: ' + e.error, 'bot'); };
+  rec.onresult = ev => {
+    const t = ev.results[0][0].transcript;
+    send(t);
+  };
+  rec.start();
+};
+
+/* ---------- boot ---------- */
+(function boot() {
+  if (!cfg.key) { openCfg(); }
+  bubble('Namaste Boss. Main Jarvis hoon. Boliye ya likhiye.', 'bot');
+})();
+</script>
+</body>
+</html>
