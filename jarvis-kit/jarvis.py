@@ -1497,20 +1497,34 @@ def _tokens(text):
 
 
 def retrieve(query, chunks, k=4):
-    """Keyword overlap se sabse relevant hisse. Internet nahi, library nahi."""
+    """Keyword overlap + file naam ka boost + padosi hissa. Fast, no library."""
     q = _tokens(query)
     if not q or not chunks:
         return []
     scored = []
-    for ch in chunks:
+    for idx, ch in enumerate(chunks):
         toks = _tokens(ch.get("text", ""))
         if not toks:
             continue
         hit = len(q & toks)
-        if hit:
-            scored.append((hit / (len(toks) ** 0.5), ch))
+        name_hit = len(q & _tokens(ch.get("file", "")))
+        if not hit and not name_hit:
+            continue
+        score = (hit / (len(toks) ** 0.5)) + (0.35 * name_hit)
+        scored.append((score, idx, ch))
     scored.sort(key=lambda x: -x[0])
-    return [ch for _, ch in scored[:k]]
+    out, seen = [], set()
+    for _score, idx, ch in scored:
+        for j in (idx, idx + 1):
+            if 0 <= j < len(chunks):
+                key = (chunks[j].get("file"), chunks[j].get("text", "")[:60])
+                if key in seen:
+                    continue
+                seen.add(key)
+                out.append(chunks[j])
+                if len(out) >= k:
+                    return out
+    return out[:k]
 
 
 LOCAL_SYSTEM = """You are {name}, {user}'s private assistant on an Android phone. Offline.
@@ -2312,6 +2326,61 @@ def data_context(query, cfg, k=None):
               "Jawab ke saath file ka naam batao.")
 
 
+ANSWER_CACHE = {}
+
+
+def _cache_key(text, cfg):
+    return (str(cfg.get("providers", "")), (text or "").strip().lower()[:200])
+
+
+def ask_parallel(cfg, mem, user_part, key, extra=None, timeout=25):
+    """Groq aur Gemini ko saath bhejo - jo pehle jawab de wahi le lo."""
+    text_part = user_part if isinstance(user_part, str) else ""
+    if not text_part:
+        return None
+    dctx = data_context(text_part, cfg)
+    extra2 = (extra + "\n\n" + dctx) if (extra and dctx) else (extra or dctx)
+    msgs = ask_messages(cfg, mem, text_part, extra2)
+    results = {}
+    errs = {}
+
+    def run(prov):
+        try:
+            if prov == "groq":
+                pk = load_provider_key("groq")
+                if not pk:
+                    return
+                raw = openai_chat("groq", msgs, cfg, pk, timeout=timeout)
+                plan = extract_json(raw) if raw else None
+                if isinstance(plan, dict) and plan.get("say"):
+                    results["groq"] = plan
+            elif prov == "gemini":
+                if not key:
+                    return
+                plan = ask_gemini(cfg, mem, user_part, key, extra2)
+                if isinstance(plan, dict) and plan.get("say"):
+                    results["gemini"] = plan
+        except Exception as exc:
+            errs[prov] = str(exc)[:80]
+
+    threads = [threading.Thread(target=run, args=(p,), daemon=True) for p in ("groq", "gemini")]
+    for t in threads:
+        t.start()
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        for prov in ("groq", "gemini"):
+            if prov in results:
+                plan = results[prov]
+                plan.setdefault("do", [])
+                LAST_PROVIDER["name"] = prov + "+race"
+                LAST_PROVIDER["trace"] = [(prov, round(time.time() - (deadline - timeout), 2), "ok")]
+                return plan
+        if not any(t.is_alive() for t in threads):
+            break
+        time.sleep(0.08)
+    return None
+
+
 def ask_remote(cfg, mem, user_part, key, extra=None):
     """Gemini -> Groq -> OpenRouter -> local, jo pehle chale."""
     order = [p.strip() for p in str(cfg.get("providers",
@@ -2322,6 +2391,11 @@ def ask_remote(cfg, mem, user_part, key, extra=None):
         extra = (extra + "\n\n" + dctx) if extra else dctx
     last_err = ""
     LAST_PROVIDER["trace"] = []
+    if text_part and load_provider_key("groq") and key and not extra \
+            and not any(k in str(cfg.get("providers", "")) for k in ("openrouter,",)):
+        raced = ask_parallel(cfg, mem, user_part, key)
+        if raced:
+            return raced
     now_t = time.time()
     active = [p for p in order if PROVIDER_COOL.get(p, 0) < now_t]
     if not active:
@@ -3399,6 +3473,16 @@ def serve(cfg, port=8080):
     except OSError as exc:
         print("Port %d busy hai: %s" % (port, exc))
         return 1
+    def _warm():
+        try:
+            if load_provider_key("groq"):
+                openai_chat("groq", [{"role": "user", "content": "hi"}], cfg,
+                            load_provider_key("groq"), timeout=12)
+            elif key:
+                api_call("/models?pageSize=1", key=key, timeout=10)
+        except Exception:
+            pass
+    threading.Thread(target=_warm, daemon=True).start()
     print("=" * 52)
     print("  JARVIS browser panel chalu hai")
     print("  Chrome me kholo:  http://127.0.0.1:%d" % port)
