@@ -1707,6 +1707,8 @@ ROUTES = [
       "error kyun", "theek karo apne"), "diagnose"),
     (("kitna data", "kaunsa data", "kaun si file", "kaunsi file", "vault me", "memory me kya",
       "data hai", "kitni file", "files batao"), "vault_info"),
+    (("collect karo", "internet se laao", "data laao", "download karo", "save karo internet se",
+      "seekho", "learn karo"), "collect"),
     (("band karo", "band kar do", "close karo", "kill karo"), "app_stop"),
     (("pause karo", "rok do", "play karo", "next gaana", "pichhla gaana"), "media"),
     (("wifi", "internet kaisa"), "wifi"),
@@ -2006,6 +2008,15 @@ def t_self_edit(a):
     return ("Code update ho gaya: " if ok_r else "Nahi ho paya: ") + msg
 
 
+def t_collect(a):
+    topic = str(a.get("topic") or a.get("query") or a.get("text") or "").strip()
+    if not topic:
+        return "Kya collect karna hai? Topic bolo."
+    cfg = load_config()
+    ok_c, msg = collect_topic(topic, cfg, load_key())
+    return ("Ho gaya: " if ok_c else "Nahi hua: ") + msg
+
+
 def t_diagnose(a):
     deep = bool(a.get("deep"))
     txt, n = diagnose(load_config(), deep=deep)
@@ -2047,6 +2058,7 @@ TOOLS = {
     "self_edit": t_self_edit,
     "diagnose": t_diagnose,
     "vault_info": t_vault_info,
+    "collect": t_collect,
     "gh_repos": t_gh_repos,
     "gh_upload": t_gh_upload,
     "app_stop": t_app_stop,
@@ -2081,6 +2093,7 @@ TOOL_HELP = """Available tools (JSON me "do" list ke andar):
   {"tool":"self_edit","args":{"request":"kya badalna hai"}}   (apna code khud badalna)
   {"tool":"diagnose"}   (apna system check karke dikkat batao)
   {"tool":"vault_info"}   (mere paas kitna data hai, kaunsi files)
+  {"tool":"collect","args":{"topic":"..."}}   (internet se data laakar vault me save)
   {"tool":"gh_repos"} | {"tool":"gh_upload","args":{"repo":"user/repo","path":"a.txt","file":"/path"}}
   {"tool":"app_stop","args":{"app":"youtube"}}  | {"tool":"app_start","args":{"app":"whatsapp"}}
   {"tool":"media","args":{"action":"pause|play|next|prev|toggle"}} | {"tool":"key","args":{"key":"back|home|volume_up"}}
@@ -3157,6 +3170,8 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --persona "..." apni pasand ka behaviour likho (file me jodta hai)
   python jarvis.py --import-all /sdcard/Download   poore folder ka data vault me
   python jarvis.py --vault-clean  duplicate file hatao aur index saaf karo
+  python jarvis.py --collect "topic"   internet se data laakar vault me daalo
+  python jarvis.py --learn [N]    vault ki files se seekho (dimaag me)
   python jarvis.py --teach "..."  seedha sikhao (style ya yaad)
   python jarvis.py --diag         apna system check karo (kya dikkat hai)
   python jarvis.py --mind show    apna dimaag dekho (facts, style, sabak)
@@ -3500,6 +3515,82 @@ def listen_stop():
     LISTEN["stop"] = True
 
 
+COLLECT_DIR_NAME = "collected"
+
+
+def collect_topic(topic, cfg, key, n=3):
+    """Public web se data laao aur vault me save karo. (ok, msg)"""
+    hits = []
+    try:
+        hits = ddg_search(topic, limit=n + 2) or wiki_search(topic)
+    except Exception as exc:
+        return False, "search fail: %s" % exc
+    if not hits:
+        return False, "internet par kuch nahi mila"
+    d = os.path.join(data_dir(cfg), COLLECT_DIR_NAME)
+    os.makedirs(d, exist_ok=True)
+    slug = re.sub(r"[^a-zA-Z0-9]+", "-", topic.lower()).strip("-")[:50] or "topic"
+    saved, lines = 0, []
+    for h in hits[:n]:
+        page = fetch_page(h.get("url", ""), 12000)
+        if not page or len(page) < 200:
+            continue
+        text = re.sub(r"\n{3,}", "\n\n", page)[:8000]
+        fname = os.path.join(d, "%s-%d.md" % (slug, saved + 1))
+        try:
+            with open(fname, "w", encoding="utf-8") as f:
+                f.write("# %s\n\nSource: %s\nCollected: %s\n\n%s\n"
+                        % (h.get("title") or topic, h.get("url", ""),
+                           datetime.now().strftime("%Y-%m-%d %H:%M"), text))
+            saved += 1
+            lines.append(h.get("url", ""))
+        except OSError:
+            pass
+    if not saved:
+        return False, "pages padhe nahi ja sake"
+    build_index(cfg, force=True)
+    brain_add("skills", "data collect kiya: %s (%d source)" % (topic[:60], saved))
+    return True, "%d source se data vault me daala: %s" % (saved, ", ".join(u[:60] for u in lines[:3]))
+
+
+def learn_from_vault(cfg, key, limit=8):
+    """Vault ki files se seekho - har file ke 2-3 mukhya point dimaag me. (ok, msg)"""
+    chunks, nfiles, _c = build_index(cfg)
+    if not chunks:
+        return False, "vault khaali hai"
+    b = load_brain()
+    learned = set(b.get("learned_files") or [])
+    files = []
+    for c in chunks:
+        f = c.get("file", "")
+        if f and f not in files and f not in learned:
+            files.append(f)
+    if not files:
+        return True, "sab files pehle se seekh li hain"
+    todo = files[:limit]
+    done = 0
+    for fname in todo:
+        text = " ".join(c["text"] for c in chunks if c.get("file") == fname)[:4000]
+        if len(text) < 60:
+            continue
+        prompt = ("Is document ke 3 sabse zaroori point Hinglish me likho, har point ek line. "
+                  "Sirf points, koi bhoomika nahi.")
+        out = ask_text(cfg, key, "Tum ek document summarizer ho.", prompt + "\n\n" + text, max_tokens=300)
+        out = strip_markdown(out or "").strip()
+        if not out:
+            continue
+        for line in [x.strip(" -*•") for x in out.splitlines() if x.strip()][:3]:
+            if len(line) > 12:
+                brain_add("facts", "[%s] %s" % (fname[:24], line[:150]))
+        learned.add(fname)
+        done += 1
+    b = load_brain()
+    b["learned_files"] = sorted(learned)[-500:]
+    save_brain(b)
+    build_index(cfg, force=True)
+    return True, "%d file se seekha (dimaag me ab %d yaadein)" % (done, len(load_brain()["facts"]))
+
+
 def serve(cfg, port=8080):
     """Browser control panel - Termux ke saare tools browser se chalte hain."""
     from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -3778,6 +3869,24 @@ def main(argv):
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
         return 0
+    if argv[0] == "--collect":
+        cfg = load_config()
+        topic = " ".join(argv[1:]).strip()
+        if not topic:
+            print("Use: python jarvis.py --collect \"topic ya sawaal\"")
+            return 1
+        ok_c, msg = collect_topic(topic, cfg, load_key())
+        print(("OK: " if ok_c else "FAIL: ") + msg)
+        return 0 if ok_c else 1
+    if argv[0] == "--learn":
+        cfg = load_config()
+        n = 8
+        for a in argv[1:]:
+            if a.isdigit():
+                n = int(a)
+        ok_l, msg = learn_from_vault(cfg, load_key(), limit=n)
+        print(("OK: " if ok_l else "FAIL: ") + msg)
+        return 0 if ok_l else 1
     if argv[0] == "--vault-clean":
         cfg = load_config()
         d = data_dir(cfg)
