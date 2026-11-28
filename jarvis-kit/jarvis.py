@@ -762,22 +762,109 @@ def record_audio(seconds):
         return b""
 
 
-def phone_speak(text, cfg):
-    """Phone ka TTS - female-ish pitch. Free, offline."""
-    pitch = str(cfg.get("voice_pitch", 1.15))
-    rate = str(cfg.get("tts_rate", 0.98))
-    lang = str(cfg.get("voice_lang", "hi-IN"))
-    for args in (["-l", lang, "-p", pitch, "-r", rate, "-v", "female", text],
-                 ["-l", lang, "-p", pitch, "-r", rate, text],
-                 ["-l", lang, text]):
-        ok, out = termux("termux-tts-speak", *args, timeout=180)
-        if ok:
-            return True
-    log("phone tts fail: %s" % out)
-    return False
+# ---------------------------------------------------------------- Hindi uchcharan
+HINDI_WORDS = {
+    "battery": "बैटरी", "charge": "चार्ज", "charging": "चार्जिंग", "phone": "फ़ोन",
+    "jarvis": "जार्विस", "boss": "बॉस", "torch": "टॉर्च", "wifi": "वाई-फ़ाई",
+    "internet": "इंटरनेट", "message": "मैसेज", "photo": "फ़ोटो", "camera": "कैमरा",
+    "screen": "स्क्रीन", "volume": "वॉल्यूम", "time": "टाइम", "date": "तारीख़",
+    "today": "आज", "tomorrow": "कल", "please": "प्लीज़", "sorry": "सॉरी",
+    "ok": "ठीक", "okay": "ठीक", "yes": "हाँ", "no": "नहीं", "hello": "हैलो",
+    "note": "नोट", "notes": "नोट्स", "app": "ऐप", "update": "अपडेट",
+    "system": "सिस्टम", "data": "डेटा", "file": "फ़ाइल", "call": "कॉल",
+}
+
+HINDI_NUMS = ("शून्य एक दो तीन चार पाँच छह सात आठ नौ दस ग्यारह बारह तेरह चौदह पंद्रह "
+              "सोलह सत्रह अठारह उन्नीस बीस इक्कीस बाईस तेईस चौबीस पच्चीस छब्बीस सत्ताईस "
+              "अट्ठाईस उनतीस तीस इकतीस बत्तीस तैंतीस चौंतीस पैंतीस छत्तीस सैंतीस अड़तीस "
+              "उनतालीस चालीस इकतालीस बयालीस तैंतालीस चवालीस पैंतालीस छियालीस सैंतालीस "
+              "अड़तालीस उनचास पचास इक्यावन बावन तिरपन चौवन पचपन छप्पन सत्तावन अट्ठावन "
+              "उनसठ साठ इकसठ बासठ तिरसठ चौंसठ पैंसठ छियासठ सड़सठ अड़सठ उनहत्तर सत्तर "
+              "इकहत्तर बहत्तर तिहत्तर चौहत्तर पचहत्तर छिहत्तर सतहत्तर अठहत्तर उन्नासी अस्सी "
+              "इक्यासी बयासी तिरासी चौरासी पचासी छियासी सत्तासी अट्ठासी नवासी नब्बे "
+              "इक्यानवे बानवे तिरानवे चौरानवे पचानवे छियानवे सत्तानवे अट्ठानवे निन्यानवे सौ").split()
 
 
-def gemini_tts(text, cfg, key):
+def number_to_hindi(n):
+    n = int(n)
+    if 0 <= n < len(HINDI_NUMS):
+        return HINDI_NUMS[n]
+    if n == 100:
+        return "सौ"
+    if 100 < n < 1000:
+        h, r = divmod(n, 100)
+        return HINDI_NUMS[h] + " सौ" + ((" " + HINDI_NUMS[r]) if r else "")
+    if n % 100000 == 0 and n < 10000000:
+        return HINDI_NUMS[n // 100000] + " लाख"
+    return str(n)
+
+
+def hindi_speech_text(text):
+    """Phone TTS ke liye: English shabd Devanagari me, numbers Hindi me (sahi uchcharan)."""
+    t = text or ""
+
+    def num_repl(m):
+        try:
+            return number_to_hindi(int(m.group(0)))
+        except Exception:
+            return m.group(0)
+
+    t = re.sub(r"\b(\d{1,5})\b", num_repl, t)
+    t = t.replace("%", " प्रतिशत").replace("&", " और ").replace("@", " एट ")
+    out = []
+    for word in re.split(r"(\s+)", t):
+        key = re.sub(r"[^a-zA-Z]", "", word).lower()
+        if key in HINDI_WORDS:
+            out.append(HINDI_WORDS[key])
+        else:
+            out.append(word)
+    return "".join(out)
+
+
+# ---------------------------------------------------------------- Emotion engine
+EMOTION = {
+    "happy":     {"pitch": 1.22, "rate": 1.06, "style": "khushi bhare, muskuraate hue, khush"},
+    "excited":   {"pitch": 1.28, "rate": 1.12, "style": "bahut excited, energetic, josh me"},
+    "calm":      {"pitch": 1.05, "rate": 0.94, "style": "shaant, dheeme, sukoon bhare"},
+    "sad":       {"pitch": 0.98, "rate": 0.90, "style": "udaas, dheeme, halki udaasi ke saath"},
+    "caring":    {"pitch": 1.12, "rate": 0.95, "style": "pyaar se, apnapan bhare, warm"},
+    "serious":   {"pitch": 1.02, "rate": 0.98, "style": "serious, saaf aur seedhi baat"},
+    "playful":   {"pitch": 1.25, "rate": 1.05, "style": "mazaak me, halki hansi ke saath, playful"},
+    "surprised": {"pitch": 1.30, "rate": 1.05, "style": "hairan, aashcharya bhare"},
+    "neutral":   {"pitch": 1.15, "rate": 1.0,  "style": "natural, dost jaisi"},
+}
+
+
+def pick_emotion(text, cfg=None):
+    """Text se bhaav pakdo (agar model ne emotion na diya ho)."""
+    t = (text or "").lower()
+    table = (
+        ("sad", ("dukh", "udaas", "bura laga", "afsos", "sorry to hear", "chali gayi")),
+        ("caring", ("aaram", "dhyan", "pyaar", "khayal", "theek ho", "thak")),
+        ("excited", ("wow", "arre wah", "zabardast", "shandar", "badhai")),
+        ("happy", ("khush", "mazaa", "achha laga", "haha", "hansi", "sahi hai")),
+        ("serious", ("dhyan se", "zaroori", "warning", "khatra", "note karo")),
+        ("playful", ("mazaak", "halka", "hmm", "acha ji")),
+    )
+    for emo, keys in table:
+        if any(k in t for k in keys):
+            return emo
+    return "neutral"
+
+
+def phone_speak(text, cfg, emotion=None):
+    """Phone TTS - Hindi uchcharan + bhaav ke hisaab se pitch/rate."""
+    emo = EMOTION.get(emotion or "neutral", EMOTION["neutral"])
+    pitch = float(cfg.get("voice_pitch", emo["pitch"]))
+    rate = float(cfg.get("tts_rate", 1.0)) * emo["rate"]
+    say_text = hindi_speech_text(text)
+    ok, out = termux("termux-tts-speak", "-l", str(cfg.get("voice_lang", "hi-IN")),
+                     "-p", "%.2f" % pitch, "-r", "%.2f" % rate, say_text, timeout=60)
+    if not ok:
+        termux("termux-tts-speak", "-l", "hi-IN", say_text, timeout=60)
+
+
+def gemini_tts(text, cfg, key, emotion=None):
     """Gemini ka expressive voice - emotions ke saath. (path, error)"""
     ensure_dirs()
     voice = cfg.get("gemini_voice", "Kore")
@@ -847,7 +934,7 @@ def wav_seconds(path):
         return 0.0
 
 
-def speak(text, cfg, force_gemini=False):
+def speak(text, cfg, force_gemini=False, emotion=None):
     """Text aur awaaz saath me: Gemini voice pehle banata hai, phir dono ek saath."""
     text = strip_markdown(text)
     if not text:
@@ -856,6 +943,7 @@ def speak(text, cfg, force_gemini=False):
         print("  %s: %s" % (cfg.get("name", "Jarvis"), text))
         return
     mode = str(cfg.get("tts", "auto"))
+    emotion = emotion or pick_emotion(text, cfg)
     key = load_key()
     use_gemini = (mode == "gemini") or (mode == "auto" and force_gemini)
     if STUB:
@@ -869,7 +957,7 @@ def speak(text, cfg, force_gemini=False):
             TTS_COOL["told"] = True
     if use_gemini and key:
         print("  (awaaz ban rahi hai...)")
-        path, err = gemini_tts(text, cfg, key)
+        path, err = gemini_tts(text, cfg, key, emotion)
         if path:
             print("\n%s: %s\n" % (cfg.get("name", "Jarvis"), text), end="", flush=True)
             if play_audio(path, wav_seconds(path)):
@@ -884,7 +972,7 @@ def speak(text, cfg, force_gemini=False):
             print("  (Gemini voice fail: %s)" % err)
 
     print("\n%s: %s\n" % (cfg.get("name", "Jarvis"), text), flush=True)
-    phone_speak(text, cfg)
+    phone_speak(text, cfg, emotion)
 
 def adb_serial(cfg):
     if cfg.get("adb_serial"):
@@ -2376,8 +2464,9 @@ briefing, GitHub, aur diagnose (apni dikkat khud dekhna - "sun nahi rahe"/"probl
 KAAM: kaam bole to tool chalao, sirf baat mat karo.
 KABHI apni soch, analysis ya English notes mat likho ("The user is asking", "I should" jaisa kuch nahi).
 Sirf wahi likho jo user ko bolna hai. Jawab sirf is JSON me:
-{{"say": "jo bolna hai", "do": [{{"tool": "naam", "args": {{}}}}]}}
+{{"say": "jo bolna hai", "emotion": "happy|excited|calm|sad|caring|serious|playful|surprised|neutral", "do": [{{"tool": "naam", "args": {{}}}}]}}
 - "say" = bolo jaane wala text, chhota, bina markdown.
+- "emotion" = bhaav (khushi, udaasi, pyaar, mazaak) - isse awaaz ka lehja badalta hai.
 - "do" = asli kaam; warna [].
 - Tool ka sach result aane ke baad hi "ho gaya" bolo.
 
@@ -2790,6 +2879,7 @@ def handle_turn(user_part, cfg, mem, key, heard_text="", voice=False):
         return say
     plan = ask_model(cfg, mem, user_part, key)
     say = strip_reasoning(strip_markdown(str(plan.get("say", ""))))
+    emotion = str(plan.get("emotion", "") or "").strip().lower() or None
     if not say:
         say = "Ek second Boss, dobara bolo na?"
     actions = plan.get("do") or plan.get("actions") or []
@@ -2799,7 +2889,7 @@ def handle_turn(user_part, cfg, mem, key, heard_text="", voice=False):
     done_lines = []
     if actions:
         if say:
-            speak(say, cfg)
+            speak(say, cfg, emotion=emotion)
         print("\n  [KAAM SHURU] %d kaam..." % min(len(actions), 4))
         results = []
         for act in actions[:4]:
@@ -2831,9 +2921,9 @@ def handle_turn(user_part, cfg, mem, key, heard_text="", voice=False):
             if "poora" not in (say or "").lower() and "ho gaya" not in (say or "").lower():
                 say = ((say + " ") if say else "") + done_txt
         if cfg.get("speak_actions", True) and say:
-            speak(say, cfg)
+            speak(say, cfg, emotion=emotion)
     elif say:
-        speak(say, cfg)
+        speak(say, cfg, emotion=emotion)
 
     total = time.time() - t0
     print("  [%.1f second | %s]" % (total, LAST_PROVIDER["name"] or "?"))
