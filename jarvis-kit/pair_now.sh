@@ -22,7 +22,8 @@ echo
 echo "-> port=$PORT code=$CODE"
 echo
 
-IP=$(adb shell ip route 2>/dev/null | awk '{print $9; exit}')
+IP=$(termux-wifi-connectioninfo 2>/dev/null | grep -o '"ip": *"[^"]*"' | sed 's/.*: *"//;s/"//' | head -1)
+[ -z "$IP" ] && IP=$(adb shell ip route 2>/dev/null | awk '{print $9; exit}')
 [ -z "$IP" ] && IP=$(ip -4 addr 2>/dev/null | awk '/inet /{print $2}' | cut -d/ -f1 | grep -v '^127' | head -1)
 echo "  phone IP: ${IP:-?}"
 

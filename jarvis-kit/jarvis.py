@@ -661,6 +661,39 @@ def adb_ready(cfg=None):
     return (ok and "jarvis_ok" in out), (out or "no answer")
 
 
+APP_MAP = {
+    "youtube": "com.google.android.youtube",
+    "whatsapp": "com.whatsapp",
+    "instagram": "com.instagram.android",
+    "facebook": "com.facebook.katana",
+    "chrome": "com.android.chrome",
+    "camera": "com.android.camera",
+    "settings": "com.android.settings",
+    "gmail": "com.google.android.gm",
+    "maps": "com.google.android.apps.maps",
+    "spotify": "com.spotify.music",
+    "telegram": "org.telegram.messenger",
+    "playstore": "com.android.vending",
+    "gallery": "com.google.android.apps.photos",
+    "phone": "com.google.android.dialer",
+    "messages": "com.google.android.apps.messaging",
+    "x": "com.twitter.android",
+    "twitter": "com.twitter.android",
+    "netflix": "com.netflix.mediaclient",
+    "hotstar": "in.startv.hotstar",
+    "paytm": "net.one97.paytm",
+    "phonepe": "com.phonepe.app",
+    "gpay": "com.google.android.apps.nbu.paisa.user",
+    "zomato": "com.application.zomato",
+    "swiggy": "in.swiggy.android",
+}
+
+KEYS = {"home": "3", "back": "4", "recent": "187", "power": "26", "volume_up": "24",
+        "volume_down": "25", "mute": "164", "play_pause": "85", "play": "126", "pause": "127",
+        "next": "87", "prev": "88", "enter": "66", "delete": "67", "search": "84",
+        "wake": "224", "sleep": "223", "screenshot": "120"}
+
+
 def pkg_from(text):
     t = (text or "").lower()
     for name, pkg in APP_MAP.items():
@@ -674,9 +707,24 @@ def t_app_stop(a):
     if not pkg:
         return "Kaunsa app band karna hai? Naam bolo (youtube, whatsapp...)"
     ok, out = adb_shell("am force-stop %s" % pkg)
-    if not ok:
-        return "Band nahi kar paya: %s" % out
-    return "%s band kar diya" % pkg
+    if ok:
+        return "%s band kar diya" % pkg
+    # fallback: App info page khol do (wahan Force stop hota hai)
+    ok2, out2 = termux("am", "start", "-a", "android.settings.APPLICATION_DETAILS_SETTINGS",
+                       "-d", "package:%s" % pkg, timeout=20)
+    if ok2:
+        return ("%s ki App info khol di - neeche 'Force stop' dabao. "
+                "(ADB pair karne ke baad ye khud ho jayega: bash pair_now.sh)" % pkg)
+    return "Band nahi kar paya: %s" % (out or out2)
+
+
+def t_app_info(a):
+    pkg = str(a.get("package") or "").strip() or pkg_from(str(a.get("app", "")))
+    if not pkg:
+        return "Kaunsa app? Naam bolo"
+    ok, out = termux("am", "start", "-a", "android.settings.APPLICATION_DETAILS_SETTINGS",
+                     "-d", "package:%s" % pkg, timeout=20)
+    return ("%s ki settings khol di" % pkg) if ok else "Nahi khula: %s" % out
 
 
 def t_app_start(a):
@@ -1615,6 +1663,7 @@ TOOLS = {
     "gh_repos": t_gh_repos,
     "gh_upload": t_gh_upload,
     "app_stop": t_app_stop,
+    "app_info": t_app_info,
     "app_start": t_app_start,
     "key": t_key,
     "media": t_media,
