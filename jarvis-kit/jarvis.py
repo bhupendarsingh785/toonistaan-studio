@@ -1072,44 +1072,87 @@ def adb_mdns_ports():
     return pair, conn
 
 
+def _ask_digits(prompt, min_len=4, max_len=6):
+    """Sirf ank lo, galat ho to dobara poochho."""
+    for _ in range(4):
+        try:
+            v = input(prompt).strip().replace(" ", "")
+        except EOFError:
+            return ""
+        v = re.sub(r"[^0-9]", "", v)
+        if min_len <= len(v) <= max_len:
+            return v
+        print("  galat (%d ank mile) - dobara" % len(v))
+    return ""
+
+
 def adb_auto(cfg):
-    """ADB pairing jitna automatic ho sake: port khud, code ek baar, phir save."""
+    """ADB pairing: port khud (mDNS) ya poochh kar, code ek baar, phir save."""
     ok_adb, msg_adb = adb_ready(cfg)
     if not ok_adb and "install" in str(msg_adb):
         print("adb install kar raha hoon...")
         termux("pkg", "install", "-y", "android-tools", timeout=280)
+        ok_adb, msg_adb = adb_ready(cfg)
+    if not ok_adb:
+        print("adb nahi mila: %s" % msg_adb)
+        return False
+
+    print("\nPhone par: Settings > Developer options > Wireless debugging")
+    print("  -> 'Pair device with pairing code' KHOLO (popup khula rakho)")
+    print("  -> popup me: 'Wi-Fi pairing code' (6 ank) aur 'IP address & port' (port)\n")
+
     pair, conn = adb_mdns_ports()
-    print("mDNS: pairing=%s connect=%s" % (pair or "?", conn or "?"))
-    if not pair:
-        print("\nPhone par: Settings > Developer options > Wireless debugging > "
-              "'Pair device with pairing code' kholo, phir ye dobara chalao.")
-        return False
-    try:
-        code = input("6-ank code (popup se): ").strip()
-    except EOFError:
-        return False
+    if pair:
+        print("mDNS se mila: pairing=%s connect=%s" % (pair, conn or "?"))
+        pport = pair.split(":")[-1]
+    else:
+        pport = _ask_digits("Pairing port (popup ke IP:port me colon ke baad, 5 ank): ", 4, 5)
+        if not pport:
+            print("Port nahi mila - cancel.")
+            return False
+    code = _ask_digits("6-ank pairing code: ", 6, 6)
     if not code:
+        print("Code nahi mila - cancel.")
         return False
-    ok_p, out_p = termux("adb", "pair", pair, code, timeout=60)
-    print(("pair: " + str(out_p)[:120]))
+
+    target = pair if pair else None
+    if not target:
+        ok_i, out_i = termux("termux-wifi-connectioninfo", timeout=20)
+        ip = "10.198.205.62"
+        try:
+            ip = json.loads(out_i).get("ip", ip) or ip
+        except Exception:
+            m = re.search(r'"ip"\s*:\s*"([^"]+)"', str(out_i or ""))
+            if m:
+                ip = m.group(1)
+        target = "%s:%s" % (ip, pport)
+    print("\npairing %s ..." % target)
+    ok_p, out_p = termux("adb", "pair", target, code, timeout=60)
+    print("  -> %s" % str(out_p)[:160])
+    if "Successfully paired" not in str(out_p):
+        print("\nPair nahi hua. Sabse aam wajah: code expire (popup dobara kholo) "
+              "ya port galat. Dobara: python jarvis.py --adb-auto")
+        return False
+
     if not conn:
         _, conn = adb_mdns_ports()
     if not conn:
-        print("connect port nahi mila - Wireless debugging screen ka port daalo")
-        try:
-            conn = input("connect port (jaise 192.168.1.5:41457): ").strip()
-        except EOFError:
-            return False
+        cport = _ask_digits("Connect port (Wireless debugging screen ka port, 5 ank): ", 4, 5)
+        if cport:
+            base_ip = target.split(":")[0]
+            conn = "%s:%s" % (base_ip, cport)
+    if not conn:
+        print("Connect port nahi mila - pairing ho gayi, par connect nahi hua.")
+        return False
     ok_c, out_c = termux("adb", "connect", conn, timeout=45)
-    print("connect: %s" % str(out_c)[:120])
+    print("  -> %s" % str(out_c)[:120])
     ok_d, out_d = termux("adb", "devices", timeout=25)
-    good = "device" in str(out_d) and "offline" not in str(out_d)
-    if good:
+    if "device" in str(out_d) and "offline" not in str(out_d):
         cfg["adb_serial"] = conn
         save_config(cfg)
-        print("\nOK: phone control chalu. Ab 'youtube kholo', 'pause karo' sab chalega.")
+        print("\nOK: phone control chalu (%s). Ab 'youtube kholo', 'pause karo' sab chalega." % conn)
         return True
-    print("\nFAIL: devices -> %s" % str(out_d)[:200])
+    print("\nFAIL devices: %s" % str(out_d)[:200])
     return False
 
 
