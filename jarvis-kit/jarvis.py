@@ -80,6 +80,7 @@ DEFAULT_CONFIG = {
     "data_dir": "~/jarvis/data", # aapka data yahan rakho - .txt .md .csv .json .srt .pdf
     "rag_top": 4,                # ek jawab me data ke kitne hisse padhe
     "stt_lang": "hi",            # sunne ki bhasha (hi = Hindi/Hinglish, en = English)
+    "auto_collect": True,        # jawab na mile to khud web se data laaye
     "wake_word": "jarvis",       # sirf is shabd ke saath jawab de (khaali = har baat)
     "auto_loop": False,          # True = Enter dabane ki zarurat nahi, lagataar sunta rahe
     "speak_actions": True,       # action ka result bolkar bataye
@@ -2810,6 +2811,12 @@ def handle_turn(user_part, cfg, mem, key, heard_text="", voice=False):
     if len(trace) > 1 or (trace and trace[0][2] != "ok"):
         print("  (%s)" % " -> ".join("%s %.1fs %s" % (p, d, st) for p, d, st in trace))
     try:
+        if cfg.get("auto_collect", True) and needs_data(say) and (heard_text or ""):
+            if queue_topic(heard_text, cfg):
+                say = (say or "") + " (ye topic apne aap seekhne ke liye rakh liya hai)"
+    except Exception as exc:
+        log("queue fail: %s" % exc)
+    try:
         learn_from_turn(heard_text or "", say, cfg)
     except Exception as exc:
         log("learn fail: %s" % exc)
@@ -3171,6 +3178,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --import-all /sdcard/Download   poore folder ka data vault me
   python jarvis.py --vault-clean  duplicate file hatao aur index saaf karo
   python jarvis.py --collect "topic"   internet se data laakar vault me daalo
+  python jarvis.py --auto-collect  jo kami hai wo khud web se laao
   python jarvis.py --learn [N]    vault ki files se seekho (dimaag me)
   python jarvis.py --teach "..."  seedha sikhao (style ya yaad)
   python jarvis.py --diag         apna system check karo (kya dikkat hai)
@@ -3649,6 +3657,70 @@ def daemon_mode(cfg, port=8080):
                 return 1
 
 
+QUEUE_PATH = os.path.join(JARVIS_DIR, "collect_queue.json")
+
+
+def queue_topic(topic, cfg=None):
+    """Jis cheez ka jawab nahi pata, use apne aap seekhne ke liye queue me daalo."""
+    topic = re.sub(r"\s+", " ", str(topic or "")).strip()[:160]
+    if len(topic) < 8:
+        return False
+    q = read_json(QUEUE_PATH, [])
+    if not isinstance(q, list):
+        q = []
+    low = topic.lower()
+    if any(low == str(x.get("topic", "")).lower() for x in q if isinstance(x, dict)):
+        return False
+    q.append({"topic": topic, "at": datetime.now().strftime("%Y-%m-%d %H:%M")})
+    write_json(QUEUE_PATH, q[-40:])
+    log("queued for auto-collect: %s" % topic[:60])
+    return True
+
+
+def needs_data(reply):
+    """Jawab se pata chala ki data nahi tha?"""
+    r = (reply or "").lower()
+    marks = ("data me ye nahi mila", "data me nahi mila", "nahi pata", "pata nahi",
+             "mujhe nahi maloom", "jaankari nahi", "sources me nahi mila", "koi data nahi")
+    return any(m in r for m in marks)
+
+
+def process_queue(cfg, key, limit=2, verbose=True):
+    """Queue se topic uthao, web se data laao, seekho. (done, msg)"""
+    q = read_json(QUEUE_PATH, [])
+    if not isinstance(q, list) or not q:
+        return 0, "queue khaali hai"
+    done, notes = 0, []
+    for item in q[:limit]:
+        topic = str(item.get("topic", "")).strip()
+        if not topic:
+            continue
+        if verbose:
+            print("  [auto-collect] %s ..." % topic[:60])
+        ok_c, msg = collect_topic(topic, cfg, key)
+        if ok_c:
+            done += 1
+            notes.append(topic[:40])
+            try:
+                learn_from_vault(cfg, key, limit=3)
+            except Exception as exc:
+                log("auto learn fail: %s" % exc)
+    rest = q[limit:]
+    write_json(QUEUE_PATH, rest)
+    return done, ("%d topic ka data jama kiya: %s" % (done, ", ".join(notes)) if done else "kuch nahi mila")
+
+
+def auto_collect_loop(cfg, key, every_min=10):
+    """Background me chalta rahe - jo kami hai wo khud poori karta rahe."""
+    print("  auto-collect chalu (har %d minute check)" % every_min)
+    while True:
+        try:
+            process_queue(cfg, key, limit=2)
+        except Exception as exc:
+            log("auto collect loop: %s" % exc)
+        time.sleep(max(120, every_min * 60))
+
+
 def serve(cfg, port=8080):
     """Browser control panel - Termux ke saare tools browser se chalte hain."""
     from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -3836,6 +3908,8 @@ def serve(cfg, port=8080):
         except Exception:
             pass
     threading.Thread(target=_warm, daemon=True).start()
+    if cfg.get("auto_collect", True):
+        threading.Thread(target=auto_collect_loop, args=(cfg, key, 10), daemon=True).start()
     print("=" * 52)
     print("  JARVIS browser panel chalu hai")
     print("  Chrome me kholo:  http://127.0.0.1:%d" % port)
@@ -3926,6 +4000,13 @@ def main(argv):
         except OSError:
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
+        return 0
+    if argv[0] == "--auto-collect":
+        cfg = load_config()
+        done, msg = process_queue(cfg, load_key(), limit=3)
+        print(("OK: " if done else "INFO: ") + msg)
+        q = read_json(QUEUE_PATH, [])
+        print("Queue me abhi %d topic baaki" % (len(q) if isinstance(q, list) else 0))
         return 0
     if argv[0] == "--collect":
         cfg = load_config()
