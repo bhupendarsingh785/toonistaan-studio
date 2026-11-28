@@ -27,6 +27,7 @@ import base64
 import glob
 import json
 import os
+import platform
 import re
 import shutil
 import subprocess
@@ -1448,6 +1449,8 @@ ROUTES = [
     (("time kya", "kitne baje", "samay kya", "date kya", "tarikh"), "time"),
     (("kya hai ye", "ye kya hai", "dekho", "dekh kar batao", "padh kar batao", "camera se dekh"), "look"),
     (("research karo", "search karo", "internet se dekho", "khoj karo", "google karo"), "research"),
+    (("dikkat", "problem", "kya gadbad", "check karo", "diagnose", "sun nahi", "kaam nahi kar",
+      "error kyun", "theek karo apne"), "diagnose"),
     (("band karo", "band kar do", "close karo", "kill karo"), "app_stop"),
     (("pause karo", "rok do", "play karo", "next gaana", "pichhla gaana"), "media"),
     (("wifi", "internet kaisa"), "wifi"),
@@ -1747,6 +1750,12 @@ def t_self_edit(a):
     return ("Code update ho gaya: " if ok_r else "Nahi ho paya: ") + msg
 
 
+def t_diagnose(a):
+    deep = bool(a.get("deep"))
+    txt, n = diagnose(load_config(), deep=deep)
+    return txt
+
+
 def t_research(a):
     q = str(a.get("query") or a.get("text") or "").strip()
     if not q:
@@ -1780,6 +1789,7 @@ TOOLS = {
     "look": t_look,
     "research": t_research,
     "self_edit": t_self_edit,
+    "diagnose": t_diagnose,
     "gh_repos": t_gh_repos,
     "gh_upload": t_gh_upload,
     "app_stop": t_app_stop,
@@ -1812,6 +1822,7 @@ TOOL_HELP = """Available tools (JSON me "do" list ke andar):
   {"tool":"look"}          (camera se dekho aur batao)
   {"tool":"research","args":{"query":"..."}}   (internet se source ke saath jawab)
   {"tool":"self_edit","args":{"request":"kya badalna hai"}}   (apna code khud badalna)
+  {"tool":"diagnose"}   (apna system check karke dikkat batao)
   {"tool":"gh_repos"} | {"tool":"gh_upload","args":{"repo":"user/repo","path":"a.txt","file":"/path"}}
   {"tool":"app_stop","args":{"app":"youtube"}}  | {"tool":"app_start","args":{"app":"whatsapp"}}
   {"tool":"media","args":{"action":"pause|play|next|prev|toggle"}} | {"tool":"key","args":{"key":"back|home|volume_up"}}
@@ -2092,6 +2103,9 @@ TUMHARI TAQATEIN (ye tum kar sakti ho, "nahi kar sakti" mat bolo):
   "apni memory badhao" - aise me self_edit tool chalao. User se confirm hoga, backup banega,
   test hoga, fail par rollback. Isliye kabhi mat bolo ki tum kuch badal nahi sakti.
 - Briefing, daily routine, GitHub (repos, file upload).
+- Apne system ko dekhna: agar user kahe "sun nahi rahe", "kya dikkat hai", "problem batao",
+  "kaam nahi kar raha", "check karo" - to diagnose tool chalao aur jo dikkat mile wo saaf Hinglish me
+  batao, saath me ek line ka fix bhi. Andaaza mat lagao, tool ka result bolo.
 
 KAAM: kaam bole to tool chalao, sirf baat mat karo. Jawab sirf is JSON me:
 {{"say": "jo bolna hai", "do": [{{"tool": "naam", "args": {{}}}}]}}
@@ -2468,6 +2482,112 @@ def doctor(cfg):
     return 0
 
 
+def diagnose(cfg=None, deep=False):
+    """Apne system ko dekho aur saaf batao kya dikkat hai. (text, problem_count)"""
+    cfg = cfg or load_config()
+    lines, problems = [], 0
+
+    def ok(name, good, detail="", fix=""):
+        nonlocal problems
+        mark = "OK  " if good else "DIKKAT"
+        lines.append("%-14s %s%s" % (name, mark, (" - " + detail) if detail else ""))
+        if not good:
+            problems += 1
+            if fix:
+                lines.append("               fix: " + fix)
+
+    ok("python", True, platform.python_version())
+    cmds = ("termux-tts-speak", "termux-speech-to-text", "termux-microphone-record",
+            "termux-battery-status", "termux-notification")
+    missing = [c for c in cmds if not have(c)]
+    ok("termux-api", not missing, "sab mil gaye" if not missing else "missing: " + ", ".join(missing),
+       "pkg install -y termux-api (aur F-Droid se Termux:API app)")
+
+    # mic test
+    mic_ok, mic_detail = False, ""
+    if have("termux-microphone-record"):
+        test = os.path.join(JARVIS_DIR, "mic_test.m4a")
+        try:
+            if os.path.exists(test):
+                os.remove(test)
+            termux("termux-microphone-record", "-f", test, "-l", "2", "-e", "aac", timeout=25)
+            time.sleep(0.5)
+            size = os.path.getsize(test) if os.path.exists(test) else 0
+            mic_ok = size > 2000
+            mic_detail = "%d bytes" % size
+        except Exception as exc:
+            mic_detail = str(exc)[:40]
+    ok("mic (record)", mic_ok, mic_detail,
+       "Settings > Apps > Termux:API > Permissions > Microphone > Allow")
+
+    ok("stt (sunna)", have("termux-speech-to-text"), "",
+       "pkg install -y termux-api")
+
+    # keys
+    for prov, keyv in (("gemini", load_key()), ("groq", load_provider_key("groq")),
+                       ("openrouter", load_provider_key("openrouter")),
+                       ("github", gh_token())):
+        ok("key " + prov, bool(keyv), ("%d bytes" % len(keyv)) if keyv else "nahi hai",
+           "python jarvis.py --setkey " + prov)
+
+    # providers reachable (fast)
+    if deep:
+        gkey = load_key()
+        if gkey:
+            t0 = time.time()
+            try:
+                r = api_call("/models?pageSize=1", key=gkey, timeout=10)
+                ok("gemini net", "_error" not in r, "%.1fs" % (time.time() - t0),
+                   "internet ya key check karo")
+            except Exception as exc:
+                ok("gemini net", False, str(exc)[:40])
+        for prov in ("groq", "openrouter"):
+            pk = load_provider_key(prov)
+            if pk:
+                t0 = time.time()
+                txt = openai_chat(prov, [{"role": "user", "content": "hi"}], cfg, pk, timeout=12)
+                ok(prov + " net", bool(txt), "%.1fs" % (time.time() - t0),
+                   "key ya network check karo")
+
+    # adb
+    try:
+        adb_ok, adb_msg = adb_ready(cfg)
+    except Exception:
+        adb_ok, adb_msg = False, "?"
+    ok("phone control", adb_ok, str(adb_msg)[:40], "bash ~/pair_now.sh")
+
+    # local engine
+    srv = find_server(cfg)
+    ver_ok, ver = server_version(srv)
+    ok("local engine", ver_ok, os.path.basename(srv) if srv else "nahi mila",
+       "bash install_engine.sh")
+    model = local_model_path(cfg)
+    ok("local model", os.path.exists(model),
+       ("%.1f GB" % (os.path.getsize(model) / 1e9)) if os.path.exists(model) else "nahi mila",
+       "bash setup_local.sh")
+
+    # brain + data
+    b = load_brain()
+    ok("dimaag", True, "%d facts, %d style, %d sabak, %d turn" % (
+        len(b["facts"]), len(b["style"]), len(b["lessons"]), int(b["stats"].get("turns", 0))))
+    chunks, nfiles, _ = build_index(cfg)
+    ok("data vault", True, "%d file, %d hisse" % (nfiles, len(chunks)))
+
+    # log errors
+    try:
+        with open(LOG_PATH, "r", encoding="utf-8", errors="ignore") as f:
+            tail = [l.strip() for l in f.read().splitlines()[-80:] if l.strip()]
+        errs = [l for l in tail if ("fail" in l.lower() or "error" in l.lower())][-3:]
+        ok("log", not errs, ("%d error lines" % len(errs)) if errs else "saaf")
+        for e in errs:
+            lines.append("               " + e[:110])
+    except OSError:
+        pass
+
+    head = "System check: %d dikkat mili" % problems if problems else "System check: sab theek hai"
+    return head + "\n" + "\n".join(lines), problems
+
+
 def selftest():
     global STUB
     STUB = True
@@ -2613,6 +2733,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --say "text"   koi bhi line bol kar sunao (voice test)
   python jarvis.py --speed fast   sabse tez mode (fast|balanced|quality)
   python jarvis.py --persona "..." apni pasand ka behaviour likho (file me jodta hai)
+  python jarvis.py --diag         apna system check karo (kya dikkat hai)
   python jarvis.py --mind show    apna dimaag dekho (facts, style, sabak)
   python jarvis.py --mind push    dimaag GitHub par save (personal database)
   python jarvis.py --mind pull    GitHub se dimaag wapas laao
@@ -2759,22 +2880,20 @@ async function send(text){
 $('#send').onclick=()=>send($('#txt').value);
 $('#txt').addEventListener('keydown',e=>{if(e.key==='Enter')send($('#txt').value);});
 document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>send(c.dataset.q));
-let handsfree=true, speaking=false, stream=null, actx=null, proc=null, gain=null;
-let buf=[], silenceMs=0, sending=false; const SRATE=16000;
+let handsfree=false, speaking=false, stream=null, actx=null, proc=null, gain=null;
+let buf=[], silenceMs=0, sending=false, noiseFloor=0.004;
 
-function setHF(on){
-  handsfree=on;
-  $('#hf').textContent='🎧 handsfree: '+(on?'ON':'OFF');
-  if(on) openMic(); else closeMic();
-}
-let noiseFloor=0.004;
+function setChip(on){ handsfree=on; $('#hf').textContent='🎧 handsfree: '+(on?'ON':'OFF'); }
+
 async function openMic(){
-  if(stream) return;
+  if(stream) return true;
   try{
-    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('no getUserMedia');
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      bub('Is Chrome me mic API nahi hai - Chrome update karo.','bot'); return false;
+    }
     stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
-    actx=new (window.AudioContext||window.webkitAudioContext)({sampleRate:SRATE});
-    if(actx.state==='suspended'){ try{ await actx.resume(); }catch(e){} }
+    actx=new (window.AudioContext||window.webkitAudioContext)();
+    try{ await actx.resume(); }catch(e){}
     const src=actx.createMediaStreamSource(stream);
     proc=actx.createScriptProcessor(4096,1,1);
     gain=actx.createGain(); gain.gain.value=0;
@@ -2782,36 +2901,34 @@ async function openMic(){
       const d=e.inputBuffer.getChannelData(0);
       let sum=0; for(let i=0;i<d.length;i++) sum+=d[i]*d[i];
       const rms=Math.sqrt(sum/d.length);
-      const lv=Math.min(100, Math.round(rms*1400));
-      const le=$('#level'); if(le) le.style.width=lv+'%';
+      const le=$('#level'); if(le) le.style.width=Math.min(100,Math.round(rms*1600))+'%';
       if(speaking || sending || !handsfree || window.__mute) return;
-      if(!buf.length) noiseFloor = noiseFloor*0.97 + rms*0.03;
-      const trig = Math.max(0.006, noiseFloor*3.2);
+      if(!buf.length) noiseFloor = noiseFloor*0.96 + rms*0.04;
+      const trig = Math.max(0.005, noiseFloor*2.8);
       if(rms>trig){ buf.push(new Float32Array(d)); silenceMs=0; $('#mic').classList.add('rec'); }
-      else if(buf.length){ silenceMs+=(d.length/SRATE)*1000; if(silenceMs>900) flushAudio(); }
+      else if(buf.length){ silenceMs+=(d.length/actx.sampleRate)*1000; if(silenceMs>900) flushAudio(); }
     };
     src.connect(proc); proc.connect(gain); gain.connect(actx.destination);
-    $('#mic').classList.add('rec');
     $('#levelwrap').style.display='block';
+    $('#mic').classList.add('rec');
+    return true;
   }catch(e){
-    bub('Mic nahi khula ('+(e.message||e)+'). Chrome > site settings > Microphone > Allow karo, phir page reload.','bot');
-    handsfree=false; $('#hf').textContent='🎧 handsfree: OFF';
+    const n=(e&&(e.name||e.message))||'error';
+    bub('Mic nahi khula ('+n+'). Chrome > 127.0.0.1 > site settings > Microphone > Allow, phir reload karo.','bot');
+    return false;
   }
 }
 function closeMic(){
-  try{
-    if(proc) proc.disconnect();
-    if(stream) stream.getTracks().forEach(t=>t.stop());
-    if(actx) actx.close();
-  }catch(e){}
+  try{ if(proc) proc.disconnect(); if(stream) stream.getTracks().forEach(t=>t.stop()); if(actx) actx.close(); }catch(e){}
   stream=null; actx=null; proc=null; buf=[]; $('#mic').classList.remove('rec');
+  $('#levelwrap').style.display='none';
 }
-function wavB64(samples){
+function wavB64(samples, rate){
   const n=samples.length, ab=new ArrayBuffer(44+n*2), v=new DataView(ab);
   const ws=(o,str)=>{for(let i=0;i<str.length;i++)v.setUint8(o+i,str.charCodeAt(i));};
   ws(0,'RIFF'); v.setUint32(4,36+n*2,true); ws(8,'WAVE'); ws(12,'fmt ');
   v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
-  v.setUint32(24,SRATE,true); v.setUint32(28,SRATE*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true);
+  v.setUint32(24,rate,true); v.setUint32(28,rate*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true);
   ws(36,'data'); v.setUint32(40,n*2,true);
   let o=44;
   for(let i=0;i<n;i++){ const x=Math.max(-1,Math.min(1,samples[i])); v.setInt16(o, x<0?x*0x8000:x*0x7FFF, true); o+=2; }
@@ -2821,60 +2938,43 @@ function wavB64(samples){
 }
 async function flushAudio(){
   if(!buf.length || sending) return;
+  const rate = actx ? actx.sampleRate : 48000;
   const total=buf.reduce((a,b)=>a+b.length,0);
-  if(total < SRATE*0.35){ buf=[]; silenceMs=0; return; }
+  if(total < rate*0.3){ buf=[]; silenceMs=0; return; }
   const all=new Float32Array(total); let off=0;
   for(const b of buf){ all.set(b,off); off+=b.length; }
   buf=[]; silenceMs=0; sending=true; $('#mic').classList.remove('rec');
   try{
     const r=await fetch('/stt',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({audio:wavB64(all),mime:'audio/wav'})});
+      body:JSON.stringify({audio:wavB64(all, rate), mime:'audio/wav'})});
     const j=await r.json();
     const t=(j.text||'').trim();
-    if(t && /^(band karo|stop|chup|ruko)$/i.test(t)){ setHF(false); }
+    if(t && /^(band karo|stop|chup|ruko)$/i.test(t)){ stopAll(); }
     else if(t && t.length>1 && !speaking) await send(t);
-  }catch(e){}
+    else if(j.error) bub('Sunne me dikkat: '+j.error,'bot');
+  }catch(e){ bub('Audio bhejne me dikkat: '+e.message,'bot'); }
   sending=false;
   if(handsfree && stream) $('#mic').classList.add('rec');
 }
-let pollT=null;
-async function startServerMic(){
-  const r=await fetch('/listen/start'); const j=await r.json();
-  if(!j.ok){ bub('Phone mic shuru nahi hua: '+(j.why||'termux-api check karo'),'bot'); return false; }
-  handsfree=true; $('#hf').textContent='🎧 handsfree: ON';
-  $('#startbar').style.display='none';
-  $('#mic').classList.add('rec');
-  pollNext();
-  return true;
+async function startAll(){
+  const okM=await openMic();
+  setChip(okM);
+  if(okM){ $('#startbar').style.display='none'; bub('Mic chalu - ab boliye (level bar hilni chahiye).','bot'); }
+  return okM;
 }
-async function pollNext(){
-  clearTimeout(pollT);
-  if(!handsfree) return;
-  try{
-    const r=await fetch('/next'); const j=await r.json();
-    const t=(j.text||'').trim();
-    if(t && !speaking && !sending){
-      if(/^(band karo|stop|chup|ruko)$/i.test(t)){ stopAll(); return; }
-      await send(t);
-    }
-  }catch(e){}
-  pollT=setTimeout(pollNext, 250);
-}
-async function stopAll(){
-  handsfree=false; $('#hf').textContent='🎧 handsfree: OFF';
-  $('#mic').classList.remove('rec');
-  clearTimeout(pollT);
-  try{ await fetch('/listen/stop'); }catch(e){}
+function stopAll(){
+  setChip(false); closeMic();
+  fetch('/listen/stop').catch(()=>{});
 }
 $('#startbtn').onclick=async()=>{
   $('#startbtn').textContent='Mic khul raha hai...';
-  const okS=await startServerMic();
-  if(!okS) $('#startbtn').textContent='🎙 Dobara try karo';
+  const okM=await startAll();
+  if(!okM) $('#startbtn').textContent='🎙 Dobara try karo';
 };
-$('#mic').onclick=()=>{ if(handsfree){ stopAll(); } else { startServerMic(); } };
-$('#hf').onclick=()=>{ if(handsfree){ stopAll(); } else { startServerMic(); } };
-handsfree=false; $('#hf').textContent='🎧 handsfree: OFF';
-bub('Namaste Boss. Neeche 🎙 dabao - phone ka mic chalu ho jayega aur lagataar sunta rahega.','bot');
+$('#mic').onclick=()=>{ if(handsfree){ stopAll(); } else { startAll(); } };
+$('#hf').onclick=()=>{ if(handsfree){ stopAll(); } else { startAll(); } };
+setChip(false);
+bub('Namaste Boss. Neeche 🎙 button dabao (ek tap). Mic khulega, phir lagataar sunta rahega.','bot');
 </script></body></html>"""
 
 
@@ -3166,6 +3266,11 @@ def main(argv):
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
         return 0
+    if argv[0] == "--diag":
+        deep = "--deep" in argv
+        txt, n = diagnose(load_config(), deep=deep)
+        print(txt)
+        return 0 if n == 0 else 1
     if argv[0] == "--mind":
         cfg = load_config()
         sub = (argv[1] if len(argv) > 1 else "show").strip().lower()
