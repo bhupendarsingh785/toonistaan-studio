@@ -1056,6 +1056,103 @@ def speak(text, cfg, force_gemini=False, emotion=None):
     else:
         phone_speak(text, cfg, emotion)
 
+def adb_mdns_ports():
+    """mDNS se pairing aur connect port khud dhoondho. (pair, connect)"""
+    pair = conn = ""
+    try:
+        ok, out = termux("adb", "mdns", "services", timeout=25)
+        text = out or ""
+        for line in text.splitlines():
+            if "_adb-tls-pairing" in line:
+                pair = line.strip().split()[-1]
+            elif "_adb-tls-connect" in line:
+                conn = line.strip().split()[-1]
+    except Exception:
+        pass
+    return pair, conn
+
+
+def adb_auto(cfg):
+    """ADB pairing jitna automatic ho sake: port khud, code ek baar, phir save."""
+    ok_adb, msg_adb = adb_ready(cfg)
+    if not ok_adb and "install" in str(msg_adb):
+        print("adb install kar raha hoon...")
+        termux("pkg", "install", "-y", "android-tools", timeout=280)
+    pair, conn = adb_mdns_ports()
+    print("mDNS: pairing=%s connect=%s" % (pair or "?", conn or "?"))
+    if not pair:
+        print("\nPhone par: Settings > Developer options > Wireless debugging > "
+              "'Pair device with pairing code' kholo, phir ye dobara chalao.")
+        return False
+    try:
+        code = input("6-ank code (popup se): ").strip()
+    except EOFError:
+        return False
+    if not code:
+        return False
+    ok_p, out_p = termux("adb", "pair", pair, code, timeout=60)
+    print(("pair: " + str(out_p)[:120]))
+    if not conn:
+        _, conn = adb_mdns_ports()
+    if not conn:
+        print("connect port nahi mila - Wireless debugging screen ka port daalo")
+        try:
+            conn = input("connect port (jaise 192.168.1.5:41457): ").strip()
+        except EOFError:
+            return False
+    ok_c, out_c = termux("adb", "connect", conn, timeout=45)
+    print("connect: %s" % str(out_c)[:120])
+    ok_d, out_d = termux("adb", "devices", timeout=25)
+    good = "device" in str(out_d) and "offline" not in str(out_d)
+    if good:
+        cfg["adb_serial"] = conn
+        save_config(cfg)
+        print("\nOK: phone control chalu. Ab 'youtube kholo', 'pause karo' sab chalega.")
+        return True
+    print("\nFAIL: devices -> %s" % str(out_d)[:200])
+    return False
+
+
+def adb_reconnect(cfg):
+    """Boot ke baad / panel start par chup-chaap dobara judo."""
+    serial = str(cfg.get("adb_serial") or "").strip()
+    if not serial:
+        return False, "serial nahi"
+    ok, out = termux("adb", "connect", serial, timeout=25)
+    ok2, out2 = termux("adb", "devices", timeout=20)
+    if "device" in str(out2) and "offline" not in str(out2):
+        return True, "connected %s" % serial
+    return False, str(out)[:80]
+
+
+def t_youtube(a):
+    """YouTube control: kholo, search, play/pause, next, volume."""
+    action = str(a.get("action") or a.get("do") or "open").lower()
+    query = str(a.get("query") or a.get("q") or "").strip()
+    pkg = APP_MAP["youtube"]
+    if action in ("search", "gaana", "video", "chalao", "play_query") and query:
+        url = "https://www.youtube.com/results?search_query=" + urllib.parse.quote(query)
+        ok, out = termux("am", "start", "-a", "android.intent.action.VIEW", "-d", url, timeout=25)
+        if not ok:
+            adb_shell("am start -a android.intent.action.VIEW -d '%s'" % url)
+        return "YouTube par '%s' search khol diya" % query
+    if action in ("open", "kholo", "start"):
+        ok, out = termux("monkey", "-p", pkg, "-c", "android.intent.category.LAUNCHER", "1", timeout=25)
+        if not ok:
+            adb_shell("monkey -p %s 1" % pkg)
+        return "YouTube khol diya"
+    keys = {"pause": "85", "play": "85", "playpause": "85", "next": "87", "prev": "88",
+            "back": "4", "home": "3", "volume_up": "24", "volume_down": "25", "mute": "164",
+            "search": "84"}
+    if action in keys:
+        ok, out = adb_shell("input keyevent %s" % keys[action])
+        return ("YouTube: %s kiya" % action) if ok else "Nahi hua: %s" % out
+    if action == "stop":
+        ok, out = adb_shell("am force-stop %s" % pkg)
+        return "YouTube band kar diya" if ok else "Nahi hua: %s" % out
+    return "Samajh nahi aaya: %s (open/search/pause/next/stop)" % action
+
+
 def adb_serial(cfg):
     if cfg.get("adb_serial"):
         return str(cfg["adb_serial"])
@@ -1879,6 +1976,7 @@ ROUTES = [
       "error kyun", "theek karo apne"), "diagnose"),
     (("kitna data", "kaunsa data", "kaun si file", "kaunsi file", "vault me", "memory me kya",
       "data hai", "kitni file", "files batao"), "vault_info"),
+    (("youtube", "yt"), "youtube"),
     (("collect karo", "internet se laao", "data laao", "download karo", "save karo internet se",
       "seekho", "learn karo"), "collect"),
     (("band karo", "band kar do", "close karo", "kill karo"), "app_stop"),
@@ -2240,6 +2338,7 @@ TOOLS = {
     "diagnose": t_diagnose,
     "vault_info": t_vault_info,
     "collect": t_collect,
+    "youtube": t_youtube,
     "deep_research": t_deep_research,
     "gh_repos": t_gh_repos,
     "gh_upload": t_gh_upload,
@@ -2276,6 +2375,7 @@ TOOL_HELP = """Available tools (JSON me "do" list ke andar):
   {"tool":"diagnose"}   (apna system check karke dikkat batao)
   {"tool":"vault_info"}   (mere paas kitna data hai, kaunsi files)
   {"tool":"collect","args":{"topic":"..."}}   (internet se data laakar vault me save)
+  {"tool":"youtube","args":{"action":"open|search|pause|next|stop","query":"..."}}   (YouTube control)
   {"tool":"deep_research","args":{"topic":"...","build":false}}   (bada research + report)
   {"tool":"gh_repos"} | {"tool":"gh_upload","args":{"repo":"user/repo","path":"a.txt","file":"/path"}}
   {"tool":"app_stop","args":{"app":"youtube"}}  | {"tool":"app_start","args":{"app":"whatsapp"}}
@@ -3492,6 +3592,8 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --update       naya version khud install karo (backup ke saath)
   python jarvis.py --always       hamesha sunne wala mode (wakelock + notification)
   python jarvis.py --serve        browser panel (http://127.0.0.1:8080) - saare tools browser se
+  python jarvis.py --adb-auto     ADB pairing jitna automatic ho sake (port khud)
+  python jarvis.py --adb-connect  purane pairing se dobara judo
   python jarvis.py --adb "command"     poore phone par adb command (setup_adb.sh ke baad)
   python jarvis.py --research "topic"  internet se source ke saath jawab
   python jarvis.py --build "idea"      chhoti app banao (single HTML, browser me khulegi)
@@ -4453,6 +4555,11 @@ def serve(cfg, port=8080):
         except Exception:
             pass
     threading.Thread(target=_warm, daemon=True).start()
+    if cfg.get("adb_serial"):
+        def _adb_bg():
+            ok_a, msg_a = adb_reconnect(cfg)
+            print("  adb: %s" % msg_a)
+        threading.Thread(target=_adb_bg, daemon=True).start()
     if cfg.get("auto_collect", True):
         threading.Thread(target=auto_collect_loop, args=(cfg, key, 10), daemon=True).start()
     print("=" * 52)
@@ -4808,6 +4915,12 @@ def main(argv):
             if a.isdigit():
                 port = int(a)
         return serve(cfg, port)
+    if argv[0] == "--adb-auto":
+        return 0 if adb_auto(load_config()) else 1
+    if argv[0] == "--adb-connect":
+        ok_c, msg_c = adb_reconnect(load_config())
+        print(("OK: " if ok_c else "INFO: ") + msg_c)
+        return 0 if ok_c else 1
     if argv[0] == "--adb":
         cmd = " ".join(argv[1:]).strip()
         if not cmd:
