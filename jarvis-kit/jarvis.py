@@ -2678,6 +2678,10 @@ footer{padding:9px 9px calc(9px + env(safe-area-inset-bottom));background:var(--
 </style></head><body>
 <header><span class="dot"></span><h1>JARVIS</h1><span class="sp"></span><button id="gear">⚙</button></header>
 <div id="chat"></div>
+<div id="startbar" style="padding:10px 12px;background:#12212a;border-top:1px solid #1d3540;display:flex;gap:9px;align-items:center">
+  <button id="startbtn" style="flex:1;padding:13px;border:none;border-radius:12px;background:#37c2c9;color:#04191c;font-weight:700;font-size:15px">🎙 Mic shuru karo (ek tap)</button>
+</div>
+<div id="levelwrap" style="display:none;height:6px;background:#0e1c22"><div id="level" style="height:6px;width:0%;background:#37c2c9;transition:width .08s"></div></div>
 <div class="chips">
   <button class="chip" id="hf">🎧 handsfree: ON</button>
   <button class="chip" data-q="battery kitni hai">battery</button>
@@ -2763,9 +2767,11 @@ function setHF(on){
   $('#hf').textContent='🎧 handsfree: '+(on?'ON':'OFF');
   if(on) openMic(); else closeMic();
 }
+let noiseFloor=0.004;
 async function openMic(){
   if(stream) return;
   try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('no getUserMedia');
     stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
     actx=new (window.AudioContext||window.webkitAudioContext)({sampleRate:SRATE});
     if(actx.state==='suspended'){ try{ await actx.resume(); }catch(e){} }
@@ -2773,17 +2779,22 @@ async function openMic(){
     proc=actx.createScriptProcessor(4096,1,1);
     gain=actx.createGain(); gain.gain.value=0;
     proc.onaudioprocess=e=>{
-      if(speaking || sending || !handsfree || window.__mute) return;
       const d=e.inputBuffer.getChannelData(0);
       let sum=0; for(let i=0;i<d.length;i++) sum+=d[i]*d[i];
       const rms=Math.sqrt(sum/d.length);
-      if(rms>0.013){ buf.push(new Float32Array(d)); silenceMs=0; $('#mic').classList.add('rec'); }
-      else if(buf.length){ silenceMs+=(d.length/SRATE)*1000; if(silenceMs>850) flushAudio(); }
+      const lv=Math.min(100, Math.round(rms*1400));
+      const le=$('#level'); if(le) le.style.width=lv+'%';
+      if(speaking || sending || !handsfree || window.__mute) return;
+      if(!buf.length) noiseFloor = noiseFloor*0.97 + rms*0.03;
+      const trig = Math.max(0.006, noiseFloor*3.2);
+      if(rms>trig){ buf.push(new Float32Array(d)); silenceMs=0; $('#mic').classList.add('rec'); }
+      else if(buf.length){ silenceMs+=(d.length/SRATE)*1000; if(silenceMs>900) flushAudio(); }
     };
     src.connect(proc); proc.connect(gain); gain.connect(actx.destination);
     $('#mic').classList.add('rec');
+    $('#levelwrap').style.display='block';
   }catch(e){
-    bub('Mic permission do: Chrome > site settings > Microphone > Allow','bot');
+    bub('Mic nahi khula ('+(e.message||e)+'). Chrome > site settings > Microphone > Allow karo, phir page reload.','bot');
     handsfree=false; $('#hf').textContent='🎧 handsfree: OFF';
   }
 }
@@ -2826,10 +2837,18 @@ async function flushAudio(){
   sending=false;
   if(handsfree && stream) $('#mic').classList.add('rec');
 }
+$('#startbtn').onclick=async()=>{
+  $('#startbtn').textContent='Mic khul raha hai...';
+  setHF(true);
+  setTimeout(()=>{
+    if(stream){ $('#startbar').style.display='none'; }
+    else { $('#startbtn').textContent='🎙 Dobara try karo'; }
+  }, 1200);
+};
 $('#mic').onclick=()=>{ if(handsfree && stream){ setHF(false); } else { setHF(true); } };
 $('#hf').onclick=()=>setHF(!handsfree);
-setHF(true);
-bub('Namaste Boss. Mic permanent ON hai - jab bolo, sun lungi. (Chrome me ek baar Allow)','bot');
+handsfree=false; $('#hf').textContent='🎧 handsfree: OFF';
+bub('Namaste Boss. Neeche 🎙 button dabao - ek baar mic khulega, phir permanently sun lungi.','bot');
 </script></body></html>"""
 
 
