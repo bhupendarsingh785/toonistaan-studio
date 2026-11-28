@@ -268,6 +268,81 @@ def self_apply(edits, reason="", confirm=True):
     return True, "Code update ho gaya (backup: %s)" % os.path.basename(bak)
 
 
+def groq_transcribe(wav_bytes, key, cfg=None):
+    """Groq Whisper se audio -> text. Free tier, bahut fast. (text, err)"""
+    if not wav_bytes or not key:
+        return "", "audio/key nahi"
+    boundary = "----jarvisboundary7x"
+    parts = []
+    def field(name, value):
+        parts.append(("--%s\r\nContent-Disposition: form-data; name=\"%s\"\r\n\r\n%s\r\n"
+                      % (boundary, name, value)).encode("utf-8"))
+    parts.append(("--%s\r\nContent-Disposition: form-data; name=\"file\"; filename=\"a.wav\"\r\n"
+                  "Content-Type: audio/wav\r\n\r\n" % boundary).encode("utf-8"))
+    parts.append(wav_bytes)
+    parts.append(b"\r\n")
+    field("model", "whisper-large-v3-turbo")
+    field("language", "hi")
+    field("response_format", "json")
+    parts.append(("--%s--\r\n" % boundary).encode("utf-8"))
+    body = b"".join(parts)
+    req = urllib.request.Request("https://api.groq.com/openai/v1/audio/transcriptions",
+                                 data=body, method="POST",
+                                 headers={"Authorization": "Bearer %s" % key,
+                                          "Content-Type": "multipart/form-data; boundary=%s" % boundary,
+                                          "User-Agent": UA})
+    try:
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            data = json.loads(resp.read().decode("utf-8", "ignore"))
+        return (data.get("text") or "").strip(), ""
+    except urllib.error.HTTPError as exc:
+        msg = ""
+        try:
+            msg = exc.read().decode("utf-8", "ignore")[:150]
+        except Exception:
+            pass
+        log("groq stt fail: HTTP %s %s" % (exc.code, msg))
+        return "", "HTTP %s" % exc.code
+    except Exception as exc:
+        log("groq stt fail: %s" % exc)
+        return "", str(exc)[:60]
+
+
+def web_fallback(query, cfg=None):
+    """Koi API na chale to open web se seedha jawab. (text, sources)"""
+    try:
+        hits = ddg_search(query, limit=4) or wiki_search(query) or wiki_search(query, "hi")
+    except Exception as exc:
+        log("web fallback search fail: %s" % exc)
+        hits = []
+    if not hits:
+        return "", []
+    words = [w.lower() for w in _WORD.findall(query or "") if len(w) > 3]
+    junk = ("main page", "create account", "log in", "donate", "random article",
+            "privacy policy", "cookie", "jump to", "navigation", "subscribe",
+            "sign in", "advertisement", "all rights reserved", "retrieved from")
+    pieces, used = [], []
+    for h in hits[:3]:
+        page = fetch_page(h["url"], 8000)
+        if not page:
+            continue
+        sentences = [x.strip() for x in re.split(r"(?<=[.!?])\s+", page)]
+        good = [x for x in sentences
+                if 50 < len(x) < 320 and not any(j in x.lower() for j in junk)]
+        if not good:
+            continue
+        scored = sorted(good, key=lambda x: -sum(1 for w in words if w in x.lower()))
+        take = [x for x in scored[:2] if sum(1 for w in words if w in x.lower()) > 0] or scored[:1]
+        if take:
+            pieces.append(" ".join(take))
+            used.append(h)
+        if len(used) >= 2:
+            break
+    if not pieces:
+        return "", used
+    return " ".join(pieces).strip()[:700], used
+
+
 def ask_text(cfg, key, system, user, max_tokens=1200):
     """Kisi bhi provider se seedha text (JSON edits ke liye)."""
     order = [x.strip() for x in str(cfg.get("providers", "gemini,groq,openrouter")).split(",") if x.strip()]
@@ -2271,6 +2346,14 @@ def ask_remote(cfg, mem, user_part, key, extra=None):
             last_err = "%s: %s" % (prov, exc)
             LAST_PROVIDER["trace"].append((prov, time.time() - t_prov, "fail"))
             log("provider %s fail: %s" % (prov, exc))
+    # aakhri raasta: open web se jawab (koi API nahi)
+    txt, used = web_fallback(text_part)
+    if txt:
+        LAST_PROVIDER["name"] = "web"
+        say = "Internet se mila Boss: " + txt
+        if used:
+            say += " (source: %s)" % used[0]["url"][:80]
+        return {"say": say[:700], "do": []}
     return {"say": "Sabhi brain fail ho gaye (%s). Doctor chalao: python jarvis.py --doctor"
                    % (last_err or "koi provider available nahi"), "do": []}
 
@@ -3005,7 +3088,15 @@ async function pollNext(){
   pollT=setTimeout(pollNext, 300);
 }
 async function startAll(){
-  // 1) phone ka mic (Termux) - free aur unlimited
+  // 1) browser mic + Groq Whisper (fast, free) - prefer
+  const okB=await openMic();
+  if(okB){
+    serverMode=false; setChip(true);
+    $('#startbar').style.display='none';
+    bub('Mic chalu - boliye (level bar hilni chahiye).','bot');
+    return true;
+  }
+  // 2) warna phone ka mic (Termux)
   try{
     const r=await fetch('/listen/start'); const j=await r.json();
     if(j.ok){
@@ -3200,6 +3291,16 @@ def serve(cfg, port=8080):
             elif self.path == "/stt":
                 b64 = str(body.get("audio", ""))
                 mime = str(body.get("mime", "audio/wav"))
+                gkey = load_provider_key("groq")
+                if b64 and gkey:
+                    try:
+                        wav = base64.b64decode(b64)
+                    except Exception:
+                        wav = b""
+                    txt_g, err_g = groq_transcribe(wav, gkey, cfg)
+                    if txt_g:
+                        self._send(200, json.dumps({"text": txt_g, "via": "groq"}))
+                        return
                 if have("termux-speech-to-text"):
                     txt_t = listen_text(int(cfg.get("listen_seconds", 8)))
                     if txt_t:
