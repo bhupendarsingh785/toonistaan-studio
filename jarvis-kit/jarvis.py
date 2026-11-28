@@ -1088,13 +1088,11 @@ def _ask_digits(prompt, min_len=4, max_len=6):
 
 def adb_auto(cfg):
     """ADB pairing: port khud (mDNS) ya poochh kar, code ek baar, phir save."""
-    ok_adb, msg_adb = adb_ready(cfg)
-    if not ok_adb and "install" in str(msg_adb):
-        print("adb install kar raha hoon...")
+    if not have("adb"):
+        print("adb install kar raha hoon (1-2 minute)...")
         termux("pkg", "install", "-y", "android-tools", timeout=280)
-        ok_adb, msg_adb = adb_ready(cfg)
-    if not ok_adb:
-        print("adb nahi mila: %s" % msg_adb)
+    if not have("adb"):
+        print("adb install nahi hua - chalao: pkg install -y android-tools")
         return False
 
     print("\nPhone par: Settings > Developer options > Wireless debugging")
