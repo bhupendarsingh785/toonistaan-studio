@@ -3178,6 +3178,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --mind push    dimaag GitHub par save (personal database)
   python jarvis.py --mind pull    GitHub se dimaag wapas laao
   python jarvis.py --update       naya version khud install karo (backup ke saath)
+  python jarvis.py --always       hamesha sunne wala mode (wakelock + notification)
   python jarvis.py --serve        browser panel (http://127.0.0.1:8080) - saare tools browser se
   python jarvis.py --adb "command"     poore phone par adb command (setup_adb.sh ke baad)
   python jarvis.py --research "topic"  internet se source ke saath jawab
@@ -3589,6 +3590,59 @@ def learn_from_vault(cfg, key, limit=8):
     save_brain(b)
     build_index(cfg, force=True)
     return True, "%d file se seekha (dimaag me ab %d yaadein)" % (done, len(load_brain()["facts"]))
+
+
+def notify(title, body, actions=None):
+    """Lock screen par jawab dikhao."""
+    args = ["termux-notification", "--title", str(title)[:60], "--content", str(body)[:400],
+            "--priority", "high", "--id", "jarvis"]
+    if actions:
+        for label, cmd in actions:
+            args += ["--button1" if label == actions[0][0] else "--button2", label]
+    try:
+        termux(*args, timeout=20)
+    except Exception:
+        pass
+
+
+def daemon_mode(cfg, port=8080):
+    """Hamesha chalta rahe: wakelock + auto-restart + notification se jawab."""
+    key = load_key()
+    mem = load_memory()
+    termux("termux-wake-lock", timeout=15)
+    print("=" * 52)
+    print("  JARVIS ALWAYS-ON mode")
+    print("  Screen on rakhna padega (Android background mic block karta hai)")
+    print("  Band karne ke liye Ctrl+C")
+    print("=" * 52)
+    notify("JARVIS chalu hai", "Bolo 'Jarvis ...' - main sun rahi hoon. Band karne ke liye Termux me Ctrl+C.")
+    fails = 0
+    while True:
+        try:
+            heard = listen_text(int(cfg.get("listen_seconds", 8)))
+            if not heard:
+                fails += 1
+                if fails in (5, 25):
+                    notify("JARVIS: mic band lag raha hai",
+                           "Screen on karo ya Termux kholo. (Android background mic block karta hai)")
+                time.sleep(0.6)
+                continue
+            fails = 0
+            print("  aapne kaha: %s" % heard)
+            say = handle_turn(heard, cfg, mem, key, heard_text=heard, voice=True)
+            if say:
+                notify("JARVIS", say)
+        except KeyboardInterrupt:
+            termux("termux-wake-unlock", timeout=10)
+            print("\nBand kar diya.")
+            return 0
+        except Exception as exc:
+            log("daemon error: %s" % exc)
+            fails += 1
+            time.sleep(2)
+            if fails > 30:
+                notify("JARVIS ruk gaya", "Dobara chalao: bash ~/jarvis/start_always.sh")
+                return 1
 
 
 def serve(cfg, port=8080):
