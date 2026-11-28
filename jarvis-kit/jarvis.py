@@ -82,7 +82,8 @@ DEFAULT_CONFIG = {
     "data_dir": "~/jarvis/data", # aapka data yahan rakho - .txt .md .csv .json .srt .pdf
     "rag_top": 4,                # ek jawab me data ke kitne hisse padhe
     "stt_lang": "hi",            # sunne ki bhasha (hi = Hindi/Hinglish, en = English)
-    "human_touch": True,         # insan jaisa touch (hansi, hmm, saans)
+    "human_touch": True,
+    "pauses": True,               # asli thehraav (saans/soch)         # insan jaisa touch (hansi, hmm, saans)
     "behaviour": {"relation": "boss", "age": "jawan", "place": "ghar", "laugh": True, "backchannel": True},
     "human_touch": True,
     "behaviour": {"relation": "boss", "age": "jawan", "place": "ghar", "laugh": True, "backchannel": True},
@@ -834,7 +835,8 @@ EMOTION = {
 }
 BEHAVIOUR_DEFAULT = {"relation": "boss", "age": "jawan", "place": "ghar",
                      "laugh": True, "backchannel": True}
-LAUGHS = {"khilkhilana": "हीहीही", "thahaka": "हाहाहा", "dheemi": "हीही", "awkward": "हेहे"}
+LAUGHS = {"khilkhilana": "हीहीही…हीही", "thahaka": "हाहाहा…हाहा", "dheemi": "हीही…",
+          "awkward": "हेहे"}
 SIGHS = {"soch": "हम्म…", "thakan": "हाआ…", "hairani": "अरे!"}
 PLACE_STYLE = {"ghar": {"rate": 1.0, "pitch": 1.0}, "bazaar": {"rate": 1.08, "pitch": 1.06},
                "office": {"rate": 1.0, "pitch": 0.98}, "aspataal": {"rate": 0.9, "pitch": 0.96},
@@ -902,6 +904,21 @@ def humanize(text, emotion=None, cfg=None, chance=0.45):
         t = t + " " + SIGHS["soch"]
     t = re.sub(r",\s+", ", … ", t, count=2)
     return re.sub(r"\s{2,}", " ", t).strip()
+
+
+def speak_with_pauses(text, cfg, emotion=None):
+    """File ke hisaab se thehraav: 0.35s saans, 0.7s soch - tukdon me bolna."""
+    parts = [x.strip() for x in re.split(r"…|\|\.\.\.", text or "") if x.strip()]
+    if len(parts) <= 1:
+        return phone_speak(text, cfg, emotion)
+    ok_all = True
+    for i, part in enumerate(parts):
+        ok = phone_speak(part, cfg, emotion)
+        ok_all = ok_all and ok
+        if i < len(parts) - 1:
+            gap = 0.7 if part.rstrip().endswith(("?", "؟")) else 0.35
+            time.sleep(gap)
+    return ok_all
 
 
 def phone_speak(text, cfg, emotion=None):
@@ -1034,7 +1051,10 @@ def speak(text, cfg, force_gemini=False, emotion=None):
             print("  (Gemini voice fail: %s)" % err)
 
     print("\n%s: %s\n" % (cfg.get("name", "Jarvis"), text), flush=True)
-    phone_speak(text, cfg, emotion)
+    if cfg.get("pauses", True):
+        speak_with_pauses(text, cfg, emotion)
+    else:
+        phone_speak(text, cfg, emotion)
 
 def adb_serial(cfg):
     if cfg.get("adb_serial"):
