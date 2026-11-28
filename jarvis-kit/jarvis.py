@@ -259,6 +259,11 @@ def self_apply(edits, reason="", confirm=True):
             pass
         return False, "likhne me dikkat: %s" % exc
     _self_log("applied: %s | %s" % (reason, "; ".join(done)))
+    try:
+        brain_add("lessons", "khud ko badla: %s" % reason[:120])
+        brain_add("skills", "; ".join(done)[:150])
+    except Exception:
+        pass
     return True, "Code update ho gaya (backup: %s)" % os.path.basename(bak)
 
 
@@ -389,6 +394,121 @@ def self_request(request, cfg, key, confirm=True):
         return False, note or "model ne koi badlav nahi diya"
     ok, msg = self_apply(edits, reason=request, confirm=confirm)
     return ok, ("%s | %s" % (note, msg)).strip(" |")
+
+
+BRAIN_PATH = os.path.join(JARVIS_DIR, "brain.json")
+BRAIN_DEFAULT = {"facts": [], "style": [], "lessons": [], "skills": [], "stats": {},
+                 "updated": ""}
+
+
+def load_brain():
+    b = read_json(BRAIN_PATH, BRAIN_DEFAULT)
+    for k in ("facts", "style", "lessons", "skills"):
+        if not isinstance(b.get(k), list):
+            b[k] = []
+    if not isinstance(b.get("stats"), dict):
+        b["stats"] = {}
+    return b
+
+
+def save_brain(b):
+    b["updated"] = datetime.now().strftime("%Y-%m-%d %H:%M")
+    for k in ("facts", "style", "lessons", "skills"):
+        b[k] = b[k][-300:]
+    write_json(BRAIN_PATH, b)
+
+
+def brain_add(kind, text, limit=300):
+    text = str(text).strip()
+    if not text or len(text) < 3:
+        return
+    b = load_brain()
+    lst = b.setdefault(kind, [])
+    if text in lst:
+        lst.remove(text)
+    lst.append(text[:limit])
+    b[kind] = lst[-300:]
+    save_brain(b)
+
+
+def learn_from_turn(user_text, reply, cfg):
+    """Har baat se seekho - rules based, fast (koi API call nahi)."""
+    t = (user_text or "").lower()
+    ut = (user_text or "").strip()
+    got = []
+    for pat in (r"(?:yaad rakho|remember)[:\s]+(.{3,140})",):
+        m = re.search(pat, ut, re.I)
+        if m:
+            got.append(("facts", m.group(1).strip()))
+    for pat in (r"(?:hamesha|always|aage se|future me)[:\s]+(.{4,140})",
+                r"(?:aisa bolo|aise bolo|aise jawab do|tone)[:\s]+(.{4,140})"):
+        m = re.search(pat, ut, re.I)
+        if m:
+            got.append(("style", m.group(1).strip()))
+    m = re.search(r"mera naam ([A-Za-z\u0900-\u097F ]{2,30})", ut, re.I)
+    if m:
+        got.append(("facts", "user ka naam %s hai" % m.group(1).strip()))
+    if any(w in t for w in ("galat", "galti", "wrong")):
+        got.append(("lessons", "user ne bataya galat tha: %s" % ut[:100]))
+    if reply and len(reply) < 400:
+        b = load_brain()
+        b["stats"]["turns"] = int(b["stats"].get("turns", 0)) + 1
+        save_brain(b)
+    for kind, txt in got:
+        brain_add(kind, txt)
+
+
+def brain_summary(cfg, max_chars=700):
+    """Prompt ke liye chhota summary - fast rakhne ke liye."""
+    b = load_brain()
+    parts = []
+    if b["facts"]:
+        parts.append("Yaadein: " + "; ".join(b["facts"][-12:]))
+    if b["style"]:
+        parts.append("Style: " + "; ".join(b["style"][-6:]))
+    if b["lessons"]:
+        parts.append("Sabak: " + "; ".join(b["lessons"][-5:]))
+    if b["skills"]:
+        parts.append("Skills: " + "; ".join(b["skills"][-6:]))
+    txt = "\n".join(parts)
+    return txt[-max_chars:] if len(txt) > max_chars else txt
+
+
+def gh_brain_sync(cfg, direction="push"):
+    """GitHub ko personal database banao: brain.json wahan rakho. (ok, msg)"""
+    tok = gh_token()
+    if not tok:
+        return False, "GitHub token nahi (python jarvis.py --setkey github)"
+    repo = cfg.get("brain_repo") or "bhupendarsingh785/toonistaan-studio"
+    path = cfg.get("brain_path") or "jarvis-kit/brain/brain.json"
+    url = "/repos/%s/contents/%s" % (repo, path)
+    if direction == "pull":
+        data, err = gh_api(url, token=tok)
+        if not data or "content" not in data:
+            return False, "remote brain nahi mila: %s" % (err or "khaali")
+        try:
+            raw = base64.b64decode(data["content"]).decode("utf-8", "ignore")
+            remote = json.loads(raw)
+        except Exception as exc:
+            return False, "remote brain padha nahi: %s" % exc
+        local = load_brain()
+        for k in ("facts", "style", "lessons", "skills"):
+            merged = list(dict.fromkeys((remote.get(k) or []) + (local.get(k) or [])))
+            local[k] = merged[-300:]
+        save_brain(local)
+        return True, "GitHub se brain mila (%d facts, %d sabak)" % (len(local["facts"]), len(local["lessons"]))
+    # push
+    b = load_brain()
+    content = base64.b64encode(json.dumps(b, ensure_ascii=False, indent=1).encode("utf-8")).decode()
+    body = {"message": "brain sync %s" % datetime.now().strftime("%Y-%m-%d %H:%M"), "content": content}
+    data, err = gh_api(url, "GET", None, tok)
+    if data and data.get("sha"):
+        body["sha"] = data["sha"]
+    res, err2 = gh_api(url, "PUT", body, tok)
+    if not res:
+        return False, "push fail: %s" % (err2 or err)
+    return True, "brain GitHub par save (%d facts, %d style, %d sabak)" % (
+        len(b["facts"]), len(b["style"]), len(b["lessons"]))
 
 
 def load_config():
@@ -1982,10 +2102,12 @@ KAAM: kaam bole to tool chalao, sirf baat mat karo. Jawab sirf is JSON me:
 
 {user} ke baare me: {facts}
 Notes: {notes}
+{brain}
 {extra}
 """.format(name=name, user=user, lang=lang, tools=TOOL_HELP,
            facts=("; ".join(facts) if facts else "abhi kuch nahi"),
            notes=("; ".join("%s %s" % (n.get("at", ""), n.get("text", "")) for n in notes) if notes else "koi nahi"),
+           brain=brain_summary(cfg),
            extra=("\nExtra persona:\n" + extra) if extra else "")
 
 
@@ -2232,6 +2354,10 @@ def handle_turn(user_part, cfg, mem, key, heard_text=""):
     trace = LAST_PROVIDER.get("trace") or []
     if len(trace) > 1 or (trace and trace[0][2] != "ok"):
         print("  (%s)" % " -> ".join("%s %.1fs %s" % (p, d, st) for p, d, st in trace))
+    try:
+        learn_from_turn(heard_text or "", say, cfg)
+    except Exception as exc:
+        log("learn fail: %s" % exc)
     mem["history"].append({"role": "user", "text": heard_text or "[voice]"})
     mem["history"].append({"role": "model", "text": say})
     mem["history"] = mem["history"][-40:]
@@ -2481,6 +2607,9 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --say "text"   koi bhi line bol kar sunao (voice test)
   python jarvis.py --speed fast   sabse tez mode (fast|balanced|quality)
   python jarvis.py --persona "..." apni pasand ka behaviour likho (file me jodta hai)
+  python jarvis.py --mind show    apna dimaag dekho (facts, style, sabak)
+  python jarvis.py --mind push    dimaag GitHub par save (personal database)
+  python jarvis.py --mind pull    GitHub se dimaag wapas laao
   python jarvis.py --update       naya version khud install karo (backup ke saath)
   python jarvis.py --serve        browser panel (http://127.0.0.1:8080) - saare tools browser se
   python jarvis.py --adb "command"     poore phone par adb command (setup_adb.sh ke baad)
@@ -2703,6 +2832,21 @@ def serve(cfg, port=8080):
     mem = load_memory()
     lock = threading.Lock()
     QUIET["on"] = True
+    if gh_token():
+        try:
+            ok_b, msg_b = gh_brain_sync(cfg, "pull")
+            print("  brain: %s" % msg_b)
+        except Exception:
+            pass
+    counter = {"n": 0}
+
+    def maybe_push():
+        counter["n"] += 1
+        if counter["n"] % 10 == 0 and gh_token():
+            try:
+                gh_brain_sync(cfg, "push")
+            except Exception:
+                pass
 
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *a):
@@ -2768,6 +2912,7 @@ def serve(cfg, port=8080):
                 try:
                     with lock:
                         say = handle_turn(text, cfg, mem, key, heard_text=text)
+                    maybe_push()
                 except Exception as exc:
                     self._send(200, json.dumps({"error": str(exc)[:200]}))
                     return
@@ -2904,6 +3049,24 @@ def main(argv):
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
         return 0
+    if argv[0] == "--mind":
+        cfg = load_config()
+        sub = (argv[1] if len(argv) > 1 else "show").strip().lower()
+        if sub == "show":
+            b = load_brain()
+            print("Brain: %s" % BRAIN_PATH)
+            print("  turns   : %s" % b["stats"].get("turns", 0))
+            for k in ("facts", "style", "lessons", "skills"):
+                print("  %-8s: %d" % (k, len(b[k])))
+                for x in b[k][-5:]:
+                    print("      - %s" % x[:100])
+            return 0
+        if sub in ("push", "pull"):
+            ok_r, msg = gh_brain_sync(cfg, sub)
+            print(("OK: " if ok_r else "FAIL: ") + msg)
+            return 0 if ok_r else 1
+        print("Use: --mind show | push | pull")
+        return 1
     if argv[0] == "--update":
         url = ("https://raw.githubusercontent.com/bhupendarsingh785/toonistaan-studio/"
                "main/jarvis-kit/jarvis.py")
