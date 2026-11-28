@@ -2837,19 +2837,83 @@ async function flushAudio(){
   sending=false;
   if(handsfree && stream) $('#mic').classList.add('rec');
 }
+let pollT=null;
+async function startServerMic(){
+  const r=await fetch('/listen/start'); const j=await r.json();
+  if(!j.ok){ bub('Phone mic shuru nahi hua: '+(j.why||'termux-api check karo'),'bot'); return false; }
+  handsfree=true; $('#hf').textContent='🎧 handsfree: ON';
+  $('#startbar').style.display='none';
+  $('#mic').classList.add('rec');
+  pollNext();
+  return true;
+}
+async function pollNext(){
+  clearTimeout(pollT);
+  if(!handsfree) return;
+  try{
+    const r=await fetch('/next'); const j=await r.json();
+    const t=(j.text||'').trim();
+    if(t && !speaking && !sending){
+      if(/^(band karo|stop|chup|ruko)$/i.test(t)){ stopAll(); return; }
+      await send(t);
+    }
+  }catch(e){}
+  pollT=setTimeout(pollNext, 250);
+}
+async function stopAll(){
+  handsfree=false; $('#hf').textContent='🎧 handsfree: OFF';
+  $('#mic').classList.remove('rec');
+  clearTimeout(pollT);
+  try{ await fetch('/listen/stop'); }catch(e){}
+}
 $('#startbtn').onclick=async()=>{
   $('#startbtn').textContent='Mic khul raha hai...';
-  setHF(true);
-  setTimeout(()=>{
-    if(stream){ $('#startbar').style.display='none'; }
-    else { $('#startbtn').textContent='🎙 Dobara try karo'; }
-  }, 1200);
+  const okS=await startServerMic();
+  if(!okS) $('#startbtn').textContent='🎙 Dobara try karo';
 };
-$('#mic').onclick=()=>{ if(handsfree && stream){ setHF(false); } else { setHF(true); } };
-$('#hf').onclick=()=>setHF(!handsfree);
+$('#mic').onclick=()=>{ if(handsfree){ stopAll(); } else { startServerMic(); } };
+$('#hf').onclick=()=>{ if(handsfree){ stopAll(); } else { startServerMic(); } };
 handsfree=false; $('#hf').textContent='🎧 handsfree: OFF';
-bub('Namaste Boss. Neeche 🎙 button dabao - ek baar mic khulega, phir permanently sun lungi.','bot');
+bub('Namaste Boss. Neeche 🎙 dabao - phone ka mic chalu ho jayega aur lagataar sunta rahega.','bot');
 </script></body></html>"""
+
+
+LISTEN = {"thread": None, "q": None, "stop": True}
+
+
+def listen_loop(cfg):
+    """Phone ke mic se lagataar sunta rahe (Termux:API), text queue me daalta hai."""
+    import queue as _q
+    LISTEN["q"] = LISTEN.get("q") or _q.Queue()
+    LISTEN["stop"] = False
+    log("listen loop start")
+    while not LISTEN["stop"]:
+        try:
+            txt = listen_text(int(cfg.get("listen_seconds", 8)))
+        except Exception as exc:
+            log("listen fail: %s" % exc)
+            txt = ""
+        if txt:
+            try:
+                LISTEN["q"].put_nowait(txt.strip())
+            except Exception:
+                pass
+        time.sleep(0.2)
+    log("listen loop stop")
+
+
+def listen_start(cfg):
+    if LISTEN["thread"] and LISTEN["thread"].is_alive():
+        return True
+    if not have("termux-speech-to-text"):
+        return False
+    LISTEN["thread"] = threading.Thread(target=listen_loop, args=(cfg,), daemon=True)
+    LISTEN["thread"].start()
+    return True
+
+
+def listen_stop():
+    LISTEN["stop"] = True
 
 
 def serve(cfg, port=8080):
@@ -2905,6 +2969,21 @@ def serve(cfg, port=8080):
                     self.wfile.write(data)
                 except Exception:
                     pass
+            elif path == "/listen/start":
+                ok_l = listen_start(cfg)
+                self._send(200, json.dumps({"ok": ok_l,
+                                            "why": "" if ok_l else "termux-api (termux-speech-to-text) nahi mila"}))
+            elif path == "/listen/stop":
+                listen_stop()
+                self._send(200, json.dumps({"ok": True}))
+            elif path == "/next":
+                got = ""
+                try:
+                    if LISTEN.get("q"):
+                        got = LISTEN["q"].get(timeout=1.2)
+                except Exception:
+                    got = ""
+                self._send(200, json.dumps({"text": got}))
             elif path == "/ping":
                 self._send(200, json.dumps({"ok": True, "chain": cfg.get("providers"),
                                             "voice": cfg.get("gemini_voice") if cfg.get("tts") != "phone" else "phone"}))
