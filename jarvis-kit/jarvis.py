@@ -557,6 +557,36 @@ def learn_from_turn(user_text, reply, cfg):
         brain_add(kind, txt)
 
 
+def vault_summary(cfg, max_files=25):
+    """Vault me kya hai - chhota summary prompt aur jawab ke liye."""
+    try:
+        chunks, nfiles, _cached = build_index(cfg)
+    except Exception:
+        return "Vault padha nahi ja saka"
+    if not nfiles:
+        return "Vault khaali hai (koi data nahi)"
+    names = []
+    for c in chunks:
+        n = c.get("file", "")
+        if n and n not in names:
+            names.append(n)
+    extra = len(names) - max_files
+    txt = "Vault: %d file, %d hisse. Files: %s" % (
+        nfiles, len(chunks), ", ".join(names[:max_files]))
+    if extra > 0:
+        txt += " ... (+%d aur)" % extra
+    return txt
+
+
+def t_vault_info(a):
+    cfg = load_config()
+    b = load_brain()
+    parts = [vault_summary(cfg, max_files=40)]
+    parts.append("Dimaag: %d yaadein, %d style, %d sabak, %d turn" % (
+        len(b["facts"]), len(b["style"]), len(b["lessons"]), int(b["stats"].get("turns", 0))))
+    return " | ".join(parts)
+
+
 def brain_summary(cfg, max_chars=700):
     """Prompt ke liye chhota summary - fast rakhne ke liye."""
     b = load_brain()
@@ -1675,6 +1705,8 @@ ROUTES = [
     (("research karo", "search karo", "internet se dekho", "khoj karo", "google karo"), "research"),
     (("dikkat", "problem", "kya gadbad", "check karo", "diagnose", "sun nahi", "kaam nahi kar",
       "error kyun", "theek karo apne"), "diagnose"),
+    (("kitna data", "kaunsa data", "kaun si file", "kaunsi file", "vault me", "memory me kya",
+      "data hai", "kitni file", "files batao"), "vault_info"),
     (("band karo", "band kar do", "close karo", "kill karo"), "app_stop"),
     (("pause karo", "rok do", "play karo", "next gaana", "pichhla gaana"), "media"),
     (("wifi", "internet kaisa"), "wifi"),
@@ -2014,6 +2046,7 @@ TOOLS = {
     "research": t_research,
     "self_edit": t_self_edit,
     "diagnose": t_diagnose,
+    "vault_info": t_vault_info,
     "gh_repos": t_gh_repos,
     "gh_upload": t_gh_upload,
     "app_stop": t_app_stop,
@@ -2047,6 +2080,7 @@ TOOL_HELP = """Available tools (JSON me "do" list ke andar):
   {"tool":"research","args":{"query":"..."}}   (internet se source ke saath jawab)
   {"tool":"self_edit","args":{"request":"kya badalna hai"}}   (apna code khud badalna)
   {"tool":"diagnose"}   (apna system check karke dikkat batao)
+  {"tool":"vault_info"}   (mere paas kitna data hai, kaunsi files)
   {"tool":"gh_repos"} | {"tool":"gh_upload","args":{"repo":"user/repo","path":"a.txt","file":"/path"}}
   {"tool":"app_stop","args":{"app":"youtube"}}  | {"tool":"app_start","args":{"app":"whatsapp"}}
   {"tool":"media","args":{"action":"pause|play|next|prev|toggle"}} | {"tool":"key","args":{"key":"back|home|volume_up"}}
@@ -2335,12 +2369,14 @@ KAAM: kaam bole to tool chalao, sirf baat mat karo. Jawab sirf is JSON me:
 {user} ke baare me: {facts}
 Notes: {notes}
 {brain}
+{vault}
 {mode}
 {extra}
 """.format(name=name, user=user, lang=lang, tools=TOOL_HELP,
            facts=("; ".join(facts) if facts else "abhi kuch nahi"),
            notes=("; ".join("%s %s" % (n.get("at", ""), n.get("text", "")) for n in notes) if notes else "koi nahi"),
            brain=brain_summary(cfg),
+           vault=("AAPKA DATA: " + vault_summary(cfg, 12)),
            mode=("AAPKI AWAAZ HAI: aap jo 'say' likhti ho wo phone TTS ya Gemini voice se bol kar sunaya jata hai. "
                  "Kabhi mat kaho ki 'main text hoon', 'awaaz nahi de sakti' ya 'awaaz ka code nahi hai' - "
                  "aap bol sakti ho. Phone ke hardware tools (battery, torch, app) bhi aapke paas hain. "
