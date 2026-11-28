@@ -2010,6 +2010,15 @@ def t_self_edit(a):
     return ("Code update ho gaya: " if ok_r else "Nahi ho paya: ") + msg
 
 
+def t_deep_research(a):
+    topic = str(a.get("topic") or a.get("query") or a.get("text") or "").strip()
+    if not topic:
+        return "Kis topic par research karna hai?"
+    cfg = load_config()
+    ok_d, msg = deep_research(topic, cfg, load_key(), build=bool(a.get("build")))
+    return ("Ho gaya: " if ok_d else "Nahi hua: ") + msg
+
+
 def t_collect(a):
     topic = str(a.get("topic") or a.get("query") or a.get("text") or "").strip()
     if not topic:
@@ -2061,6 +2070,7 @@ TOOLS = {
     "diagnose": t_diagnose,
     "vault_info": t_vault_info,
     "collect": t_collect,
+    "deep_research": t_deep_research,
     "gh_repos": t_gh_repos,
     "gh_upload": t_gh_upload,
     "app_stop": t_app_stop,
@@ -2096,6 +2106,7 @@ TOOL_HELP = """Available tools (JSON me "do" list ke andar):
   {"tool":"diagnose"}   (apna system check karke dikkat batao)
   {"tool":"vault_info"}   (mere paas kitna data hai, kaunsi files)
   {"tool":"collect","args":{"topic":"..."}}   (internet se data laakar vault me save)
+  {"tool":"deep_research","args":{"topic":"...","build":false}}   (bada research + report)
   {"tool":"gh_repos"} | {"tool":"gh_upload","args":{"repo":"user/repo","path":"a.txt","file":"/path"}}
   {"tool":"app_stop","args":{"app":"youtube"}}  | {"tool":"app_start","args":{"app":"whatsapp"}}
   {"tool":"media","args":{"action":"pause|play|next|prev|toggle"}} | {"tool":"key","args":{"key":"back|home|volume_up"}}
@@ -3287,6 +3298,8 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --persona "..." apni pasand ka behaviour likho (file me jodta hai)
   python jarvis.py --import-all /sdcard/Download   poore folder ka data vault me
   python jarvis.py --vault-clean  duplicate file hatao aur index saaf karo
+  python jarvis.py --deep "topic" [--project] [--include] [--push]
+                                  bada research: report + project + apne andar tool + GitHub
   python jarvis.py --collect "topic"   internet se data laakar vault me daalo
   python jarvis.py --auto-collect  jo kami hai wo khud web se laao
   python jarvis.py --queue "topic"  seekhne ke liye topic queue me daalo
@@ -3834,6 +3847,202 @@ def auto_collect_loop(cfg, key, every_min=10):
         time.sleep(max(120, every_min * 60))
 
 
+RESEARCH_DIR_NAME = "research"
+
+
+def projects_dir():
+    d = os.path.join(os.path.expanduser("~/jarvis"), "projects")
+    os.makedirs(d, exist_ok=True)
+    return d
+
+
+def make_project(topic, cfg, key, report, slug=None):
+    """Research se poora project banao: app + README + spec. (path, files, msg)"""
+    slug = slug or (re.sub(r"[^a-zA-Z0-9]+", "-", (topic or "").lower()).strip("-")[:40] or "project")
+    pdir = os.path.join(projects_dir(), slug)
+    os.makedirs(pdir, exist_ok=True)
+    spec = ask_text(cfg, key, "Tum ek senior product engineer ho.",
+                    "Is research se ek chhota par advanced product spec banao Hinglish me: "
+                    "problem, solution, features (5), tech stack, 4 steps me build plan, "
+                    "aur kaise test karenge. Sirf spec, koi bhashan nahi.\n\nTOPIC: %s\nREPORT:\n%s"
+                    % (topic, report[:2500]), max_tokens=800)
+    html = ask_text(cfg, key, "Tum ek senior frontend engineer ho.",
+                    "Ek single HTML file banao (inline CSS + JS, mobile-first, dark theme, clean UI) "
+                    "jo is idea ka working demo ho. Sirf HTML code do, koi explanation nahi.\n\n"
+                    "IDEA: %s\n\nSPEC:\n%s" % (topic, (spec or "")[:1500]), max_tokens=2600)
+    html = re.sub(r"^```[a-zA-Z]*", "", (html or "").strip())
+    html = re.sub(r"```$", "", html).strip()
+    files = {}
+    files["SPEC.md"] = "# %s - Spec\n\n%s\n" % (topic, (spec or "spec nahi bana").strip())
+    files["README.md"] = ("# %s\n\n%s\n\n## Kaise chalao\n\n1. `index.html` ko Chrome me kholo\n"
+                          "2. Ya Termux me: `python -m http.server 8080` phir 127.0.0.1:8080\n\n"
+                          "## Research\n\n%s\n" % (topic, (spec or "")[:300], report[:1200]))
+    if "<html" in html.lower():
+        files["index.html"] = html
+    written = []
+    for name, content in files.items():
+        try:
+            with open(os.path.join(pdir, name), "w", encoding="utf-8") as f:
+                f.write(content)
+            written.append(name)
+        except OSError:
+            pass
+    if "index.html" in written:
+        try:
+            termux("termux-open-url", "file://" + os.path.join(pdir, "index.html"), timeout=15)
+        except Exception:
+            pass
+    return pdir, written, "%d file bani: %s" % (len(written), ", ".join(written))
+
+
+def push_project(pdir, repo=None, path_prefix="jarvis-kit/projects"):
+    """Project ko GitHub par daalo (personal database). (ok, msg)"""
+    tok = gh_token()
+    if not tok:
+        return False, "GitHub token nahi"
+    repo = repo or "bhupendarsingh785/toonistaan-studio"
+    slug = os.path.basename(pdir.rstrip("/"))
+    ok_n, fail_n = 0, 0
+    for name in sorted(os.listdir(pdir)):
+        fp = os.path.join(pdir, name)
+        if not os.path.isfile(fp) or os.path.getsize(fp) > 900000:
+            continue
+        try:
+            with open(fp, "rb") as f:
+                content = base64.b64encode(f.read()).decode()
+        except OSError:
+            continue
+        url = "/repos/%s/contents/%s/%s/%s" % (repo, path_prefix, slug, name)
+        body = {"message": "project: %s/%s" % (slug, name), "content": content}
+        cur, _e = gh_api(url, "GET", None, tok)
+        if cur and cur.get("sha"):
+            body["sha"] = cur["sha"]
+        res, _e2 = gh_api(url, "PUT", body, tok)
+        if res:
+            ok_n += 1
+        else:
+            fail_n += 1
+    if ok_n:
+        return True, "%d file GitHub par %s/%s/%s" % (ok_n, repo, path_prefix, slug)
+    return False, "push fail (%d)" % fail_n
+
+
+def include_in_self(topic, report, cfg, key, confirm=True):
+    """Research se apne andar naya capability add karo (self-edit)."""
+    lines = [x.strip() for x in (report or "").splitlines() if len(x.strip()) > 20][:8]
+    req = ("Is research ke aadhar par mujhme ek naya chhota tool add karo jo user ke liye useful ho. "
+           "Tool ka naam angrezi, kaam saaf, aur args simple rakho. "
+           "Topic: %s. Research ke mukhya point: %s" % (topic[:80], " | ".join(lines)[:900]))
+    return self_request(req, cfg, key, confirm=confirm)
+
+
+def deep_research(topic, cfg, key, build=False, sub_n=4, verbose=True,
+                  project=False, include=False, push=False):
+    """Bada research: sub-questions -> sources -> gaps -> report -> (optional) prototype."""
+    topic = (topic or "").strip()
+    if len(topic) < 4:
+        return False, "topic chhota hai"
+    slug = re.sub(r"[^a-zA-Z0-9]+", "-", topic.lower()).strip("-")[:50] or "topic"
+    rdir = os.path.join(data_dir(cfg), RESEARCH_DIR_NAME)
+    os.makedirs(rdir, exist_ok=True)
+
+    # 1) plan
+    plan_q = ("Is topic par research ke liye %d sharp sub-questions banao jo aaj ke samay me "
+              "sabse zaroori hain. Har line me ek sawaal, koi bhoomika nahi. Topic: %s"
+              % (sub_n, topic))
+    raw_q = ask_text(cfg, key, "Tum ek research planner ho.", plan_q, max_tokens=300)
+    questions = [re.sub(r"^[-*\d. )]+", "", x).strip()
+                 for x in (raw_q or "").splitlines() if len(x.strip()) > 12][:sub_n]
+    if not questions:
+        questions = [topic]
+    if verbose:
+        print("  plan: %d sawaal" % len(questions))
+        for q in questions:
+            print("    - %s" % q[:90])
+
+    # 2) sources
+    all_sources, digest = [], []
+    for i, q in enumerate(questions, 1):
+        if verbose:
+            print("  [%d/%d] %s" % (i, len(questions), q[:70]))
+        try:
+            ok_c, msg = collect_topic(q, cfg, key, n=2)
+        except Exception as exc:
+            ok_c, msg = False, str(exc)[:60]
+        if ok_c:
+            digest.append("Q: %s\nSources: %s" % (q, msg))
+            all_sources.append(msg)
+        else:
+            digest.append("Q: %s\nSources: nahi mile (%s)" % (q, msg))
+
+    # 3) synthesis
+    syn_prompt = ("In research notes ke aadhar par ek saaf report banao Hinglish me:\n"
+                  "1) Abhi kya exist karta hai (facts, sources ke saath)\n"
+                  "2) Kya abhi tak nahi bana / gap kahan hai\n"
+                  "3) Is gap ko bharne ke 3 practical idea (kaise banega, kya chahiye)\n"
+                  "4) Aage kya research karna chahiye\n"
+                  "Jo notes me nahi hai wo mat banao.\n\nTOPIC: %s\n\nNOTES:\n%s"
+                  % (topic, "\n\n".join(digest)[:6000]))
+    report = ask_text(cfg, key, "Tum ek senior research analyst ho.", syn_prompt, max_tokens=1200)
+    report = (report or "").strip()
+    if not report:
+        return False, "report nahi ban payi (provider fail?)"
+
+    stamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+    fname = os.path.join(rdir, "%s-report.md" % slug)
+    try:
+        with open(fname, "w", encoding="utf-8") as f:
+            f.write("# %s\n\nDate: %s\n\n## Sub-questions\n%s\n\n## Report\n%s\n\n## Sources\n%s\n"
+                    % (topic, stamp, "\n".join("- " + q for q in questions), report,
+                       "\n".join("- " + x for x in all_sources)))
+    except OSError as exc:
+        return False, "report save nahi hui: %s" % exc
+
+    # 4) brain
+    for line in [x.strip(" -*•") for x in report.splitlines() if len(x.strip()) > 25][:5]:
+        brain_add("facts", "[research:%s] %s" % (slug[:20], line[:140]))
+    brain_add("skills", "deep research: %s" % topic[:80])
+    build_index(cfg, force=True)
+
+    out = "Report ban gayi: %s (%d sources)" % (os.path.basename(fname), len(all_sources))
+
+    if project:
+        pdir, files, pmsg = make_project(topic, cfg, key, report, slug)
+        out += " | PROJECT: %s (%s)" % (pdir, pmsg)
+        if push:
+            ok_p, pmsg2 = push_project(pdir)
+            out += " | " + pmsg2
+    if include:
+        ok_i, imsg = include_in_self(topic, report, cfg, key)
+        out += " | APNE ANDAR: " + (imsg if ok_i else "nahi joda (%s)" % imsg)
+
+    # 5) prototype (optional)
+    if build:
+        proto_prompt = ("Is research ke aadhar par ek chhota working prototype banao - ek single HTML file "
+                        "jisme inline CSS aur JS ho, mobile par chale, aur idea ko demo kare. "
+                        "Sirf poora HTML code do, koi explanation nahi.\n\nIDEA: %s\n\nREPORT:\n%s"
+                        % (topic, report[:3000]))
+        code = ask_text(cfg, key, "Tum ek senior product engineer ho.", proto_prompt, max_tokens=2500)
+        code = (code or "").strip()
+        code = re.sub(r"^```[a-zA-Z]*", "", code).strip()
+        code = re.sub(r"```$", "", code).strip()
+        if code and "<html" in code.lower():
+            pdir = os.path.join(os.path.expanduser("~/jarvis"), "projects")
+            os.makedirs(pdir, exist_ok=True)
+            ppath = os.path.join(pdir, "%s.html" % slug)
+            try:
+                with open(ppath, "w", encoding="utf-8") as f:
+                    f.write(code)
+                termux("termux-open-url", "file://" + ppath, timeout=15)
+                out += " | prototype: ~/jarvis/projects/%s.html" % slug
+                brain_add("skills", "prototype banaya: %s" % topic[:60])
+            except OSError as exc:
+                out += " | prototype save fail: %s" % exc
+        else:
+            out += " | prototype nahi bana"
+    return True, out
+
+
 def serve(cfg, port=8080):
     """Browser control panel - Termux ke saare tools browser se chalte hain."""
     from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -4134,6 +4343,21 @@ def main(argv):
         q = read_json(QUEUE_PATH, [])
         print("Queue me abhi %d topic baaki" % (len(q) if isinstance(q, list) else 0))
         return 0
+    if argv[0] == "--deep":
+        cfg = load_config()
+        flags = [a for a in argv[1:] if a.startswith("--")]
+        topic = " ".join(a for a in argv[1:] if not a.startswith("--")).strip()
+        if not topic:
+            print("Use: python jarvis.py --deep \"topic\" [--build]")
+            return 1
+        print("Deep research: %s\n" % topic)
+        ok_d, msg = deep_research(topic, cfg, load_key(),
+                                  build="--build" in flags,
+                                  project=("--project" in flags) or ("--build" in flags),
+                                  include="--include" in flags,
+                                  push="--push" in flags)
+        print(("\nOK: " if ok_d else "\nFAIL: ") + msg)
+        return 0 if ok_d else 1
     if argv[0] == "--collect":
         cfg = load_config()
         topic = " ".join(argv[1:]).strip()
