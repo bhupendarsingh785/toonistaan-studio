@@ -1,10 +1,15 @@
 {
- "facts": [],
- "style": [],
+ "facts": [
+  "mera channel SWAG hai",
+  "mujhe Bhupendar bulaya karo"
+ ],
+ "style": [
+  "hamesha chhoti line me jawab do"
+ ],
  "lessons": [],
  "skills": [],
  "stats": {
-  "turns": 10
+  "turns": 14
  },
- "updated": "2026-11-28 11:46"
+ "updated": "2026-11-28 13:09"
 }
