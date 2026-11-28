@@ -2481,6 +2481,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --say "text"   koi bhi line bol kar sunao (voice test)
   python jarvis.py --speed fast   sabse tez mode (fast|balanced|quality)
   python jarvis.py --persona "..." apni pasand ka behaviour likho (file me jodta hai)
+  python jarvis.py --update       naya version khud install karo (backup ke saath)
   python jarvis.py --serve        browser panel (http://127.0.0.1:8080) - saare tools browser se
   python jarvis.py --adb "command"     poore phone par adb command (setup_adb.sh ke baad)
   python jarvis.py --research "topic"  internet se source ke saath jawab
@@ -2816,6 +2817,35 @@ def main(argv):
         except OSError:
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
+        return 0
+    if argv[0] == "--update":
+        url = ("https://raw.githubusercontent.com/bhupendarsingh785/toonistaan-studio/"
+               "main/jarvis-kit/jarvis.py")
+        print("Naya version laa raha hoon...")
+        try:
+            new = http_get(url, timeout=45)
+        except Exception as exc:
+            print("Download fail: %s" % exc)
+            return 1
+        if "def main(argv)" not in new or len(new) < 50000:
+            print("Download adhoora laga - kuch nahi badla")
+            return 1
+        bak = self_backup()
+        try:
+            with open(SELF_PATH, "w", encoding="utf-8") as f:
+                f.write(new)
+            ok_r, msg = self_verify()
+        except OSError as exc:
+            ok_r, msg = False, str(exc)
+        if not ok_r:
+            try:
+                shutil.copyfile(bak, SELF_PATH)
+            except OSError:
+                pass
+            print("Naya version fail hua (%s) - purana wapas" % msg)
+            return 1
+        print("Update ho gaya (%d bytes). Backup: %s" % (len(new), os.path.basename(bak)))
+        print("Ab chalao: python jarvis.py --serve")
         return 0
     if argv[0] in ("--serve", "--web"):
         cfg = load_config()
