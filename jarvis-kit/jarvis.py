@@ -60,7 +60,7 @@ DEFAULT_CONFIG = {
     "listen_seconds": 8,
     "voice_lang": "hi-IN",
     "tts": "gemini",             # gemini (emotional) | phone (robotic, fast) | auto
-    "tts_style": "sweet, warm and clear female voice. Speak Hindi/Hinglish with correct, crisp pronunciation and a gentle smile in the voice. Natural emotion and small pauses at commas, moderate speed, never flat or robotic. Every word should be clearly understandable.",
+    "tts_style": "a real human woman speaking naturally, not a text-to-speech engine. Sweet, warm, clear Hindi/Hinglish pronunciation with slight breath, natural intonation and a soft smile in the voice. Speak Hindi/Hinglish with correct, crisp pronunciation and a gentle smile in the voice. Natural emotion and small pauses at commas, moderate speed, never flat or robotic. Every word should be clearly understandable.",
     "gemini_voice": "Kore",      # Kore, Aoede, Leda, Zephyr (female-ish)
     "tts_model": "gemini-2.5-flash-preview-tts",
     "voice_pitch": 1.15,         # phone TTS ki awaaz thodi patli (ladki jaisi)
@@ -2542,6 +2542,7 @@ footer{padding:9px 9px calc(9px + env(safe-area-inset-bottom));background:var(--
 <header><span class="dot"></span><h1>JARVIS</h1><span class="sp"></span><button id="gear">⚙</button></header>
 <div id="chat"></div>
 <div class="chips">
+  <button class="chip" id="hf">🎧 handsfree: ON</button>
   <button class="chip" data-q="battery kitni hai">battery</button>
   <button class="chip" data-q="aaj kya karna chahiye">aaj ka plan</button>
   <button class="chip" data-q="torch on karo">torch</button>
@@ -2577,17 +2578,29 @@ ping();
 $('#gear').onclick=()=>{$('#sht').classList.add('on');ping();};
 $('#ok').onclick=()=>$('#sht').classList.remove('on');
 function say(text){
-  if(spk){spk.pause();spk=null;}
+  speaking=true; stopRec();
+  if(spk){try{spk.pause();}catch(e){} spk=null;}
+  const done=()=>{ speaking=false; restartSoon(500); };
   fetch('/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})})
    .then(r=>r.json()).then(j=>{
-     if(j.audio){const a=new Audio('data:audio/wav;base64,'+j.audio);spk=a;a.play().catch(()=>fallback(text));}
-     else fallback(text);
+     if(j.audio){
+       const a=new Audio('data:audio/wav;base64,'+j.audio); spk=a;
+       a.onended=done; a.onerror=()=>{fallback(text);};
+       a.play().catch(()=>fallback(text));
+     } else fallback(text);
    }).catch(()=>fallback(text));
 }
 function fallback(text){
-  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);
-    const vs=speechSynthesis.getVoices()||[];const hi=vs.find(v=>/hi[-_]IN/i.test(v.lang));
-    if(hi)u.voice=hi;u.lang=hi?hi.lang:'hi-IN';u.pitch=1.15;u.rate=1.0;speechSynthesis.speak(u);}catch(e){}
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    const vs=speechSynthesis.getVoices()||[];
+    const hi=vs.find(v=>/hi[-_]IN/i.test(v.lang) && /female|google/i.test(v.name)) || vs.find(v=>/hi[-_]IN/i.test(v.lang));
+    if(hi)u.voice=hi;
+    u.lang=hi?hi.lang:'hi-IN'; u.pitch=1.2; u.rate=0.98;
+    u.onend=()=>{ speaking=false; restartSoon(500); };
+    speaking=true; speechSynthesis.speak(u);
+  }catch(e){ speaking=false; restartSoon(800); }
 }
 async function send(text){
   text=(text||'').trim(); if(!text||busy)return; busy=true;
@@ -2605,24 +2618,48 @@ async function send(text){
 $('#send').onclick=()=>send($('#txt').value);
 $('#txt').addEventListener('keydown',e=>{if(e.key==='Enter')send($('#txt').value);});
 document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>send(c.dataset.q));
-const SR=window.SpeechRecognition||window.webkitSpeechRecognition; let rec=null;
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let rec=null, handsfree=true, speaking=false, restartT=null;
+
+function setHF(on){
+  handsfree=on;
+  $('#hf').textContent='🎧 handsfree: '+(on?'ON':'OFF');
+  if(on){ if(!speaking) startRec(); } else { stopRec(); }
+}
+function stopRec(){ clearTimeout(restartT); try{ if(rec){rec.onend=null; rec.stop();} }catch(e){} rec=null; $('#mic').classList.remove('rec'); }
+function restartSoon(ms){ clearTimeout(restartT); restartT=setTimeout(()=>{ if(handsfree && !speaking) startRec(); }, ms||700); }
+
+function startRec(){
+  if(!SR || rec || speaking || busy) return;
+  try{
+    rec=new SR(); rec.lang='hi-IN'; rec.interimResults=true; rec.continuous=false; rec.maxAlternatives=1;
+    rec.onstart=()=>{$('#mic').classList.add('rec');};
+    rec.onerror=e=>{$('#mic').classList.remove('rec');rec=null;
+      if(e.error==='not-allowed'){bub('Mic ki permission do (Chrome me site settings).','bot');return;}
+      if(e.error!=='no-speech' && e.error!=='aborted') bub('Mic: '+e.error,'bot');
+      restartSoon(1200);};
+    rec.onend=()=>{$('#mic').classList.remove('rec'); rec=null; restartSoon();};
+    rec.onresult=ev=>{
+      let txt='', fin=false;
+      for(let i=ev.resultIndex;i<ev.results.length;i++){
+        txt+=ev.results[i][0].transcript; if(ev.results[i].isFinal) fin=true;
+      }
+      txt=txt.trim();
+      if(!txt) return;
+      if(/^(band karo|stop|chup|ruko)$/i.test(txt)){ setHF(false); return; }
+      if(fin){ stopRec(); send(txt); }
+    };
+    rec.start();
+  }catch(e){ rec=null; }
+}
+
 $('#mic').onclick=()=>{
   if(!SR){bub('Is browser me mic support nahi - Chrome use karo.','bot');return;}
-  if(rec){rec.stop();return;}
-  rec=new SR(); rec.lang='hi-IN'; rec.interimResults=false;
-  rec.onstart=()=>$('#mic').classList.add('rec');
-  rec.onend=()=>{$('#mic').classList.remove('rec');rec=null;};
-  rec.onerror=e=>{$('#mic').classList.remove('rec');rec=null;bub('Mic error: '+e.error,'bot');};
-  rec.onresult=ev=>send(ev.results[0][0].transcript);
-  rec.start();
+  if(rec){ stopRec(); } else { speaking=false; startRec(); }
 };
-$('#apply').onclick=async()=>{
-  $('#pend').classList.remove('on'); bub('badlav laga rahi hoon...','bot','think');
-  const r=await fetch('/apply',{method:'POST'}); const j=await r.json();
-  bub((j.ok?'Ho gaya: ':'Nahi hua: ')+(j.say||''),'bot'); say(j.say||'');
-};
-$('#cancel').onclick=()=>{$('#pend').classList.remove('on');fetch('/cancel',{method:'POST'});bub('Cancel kar diya.','bot');};
-bub('Namaste Boss. Boliye ya likhiye.','bot');
+$('#hf').onclick=()=>setHF(!handsfree);
+setHF(true);
+bub('Namaste Boss. Boliye - main sun rahi hoon. (handsfree ON)','bot');
 </script></body></html>"""
 
 
