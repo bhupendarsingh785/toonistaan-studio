@@ -1254,10 +1254,24 @@ def adb_serial(cfg):
     return ""
 
 
+def rish_path():
+    """rish kahan hai - PATH, ~/.local/bin, /sdcard/Download sab dekho."""
+    for p in (os.path.expanduser("~/.local/bin/rish"),
+              os.path.expanduser("~/rish"),
+              "/sdcard/Download/rish",
+              "/data/data/com.termux/files/usr/bin/rish"):
+        if os.path.exists(p):
+            return p
+    return "rish" if have("rish") else ""
+
+
 def rish_shell(cmd, timeout=30):
     """Shizuku ka shell (rish) - ADB pairing ke bina bhi app control."""
+    path = rish_path()
+    if not path:
+        return False, "rish nahi mila (Shizuku > Use Shizuku in terminal apps > download rish)"
     try:
-        ok, out = termux("rish", "-c", cmd, timeout=timeout)
+        ok, out = termux(path, "-c", cmd, timeout=timeout)
         return bool(ok), str(out or "")[:400]
     except Exception as exc:
         return False, str(exc)[:120]
@@ -1280,7 +1294,7 @@ def adb_shell(cmd, cfg=None, timeout=25):
 
 
 def shizuku_ready():
-    if not have("rish"):
+    if not rish_path():
         return False
     ok, out = rish_shell("echo jarvis_shizuku_ok")
     return ok and "jarvis_shizuku_ok" in str(out)
@@ -3687,7 +3701,10 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --vault-clean  duplicate file hatao aur index saaf karo
   python jarvis.py --deep "topic" [--project] [--include] [--push]
                                   bada research: report + project + apne andar tool + GitHub
-  python jarvis.py --collect "topic"   internet se data laakar vault me daalo
+  python jarvis.py --collect-plan "domain"   bahar ke 20 naye research topics banao
+  python jarvis.py --topics [a,b,c]    topic list dekho / apne topic daalo
+  python jarvis.py --bulk 5            list se 5 topic ka web data laao (resumable)
+  python jarvis.py --collect "topic"   ek topic ka data laakar vault me daalo
   python jarvis.py --auto-collect  jo kami hai wo khud web se laao
   python jarvis.py --queue "topic"  seekhne ke liye topic queue me daalo
   python jarvis.py --queue-clean   queue se bakwaas topics hatao
@@ -4480,6 +4497,65 @@ def deep_research(topic, cfg, key, build=False, sub_n=4, verbose=True,
     return True, out
 
 
+TOPICS_PATH = os.path.join(JARVIS_DIR, "topics.json")
+
+
+def topics_load():
+    data = read_json(TOPICS_PATH, {"topics": [], "done": []})
+    if not isinstance(data, dict):
+        data = {"topics": [], "done": []}
+    data.setdefault("topics", [])
+    data.setdefault("done", [])
+    return data
+
+
+def topics_save(data):
+    write_json(TOPICS_PATH, data)
+
+
+def topics_plan(domain, cfg, key, n=20):
+    """Ek domain se naye research topics banao (bahar ki duniya ke liye)."""
+    prompt = ("Is domain par %d research topics banao jo aaj duniya me sabse zaroori hain. "
+              "Har topic ek line, angrezi me, search karne layak (jaise 'Hindi speech emotion datasets 2026'). "
+              "Sirf list, koi bhoomika nahi.\n\nDOMAIN: %s" % (n, domain))
+    raw = ask_text(cfg, key, "Tum ek research director ho.", prompt, max_tokens=700)
+    topics = [re.sub(r"^[-*\d. )]+", "", x).strip()
+              for x in (raw or "").splitlines() if len(x.strip()) > 12][:n]
+    data = topics_load()
+    existing = {t.lower() for t in data["topics"]}
+    added = [t for t in topics if t.lower() not in existing]
+    data["topics"].extend(added)
+    topics_save(data)
+    return added
+
+
+def bulk_collect(cfg, key, limit=5, per_topic=2, verbose=True):
+    """Topic list se ek-ek karke web data laao. (done, msg)"""
+    data = topics_load()
+    pending = [t for t in data["topics"] if t not in data["done"]]
+    if not pending:
+        return 0, "topic list khaali hai (pehle --collect-plan ya --topics)"
+    todo = pending[:limit]
+    if verbose:
+        print("  %d topic pending, %d abhi laa rahi hoon (har ek ~10-20 sec)" % (len(pending), len(todo)))
+    done = 0
+    for i, topic in enumerate(todo, 1):
+        if verbose:
+            print("  [%d/%d] %s ..." % (i, len(todo), topic[:70]), end="", flush=True)
+        ok_c, msg = collect_topic(topic, cfg, key, n=per_topic)
+        if ok_c:
+            done += 1
+            data["done"].append(topic)
+            topics_save(data)
+            if verbose:
+                print(" ok")
+        elif verbose:
+            print(" skip (%s)" % str(msg)[:50])
+        time.sleep(1.5)
+    chunks, nfiles, _c = build_index(cfg, force=True)
+    return done, "%d topic ka data aaya. Vault: %d file, %d hisse" % (done, nfiles, len(chunks))
+
+
 def serve(cfg, port=8080):
     """Browser control panel - Termux ke saare tools browser se chalte hain."""
     from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -4764,6 +4840,43 @@ def main(argv):
         except OSError:
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
+        return 0
+    if argv[0] == "--collect-plan":
+        cfg = load_config()
+        domain = " ".join(argv[1:]).strip()
+        if not domain:
+            print("Use: python jarvis.py --collect-plan \"voice AI, Hindi speech\"")
+            return 1
+        added = topics_plan(domain, cfg, load_key(), 20)
+        print("%d naye topic bane:" % len(added))
+        for t in added:
+            print("  - " + t[:90])
+        print("\nAb: python jarvis.py --bulk 5")
+        return 0
+    if argv[0] == "--topics":
+        cfg = load_config()
+        words = " ".join(argv[1:]).strip()
+        if not words:
+            d = topics_load()
+            print("Topics: %d | done: %d" % (len(d["topics"]), len(d["done"])))
+            for t in d["topics"][-20:]:
+                print(("  [x] " if t in d["done"] else "  [ ] ") + t[:85])
+            return 0
+        d = topics_load()
+        for t in [x.strip() for x in words.split(",") if x.strip()]:
+            if t.lower() not in {y.lower() for y in d["topics"]}:
+                d["topics"].append(t)
+        topics_save(d)
+        print("Topics ab: %d" % len(d["topics"]))
+        return 0
+    if argv[0] == "--bulk":
+        cfg = load_config()
+        n = 5
+        for a in argv[1:]:
+            if a.isdigit():
+                n = int(a)
+        done, msg = bulk_collect(cfg, load_key(), limit=n)
+        print(("OK: " if done else "INFO: ") + msg)
         return 0
     if argv[0] == "--queue-clean":
         q = read_json(QUEUE_PATH, [])
