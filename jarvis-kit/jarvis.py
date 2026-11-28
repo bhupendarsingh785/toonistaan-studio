@@ -1254,6 +1254,15 @@ def adb_serial(cfg):
     return ""
 
 
+def rish_shell(cmd, timeout=30):
+    """Shizuku ka shell (rish) - ADB pairing ke bina bhi app control."""
+    try:
+        ok, out = termux("rish", "-c", cmd, timeout=timeout)
+        return bool(ok), str(out or "")[:400]
+    except Exception as exc:
+        return False, str(exc)[:120]
+
+
 def adb_shell(cmd, cfg=None, timeout=25):
     """ADB ke through phone me shell command. (ok, output)"""
     cfg = cfg or load_config()
@@ -1263,7 +1272,18 @@ def adb_shell(cmd, cfg=None, timeout=25):
     if not serial:
         return False, "adb device connected nahi hai - bash setup_adb.sh"
     ok, out = termux("adb", "-s", serial, "shell", cmd, timeout=timeout)
+    if not ok and have("rish"):
+        ok2, out2 = rish_shell(cmd, timeout=timeout)
+        if ok2:
+            return True, out2
     return ok, out
+
+
+def shizuku_ready():
+    if not have("rish"):
+        return False
+    ok, out = rish_shell("echo jarvis_shizuku_ok")
+    return ok and "jarvis_shizuku_ok" in str(out)
 
 
 def adb_ready(cfg=None):
@@ -3466,7 +3486,10 @@ def diagnose(cfg=None, deep=False):
         adb_ok, adb_msg = adb_ready(cfg)
     except Exception:
         adb_ok, adb_msg = False, "?"
-    ok("phone control", adb_ok, str(adb_msg)[:40], "bash ~/pair_now.sh")
+    shz = shizuku_ready()
+    ok("phone control", adb_ok or shz,
+       ("ADB" if adb_ok else ("Shizuku (rish)" if shz else str(adb_msg)[:40])),
+       "Shizuku app se start karo (adb se aasan), ya bash ~/pair_now.sh")
 
     # local engine
     srv = find_server(cfg)
