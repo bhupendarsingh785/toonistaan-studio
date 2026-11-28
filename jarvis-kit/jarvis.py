@@ -31,6 +31,7 @@ import re
 import shutil
 import subprocess
 import sys
+import threading
 import time
 import urllib.error
 import urllib.parse
@@ -89,6 +90,7 @@ DEFAULT_CONFIG = {
 # ----------------------------------------------------------------------------
 
 STUB = False  # --selftest ke liye
+QUIET = {"on": False}   # --serve mode me terminal audio band
 
 
 def ensure_dirs():
@@ -547,6 +549,9 @@ def speak(text, cfg, force_gemini=False):
     """Text aur awaaz saath me: Gemini voice pehle banata hai, phir dono ek saath."""
     text = strip_markdown(text)
     if not text:
+        return
+    if QUIET["on"]:
+        print("  %s: %s" % (cfg.get("name", "Jarvis"), text))
         return
     mode = str(cfg.get("tts", "auto"))
     key = load_key()
@@ -2374,6 +2379,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --say "text"   koi bhi line bol kar sunao (voice test)
   python jarvis.py --speed fast   sabse tez mode (fast|balanced|quality)
   python jarvis.py --persona "..." apni pasand ka behaviour likho (file me jodta hai)
+  python jarvis.py --serve        browser panel (http://127.0.0.1:8080) - saare tools browser se
   python jarvis.py --adb "command"     poore phone par adb command (setup_adb.sh ke baad)
   python jarvis.py --research "topic"  internet se source ke saath jawab
   python jarvis.py --build "idea"      chhoti app banao (single HTML, browser me khulegi)
@@ -2386,6 +2392,218 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --import <path>  file/folder/zip vault me daalo (data.txt, notes.zip...)
   python jarvis.py --version
 """
+
+
+WEB_PAGE = """<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1416"><title>JARVIS</title>
+<style>
+:root{--bg:#0b1416;--pnl:#12212a;--acc:#37c2c9;--txt:#e8f4f6;--dim:#7fa0a8;--usr:#1b3a44}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,Roboto,sans-serif;height:100dvh;display:flex;flex-direction:column}
+header{display:flex;gap:9px;align-items:center;padding:11px 13px;background:var(--pnl);border-bottom:1px solid #1d3540}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)}
+header h1{font-size:15px;margin:0;font-weight:600;letter-spacing:.4px}
+header .sp{flex:1}
+header button{background:transparent;border:1px solid #2a4a55;color:var(--dim);border-radius:8px;padding:6px 10px;font-size:12px}
+#chat{flex:1;overflow-y:auto;padding:13px 11px;display:flex;flex-direction:column;gap:9px}
+.msg{max-width:86%;padding:10px 13px;border-radius:14px;font-size:14.5px;line-height:1.45;white-space:pre-wrap;word-wrap:break-word}
+.me{align-self:flex-end;background:var(--usr);border-bottom-right-radius:4px}
+.bot{align-self:flex-start;background:var(--pnl);border:1px solid #1d3540;border-bottom-left-radius:4px}
+.bot.think{color:var(--dim);font-style:italic}
+.time{font-size:10.5px;color:var(--dim);margin:1px 6px}
+footer{padding:9px 9px calc(9px + env(safe-area-inset-bottom));background:var(--pnl);border-top:1px solid #1d3540;display:flex;gap:7px;align-items:center}
+#txt{flex:1;background:#0e1c22;border:1px solid #24414c;color:var(--txt);border-radius:22px;padding:12px 15px;font-size:15px;outline:none}
+#mic,#send{width:47px;height:47px;border-radius:50%;border:none;display:grid;place-items:center;font-size:19px}
+#mic{background:#1b3a44;color:var(--acc)}
+#mic.rec{background:#c0392b;color:#fff;animation:pl 1.1s infinite}
+@keyframes pl{0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,.6)}50%{box-shadow:0 0 0 12px rgba(192,57,43,0)}}
+#send{background:var(--acc);color:#04191c}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:7px 10px 0;background:var(--pnl)}
+.chip{flex:0 0 auto;font-size:12px;padding:7px 11px;border-radius:15px;background:#16303a;color:var(--acc);border:1px solid #22414c}
+#sht{position:fixed;inset:0;background:rgba(3,10,12,.9);display:none;z-index:9;padding:16px;overflow-y:auto}
+#sht.on{display:block}
+.card{background:var(--pnl);border:1px solid #22414c;border-radius:14px;padding:15px;max-width:520px;margin:0 auto;font-size:13px;line-height:1.6}
+.card h2{margin:0 0 10px;font-size:15px;color:var(--acc)}
+.card code{background:#0e1c22;padding:1px 5px;border-radius:4px;font-size:12px}
+.card button{margin-top:12px;width:100%;padding:11px;border-radius:10px;border:none;background:var(--acc);color:#04191c;font-weight:600}
+</style></head><body>
+<header><span class="dot"></span><h1>JARVIS</h1><span class="sp"></span><button id="gear">⚙</button></header>
+<div id="chat"></div>
+<div class="chips">
+  <button class="chip" data-q="battery kitni hai">battery</button>
+  <button class="chip" data-q="aaj kya karna chahiye">aaj ka plan</button>
+  <button class="chip" data-q="torch on karo">torch</button>
+  <button class="chip" data-q="screen par kya hai">screen</button>
+  <button class="chip" data-q="research karo aaj ka gold rate">research</button>
+</div>
+<footer>
+  <button id="mic">🎙</button>
+  <input id="txt" placeholder="Likhо ya mic dabao..." autocomplete="off">
+  <button id="send">➤</button>
+</footer>
+<div id="sht"><div class="card">
+  <h2>Setup</h2>
+  Ye page aapke phone me chal rahe JARVIS se juda hai (<code>Termux</code> me <code>python jarvis.py --serve</code>).
+  <br><br>
+  Brain: <b id="chain">?</b><br>Awaaz: <b id="voice">?</b><br>Server: <b id="srv">checking...</b>
+  <br><br>
+  Kuch badalna ho to Termux me karo (<code>--config</code>, <code>--speed</code>, <code>--voices</code>), phir ye page refresh karo.
+  <br><br>
+  Chrome menu → <b>Add to Home screen</b> → ek tap me app.
+  <button id="ok">Theek hai</button>
+</div></div>
+<script>
+const $=s=>document.querySelector(s); let busy=false, spk=null;
+function bub(t,w,c){const d=document.createElement('div');d.className='msg '+w+(c?' '+c:'');d.textContent=t;
+ $('#chat').appendChild(d);$('#chat').scrollTop=$('#chat').scrollHeight;return d;}
+function tm(s){const d=document.createElement('div');d.className='time';d.textContent=s+'s';$('#chat').appendChild(d);}
+async function ping(){try{const r=await fetch('/ping');const j=await r.json();
+ $('#chain').textContent=j.chain||'?';$('#voice').textContent=j.voice||'phone';$('#srv').textContent='OK';}catch(e){$('#srv').textContent='band';}}
+ping();
+$('#gear').onclick=()=>{$('#sht').classList.add('on');ping();};
+$('#ok').onclick=()=>$('#sht').classList.remove('on');
+function say(text){
+  if(spk){spk.pause();spk=null;}
+  fetch('/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})})
+   .then(r=>r.json()).then(j=>{
+     if(j.audio){const a=new Audio('data:audio/wav;base64,'+j.audio);spk=a;a.play().catch(()=>fallback(text));}
+     else fallback(text);
+   }).catch(()=>fallback(text));
+}
+function fallback(text){
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);
+    const vs=speechSynthesis.getVoices()||[];const hi=vs.find(v=>/hi[-_]IN/i.test(v.lang));
+    if(hi)u.voice=hi;u.lang=hi?hi.lang:'hi-IN';u.pitch=1.15;u.rate=1.0;speechSynthesis.speak(u);}catch(e){}
+}
+async function send(text){
+  text=(text||'').trim(); if(!text||busy)return; busy=true;
+  bub(text,'me'); $('#txt').value='';
+  const th=bub('soch rahi hoon...','bot','think'); const t0=Date.now();
+  try{
+    const r=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
+    const j=await r.json(); th.remove();
+    if(j.say){bub(j.say,'bot'); tm(((Date.now()-t0)/1000).toFixed(1)+' · '+(j.provider||'?')); say(j.say);}
+    else bub('Dikkat: '+(j.error||'jawab nahi mila'),'bot');
+  }catch(e){th.remove();bub('Server se baat nahi hui. Termux me --serve chal raha hai?','bot');}
+  busy=false;
+}
+$('#send').onclick=()=>send($('#txt').value);
+$('#txt').addEventListener('keydown',e=>{if(e.key==='Enter')send($('#txt').value);});
+document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>send(c.dataset.q));
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition; let rec=null;
+$('#mic').onclick=()=>{
+  if(!SR){bub('Is browser me mic support nahi - Chrome use karo.','bot');return;}
+  if(rec){rec.stop();return;}
+  rec=new SR(); rec.lang='hi-IN'; rec.interimResults=false;
+  rec.onstart=()=>$('#mic').classList.add('rec');
+  rec.onend=()=>{$('#mic').classList.remove('rec');rec=null;};
+  rec.onerror=e=>{$('#mic').classList.remove('rec');rec=null;bub('Mic error: '+e.error,'bot');};
+  rec.onresult=ev=>send(ev.results[0][0].transcript);
+  rec.start();
+};
+bub('Namaste Boss. Boliye ya likhiye.','bot');
+</script></body></html>"""
+
+
+def serve(cfg, port=8080):
+    """Browser control panel - Termux ke saare tools browser se chalte hain."""
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+    key = load_key()
+    mem = load_memory()
+    lock = threading.Lock()
+    QUIET["on"] = True
+
+    class Handler(BaseHTTPRequestHandler):
+        def log_message(self, *a):
+            pass
+
+        def _send(self, code, body, ctype="application/json; charset=utf-8"):
+            data = body if isinstance(body, bytes) else str(body).encode("utf-8")
+            self.send_response(code)
+            self.send_header("Content-Type", ctype)
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            try:
+                self.wfile.write(data)
+            except Exception:
+                pass
+
+        def do_GET(self):
+            path = self.path.split("?")[0]
+            if path in ("/", "/index.html"):
+                self._send(200, WEB_PAGE, "text/html; charset=utf-8")
+            elif path == "/ping":
+                self._send(200, json.dumps({"ok": True, "chain": cfg.get("providers"),
+                                            "voice": cfg.get("gemini_voice") if cfg.get("tts") != "phone" else "phone"}))
+            else:
+                self._send(404, json.dumps({"error": "not found"}))
+
+        def do_POST(self):
+            try:
+                n = int(self.headers.get("Content-Length", 0) or 0)
+                body = json.loads(self.rfile.read(n) or b"{}")
+            except Exception:
+                self._send(400, json.dumps({"error": "bad json"}))
+                return
+            if self.path == "/chat":
+                text = str(body.get("text", "")).strip()
+                if not text:
+                    self._send(400, json.dumps({"error": "khaali"}))
+                    return
+                t0 = time.time()
+                try:
+                    with lock:
+                        say = handle_turn(text, cfg, mem, key, heard_text=text)
+                except Exception as exc:
+                    self._send(200, json.dumps({"error": str(exc)[:200]}))
+                    return
+                self._send(200, json.dumps({"say": say, "provider": LAST_PROVIDER.get("name", ""),
+                                            "seconds": round(time.time() - t0, 1)}))
+            elif self.path == "/tts":
+                text = strip_markdown(str(body.get("text", "")).strip())
+                if not text or not key or cfg.get("tts") == "phone":
+                    self._send(200, json.dumps({"error": "phone voice"}))
+                    return
+                path, err = gemini_tts(text, cfg, key)
+                if not path:
+                    self._send(200, json.dumps({"error": err or "tts fail"}))
+                    return
+                try:
+                    with open(path, "rb") as f:
+                        b64 = base64.b64encode(f.read()).decode("ascii")
+                except OSError:
+                    self._send(200, json.dumps({"error": "file"}))
+                    return
+                self._send(200, json.dumps({"audio": b64}))
+            else:
+                self._send(404, json.dumps({"error": "not found"}))
+
+    try:
+        httpd = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    except OSError as exc:
+        print("Port %d busy hai: %s" % (port, exc))
+        return 1
+    print("=" * 52)
+    print("  JARVIS browser panel chalu hai")
+    print("  Chrome me kholo:  http://127.0.0.1:%d" % port)
+    print("  Chain: %s | voice: %s" % (cfg.get("providers"), cfg.get("tts")))
+    print("  Band karne ke liye Ctrl+C")
+    print("=" * 52)
+    try:
+        termux("termux-open-url", "http://127.0.0.1:%d" % port, timeout=15)
+    except Exception:
+        pass
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print("\nBand kar diya.")
+    finally:
+        httpd.server_close()
+        QUIET["on"] = False
+        save_memory(mem)
+    return 0
 
 
 def main(argv):
@@ -2458,6 +2676,13 @@ def main(argv):
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
         return 0
+    if argv[0] in ("--serve", "--web"):
+        cfg = load_config()
+        port = 8080
+        for a in argv[1:]:
+            if a.isdigit():
+                port = int(a)
+        return serve(cfg, port)
     if argv[0] == "--adb":
         cmd = " ".join(argv[1:]).strip()
         if not cmd:
