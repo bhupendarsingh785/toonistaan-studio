@@ -2642,9 +2642,11 @@ def handle_turn(user_part, cfg, mem, key, heard_text="", voice=False):
     if not isinstance(actions, list):
         actions = []
 
+    done_lines = []
     if actions:
         if say:
             speak(say, cfg)
+        print("\n  [KAAM SHURU] %d kaam..." % min(len(actions), 4))
         results = []
         for act in actions[:4]:
             if not isinstance(act, dict):
@@ -2653,14 +2655,27 @@ def handle_turn(user_part, cfg, mem, key, heard_text="", voice=False):
             args = act.get("args") or {}
             if not isinstance(args, dict):
                 args = {}
-            results.append("%s -> %s" % (name, run_tool(name, args, cfg)))
-        result_text = "Tool results (real, just executed):\n" + "\n".join(results)
+            t_one = time.time()
+            try:
+                res = run_tool(name, args, cfg)
+            except Exception as exc:
+                res = "fail: %s" % exc
+            results.append("%s -> %s" % (name, res))
+            done_lines.append("%s: %s" % (name, strip_markdown(str(res)).replace("\n", " ")[:100]))
+            print("    [%d/%d] %s (%.1fs)" % (len(done_lines), min(len(actions), 4), name, time.time() - t_one))
+        result_text = ("Tool results (real, just executed):\n" + "\n".join(results)
+                       + "\n\nAb user ko ek chhoti line me batao ki kaam POORA ho gaya aur kya hua.")
         final = ask_model(cfg, mem, user_part, key, extra=result_text)
         final_say = strip_markdown(str(final.get("say", "")))
         if final_say:
             say = final_say
-            if cfg.get("speak_actions", True):
-                speak(final_say, cfg)
+        if done_lines:
+            done_txt = "Kaam poora Boss: " + "; ".join(done_lines[:4])
+            print("\n  [KAAM POORA] " + done_txt[:300])
+            if "poora" not in (say or "").lower() and "ho gaya" not in (say or "").lower():
+                say = ((say + " ") if say else "") + done_txt
+        if cfg.get("speak_actions", True) and say:
+            speak(say, cfg)
     elif say:
         speak(say, cfg)
 
