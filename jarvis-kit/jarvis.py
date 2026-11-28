@@ -29,6 +29,7 @@ import hashlib
 import json
 import os
 import platform
+import random
 import re
 import shutil
 import subprocess
@@ -81,6 +82,10 @@ DEFAULT_CONFIG = {
     "data_dir": "~/jarvis/data", # aapka data yahan rakho - .txt .md .csv .json .srt .pdf
     "rag_top": 4,                # ek jawab me data ke kitne hisse padhe
     "stt_lang": "hi",            # sunne ki bhasha (hi = Hindi/Hinglish, en = English)
+    "human_touch": True,         # insan jaisa touch (hansi, hmm, saans)
+    "behaviour": {"relation": "boss", "age": "jawan", "place": "ghar", "laugh": True, "backchannel": True},
+    "human_touch": True,
+    "behaviour": {"relation": "boss", "age": "jawan", "place": "ghar", "laugh": True, "backchannel": True},
     "auto_collect": True,        # jawab na mile to khud web se data laaye
     "wake_word": "jarvis",       # sirf is shabd ke saath jawab de (khaali = har baat)
     "auto_loop": False,          # True = Enter dabane ki zarurat nahi, lagataar sunta rahe
@@ -762,11 +767,151 @@ def record_audio(seconds):
         return b""
 
 
-def phone_speak(text, cfg):
+# ---------------------------------------------------------------- Hindi uchcharan
+HINDI_WORDS = {
+    "battery": "बैटरी", "charge": "चार्ज", "charging": "चार्जिंग", "phone": "फ़ोन",
+    "jarvis": "जार्विस", "boss": "बॉस", "torch": "टॉर्च", "wifi": "वाई-फ़ाई",
+    "internet": "इंटरनेट", "message": "मैसेज", "photo": "फ़ोटो", "camera": "कैमरा",
+    "screen": "स्क्रीन", "volume": "वॉल्यूम", "time": "टाइम", "date": "तारीख़",
+    "today": "आज", "tomorrow": "कल", "please": "प्लीज़", "sorry": "सॉरी",
+    "ok": "ठीक", "okay": "ठीक", "yes": "हाँ", "no": "नहीं", "hello": "हैलो",
+    "note": "नोट", "notes": "नोट्स", "app": "ऐप", "update": "अपडेट",
+    "system": "सिस्टम", "data": "डेटा", "file": "फ़ाइल", "call": "कॉल",
+}
+HINDI_NUMS = ("शून्य एक दो तीन चार पाँच छह सात आठ नौ दस ग्यारह बारह तेरह चौदह पंद्रह "
+              "सोलह सत्रह अठारह उन्नीस बीस इक्कीस बाईस तेईस चौबीस पच्चीस छब्बीस सत्ताईस "
+              "अट्ठाईस उनतीस तीस इकतीस बत्तीस तैंतीस चौंतीस पैंतीस छत्तीस सैंतीस अड़तीस "
+              "उनतालीस चालीस इकतालीस बयालीस तैंतालीस चवालीस पैंतालीस छियालीस सैंतालीस "
+              "अड़तालीस उनचास पचास इक्यावन बावन तिरपन चौवन पचपन छप्पन सत्तावन अट्ठावन "
+              "उनसठ साठ इकसठ बासठ तिरसठ चौंसठ पैंसठ छियासठ सड़सठ अड़सठ उनहत्तर सत्तर "
+              "इकहत्तर बहत्तर तिहत्तर चौहत्तर पचहत्तर छिहत्तर सतहत्तर अठहत्तर उन्नासी अस्सी "
+              "इक्यासी बयासी तिरासी चौरासी पचासी छियासी सत्तासी अट्ठासी नवासी नब्बे "
+              "इक्यानवे बानवे तिरानवे चौरानवे पचानवे छियानवे सत्तानवे अट्ठानवे निन्यानवे सौ").split()
+
+
+def number_to_hindi(n):
+    n = int(n)
+    if 0 <= n < len(HINDI_NUMS):
+        return HINDI_NUMS[n]
+    if 100 < n < 1000:
+        h, r = divmod(n, 100)
+        return HINDI_NUMS[h] + " सौ" + ((" " + HINDI_NUMS[r]) if r else "")
+    if n % 100000 == 0 and n < 10000000:
+        return HINDI_NUMS[n // 100000] + " लाख"
+    return str(n)
+
+
+def hindi_speech_text(text):
+    """Phone TTS ke liye: numbers Hindi me, common English shabd Devanagari me."""
+    t = text or ""
+
+    def num_repl(m):
+        try:
+            return number_to_hindi(int(m.group(0)))
+        except Exception:
+            return m.group(0)
+
+    t = re.sub(r"\b(\d{1,5})\b", num_repl, t)
+    t = t.replace("%", " प्रतिशत").replace("&", " और ")
+    out = []
+    for word in re.split(r"(\s+)", t):
+        key = re.sub(r"[^a-zA-Z]", "", word).lower()
+        out.append(HINDI_WORDS.get(key, word))
+    return "".join(out)
+
+
+# ---------------------------------------------------------------- Emotion + behaviour
+EMOTION = {
+    "happy":     {"pitch": 1.22, "rate": 1.06, "style": "khushi bhare, muskuraate hue"},
+    "excited":   {"pitch": 1.28, "rate": 1.12, "style": "bahut excited, energetic"},
+    "calm":      {"pitch": 1.05, "rate": 0.94, "style": "shaant, sukoon bhare"},
+    "sad":       {"pitch": 0.98, "rate": 0.90, "style": "udaasi ke saath, dheeme"},
+    "caring":    {"pitch": 1.12, "rate": 0.95, "style": "pyaar se, apnapan bhare"},
+    "serious":   {"pitch": 1.02, "rate": 0.98, "style": "serious, seedhi baat"},
+    "playful":   {"pitch": 1.25, "rate": 1.05, "style": "mazaak me, halki hansi"},
+    "surprised": {"pitch": 1.30, "rate": 1.05, "style": "hairan, aashcharya bhare"},
+    "neutral":   {"pitch": 1.15, "rate": 1.00, "style": "natural, dost jaisi"},
+}
+BEHAVIOUR_DEFAULT = {"relation": "boss", "age": "jawan", "place": "ghar",
+                     "laugh": True, "backchannel": True}
+LAUGHS = {"khilkhilana": "हीहीही", "thahaka": "हाहाहा", "dheemi": "हीही", "awkward": "हेहे"}
+SIGHS = {"soch": "हम्म…", "thakan": "हाआ…", "hairani": "अरे!"}
+PLACE_STYLE = {"ghar": {"rate": 1.0, "pitch": 1.0}, "bazaar": {"rate": 1.08, "pitch": 1.06},
+               "office": {"rate": 1.0, "pitch": 0.98}, "aspataal": {"rate": 0.9, "pitch": 0.96},
+               "mandir": {"rate": 0.92, "pitch": 0.97}}
+RELATION_STYLE = {"boss": {"address": "Boss", "warmth": 1.0}, "dost": {"address": "", "warmth": 1.25},
+                  "ustaad": {"address": "Sir", "warmth": 0.8}, "maa": {"address": "Maa", "warmth": 1.3},
+                  "ajnabi": {"address": "", "warmth": 0.6}}
+
+
+def pick_emotion(text, cfg=None):
+    t = (text or "").lower()
+    table = (("sad", ("dukh", "udaas", "bura laga", "afsos", "chali gayi")),
+             ("caring", ("aaram", "dhyan", "pyaar", "khayal", "theek ho", "thak")),
+             ("excited", ("wow", "arre wah", "zabardast", "shandar", "badhai")),
+             ("happy", ("khush", "mazaa", "achha laga", "haha", "hansi", "sahi hai")),
+             ("serious", ("dhyan se", "zaroori", "warning", "khatra", "note karo")),
+             ("playful", ("mazaak", "halka", "acha ji")))
+    for emo, keys in table:
+        if any(k in t for k in keys):
+            return emo
+    return "neutral"
+
+
+def behaviour_cfg(cfg):
+    b = dict(BEHAVIOUR_DEFAULT)
+    b.update((cfg or {}).get("behaviour") or {})
+    return b
+
+
+def behaviour_speech_params(emotion, cfg):
+    b = behaviour_cfg(cfg)
+    base = EMOTION.get(emotion or "neutral", EMOTION["neutral"])
+    place = PLACE_STYLE.get(b.get("place", "ghar"), PLACE_STYLE["ghar"])
+    rel = RELATION_STYLE.get(b.get("relation", "boss"), RELATION_STYLE["boss"])
+    pitch = base["pitch"] * place["pitch"]
+    rate = base["rate"] * place["rate"] * (1.02 if rel["warmth"] > 1.1 else 1.0)
+    if b.get("age") == "bachcha":
+        pitch *= 1.15
+        rate *= 1.05
+    elif b.get("age") == "buzurg":
+        pitch *= 0.95
+        rate *= 0.9
+    return {"pitch": round(pitch, 2), "rate": round(rate, 2)}
+
+
+def humanize(text, emotion=None, cfg=None, chance=0.45):
+    """Insan jaisa touch: backchannel, hansi, saans, thehraav."""
+    t = (text or "").strip()
+    if not t:
+        return t
+    b = behaviour_cfg(cfg or {})
+    emo = emotion or pick_emotion(t, cfg)
+    if b.get("backchannel") and len(t) > 18 and random.random() < chance:
+        bc = {"happy": "अच्छा!", "excited": "अरे वाह!", "caring": "हम्म,",
+              "sad": "हम्म…", "serious": "देखिए,", "playful": "हाँ जी,"}.get(emo, "हम्म,")
+        if not t.startswith(("हम्म", "अच्छा", "अरे", "हाँ", "देखिए")):
+            t = bc + " " + t
+    if b.get("laugh") and emo in ("happy", "playful", "excited") and random.random() < 0.35:
+        style = random.choice(["dheemi", "thahaka", "khilkhilana"])
+        if not any(x in t for x in LAUGHS.values()):
+            t = t + " " + LAUGHS[style] + "…"
+    if emo in ("sad", "caring") and random.random() < 0.25:
+        t = t + " " + SIGHS["thakan"]
+    elif emo == "serious" and random.random() < 0.2:
+        t = t + " " + SIGHS["soch"]
+    t = re.sub(r",\s+", ", … ", t, count=2)
+    return re.sub(r"\s{2,}", " ", t).strip()
+
+
+def phone_speak(text, cfg, emotion=None):
     """Phone ka TTS - female-ish pitch. Free, offline."""
-    pitch = str(cfg.get("voice_pitch", 1.15))
+    params = behaviour_speech_params(emotion, cfg)
+    pitch = str(cfg.get("voice_pitch", params["pitch"]))
     rate = str(cfg.get("tts_rate", 0.98))
+    rate = "%.2f" % (float(rate) * params["rate"])
     lang = str(cfg.get("voice_lang", "hi-IN"))
+    text = hindi_speech_text(text)
     for args in (["-l", lang, "-p", pitch, "-r", rate, "-v", "female", text],
                  ["-l", lang, "-p", pitch, "-r", rate, text],
                  ["-l", lang, text]):
@@ -777,12 +922,14 @@ def phone_speak(text, cfg):
     return False
 
 
-def gemini_tts(text, cfg, key):
+def gemini_tts(text, cfg, key, emotion=None):
     """Gemini ka expressive voice - emotions ke saath. (path, error)"""
     ensure_dirs()
     voice = cfg.get("gemini_voice", "Kore")
     model = cfg.get("tts_model", "gemini-2.5-flash-preview-tts")
     style = cfg.get("tts_style") or "warm, friendly, smiling, expressive"
+    if emotion:
+        style += ", bhaav: " + EMOTION.get(emotion, {}).get("style", "")
     prompt = ("Speak the following line like a real person, not a text-to-speech engine. "
               "Style: %s. Use real emotion, a smile in the voice, small natural pauses at commas, "
               "and vary the pitch like a human conversation. Language: Hindi/Hinglish. "
@@ -847,7 +994,7 @@ def wav_seconds(path):
         return 0.0
 
 
-def speak(text, cfg, force_gemini=False):
+def speak(text, cfg, force_gemini=False, emotion=None):
     """Text aur awaaz saath me: Gemini voice pehle banata hai, phir dono ek saath."""
     text = strip_markdown(text)
     if not text:
@@ -856,6 +1003,9 @@ def speak(text, cfg, force_gemini=False):
         print("  %s: %s" % (cfg.get("name", "Jarvis"), text))
         return
     mode = str(cfg.get("tts", "auto"))
+    emotion = emotion or pick_emotion(text, cfg)
+    if cfg.get("human_touch", True) and not QUIET["on"]:
+        text = humanize(text, emotion, cfg)
     key = load_key()
     use_gemini = (mode == "gemini") or (mode == "auto" and force_gemini)
     if STUB:
@@ -869,7 +1019,7 @@ def speak(text, cfg, force_gemini=False):
             TTS_COOL["told"] = True
     if use_gemini and key:
         print("  (awaaz ban rahi hai...)")
-        path, err = gemini_tts(text, cfg, key)
+        path, err = gemini_tts(text, cfg, key, emotion)
         if path:
             print("\n%s: %s\n" % (cfg.get("name", "Jarvis"), text), end="", flush=True)
             if play_audio(path, wav_seconds(path)):
@@ -884,7 +1034,7 @@ def speak(text, cfg, force_gemini=False):
             print("  (Gemini voice fail: %s)" % err)
 
     print("\n%s: %s\n" % (cfg.get("name", "Jarvis"), text), flush=True)
-    phone_speak(text, cfg)
+    phone_speak(text, cfg, emotion)
 
 def adb_serial(cfg):
     if cfg.get("adb_serial"):
@@ -2401,6 +2551,9 @@ yaad rakhna, research (source ke saath), app banana, apna code khud badalna (sel
 briefing, GitHub, aur diagnose (apni dikkat khud dekhna - "sun nahi rahe"/"problem" par chalao).
 
 KAAM: kaam bole to tool chalao, sirf baat mat karo.
+INSAN JAISA VYAVHAAR: baat-cheet me "hmm", "achha", "haan ji" jaisa backchannel use karo (kabhi kabhi),
+mazaak par hanso (hahaha / hehe), udaas baat par dheeme ho jao, gussa ho to seedhi baat.
+Har baat me "Boss" mat chipkao - sirf kabhi kabhi. Rishta: {relation}, jagah: {place}.
 KABHI apni soch, analysis ya English notes mat likho ("The user is asking", "I should" jaisa kuch nahi).
 Sirf wahi likho jo user ko bolna hai. Jawab sirf is JSON me:
 {{"say": "jo bolna hai", "do": [{{"tool": "naam", "args": {{}}}}]}}
@@ -2420,6 +2573,8 @@ Notes: {notes}
            facts=("; ".join(facts) if facts else "abhi kuch nahi"),
            notes=("; ".join("%s %s" % (n.get("at", ""), n.get("text", "")) for n in notes) if notes else "koi nahi"),
            brain=brain_summary(cfg),
+           relation=behaviour_cfg(cfg).get("relation", "boss"),
+           place=behaviour_cfg(cfg).get("place", "ghar"),
            vault=("AAPKA DATA: " + vault_summary(cfg, 12)),
            mode=("AAPKI AWAAZ HAI: aap jo 'say' likhti ho wo phone TTS ya Gemini voice se bol kar sunaya jata hai. "
                  "Kabhi mat kaho ki 'main text hoon', 'awaaz nahi de sakti' ya 'awaaz ka code nahi hai' - "
@@ -3306,6 +3461,8 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --learn [N]    vault ki files se seekho (dimaag me)
   python jarvis.py --teach "..."  seedha sikhao (style ya yaad)
   python jarvis.py --diag         apna system check karo (kya dikkat hai)
+  python jarvis.py --behaviour relation=dost place=ghar   insan jaisa vyavhaar set karo
+  python jarvis.py --push-file <path> [repo/path]   koi bhi file GitHub par daalo
   python jarvis.py --bugs         code me bug/error check karo
   python jarvis.py --fix-bugs     pehla bug khud theek karo
   python jarvis.py --mind show    apna dimaag dekho (facts, style, sabak)
@@ -4464,6 +4621,62 @@ def main(argv):
         ok_f, msg = self_request("Is bug ko theek karo: %s" % issues[0], load_config(), load_key(), confirm=True)
         print(("OK: " if ok_f else "FAIL: ") + msg)
         return 0 if ok_f else 1
+    if argv[0] == "--behaviour":
+        cfg = load_config()
+        pairs = [a for a in argv[1:] if "=" in a]
+        if not pairs:
+            b = behaviour_cfg(cfg)
+            print("Abhi ka behaviour: %s" % b)
+            print("\nBadalne ke liye: python jarvis.py --behaviour relation=dost place=ghar laugh=on")
+            print("  relation: boss | dost | ustaad | maa | ajnabi")
+            print("  place   : ghar | bazaar | office | aspataal | mandir")
+            print("  age     : bachcha | kishor | jawan | buzurg")
+            print("  laugh   : on | off   |  backchannel: on | off")
+            return 0
+        b = behaviour_cfg(cfg)
+        for pair in pairs:
+            k, v = pair.split("=", 1)
+            k, v = k.strip(), v.strip().lower()
+            if k in ("laugh", "backchannel"):
+                b[k] = v in ("on", "1", "true", "yes", "haan")
+            elif k in ("relation", "place", "age"):
+                b[k] = v
+        cfg["behaviour"] = b
+        save_config(cfg)
+        print("Behaviour set: %s" % b)
+        return 0
+    if argv[0] == "--push-file":
+        cfg = load_config()
+        if len(argv) < 2:
+            print("Use: python jarvis.py --push-file /sdcard/Download/file.txt [repo/path.txt]")
+            return 1
+        src = os.path.expanduser(argv[1])
+        if not os.path.isfile(src):
+            print("File nahi mili: %s" % src)
+            return 1
+        tok = gh_token()
+        if not tok:
+            print("GitHub token nahi: python jarvis.py --setkey github")
+            return 1
+        dest = argv[2] if len(argv) > 2 else "jarvis-kit/files/%s" % os.path.basename(src)
+        repo = cfg.get("brain_repo") or "bhupendarsingh785/toonistaan-studio"
+        try:
+            with open(src, "rb") as f:
+                content = base64.b64encode(f.read()).decode()
+        except OSError as exc:
+            print("Padh nahi paya: %s" % exc)
+            return 1
+        url = "/repos/%s/contents/%s" % (repo, dest)
+        body = {"message": "add %s" % os.path.basename(src), "content": content}
+        cur, _e = gh_api(url, "GET", None, tok)
+        if cur and cur.get("sha"):
+            body["sha"] = cur["sha"]
+        res, err = gh_api(url, "PUT", body, tok)
+        if res:
+            print("OK: GitHub par chala gaya -> https://github.com/%s/blob/main/%s" % (repo, dest))
+            return 0
+        print("FAIL: %s" % (err or "push fail"))
+        return 1
     if argv[0] == "--diag":
         deep = "--deep" in argv
         txt, n = diagnose(load_config(), deep=deep)
