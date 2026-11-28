@@ -2305,8 +2305,11 @@ def data_context(query, cfg, k=None):
     lines = []
     for c in picked:
         lines.append("[%s] %s" % (c.get("file", "?"), c.get("text", "")[:700]))
-    return ("USER KE APNE DATA SE (sirf inhi par bharosa karo, source naam ke saath bolo):\n"
-            + "\n---\n".join(lines))
+    return ("USER KE APNE DATA SE (ye asli files hain):\n"
+            + "\n---\n".join(lines)
+            + "\n\nNIYAM: jawab sirf in hisson se do. Jo inme nahi hai wo mat banao. "
+              "Agar jawab in hisson me nahi mila to saaf bolo: 'data me ye nahi mila'. "
+              "Jawab ke saath file ka naam batao.")
 
 
 def ask_remote(cfg, mem, user_part, key, extra=None):
@@ -2481,6 +2484,7 @@ SELF_INTENT = ("apna code", "apne code", "khud ko modify", "khud ko theek", "khu
                "naya feature", "apni memory", "khud me add", "apne andar add", "khud ko upgrade",
                "apne aap ko upgrade", "apni capability", "apni power",
                "technology builder", "khud ko capable", "apne aap ko capable",
+               "apne aapko", "khud ko upgrade", "apne aap ko badal", "khud ko badal",
                "apne andar", "naya tool", "tool add", "khud ko behtar")
 
 
@@ -3330,8 +3334,10 @@ def serve(cfg, port=8080):
                     return
                 t0 = time.time()
                 try:
+                    parts = [x.strip() for x in text.splitlines() if x.strip()] or [text]
                     with lock:
-                        say = handle_turn(text, cfg, mem, key, heard_text=text)
+                        for one in parts:
+                            say = handle_turn(one, cfg, mem, key, heard_text=one)
                     maybe_push()
                 except Exception as exc:
                     self._send(200, json.dumps({"error": str(exc)[:200]}))
@@ -3800,7 +3806,9 @@ def main(argv):
                 continue
             if line.lower() in ("exit", "quit", "band"):
                 break
-            handle_turn(line, cfg, mem, key, heard_text=line)
+            parts = [x.strip() for x in line.splitlines() if x.strip()]
+            for one in (parts if len(parts) > 1 else [line]):
+                handle_turn(one, cfg, mem, key, heard_text=one)
         return 0
 
     print(USAGE)
