@@ -2578,9 +2578,9 @@ ping();
 $('#gear').onclick=()=>{$('#sht').classList.add('on');ping();};
 $('#ok').onclick=()=>$('#sht').classList.remove('on');
 function say(text){
-  speaking=true; stopRec();
+  speaking=true; buf=[]; silenceMs=0;
   if(spk){try{spk.pause();}catch(e){} spk=null;}
-  const done=()=>{ speaking=false; restartSoon(500); };
+  const done=()=>{ speaking=false; if(handsfree && stream) $('#mic').classList.add('rec'); };
   fetch('/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})})
    .then(r=>r.json()).then(j=>{
      if(j.audio){
@@ -2598,9 +2598,9 @@ function fallback(text){
     const hi=vs.find(v=>/hi[-_]IN/i.test(v.lang) && /female|google/i.test(v.name)) || vs.find(v=>/hi[-_]IN/i.test(v.lang));
     if(hi)u.voice=hi;
     u.lang=hi?hi.lang:'hi-IN'; u.pitch=1.2; u.rate=0.98;
-    u.onend=()=>{ speaking=false; restartSoon(500); };
+    u.onend=()=>{ speaking=false; if(handsfree && stream) $('#mic').classList.add('rec'); };
     speaking=true; speechSynthesis.speak(u);
-  }catch(e){ speaking=false; restartSoon(800); }
+  }catch(e){ speaking=false; }
 }
 async function send(text){
   text=(text||'').trim(); if(!text||busy)return; busy=true;
@@ -2618,48 +2618,81 @@ async function send(text){
 $('#send').onclick=()=>send($('#txt').value);
 $('#txt').addEventListener('keydown',e=>{if(e.key==='Enter')send($('#txt').value);});
 document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>send(c.dataset.q));
-const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-let rec=null, handsfree=true, speaking=false, restartT=null;
+let handsfree=true, speaking=false, stream=null, actx=null, proc=null, gain=null;
+let buf=[], silenceMs=0, sending=false; const SRATE=16000;
 
 function setHF(on){
   handsfree=on;
   $('#hf').textContent='🎧 handsfree: '+(on?'ON':'OFF');
-  if(on){ if(!speaking) startRec(); } else { stopRec(); }
+  if(on) openMic(); else closeMic();
 }
-function stopRec(){ clearTimeout(restartT); try{ if(rec){rec.onend=null; rec.stop();} }catch(e){} rec=null; $('#mic').classList.remove('rec'); }
-function restartSoon(ms){ clearTimeout(restartT); restartT=setTimeout(()=>{ if(handsfree && !speaking) startRec(); }, ms||700); }
-
-function startRec(){
-  if(!SR || rec || speaking || busy) return;
+async function openMic(){
+  if(stream) return;
   try{
-    rec=new SR(); rec.lang='hi-IN'; rec.interimResults=true; rec.continuous=false; rec.maxAlternatives=1;
-    rec.onstart=()=>{$('#mic').classList.add('rec');};
-    rec.onerror=e=>{$('#mic').classList.remove('rec');rec=null;
-      if(e.error==='not-allowed'){bub('Mic ki permission do (Chrome me site settings).','bot');return;}
-      if(e.error!=='no-speech' && e.error!=='aborted') bub('Mic: '+e.error,'bot');
-      restartSoon(1200);};
-    rec.onend=()=>{$('#mic').classList.remove('rec'); rec=null; restartSoon();};
-    rec.onresult=ev=>{
-      let txt='', fin=false;
-      for(let i=ev.resultIndex;i<ev.results.length;i++){
-        txt+=ev.results[i][0].transcript; if(ev.results[i].isFinal) fin=true;
-      }
-      txt=txt.trim();
-      if(!txt) return;
-      if(/^(band karo|stop|chup|ruko)$/i.test(txt)){ setHF(false); return; }
-      if(fin){ stopRec(); send(txt); }
+    stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+    actx=new (window.AudioContext||window.webkitAudioContext)({sampleRate:SRATE});
+    if(actx.state==='suspended'){ try{ await actx.resume(); }catch(e){} }
+    const src=actx.createMediaStreamSource(stream);
+    proc=actx.createScriptProcessor(4096,1,1);
+    gain=actx.createGain(); gain.gain.value=0;
+    proc.onaudioprocess=e=>{
+      if(speaking || sending || !handsfree) return;
+      const d=e.inputBuffer.getChannelData(0);
+      let sum=0; for(let i=0;i<d.length;i++) sum+=d[i]*d[i];
+      const rms=Math.sqrt(sum/d.length);
+      if(rms>0.013){ buf.push(new Float32Array(d)); silenceMs=0; $('#mic').classList.add('rec'); }
+      else if(buf.length){ silenceMs+=(d.length/SRATE)*1000; if(silenceMs>850) flushAudio(); }
     };
-    rec.start();
-  }catch(e){ rec=null; }
+    src.connect(proc); proc.connect(gain); gain.connect(actx.destination);
+    $('#mic').classList.add('rec');
+  }catch(e){
+    bub('Mic permission do: Chrome > site settings > Microphone > Allow','bot');
+    handsfree=false; $('#hf').textContent='🎧 handsfree: OFF';
+  }
 }
-
-$('#mic').onclick=()=>{
-  if(!SR){bub('Is browser me mic support nahi - Chrome use karo.','bot');return;}
-  if(rec){ stopRec(); } else { speaking=false; startRec(); }
-};
+function closeMic(){
+  try{
+    if(proc) proc.disconnect();
+    if(stream) stream.getTracks().forEach(t=>t.stop());
+    if(actx) actx.close();
+  }catch(e){}
+  stream=null; actx=null; proc=null; buf=[]; $('#mic').classList.remove('rec');
+}
+function wavB64(samples){
+  const n=samples.length, ab=new ArrayBuffer(44+n*2), v=new DataView(ab);
+  const ws=(o,str)=>{for(let i=0;i<str.length;i++)v.setUint8(o+i,str.charCodeAt(i));};
+  ws(0,'RIFF'); v.setUint32(4,36+n*2,true); ws(8,'WAVE'); ws(12,'fmt ');
+  v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+  v.setUint32(24,SRATE,true); v.setUint32(28,SRATE*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true);
+  ws(36,'data'); v.setUint32(40,n*2,true);
+  let o=44;
+  for(let i=0;i<n;i++){ const x=Math.max(-1,Math.min(1,samples[i])); v.setInt16(o, x<0?x*0x8000:x*0x7FFF, true); o+=2; }
+  const u8=new Uint8Array(ab); let bin='';
+  for(let i=0;i<u8.length;i++) bin+=String.fromCharCode(u8[i]);
+  return btoa(bin);
+}
+async function flushAudio(){
+  if(!buf.length || sending) return;
+  const total=buf.reduce((a,b)=>a+b.length,0);
+  if(total < SRATE*0.35){ buf=[]; silenceMs=0; return; }
+  const all=new Float32Array(total); let off=0;
+  for(const b of buf){ all.set(b,off); off+=b.length; }
+  buf=[]; silenceMs=0; sending=true; $('#mic').classList.remove('rec');
+  try{
+    const r=await fetch('/stt',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({audio:wavB64(all),mime:'audio/wav'})});
+    const j=await r.json();
+    const t=(j.text||'').trim();
+    if(t && /^(band karo|stop|chup|ruko)$/i.test(t)){ setHF(false); }
+    else if(t) await send(t);
+  }catch(e){}
+  sending=false;
+  if(handsfree && stream) $('#mic').classList.add('rec');
+}
+$('#mic').onclick=()=>{ if(handsfree && stream){ setHF(false); } else { setHF(true); } };
 $('#hf').onclick=()=>setHF(!handsfree);
 setHF(true);
-bub('Namaste Boss. Boliye - main sun rahi hoon. (handsfree ON)','bot');
+bub('Namaste Boss. Mic permanent ON hai - jab bolo, sun lungi. (Chrome me ek baar Allow)','bot');
 </script></body></html>"""
 
 
@@ -2740,6 +2773,22 @@ def serve(cfg, port=8080):
                     return
                 self._send(200, json.dumps({"say": say, "provider": LAST_PROVIDER.get("name", ""),
                                             "seconds": round(time.time() - t0, 1)}))
+            elif self.path == "/stt":
+                b64 = str(body.get("audio", ""))
+                mime = str(body.get("mime", "audio/wav"))
+                if not b64 or not key:
+                    self._send(200, json.dumps({"error": "audio ya key nahi"}))
+                    return
+                payload = {"contents": [{"role": "user", "parts": [
+                    {"text": "Transcribe exactly what is spoken. Output ONLY the spoken words in the same "
+                             "language (Hindi/Hinglish/English). No commentary, no quotes."},
+                    {"inlineData": {"mimeType": mime, "data": b64}}]}],
+                    "generationConfig": {"temperature": 0, "maxOutputTokens": 200}}
+                resp = api_call("/models/%s:generateContent" % pick_model(key, cfg), payload, key=key, timeout=60)
+                if "_error" in resp:
+                    self._send(200, json.dumps({"error": resp["_error"]}))
+                    return
+                self._send(200, json.dumps({"text": model_text(resp).strip().strip('"').strip()}))
             elif self.path == "/tts":
                 text = strip_markdown(str(body.get("text", "")).strip())
                 if not text or not key or cfg.get("tts") == "phone":
