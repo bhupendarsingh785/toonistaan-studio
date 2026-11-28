@@ -1903,6 +1903,7 @@ OPENAI_COMPAT = {
 
 
 PROVIDER_ERR = {}
+PROVIDER_COOL = {}   # provider -> unix time tak skip
 LAST_PROVIDER = {"name": "", "trace": []}
 
 
@@ -2191,7 +2192,12 @@ def ask_remote(cfg, mem, user_part, key, extra=None):
     text_part = user_part if isinstance(user_part, str) else ""
     last_err = ""
     LAST_PROVIDER["trace"] = []
-    for prov in order:
+    now_t = time.time()
+    active = [p for p in order if PROVIDER_COOL.get(p, 0) < now_t]
+    if not active:
+        PROVIDER_COOL.clear()
+        active = order
+    for prov in active:
         t_prov = time.time()
         try:
             if prov == "local":
@@ -2216,8 +2222,19 @@ def ask_remote(cfg, mem, user_part, key, extra=None):
                 if not raw and "timed out" in PROVIDER_ERR.get(prov, ""):
                     raw = openai_chat(prov, msgs, cfg, pkey)
                 if not raw and prov == "groq":
-                    if pick_groq_model(cfg, pkey):
+                    ids = [i for i in provider_models("groq", pkey)
+                           if not any(b in i.lower() for b in ("whisper", "tts", "guard", "embed"))]
+                    tried = [cfg.get("groq_model", "")]
+                    for mid in ids[:4]:
+                        if mid in tried:
+                            continue
+                        cfg["groq_model"] = mid
+                        save_config(cfg)
                         raw = openai_chat(prov, msgs, cfg, pkey)
+                        if raw:
+                            log("groq switched to %s" % mid)
+                            break
+                        tried.append(mid)
                 if not raw and prov == "openrouter":
                     if pick_openrouter_model(cfg, pkey):
                         raw = openrouter_try(cfg, pkey, msgs)
@@ -2233,6 +2250,13 @@ def ask_remote(cfg, mem, user_part, key, extra=None):
                 log("answered by %s" % prov)
                 return plan
             last_err = "%s: khaali jawab" % prov
+            err_txt = PROVIDER_ERR.get(prov, "")
+            if "404" in err_txt:
+                PROVIDER_COOL[prov] = time.time() + 1800   # model hi nahi hai - 30 min
+            elif "429" in err_txt:
+                PROVIDER_COOL[prov] = time.time() + 600    # rate limit - 10 min
+            else:
+                PROVIDER_COOL[prov] = time.time() + 180
             LAST_PROVIDER["trace"].append((prov, time.time() - t_prov, "khaali"))
         except Exception as exc:
             last_err = "%s: %s" % (prov, exc)
