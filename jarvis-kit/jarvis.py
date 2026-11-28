@@ -53,6 +53,7 @@ LLAMA_LOG = os.path.join(JARVIS_DIR, "llama.log")
 AUDIO_PATH = os.path.join(JARVIS_DIR, "mic.m4a")
 API_ROOT = "https://generativelanguage.googleapis.com/v1beta"
 UA = "JarvisTermux/1.0 (Android; Termux)"
+_WORD = re.compile(r"[a-zA-Z\u0900-\u097F]+|\d+")
 
 DEFAULT_CONFIG = {
     "name": "Jarvis",
@@ -3137,6 +3138,21 @@ def selftest():
     plan = ask_model(cfg, mem, "kuch karo", "fake-key")
     assert "say" in plan
     print("  model call      OK (stub)")
+    # smoke test - asli functions chalao (NameError yahin pakda jayega)
+    try:
+        cfg = load_config()
+        mem = {"facts": [], "notes": [], "history": []}
+        system_prompt(cfg, mem)
+        data_context("test query", cfg)
+        vault_summary(cfg, 3)
+        brain_summary(cfg)
+        code_context("test")
+        bug_scan()
+        print("\n  smoke test      OK (prompt, data, vault, code, bugs)")
+    except Exception as exc:
+        print("\n  smoke test      FAIL: %s: %s" % (type(exc).__name__, exc))
+        return 1
+
     print("\nAll good.")
     return 0
 
