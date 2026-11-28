@@ -80,7 +80,7 @@ DEFAULT_CONFIG = {
     "rag_top": 4,                # ek jawab me data ke kitne hisse padhe
     "auto_loop": False,          # True = Enter dabane ki zarurat nahi, lagataar sunta rahe
     "speak_actions": True,       # action ka result bolkar bataye
-    "max_history": 12,           # kitni purani baatein prompt me jaayein
+    "max_history": 8,            # kitni purani baatein prompt me jaayein
     "confirm_risky": True,       # SMS/call se pehle poochhe
     "briefing": True,            # shuru hote hi chhoti briefing
     "adb_serial": "",            # setup_adb.sh ke baad khud bhar jata hai
@@ -282,8 +282,9 @@ def groq_transcribe(wav_bytes, key, cfg=None):
     parts.append(wav_bytes)
     parts.append(b"\r\n")
     field("model", "whisper-large-v3-turbo")
-    field("language", "hi")
     field("response_format", "json")
+    field("prompt", "Hinglish conversation: user Hindi aur English mix karke bolta hai. "
+                    "Names, numbers aur English words jaisa bola gaya hai waisa hi likho.")
     parts.append(("--%s--\r\n" % boundary).encode("utf-8"))
     body = b"".join(parts)
     req = urllib.request.Request("https://api.groq.com/openai/v1/audio/transcriptions",
@@ -2178,19 +2179,10 @@ Insaan ki tarah baat karti ho, robot jaisa nahi. Ladki ho, dost jaisi - apnapan,
 BAAT: 2 line, 35 shabd max. Empathy, chhoti reactions ("arre wah", "hmm", "acha"), kabhi follow-up sawaal.
 Koi bullet, markdown, emoji nahi - sirf bolne wali baat. Jhooth nahi - nahi pata to bolo "ye mujhe nahi pata Boss".
 
-TUMHARI TAQATEIN (ye tum kar sakti ho, "nahi kar sakti" mat bolo):
-- Phone control: battery, torch, volume, app kholna/band karna, media pause/play, back/home, tap,
-  screen padhna, screenshot, notification, clipboard, wifi, location, photo, SMS, call.
-- Yaad rakhna: facts aur notes permanently.
-- Research: internet se search karke source ke saath jawab (bina source fact mat bolo).
-- App banana: idea se chhoti app (HTML) bana kar kholna.
-- Apna code khud badalna: "apne functions update karo", "naya feature add karo", "jawab chhota karo",
-  "apni memory badhao" - aise me self_edit tool chalao. User se confirm hoga, backup banega,
-  test hoga, fail par rollback. Isliye kabhi mat bolo ki tum kuch badal nahi sakti.
-- Briefing, daily routine, GitHub (repos, file upload).
-- Apne system ko dekhna: agar user kahe "sun nahi rahe", "kya dikkat hai", "problem batao",
-  "kaam nahi kar raha", "check karo" - to diagnose tool chalao aur jo dikkat mile wo saaf Hinglish me
-  batao, saath me ek line ka fix bhi. Andaaza mat lagao, tool ka result bolo.
+TAQATEIN (kabhi "nahi kar sakti" mat bolo): phone control (battery, torch, volume, app band/chalu,
+media, back/home, tap, screen, screenshot, notification, clipboard, wifi, location, photo, SMS, call),
+yaad rakhna, research (source ke saath), app banana, apna code khud badalna (self_edit),
+briefing, GitHub, aur diagnose (apni dikkat khud dekhna - "sun nahi rahe"/"problem" par chalao).
 
 KAAM: kaam bole to tool chalao, sirf baat mat karo. Jawab sirf is JSON me:
 {{"say": "jo bolna hai", "do": [{{"tool": "naam", "args": {{}}}}]}}
@@ -2382,7 +2374,7 @@ def ask_gemini(cfg, mem, user_part, key, extra=None):
         "contents": contents,
         "generationConfig": {
             "temperature": 0.65,
-            "maxOutputTokens": 900,
+            "maxOutputTokens": 300,
             "responseMimeType": "application/json",
         },
     }
@@ -3022,8 +3014,13 @@ async function openMic(){
       if(speaking || sending || !handsfree || window.__mute) return;
       if(!buf.length) noiseFloor = noiseFloor*0.96 + rms*0.04;
       const trig = Math.max(0.005, noiseFloor*2.8);
-      if(rms>trig){ buf.push(new Float32Array(d)); silenceMs=0; $('#mic').classList.add('rec'); }
-      else if(buf.length){ silenceMs+=(d.length/actx.sampleRate)*1000; if(silenceMs>900) flushAudio(); }
+      if(rms>trig){
+        buf.push(new Float32Array(d)); silenceMs=0; $('#mic').classList.add('rec');
+        if(!window.__t0) window.__t0=Date.now();
+      } else if(buf.length){
+        silenceMs+=(d.length/actx.sampleRate)*1000;
+        if(silenceMs>1000) flushAudio();
+      }
     };
     src.connect(proc); proc.connect(gain); gain.connect(actx.destination);
     $('#levelwrap').style.display='block';
@@ -3057,15 +3054,17 @@ async function flushAudio(){
   if(!buf.length || sending) return;
   const rate = actx ? actx.sampleRate : 48000;
   const total=buf.reduce((a,b)=>a+b.length,0);
-  if(total < rate*0.3){ buf=[]; silenceMs=0; return; }
+  if(total < rate*0.5){ buf=[]; silenceMs=0; window.__t0=0; return; }
   const all=new Float32Array(total); let off=0;
   for(const b of buf){ all.set(b,off); off+=b.length; }
   buf=[]; silenceMs=0; sending=true; $('#mic').classList.remove('rec');
+  const tStt=Date.now();
   try{
     const r=await fetch('/stt',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({audio:wavB64(all, rate), mime:'audio/wav'})});
     const j=await r.json();
     const t=(j.text||'').trim();
+    if(t) console.log('stt', ((Date.now()-tStt)/1000).toFixed(1)+'s via '+(j.via||'?'));
     if(t && /^(band karo|stop|chup|ruko)$/i.test(t)){ stopAll(); }
     else if(t && t.length>1 && !speaking) await send(t);
     else if(j.error) bub('Sunne me dikkat: '+j.error,'bot');
