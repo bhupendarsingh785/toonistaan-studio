@@ -1214,6 +1214,42 @@ def adb_reconnect(cfg):
     return False, str(out)[:80]
 
 
+def t_make_agent(a):
+    """JARVIS khud apne liye naya agent bana sakti hai (apne man se)."""
+    task = str(a.get("task") or a.get("kaam") or "").strip()
+    if not task:
+        return "Kis kaam ke liye agent banana hai?"
+    cfg = load_config()
+    key = load_key()
+    design = ask_text(cfg, key, "Tum ek AI team builder ho.",
+                      "Is kaam ke liye ek specialist agent design karo. "
+                      "JSON me do: {\"name\": \"chhota naam\", \"role\": \"uska kaam aur style 2 line me\", "
+                      "\"tools\": [\"tool1\", \"tool2\"]}. Available tools: %s\n\nKAAM: %s"
+                      % (", ".join(list(TOOLS.keys())[:20]), task[:300]), max_tokens=300)
+    plan = extract_json(design or "") or {}
+    name = str(plan.get("name") or task[:24]).strip()[:40]
+    role = str(plan.get("role") or task).strip()[:600]
+    tools = plan.get("tools") or []
+    if isinstance(tools, str):
+        tools = [x.strip() for x in tools.split(",")]
+    slug, data = agent_create(name, role, ",".join(tools), cfg, key)
+    return "Agent ban gaya: %s (%s) - kaam: %s" % (data["name"], slug, role[:120])
+
+
+def t_use_agent(a):
+    """Bane hue agent ko kaam do."""
+    slug = str(a.get("agent") or a.get("name") or "").strip()
+    task = str(a.get("task") or a.get("kaam") or "").strip()
+    cfg = load_config()
+    if not slug:
+        ags = agent_list()
+        if not ags:
+            return "Koi agent nahi hai. Pehle 'agent banao' bolo."
+        slug = ags[-1][0]
+    ok_a, msg = agent_run(slug, task or "apna kaam karo", cfg, load_key())
+    return ("Agent %s: " % slug) + str(msg)[:400]
+
+
 def t_youtube(a):
     """YouTube control: kholo, search, play/pause, next, volume."""
     action = str(a.get("action") or a.get("do") or "open").lower()
@@ -2099,6 +2135,8 @@ ROUTES = [
       "error kyun", "theek karo apne"), "diagnose"),
     (("kitna data", "kaunsa data", "kaun si file", "kaunsi file", "vault me", "memory me kya",
       "data hai", "kitni file", "files batao"), "vault_info"),
+    (("agent banao", "agent bana", "naya agent", "agent create"), "make_agent"),
+    (("agent se", "agent ko", "agent chalao", "agent run"), "use_agent"),
     (("youtube", "yt"), "youtube"),
     (("collect karo", "internet se laao", "data laao", "download karo", "save karo internet se",
       "seekho", "learn karo"), "collect"),
@@ -2462,6 +2500,8 @@ TOOLS = {
     "vault_info": t_vault_info,
     "collect": t_collect,
     "youtube": t_youtube,
+    "make_agent": t_make_agent,
+    "use_agent": t_use_agent,
     "deep_research": t_deep_research,
     "gh_repos": t_gh_repos,
     "gh_upload": t_gh_upload,
@@ -2498,6 +2538,8 @@ TOOL_HELP = """Available tools (JSON me "do" list ke andar):
   {"tool":"diagnose"}   (apna system check karke dikkat batao)
   {"tool":"vault_info"}   (mere paas kitna data hai, kaunsi files)
   {"tool":"collect","args":{"topic":"..."}}   (internet se data laakar vault me save)
+  {"tool":"make_agent","args":{"task":"..."}}   (apne liye naya specialist agent banao)
+  {"tool":"use_agent","args":{"agent":"slug","task":"..."}}   (agent ko kaam do)
   {"tool":"youtube","args":{"action":"open|search|pause|next|stop","query":"..."}}   (YouTube control)
   {"tool":"deep_research","args":{"topic":"...","build":false}}   (bada research + report)
   {"tool":"gh_repos"} | {"tool":"gh_upload","args":{"repo":"user/repo","path":"a.txt","file":"/path"}}
@@ -3701,6 +3743,10 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --vault-clean  duplicate file hatao aur index saaf karo
   python jarvis.py --deep "topic" [--project] [--include] [--push]
                                   bada research: report + project + apne andar tool + GitHub
+  python jarvis.py --agent new "Naam" "role"    naya agent banao
+  python jarvis.py --agent list                 saare agents
+  python jarvis.py --agent run <slug> "kaam"    agent ko kaam do
+  python jarvis.py --agent auto "kaam"          khud agent bana kar kaam karwao
   python jarvis.py --pack voice|youtube|agent   ready-made topic list (12 topics)
   python jarvis.py --collect-plan "domain"   bahar ke 20 naye research topics banao
   python jarvis.py --topics [a,b,c]    topic list dekho / apne topic daalo
@@ -4139,9 +4185,10 @@ def learn_from_vault(cfg, key, limit=8):
         out = ask_text(cfg, key, "Tum ek document summarizer ho.", prompt + "\n\n" + text, max_tokens=300)
         out = strip_markdown(out or "").strip()
         if not out:
-            if not quiet:
-                print(" skip (jawab nahi mila)")
-            continue
+            # model fail - file se hi point nikaal lo (kabhi skip nahi)
+            sents = [x.strip() for x in re.split(r"(?<=[.!?])\s+|\n", text)
+                     if 40 < len(x.strip()) < 300]
+            out = "\n".join(sents[:3]) if sents else text[:200]
         for line in [x.strip(" -*•") for x in out.splitlines() if x.strip()][:3]:
             if len(line) > 12:
                 brain_add("facts", "[%s] %s" % (fname[:24], line[:150]))
@@ -4615,6 +4662,93 @@ def bulk_collect(cfg, key, limit=5, per_topic=2, verbose=True):
     return done, "%d topic ka data aaya. Vault: %d file, %d hisse" % (done, nfiles, len(chunks))
 
 
+AGENTS_DIR = os.path.join(JARVIS_DIR, "agents")
+
+
+def agents_dir():
+    os.makedirs(AGENTS_DIR, exist_ok=True)
+    return AGENTS_DIR
+
+
+def agent_slug(name):
+    return re.sub(r"[^a-z0-9]+", "-", (name or "").lower()).strip("-")[:40] or "agent"
+
+
+def agent_create(name, role, tools="", cfg=None, key=None):
+    """Naya agent banao - apna role, apne tools, apni memory."""
+    slug = agent_slug(name)
+    data = {
+        "name": name.strip()[:40],
+        "role": role.strip()[:800],
+        "tools": [t.strip() for t in str(tools).split(",") if t.strip()],
+        "created": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "memory": [],
+    }
+    write_json(os.path.join(agents_dir(), slug + ".json"), data)
+    brain_add("skills", "agent banaya: %s (%s)" % (data["name"], slug))
+    return slug, data
+
+
+def agent_list():
+    out = []
+    d = agents_dir()
+    for n in sorted(os.listdir(d)):
+        if n.endswith(".json"):
+            a = read_json(os.path.join(d, n), {})
+            if a:
+                out.append((n[:-5], a))
+    return out
+
+
+def agent_delete(slug):
+    fp = os.path.join(agents_dir(), agent_slug(slug) + ".json")
+    if os.path.exists(fp):
+        os.remove(fp)
+        return True
+    return False
+
+
+def agent_run(slug, task, cfg, key, max_steps=2):
+    """Ek agent ko kaam do - wo apne role ke hisaab se tool chalayega."""
+    fp = os.path.join(agents_dir(), agent_slug(slug) + ".json")
+    a = read_json(fp, {})
+    if not a:
+        return False, "agent nahi mila: %s (--agent list)" % slug
+    tool_names = a.get("tools") or list(TOOLS.keys())
+    tool_help = "\n".join("- %s: %s" % (k, v.get("desc", "")[:60])
+                          for k, v in TOOLS.items() if k in tool_names)
+    persona = ("Tum %s ho. %s\nSirf in tools ka use karo:\n%s\n"
+               "Jawab JSON me: {\"say\": \"...\", \"do\": [{\"tool\": \"naam\", \"args\": {}}]}"
+               % (a.get("name", slug), a.get("role", ""), tool_help))
+    log_lines = []
+    context = ""
+    for step in range(max_steps):
+        plan_raw = ask_text(cfg, key, persona,
+                            "KAAM: %s\n%s" % (task, context), max_tokens=400)
+        plan = extract_json(plan_raw or "") or {}
+        say = strip_markdown(str(plan.get("say", "") or plan_raw or ""))[:400]
+        acts = plan.get("do") or []
+        if not acts:
+            a.setdefault("memory", []).append({"at": datetime.now().strftime("%H:%M"),
+                                               "task": task[:120], "say": say[:200]})
+            write_json(fp, a)
+            return True, say or "Ho gaya."
+        for act in acts[:3]:
+            nm = str(act.get("tool", "")).strip()
+            if nm not in TOOLS:
+                log_lines.append("%s: tool nahi hai" % nm)
+                continue
+            res = run_tool(nm, act.get("args") or {}, cfg)
+            log_lines.append("%s -> %s" % (nm, str(res)[:150]))
+        context = "\nPichhle results:\n" + "\n".join(log_lines)
+    final = ask_text(cfg, key, persona, "KAAM: %s\n%s\nAb short me batao kya hua." % (task, context),
+                     max_tokens=300)
+    a.setdefault("memory", []).append({"at": datetime.now().strftime("%H:%M"),
+                                       "task": task[:120], "say": (final or "")[:200]})
+    write_json(fp, a)
+    return True, strip_markdown(final or "")[:600] or "Ho gaya."
+
+
 def serve(cfg, port=8080):
     """Browser control panel - Termux ke saare tools browser se chalte hain."""
     from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -4899,6 +5033,48 @@ def main(argv):
         except OSError:
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
+        return 0
+    if argv[0] == "--agent":
+        cfg = load_config()
+        sub = argv[1] if len(argv) > 1 else "list"
+        if sub == "list":
+            ags = agent_list()
+            if not ags:
+                print("Koi agent nahi. Banao: python jarvis.py --agent new \"Naam\" \"role\"")
+                return 0
+            print("%d agent:" % len(ags))
+            for slug, a in ags:
+                print("  - %s (%s) | %d kaam kiye" % (slug, a.get("name", ""), len(a.get("memory", []))))
+            return 0
+        if sub == "new":
+            if len(argv) < 4:
+                print('Use: python jarvis.py --agent new "Research Bot" "internet par research karke report deta hai"')
+                return 1
+            slug, a = agent_create(argv[2], argv[3], argv[4] if len(argv) > 4 else "", cfg)
+            print("OK: agent bana -> %s (%s)" % (slug, a["name"]))
+            return 0
+        if sub == "run":
+            if len(argv) < 4:
+                print('Use: python jarvis.py --agent run <slug> "kaam"')
+                return 1
+            ok_a, msg = agent_run(argv[2], " ".join(argv[3:]), cfg, load_key())
+            print(("OK: " if ok_a else "FAIL: ") + str(msg)[:800])
+            return 0 if ok_a else 1
+        if sub == "auto":
+            if len(argv) < 3:
+                print('Use: python jarvis.py --agent auto "kaam"')
+                return 1
+            task = " ".join(argv[2:])
+            slug, data = agent_create(task[:24], "Is kaam ka specialist: " + task, "", cfg, load_key())
+            print("Agent bana: %s (%s)" % (data["name"], slug))
+            ok_a, msg = agent_run(slug, task, cfg, load_key())
+            print(("OK: " if ok_a else "FAIL: ") + str(msg)[:600])
+            return 0
+        if sub in ("del", "delete"):
+            ok_d = agent_delete(argv[2] if len(argv) > 2 else "")
+            print("hataya" if ok_d else "nahi mila")
+            return 0
+        print("sub: list | new | run | del")
         return 0
     if argv[0] == "--pack":
         if len(argv) < 2 or argv[1] in ("list", "-l"):
