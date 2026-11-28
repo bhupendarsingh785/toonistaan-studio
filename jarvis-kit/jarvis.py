@@ -79,6 +79,7 @@ DEFAULT_CONFIG = {
     "data_dir": "~/jarvis/data", # aapka data yahan rakho - .txt .md .csv .json .srt .pdf
     "rag_top": 4,                # ek jawab me data ke kitne hisse padhe
     "stt_lang": "hi",            # sunne ki bhasha (hi = Hindi/Hinglish, en = English)
+    "wake_word": "jarvis",       # sirf is shabd ke saath jawab de (khaali = har baat)
     "auto_loop": False,          # True = Enter dabane ki zarurat nahi, lagataar sunta rahe
     "speak_actions": True,       # action ka result bolkar bataye
     "max_history": 8,            # kitni purani baatein prompt me jaayein
@@ -2336,6 +2337,11 @@ def data_context(query, cfg, k=None):
         return ""
     if not picked:
         return ""
+    # sirf tab do jab match kaafi strong ho (warna general sawaal kharab ho jata hai)
+    q = _tokens(query)
+    strong = any(len(q & _tokens(c.get("text", ""))) >= 2 for c in picked)
+    if not strong and len(q) > 2:
+        return ""
     lines = []
     for c in picked:
         lines.append("[%s] %s" % (c.get("file", "?"), c.get("text", "")[:700]))
@@ -2587,7 +2593,21 @@ def is_self_intent(text):
     return any(k in t for k in SELF_INTENT)
 
 
-def handle_turn(user_part, cfg, mem, key, heard_text=""):
+def wake_ok(text, cfg):
+    """Background baaton ko ignore karo - sirf wake word wali baat lo."""
+    ww = str(cfg.get("wake_word") or "").strip().lower()
+    if not ww:
+        return True, text
+    low = (text or "").lower()
+    if ww not in low:
+        return False, text
+    cleaned = re.sub(re.escape(ww), " ", low, count=1)
+    # original text se wake word hatao (case safe)
+    out = re.sub(re.escape(ww), "", text, count=1, flags=re.I).strip(" ,.-!")
+    return True, (out or text)
+
+
+def handle_turn(user_part, cfg, mem, key, heard_text="", voice=False):
     t0 = time.time()
     if isinstance(user_part, str) and is_self_intent(user_part):
         ok, msg = self_request(user_part, cfg, key, confirm=True)
@@ -2934,7 +2954,7 @@ def main_loop(cfg):
             if any(w in low for w in ("exit", "band karo", "so jao", "bye jarvis", "shutdown")):
                 speak("Theek hai, standby me ja raha hoon.", cfg)
                 break
-            handle_turn(part, cfg, mem, key, heard_text=heard)
+            handle_turn(part, cfg, mem, key, heard_text=heard, voice=True)
         except KeyboardInterrupt:
             print()
             speak("Standby.", cfg)
@@ -2990,6 +3010,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --say "text"   koi bhi line bol kar sunao (voice test)
   python jarvis.py --speed fast   sabse tez mode (fast|balanced|quality)
   python jarvis.py --persona "..." apni pasand ka behaviour likho (file me jodta hai)
+  python jarvis.py --import-all /sdcard/Download   poore folder ka data vault me
   python jarvis.py --teach "..."  seedha sikhao (style ya yaad)
   python jarvis.py --diag         apna system check karo (kya dikkat hai)
   python jarvis.py --mind show    apna dimaag dekho (facts, style, sabak)
@@ -3122,12 +3143,13 @@ function fallback(text){
     speaking=true; speechSynthesis.speak(u);
   }catch(e){ speaking=false; window.__mute=false; }
 }
-async function send(text){
+async function send(text, fromVoice){
   text=(text||'').trim(); if(!text||busy)return; busy=true;
   bub(text,'me'); $('#txt').value='';
   const th=bub('soch rahi hoon...','bot','think'); const t0=Date.now();
   try{
-    const r=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
+    const r=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({text, voice: !!fromVoice})});
     const j=await r.json(); th.remove();
     if(j.say){bub(j.say,'bot'); tm(((Date.now()-t0)/1000).toFixed(1)+' · '+(j.provider||'?')); say(j.say);}
     if(j.pending){$('#pv').textContent=j.preview||'';$('#pend').classList.add('on');}
@@ -3230,7 +3252,7 @@ async function flushAudio(){
     const t=(j.text||'').trim();
     if(t) console.log('stt', ((Date.now()-tStt)/1000).toFixed(1)+'s via '+(j.via||'?'));
     if(t && /^(band karo|stop|chup|ruko)$/i.test(t)){ stopAll(); }
-    else if(t && t.length>1 && !speaking) await send(t);
+    else if(t && t.length>1 && !speaking) await send(t, true);
     else if(j.error) bub('Sunne me dikkat: '+j.error,'bot');
   }catch(e){ bub('Audio bhejne me dikkat: '+e.message,'bot'); }
   sending=false;
@@ -3245,7 +3267,7 @@ async function pollNext(){
     const t=(j.text||'').trim();
     if(t && !speaking && !sending){
       if(/^(band karo|stop|chup|ruko)$/i.test(t)){ stopAll(); return; }
-      await send(t);
+      await send(t, true);
     }
   }catch(e){}
   pollT=setTimeout(pollNext, 300);
@@ -3444,9 +3466,10 @@ def serve(cfg, port=8080):
                 t0 = time.time()
                 try:
                     parts = [x.strip() for x in text.splitlines() if x.strip()] or [text]
+                    vflag = bool(body.get("voice"))
                     with lock:
                         for one in parts:
-                            say = handle_turn(one, cfg, mem, key, heard_text=one)
+                            say = handle_turn(one, cfg, mem, key, heard_text=one, voice=vflag)
                     maybe_push()
                 except Exception as exc:
                     self._send(200, json.dumps({"error": str(exc)[:200]}))
@@ -3608,6 +3631,41 @@ def main(argv):
         except OSError:
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
+        return 0
+    if argv[0] == "--import-all":
+        cfg = load_config()
+        src = os.path.expanduser(argv[1] if len(argv) > 1 else "/sdcard/Download")
+        if not os.path.isdir(src):
+            print("Folder nahi mila: %s" % src)
+            return 1
+        exts = (".txt", ".md", ".markdown", ".csv", ".json", ".pdf", ".docx", ".xlsx")
+        files = []
+        for root, dirs, names in os.walk(src):
+            dirs[:] = [d for d in dirs if not d.startswith(".")][:30]
+            for n in names:
+                if n.lower().endswith(exts):
+                    fp = os.path.join(root, n)
+                    try:
+                        if 200 < os.path.getsize(fp) < 8 * 1024 * 1024:
+                            files.append(fp)
+                    except OSError:
+                        pass
+            if len(files) >= 120:
+                break
+        if not files:
+            print("Koi padhne layak file nahi mili (%s)" % ", ".join(exts))
+            return 1
+        print("%d file mili - vault me daal raha hoon..." % len(files))
+        done = 0
+        for fp in files:
+            try:
+                msg = import_data(fp, cfg)
+                done += 1
+                print("  [%d/%d] %s" % (done, len(files), os.path.basename(fp)[:60]))
+            except Exception as exc:
+                print("  skip %s (%s)" % (os.path.basename(fp)[:40], exc))
+        chunks, nfiles, _ = build_index(cfg, force=True)
+        print("\nVault: %d file, %d hisse" % (nfiles, len(chunks)))
         return 0
     if argv[0] == "--teach":
         cfg = load_config()
@@ -3927,7 +3985,7 @@ def main(argv):
                 break
             parts = [x.strip() for x in line.splitlines() if x.strip()]
             for one in (parts if len(parts) > 1 else [line]):
-                handle_turn(one, cfg, mem, key, heard_text=one)
+                handle_turn(one, cfg, mem, key, heard_text=one, voice=True)
         return 0
 
     print(USAGE)
