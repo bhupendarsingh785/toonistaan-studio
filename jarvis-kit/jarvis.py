@@ -2372,7 +2372,9 @@ media, back/home, tap, screen, screenshot, notification, clipboard, wifi, locati
 yaad rakhna, research (source ke saath), app banana, apna code khud badalna (self_edit),
 briefing, GitHub, aur diagnose (apni dikkat khud dekhna - "sun nahi rahe"/"problem" par chalao).
 
-KAAM: kaam bole to tool chalao, sirf baat mat karo. Jawab sirf is JSON me:
+KAAM: kaam bole to tool chalao, sirf baat mat karo.
+KABHI apni soch, analysis ya English notes mat likho ("The user is asking", "I should" jaisa kuch nahi).
+Sirf wahi likho jo user ko bolna hai. Jawab sirf is JSON me:
 {{"say": "jo bolna hai", "do": [{{"tool": "naam", "args": {{}}}}]}}
 - "say" = bolo jaane wala text, chhota, bina markdown.
 - "do" = asli kaam; warna [].
@@ -2751,6 +2753,29 @@ def wake_ok(text, cfg):
     return False, raw
 
 
+REASONING_MARKS = ("the user is", "the user wants", "the user said", "i should", "i need to",
+                   "previous context", "i'll ", "let me ", "my response", "in hinglish",
+                   "max 2 lines", "words max", "the assistant", "user asked", "so i ")
+
+
+def strip_reasoning(text):
+    """Model ki andar ki soch (English meta) hatao - sirf bolne wali baat rakho."""
+    t = (text or "").strip()
+    if not t:
+        return ""
+    low = t.lower()
+    hits = sum(1 for m in REASONING_MARKS if m in low)
+    if hits >= 2 or (hits >= 1 and len(t) > 180):
+        # Hinglish line dhoondho jo asli jawab ho
+        cands = [x.strip() for x in re.split(r"[\n.]", t) if x.strip()]
+        good = [c for c in cands
+                if not any(m in c.lower() for m in REASONING_MARKS) and len(c) > 8]
+        if good:
+            return good[-1][:300]
+        return ""
+    return t
+
+
 def handle_turn(user_part, cfg, mem, key, heard_text="", voice=False):
     t0 = time.time()
     if isinstance(user_part, str) and is_self_intent(user_part):
@@ -2763,7 +2788,9 @@ def handle_turn(user_part, cfg, mem, key, heard_text="", voice=False):
         save_memory(mem)
         return say
     plan = ask_model(cfg, mem, user_part, key)
-    say = strip_markdown(str(plan.get("say", "")))
+    say = strip_reasoning(strip_markdown(str(plan.get("say", ""))))
+    if not say:
+        say = "Ek second Boss, dobara bolo na?"
     actions = plan.get("do") or plan.get("actions") or []
     if not isinstance(actions, list):
         actions = []
@@ -2792,7 +2819,9 @@ def handle_turn(user_part, cfg, mem, key, heard_text="", voice=False):
         result_text = ("Tool results (real, just executed):\n" + "\n".join(results)
                        + "\n\nAb user ko ek chhoti line me batao ki kaam POORA ho gaya aur kya hua.")
         final = ask_model(cfg, mem, user_part, key, extra=result_text)
-        final_say = strip_markdown(str(final.get("say", "")))
+        final_say = strip_reasoning(strip_markdown(str(final.get("say", ""))))
+        if not final_say:
+            final_say = "Ho gaya Boss."
         if final_say:
             say = final_say
         if done_lines:
@@ -2922,6 +2951,55 @@ def doctor(cfg):
         return 1
     print("\nSab theek. Ab: python jarvis.py")
     return 0
+
+
+def bug_scan(path=None):
+    """Code me bug/error dhoondho: syntax, duplicate defs, bare except, TODO, lambi lines."""
+    import ast as _ast
+    path = path or SELF_PATH
+    issues = []
+    try:
+        src = open(path, "r", encoding="utf-8").read()
+    except OSError as exc:
+        return ["file padhi nahi ja saki: %s" % exc]
+    try:
+        tree = _ast.parse(src)
+    except SyntaxError as exc:
+        return ["SYNTAX ERROR line %s: %s" % (exc.lineno, exc.msg)]
+    names = {}
+    for node in tree.body:
+        if isinstance(node, (_ast.FunctionDef, _ast.ClassDef)):
+            names.setdefault(node.name, []).append(node.lineno)
+    for n, ls in names.items():
+        if len(ls) > 1:
+            issues.append("duplicate definition '%s' lines %s" % (n, ls))
+    lines = src.splitlines()
+    for i, line in enumerate(lines, 1):
+        st = line.strip()
+        if st.startswith("except:") or st == "except Exception:":
+            issues.append("bare except line %d (error chhupa leta hai)" % i)
+        if "TODO" in line or "FIXME" in line:
+            issues.append("TODO/FIXME line %d" % i)
+        if len(line) > 200:
+            issues.append("bahut lambi line %d (%d chars)" % (i, len(line)))
+    for m in re.finditer(r"def (\w+)\([^)]*\):", src):
+        pass
+    if len(issues) > 40:
+        issues = issues[:40] + ["... aur %d" % (len(issues) - 40)]
+    return issues
+
+
+def bug_report(cfg=None):
+    """Poora health report: code bugs + runtime dikkat."""
+    issues = bug_scan()
+    txt, nprob = diagnose(cfg, deep=False)
+    out = []
+    out.append("CODE CHECK: %d cheez mili" % len(issues) if issues else "CODE CHECK: koi bug nahi mila")
+    for i in issues[:12]:
+        out.append("  - " + i)
+    out.append("")
+    out.append(txt)
+    return "\n".join(out), len(issues) + nprob
 
 
 def diagnose(cfg=None, deep=False):
@@ -3183,6 +3261,8 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --learn [N]    vault ki files se seekho (dimaag me)
   python jarvis.py --teach "..."  seedha sikhao (style ya yaad)
   python jarvis.py --diag         apna system check karo (kya dikkat hai)
+  python jarvis.py --bugs         code me bug/error check karo
+  python jarvis.py --fix-bugs     pehla bug khud theek karo
   python jarvis.py --mind show    apna dimaag dekho (facts, style, sabak)
   python jarvis.py --mind push    dimaag GitHub par save (personal database)
   python jarvis.py --mind pull    GitHub se dimaag wapas laao
@@ -4113,6 +4193,21 @@ def main(argv):
         brain_add(kind, text)
         print("Sikh liya (%s): %s" % (kind, text))
         return 0
+    if argv[0] in ("--bugs", "--check"):
+        target = argv[1] if len(argv) > 1 and not argv[1].startswith("-") else None
+        rep, n = bug_report(load_config())
+        print(rep)
+        print("\nTotal: %d cheez" % n)
+        return 0 if n == 0 else 1
+    if argv[0] == "--fix-bugs":
+        issues = bug_scan()
+        if not issues:
+            print("Koi bug nahi mila - code saaf hai")
+            return 0
+        print("Pehla issue: %s" % issues[0])
+        ok_f, msg = self_request("Is bug ko theek karo: %s" % issues[0], load_config(), load_key(), confirm=True)
+        print(("OK: " if ok_f else "FAIL: ") + msg)
+        return 0 if ok_f else 1
     if argv[0] == "--diag":
         deep = "--deep" in argv
         txt, n = diagnose(load_config(), deep=deep)
