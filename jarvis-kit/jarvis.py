@@ -3569,8 +3569,10 @@ def learn_from_vault(cfg, key, limit=8):
     if not files:
         return True, "sab files pehle se seekh li hain"
     todo = files[:limit]
+    print("  %d file baaki hain, %d abhi seekh rahi hoon..." % (len(files), len(todo)))
     done = 0
-    for fname in todo:
+    for idx, fname in enumerate(todo, 1):
+        print("  [%d/%d] %s ..." % (idx, len(todo), fname[:55]), end="", flush=True)
         text = " ".join(c["text"] for c in chunks if c.get("file") == fname)[:4000]
         if len(text) < 60:
             continue
@@ -3579,12 +3581,14 @@ def learn_from_vault(cfg, key, limit=8):
         out = ask_text(cfg, key, "Tum ek document summarizer ho.", prompt + "\n\n" + text, max_tokens=300)
         out = strip_markdown(out or "").strip()
         if not out:
+            print(" skip (jawab nahi mila)")
             continue
         for line in [x.strip(" -*•") for x in out.splitlines() if x.strip()][:3]:
             if len(line) > 12:
                 brain_add("facts", "[%s] %s" % (fname[:24], line[:150]))
         learned.add(fname)
         done += 1
+        print(" ok (%d point)" % min(3, len([x for x in out.splitlines() if x.strip()])))
     b = load_brain()
     b["learned_files"] = sorted(learned)[-500:]
     save_brain(b)
