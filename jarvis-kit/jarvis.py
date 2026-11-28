@@ -1392,8 +1392,31 @@ def _read_xlsx(path):
         return ""
 
 
+def _read_pptx(path):
+    try:
+        with zipfile.ZipFile(path) as z:
+            parts = sorted(n for n in z.namelist() if re.match(r"ppt/slides/slide\d+\.xml", n))
+            out = []
+            for n in parts:
+                xml = z.read(n).decode("utf-8", "ignore")
+                out.append(re.sub(r"<[^>]+>", " ", xml))
+            return re.sub(r"[ \t]+", " ", "\n".join(out)).strip()
+    except Exception:
+        return ""
+
+
 def _read_any(path):
     ext = os.path.splitext(path)[1].lower()
+    if ext == ".pptx":
+        return _read_pptx(path)
+    if ext in (".html", ".htm"):
+        try:
+            with open(path, "r", encoding="utf-8", errors="ignore") as f:
+                raw = f.read()
+            raw = re.sub(r"<script.*?</script>|<style.*?</style>", " ", raw, flags=re.S | re.I)
+            return re.sub(r"<[^>]+>", " ", raw)
+        except OSError:
+            return ""
     if ext == ".docx":
         return _read_docx(path)
     if ext in (".xlsx", ".xlsm"):
@@ -1415,7 +1438,128 @@ def _read_any(path):
 
 
 DATA_EXT = (".txt", ".md", ".markdown", ".csv", ".json", ".log", ".srt", ".vtt",
-            ".html", ".htm", ".tsv", ".pdf", ".docx")
+            ".html", ".htm", ".tsv", ".pdf", ".docx", ".xlsx", ".pptx", ".py", ".js", ".ts",
+            ".css", ".xml", ".yaml", ".yml", ".ini", ".conf", ".sh")
+
+
+def import_data(src, cfg):
+    """Aapka data vault me laao - file, folder ya zip. (message, added_count)"""
+    import shutil as _sh
+    d = data_dir(cfg)
+    src = os.path.expanduser(src)
+    if not os.path.exists(src):
+        return ("Path nahi mila: %s" % src), 0
+    added = 0
+
+    def _take(path, name=None):
+        nonlocal added
+        name = name or os.path.basename(path)
+        if not name.lower().endswith(DATA_EXT):
+            return
+        dest = os.path.join(d, os.path.basename(name))
+        base, ext = os.path.splitext(dest)
+        i = 1
+        while os.path.exists(dest):
+            dest = "%s_%d%s" % (base, i, ext)
+            i += 1
+        try:
+            _sh.copyfile(path, dest)
+            added += 1
+        except OSError:
+            pass
+
+    if os.path.isdir(src):
+        for root, dirs, names in os.walk(src):
+            dirs[:] = [x for x in dirs if not x.startswith(".")]
+            for n in names:
+                if not n.startswith("."):
+                    _take(os.path.join(root, n), n)
+    elif src.lower().endswith(".zip"):
+        tmp = os.path.join(JARVIS_DIR, "_import")
+        _sh.rmtree(tmp, ignore_errors=True)
+        os.makedirs(tmp, exist_ok=True)
+        try:
+            with zipfile.ZipFile(src) as z:
+                z.extractall(tmp)
+        except Exception as exc:
+            return ("Zip khol nahi paya: %s" % exc), 0
+        for root, dirs, names in os.walk(tmp):
+            for n in names:
+                if not n.startswith("."):
+                    _take(os.path.join(root, n), n)
+        _sh.rmtree(tmp, ignore_errors=True)
+    else:
+        _take(src)
+    chunks, nfiles, _ = build_index(cfg, force=True)
+    return ("%d file vault me daali. Ab vault me %d file, %d hisse." % (added, nfiles, len(chunks))), added
+
+
+def chunk_text(text, fname, size=900, overlap=150):
+    """Paragraph-aware chunking - behtar retrieval ke liye."""
+    text = re.sub(r"\r", "", text or "")
+    text = re.sub(r"[ \t]{2,}", " ", text)
+    paras = [x.strip() for x in re.split(r"\n\s*\n", text) if x.strip()]
+    out, buf = [], ""
+    for para in paras:
+        if len(para) > size:
+            for i in range(0, len(para), size - overlap):
+                piece = para[i:i + size].strip()
+                if len(piece) > 30:
+                    out.append({"file": fname, "text": piece})
+            continue
+        if len(buf) + len(para) + 2 <= size:
+            buf = (buf + "\n" + para).strip() if buf else para
+        else:
+            if len(buf) > 30:
+                out.append({"file": fname, "text": buf})
+            tail = buf[-overlap:] if buf else ""
+            buf = (tail + " " + para).strip()
+    if len(buf) > 30:
+        out.append({"file": fname, "text": buf})
+    return out
+
+
+def build_index(cfg, force=False):
+    d = data_dir(cfg)
+    cache_path = os.path.join(JARVIS_DIR, "index.json")
+    files = []
+    for root, _dirs, names in os.walk(d):
+        for n in names:
+            if not n.startswith("."):
+                files.append(os.path.join(root, n))
+    files.sort()
+    sig = {}
+    for f in files:
+        try:
+            st = os.stat(f)
+            sig[f] = "%d|%d" % (st.st_size, int(st.st_mtime))
+        except OSError:
+            pass
+    cached = read_json(cache_path, {})
+    if not force and isinstance(cached, dict) and cached.get("sig") == sig and cached.get("chunks"):
+        return cached["chunks"], len(files), True
+    old = {}
+    if isinstance(cached, dict) and isinstance(cached.get("files"), dict):
+        old = cached["files"]
+    newmap, chunks, seen, reused = {}, [], set(), 0
+    for f in files:
+        ent = old.get(f)
+        if ent and ent.get("sig") == sig.get(f) and ent.get("chunks"):
+            pieces = ent["chunks"]
+            reused += 1
+        else:
+            pieces = chunk_text(_read_any(f), os.path.basename(f))
+        newmap[f] = {"sig": sig.get(f), "chunks": pieces}
+        for piece in pieces:
+            key = (piece.get("file"), hash(piece.get("text", "")[:180]))
+            if key in seen:
+                continue
+            seen.add(key)
+            chunks.append(piece)
+    chunks = chunks[:8000]
+    write_json(cache_path, {"sig": sig, "files": newmap, "chunks": chunks})
+    log("index: %d file (%d cached), %d chunks" % (len(files), reused, len(chunks)))
+    return chunks, len(files), False
 
 
 def import_data(src, cfg):
