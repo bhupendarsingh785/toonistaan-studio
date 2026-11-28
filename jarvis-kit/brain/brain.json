@@ -98,7 +98,16 @@
   "[low-resource-datasets-fo] Yeh repository Hinglish (Hindi-English mix) text mein sarcasm detect karne ke liye curated dataset provide karta hai. Dataset mein human aur AI dono t",
   "[measuring-the-effect-of-] Fizeau interferometer do aamne-saamne rakhe hue reflecting surfaces ka use karke interference fringes banata hai jo optical surfaces ki shape ko measu",
   "[measuring-the-effect-of-] Effect size statistical data mein phenomenon ki magnitude (size) aur direction ko quantitatively measure karta hai. Yeh hypothesis testing ka compleme",
-  "[multilingual-voice-cloni] 1. AI voice cloning ab Indian accents aur emotions ko perfectly replicate kar ke creators ko 600 million+ vernacular users ke liye authentic aur cost-"
+  "[multilingual-voice-cloni] 1. AI voice cloning ab Indian accents aur emotions ko perfectly replicate kar ke creators ko 600 million+ vernacular users ke liye authentic aur cost-",
+  "[correlation-between-voca] Ye album American hardcore punk band SeeYouSpaceCowboy ka debut studio album hai jo September 27, 2019 ko Pure Noise Records ke through release hua. I",
+  "[correlation-between-voca] Yeh ek data-driven technique hai jo psychology aur neurophysiology research mein use hoti hai taaki participants ke mental representations (jaise face",
+  "[cost-effective-cloud-arc] India 2025 mein global AI talent pool ke liye second aur AI skill penetration ke liye pehle number par hai, jabki AI publications mein teenve number p",
+  "[cost-effective-cloud-arc] Amazon 1994 mein Jeff Bezos dwara founded hui ek American multinational company hai jo e-commerce, cloud computing (AWS), aur digital streaming jaise",
+  "[ethical-frameworks-for-c] India globally 3rd rank par hai AI vibrancy me aur uske paas duniya ka 2nd largest AI talent pool hai jisme skill penetration sabse zyada hai. NITI Aa",
+  "[hindi-tts-models-2026-1.] One UI is Samsung Electronics ka user interface jo Android 9 Pie aur uske baad ke phones, TVs, aur computing devices ke liye banaya gaya hai, jo Samsu",
+  "[hindi-tts-models-2026-2.] Galaxy AI Samsung Electronics dwara banaya hua ek AI feature collection hai jo Galaxy devices par language translation, image editing, aur content sea",
+  "[privacy-preserving-feder] YouTube February 2005 mein Chad Hurley, Steve Chen aur Jawed Karim ne banaya tha, aur Google ne isse November 2006 mein $1.65 billion mein kharid liya",
+  "[real-time-hindi-speech-e] Yeh document ek PDF file ka raw binary data hai, isliye isme koi readable text content nahi milta. Provided stream mein sirf encoded characters aur ob"
  ],
  "style": [
   "hamesha chhoti line me jawab do"
@@ -134,12 +143,17 @@
   "data collect kiya: Latency optimization for real-time Hindi translation and emo (2 source)",
   "data collect kiya: Adapting speech emotion recognition for elderly Hindi speake (2 source)",
   "data collect kiya: Semantic alignment between Hindi text transcripts and audio  (2 source)",
-  "data collect kiya: Measuring the effect of AI voice modulation on click-through (2 source)"
+  "data collect kiya: Measuring the effect of AI voice modulation on click-through (2 source)",
+  "data collect kiya: Privacy-preserving federated learning for personalized Hindi (2 source)",
+  "data collect kiya: Correlation between vocal prosody and viewer retention rates (2 source)",
+  "data collect kiya: Cost-effective cloud architectures for scaling Hindi voice A (2 source)",
+  "data collect kiya: Hindi TTS models 2026 (2 source)",
+  "data collect kiya: speech datasets India (2 source)"
  ],
  "stats": {
   "turns": 84
  },
- "updated": "2026-11-28 20:38",
+ "updated": "2026-11-28 20:44",
  "learned_files": [
   "1794325377146_4422005_4.pdf",
   "AGENTS.md",
@@ -180,14 +194,21 @@
   "chandrayaan-4-launch-date-3.md",
   "client_secret_356143663731-0r0130elen6n53de4k60n2al4hnas8rb.apps.googleusercontent.com.json",
   "completions_usage_2026-10-08_2026-11-07.csv",
+  "correlation-between-vocal-prosody-and-viewer-reten-1.md",
+  "correlation-between-vocal-prosody-and-viewer-reten-2.md",
+  "cost-effective-cloud-architectures-for-scaling-hin-1.md",
+  "cost-effective-cloud-architectures-for-scaling-hin-2.md",
   "cross-lingual-transfer-learning-for-hindi-emotion--1.md",
   "cross-lingual-transfer-learning-for-hindi-emotion--2.md",
   "dusri-table-function-detail.docx",
   "emotion-aware-summarization-of-long-form-hindi-pod-1.md",
   "ethical-frameworks-for-commercializing-hindi-voice-1.md",
+  "ethical-frameworks-for-commercializing-hindi-voice-2.md",
   "existing-datasets-me-underrepresented-emotions-jai-1.md",
   "github-recovery-codes.txt",
   "hindi-gyaan-guide.md",
+  "hindi-tts-models-2026-1.md",
+  "hindi-tts-models-2026-2.md",
   "impact-of-background-music-on-ai-based-hindi-speak-1.md",
   "integrating-llms-for-context-aware-emotional-tone--2.md",
   "isro-chandrayaan-4-mission-details-1.md",
@@ -205,6 +226,8 @@
   "measuring-the-effect-of-ai-voice-modulation-on-cli-2.md",
   "multilingual-voice-cloning-techniques-tailored-for-1.md",
   "poora-program-saare-functions.docx",
+  "privacy-preserving-federated-learning-for-personal-1.md",
+  "real-time-hindi-speech-emotion-recognition-models--1.md",
   "seetal-audio-system-document (1).docx",
   "seetal-audio-system-document.docx",
   "seetal-audio-system-full-spec.docx",
