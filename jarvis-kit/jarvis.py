@@ -2058,6 +2058,7 @@ LANG_LINE = {
 
 
 PERSONA_FILE = os.path.join(JARVIS_DIR, "persona.txt")
+SERVE_MODE = {"on": False}
 
 
 def system_prompt(cfg, mem):
@@ -2103,11 +2104,16 @@ KAAM: kaam bole to tool chalao, sirf baat mat karo. Jawab sirf is JSON me:
 {user} ke baare me: {facts}
 Notes: {notes}
 {brain}
+{mode}
 {extra}
 """.format(name=name, user=user, lang=lang, tools=TOOL_HELP,
            facts=("; ".join(facts) if facts else "abhi kuch nahi"),
            notes=("; ".join("%s %s" % (n.get("at", ""), n.get("text", "")) for n in notes) if notes else "koi nahi"),
            brain=brain_summary(cfg),
+           mode=("Aap BROWSER PANEL me ho: aapki awaaz browser khud bajata hai (TTS), matlab aap bol sakti ho. "
+                 "Kabhi mat kaho ki aap bol nahi sakti ya sirf text de sakti ho. Phone ke hardware tools "
+                 "(battery, torch, app) bhi aapke paas hain kyunki aap phone ke andar chal rahi ho."
+                 if SERVE_MODE["on"] else ""),
            extra=("\nExtra persona:\n" + extra) if extra else "")
 
 
@@ -2629,7 +2635,9 @@ USAGE = """JARVIS (Termux) - private phone assistant
 WEB_PAGE = """<!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b1416"><title>JARVIS</title>
+<meta name="theme-color" content="#0b1416">
+<meta http-equiv="cache-control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="pragma" content="no-cache"><title>JARVIS</title>
 <style>
 :root{--bg:#0b1416;--pnl:#12212a;--acc:#37c2c9;--txt:#e8f4f6;--dim:#7fa0a8;--usr:#1b3a44}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -2707,9 +2715,9 @@ ping();
 $('#gear').onclick=()=>{$('#sht').classList.add('on');ping();};
 $('#ok').onclick=()=>$('#sht').classList.remove('on');
 function say(text){
-  speaking=true; buf=[]; silenceMs=0;
+  speaking=true; buf=[]; silenceMs=0; window.__mute=true;
   if(spk){try{spk.pause();}catch(e){} spk=null;}
-  const done=()=>{ speaking=false; if(handsfree && stream) $('#mic').classList.add('rec'); };
+  const done=()=>{ setTimeout(()=>{speaking=false; window.__mute=false; buf=[]; silenceMs=0; if(handsfree && stream) $('#mic').classList.add('rec');},400); };
   fetch('/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})})
    .then(r=>r.json()).then(j=>{
      if(j.audio){
@@ -2727,9 +2735,9 @@ function fallback(text){
     const hi=vs.find(v=>/hi[-_]IN/i.test(v.lang) && /female|google/i.test(v.name)) || vs.find(v=>/hi[-_]IN/i.test(v.lang));
     if(hi)u.voice=hi;
     u.lang=hi?hi.lang:'hi-IN'; u.pitch=1.2; u.rate=0.98;
-    u.onend=()=>{ speaking=false; if(handsfree && stream) $('#mic').classList.add('rec'); };
+    u.onend=()=>{ setTimeout(()=>{speaking=false; window.__mute=false; buf=[]; silenceMs=0; if(handsfree && stream) $('#mic').classList.add('rec');},400); };
     speaking=true; speechSynthesis.speak(u);
-  }catch(e){ speaking=false; }
+  }catch(e){ speaking=false; window.__mute=false; }
 }
 async function send(text){
   text=(text||'').trim(); if(!text||busy)return; busy=true;
@@ -2740,7 +2748,7 @@ async function send(text){
     const j=await r.json(); th.remove();
     if(j.say){bub(j.say,'bot'); tm(((Date.now()-t0)/1000).toFixed(1)+' · '+(j.provider||'?')); say(j.say);}
     if(j.pending){$('#pv').textContent=j.preview||'';$('#pend').classList.add('on');}
-    else bub('Dikkat: '+(j.error||'jawab nahi mila'),'bot');
+    else if(j.error && j.error!=='khaali') bub('Dikkat: '+j.error,'bot');
   }catch(e){th.remove();bub('Server se baat nahi hui. Termux me --serve chal raha hai?','bot');}
   busy=false;
 }
@@ -2765,7 +2773,7 @@ async function openMic(){
     proc=actx.createScriptProcessor(4096,1,1);
     gain=actx.createGain(); gain.gain.value=0;
     proc.onaudioprocess=e=>{
-      if(speaking || sending || !handsfree) return;
+      if(speaking || sending || !handsfree || window.__mute) return;
       const d=e.inputBuffer.getChannelData(0);
       let sum=0; for(let i=0;i<d.length;i++) sum+=d[i]*d[i];
       const rms=Math.sqrt(sum/d.length);
@@ -2813,7 +2821,7 @@ async function flushAudio(){
     const j=await r.json();
     const t=(j.text||'').trim();
     if(t && /^(band karo|stop|chup|ruko)$/i.test(t)){ setHF(false); }
-    else if(t) await send(t);
+    else if(t && t.length>1 && !speaking) await send(t);
   }catch(e){}
   sending=false;
   if(handsfree && stream) $('#mic').classList.add('rec');
@@ -2832,6 +2840,7 @@ def serve(cfg, port=8080):
     mem = load_memory()
     lock = threading.Lock()
     QUIET["on"] = True
+    SERVE_MODE["on"] = True
     if gh_token():
         try:
             ok_b, msg_b = gh_brain_sync(cfg, "pull")
@@ -2866,7 +2875,17 @@ def serve(cfg, port=8080):
         def do_GET(self):
             path = self.path.split("?")[0]
             if path in ("/", "/index.html"):
-                self._send(200, WEB_PAGE, "text/html; charset=utf-8")
+                data = WEB_PAGE.encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+                self.send_header("Pragma", "no-cache")
+                self.send_header("Content-Length", str(len(data)))
+                self.end_headers()
+                try:
+                    self.wfile.write(data)
+                except Exception:
+                    pass
             elif path == "/ping":
                 self._send(200, json.dumps({"ok": True, "chain": cfg.get("providers"),
                                             "voice": cfg.get("gemini_voice") if cfg.get("tts") != "phone" else "phone"}))
