@@ -2990,14 +2990,42 @@ async function flushAudio(){
   sending=false;
   if(handsfree && stream) $('#mic').classList.add('rec');
 }
+let serverMode=false, pollT=null;
+async function pollNext(){
+  clearTimeout(pollT);
+  if(!handsfree || !serverMode) return;
+  try{
+    const r=await fetch('/next'); const j=await r.json();
+    const t=(j.text||'').trim();
+    if(t && !speaking && !sending){
+      if(/^(band karo|stop|chup|ruko)$/i.test(t)){ stopAll(); return; }
+      await send(t);
+    }
+  }catch(e){}
+  pollT=setTimeout(pollNext, 300);
+}
 async function startAll(){
+  // 1) phone ka mic (Termux) - free aur unlimited
+  try{
+    const r=await fetch('/listen/start'); const j=await r.json();
+    if(j.ok){
+      serverMode=true; setChip(true);
+      $('#startbar').style.display='none';
+      $('#mic').classList.add('rec');
+      bub('Phone mic chalu - boliye, main sun rahi hoon.','bot');
+      pollNext();
+      return true;
+    }
+  }catch(e){}
+  // 2) warna browser mic
+  serverMode=false;
   const okM=await openMic();
   setChip(okM);
-  if(okM){ $('#startbar').style.display='none'; bub('Mic chalu - ab boliye (level bar hilni chahiye).','bot'); }
+  if(okM){ $('#startbar').style.display='none'; bub('Browser mic chalu - ab boliye.','bot'); }
   return okM;
 }
 function stopAll(){
-  setChip(false); closeMic();
+  setChip(false); serverMode=false; clearTimeout(pollT); closeMic();
   fetch('/listen/stop').catch(()=>{});
 }
 $('#startbtn').onclick=async()=>{
@@ -3172,6 +3200,11 @@ def serve(cfg, port=8080):
             elif self.path == "/stt":
                 b64 = str(body.get("audio", ""))
                 mime = str(body.get("mime", "audio/wav"))
+                if have("termux-speech-to-text"):
+                    txt_t = listen_text(int(cfg.get("listen_seconds", 8)))
+                    if txt_t:
+                        self._send(200, json.dumps({"text": txt_t.strip(), "via": "phone"}))
+                        return
                 if not b64 or not key:
                     self._send(200, json.dumps({"error": "audio ya key nahi"}))
                     return
