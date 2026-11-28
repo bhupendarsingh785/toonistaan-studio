@@ -3179,6 +3179,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --vault-clean  duplicate file hatao aur index saaf karo
   python jarvis.py --collect "topic"   internet se data laakar vault me daalo
   python jarvis.py --auto-collect  jo kami hai wo khud web se laao
+  python jarvis.py --queue "topic"  seekhne ke liye topic queue me daalo
   python jarvis.py --learn [N]    vault ki files se seekho (dimaag me)
   python jarvis.py --teach "..."  seedha sikhao (style ya yaad)
   python jarvis.py --diag         apna system check karo (kya dikkat hai)
@@ -4000,6 +4001,19 @@ def main(argv):
         except OSError:
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
+        return 0
+    if argv[0] == "--queue":
+        cfg = load_config()
+        topic = " ".join(argv[1:]).strip()
+        if not topic:
+            q = read_json(QUEUE_PATH, [])
+            print("Queue (%d):" % (len(q) if isinstance(q, list) else 0))
+            for x in (q if isinstance(q, list) else [])[-10:]:
+                print("  -", str(x.get("topic", ""))[:90])
+            print("\nAdd karne ke liye: python jarvis.py --queue \"topic\"")
+            return 0
+        added = queue_topic(topic, cfg)
+        print(("Queue me daala: " if added else "Pehle se queue me hai: ") + topic)
         return 0
     if argv[0] == "--auto-collect":
         cfg = load_config()
