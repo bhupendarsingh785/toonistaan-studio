@@ -847,6 +847,13 @@ RELATION_STYLE = {"boss": {"address": "Boss", "warmth": 1.0}, "dost": {"address"
 
 
 def pick_emotion(text, cfg=None):
+    try:
+        emo_l, score_l, _h = emo_detect(text)
+        if emo_l and score_l >= 1.0:
+            return {"angry": "serious", "fear": "caring", "love": "caring",
+                    "tired": "sad", "surprise": "surprised"}.get(emo_l, emo_l)
+    except Exception:
+        pass
     t = (text or "").lower()
     table = (("sad", ("dukh", "udaas", "bura laga", "afsos", "chali gayi")),
              ("caring", ("aaram", "dhyan", "pyaar", "khayal", "theek ho", "thak")),
@@ -3308,8 +3315,10 @@ def handle_turn(user_part, cfg, mem, key, heard_text="", voice=False):
         low_u = (heard_text or "").lower()
         if any(w in low_u for w in ("shabash", "wah", "achha kaam", "badhiya", "thank", "dhanyavad", "love you")):
             state_event("praised", 1.0, heard_text[:80])
+            emo_learn(heard_text, "praised")
         elif any(w in low_u for w in ("bakwas", "kharab", "kaam nahi", "bewakoof", "ganda", "faltu")):
             state_event("scolded", 1.0, heard_text[:80])
+            emo_learn(heard_text, "scolded")
         if actions and done_lines:
             state_event("success" if len(done_lines) >= len(actions) else "fail", 0.6,
                         "%d kaam" % len(done_lines))
@@ -3757,6 +3766,9 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --vault-clean  duplicate file hatao aur index saaf karo
   python jarvis.py --deep "topic" [--project] [--include] [--push]
                                   bada research: report + project + apne andar tool + GitHub
+  python jarvis.py --emotions       bhaav shabdkosh (kya seekha)
+  python jarvis.py --feel-learn     duniya/web se bhaav ke shabd seekho
+  python jarvis.py --feel-teach happy "text"   khud sikhao
   python jarvis.py --state          andar ki haalat (mood, energy, shareer)
   python jarvis.py --feel praised   bhaav badlo (success/fail/praised/scolded/rest)
   python jarvis.py --agent new "Naam" "role"    naya agent banao
@@ -4925,6 +4937,127 @@ def awareness_line(cfg=None):
     return "; ".join(bits)
 
 
+EMO_LEX_PATH = os.path.join(JARVIS_DIR, "emotion_lexicon.json")
+EMO_SEED = {
+    "happy": ("khush", "khushi", "mazaa", "achha", "badhiya", "shandar", "zabardast", "wah", "haha",
+              "\u0916\u0941\u0936", "\u092e\u091c\u093c\u093e", "\u0905\u091a\u094d\u0938\u093e", "\u092c\u0922\u093c\u093f\u092f\u093e"),
+    "sad": ("udaas", "dukh", "bura", "afsos", "rona", "royi", "chala gaya", "akela",
+            "\u0926\u0941\u0916", "\u0909\u0926\u093e\u0938", "\u0930\u094b"),
+    "angry": ("gussa", "krodh", "bakwas", "faltu", "chup", "bewakoof",
+              "\u0917\u0941\u0938\u094d\u0938\u093e", "\u092c\u0915\u0935\u093e\u0938"),
+    "fear": ("dar", "darr", "ghabra", "tension", "pareshan", "risk",
+             "\u0921\u0930", "\u0924\u0928\u093e\u0935"),
+    "love": ("pyaar", "pyar", "mohabbat", "dil", "jaan", "sweetheart",
+             "\u092a\u094d\u092f\u093e\u0930", "\u0926\u093f\u0932"),
+    "surprise": ("hairan", "aashcharya", "kya baat", "arre", "wow",
+                 "\u0939\u0948\u0930\u093e\u0928", "\u0905\u0930\u0947"),
+    "tired": ("thak", "thaka", "neend", "aaram", "rest",
+              "\u0925\u0915", "\u0928\u0940\u0902\u0926"),
+    "excited": ("josh", "excited", "zabardast", "shuru karo", "chalo",
+                "\u091c\u094b\u0936"),
+}
+
+
+def emo_lex_load():
+    d = read_json(EMO_LEX_PATH, {})
+    if not isinstance(d, dict):
+        d = {}
+    words = d.get("words") or {}
+    if not words:
+        for emo, ws in EMO_SEED.items():
+            for w in ws:
+                words.setdefault(w, {})[emo] = 1.0
+    return {"words": words, "learned": int(d.get("learned", 0)), "updated": d.get("updated", "")}
+
+
+def emo_lex_save(d):
+    d["updated"] = datetime.now().strftime("%Y-%m-%d %H:%M")
+    write_json(EMO_LEX_PATH, d)
+
+
+def emo_detect(text):
+    """Seekhe hue lexicon se bhaav pakdo. (emotion, score, hits)"""
+    lex = emo_lex_load()["words"]
+    t = (text or "").lower()
+    toks = re.findall(r"[\w\u0900-\u097F]+", t)
+    score = {}
+    hits = []
+    for tok in toks:
+        for key in (tok, tok[:6]):
+            if key in lex:
+                for emo, w in lex[key].items():
+                    score[emo] = score.get(emo, 0) + float(w)
+                hits.append(tok)
+                break
+    if not score:
+        return "", 0.0, []
+    best = max(score.items(), key=lambda x: x[1])
+    return best[0], best[1], hits[:6]
+
+
+def emo_learn(text, signal, amount=1.0):
+    """Asli baat se seekho: signal se pata chala kaunsa bhaav tha."""
+    mapping = {"praised": "happy", "scolded": "sad", "fail": "tired",
+               "success": "excited", "love": "love", "angry": "angry"}
+    emo = mapping.get(str(signal).lower(), "")
+    if not emo:
+        return 0
+    lex = emo_lex_load()
+    words = lex["words"]
+    toks = [w for w in re.findall(r"[\w\u0900-\u097F]+", (text or "").lower()) if len(w) > 3][:40]
+    n = 0
+    for tok in toks:
+        if tok in ("hai", "hoon", "karo", "nahi", "aap", "mera", "tera", "\u0939\u0948", "\u0928\u0939\u0940\u0902"):
+            continue
+        words.setdefault(tok, {})
+        words[tok][emo] = min(6.0, words[tok].get(emo, 0) + 0.25 * amount)
+        n += 1
+    lex["learned"] = int(lex.get("learned", 0)) + n
+    emo_lex_save(lex)
+    if n:
+        journal_add("seekha", "%s bhaav ke %d shabd (%s)" % (emo, n, (text or "")[:60]))
+    return n
+
+
+def emo_learn_web(cfg, key, limit=3):
+    """Duniya se bhaav ke shabd seekho (web se)."""
+    topics = ["list of emotions and feelings words",
+              "Hindi emotion words list meaning",
+              "emotional vocabulary English Hindi"]
+    got = 0
+    for t in topics[:limit]:
+        ok_c, msg = collect_topic(t, cfg, key, n=2)
+        if ok_c:
+            got += 1
+    lex = emo_lex_load()
+    # vault se emotion shabd nikaalo
+    chunks, _n, _c = build_index(cfg)
+    added = 0
+    for ch in chunks[:400]:
+        txt = ch.get("text", "").lower()
+        for emo, ws in EMO_SEED.items():
+            for w in ws:
+                if w in txt:
+                    lex["words"].setdefault(w, {})
+                    if emo not in lex["words"][w]:
+                        lex["words"][w][emo] = 0.8
+                        added += 1
+    lex["learned"] = int(lex.get("learned", 0)) + added
+    emo_lex_save(lex)
+    return got, added
+
+
+def emo_show():
+    lex = emo_lex_load()
+    words = lex["words"]
+    print("BHAV SHABDKOSH")
+    print("  shabd: %d | seekhe: %d | update: %s" % (len(words), lex.get("learned", 0), lex.get("updated", "?")))
+    top = sorted(words.items(), key=lambda kv: -sum(kv[1].values()))[:12]
+    for w, sc in top:
+        best = max(sc.items(), key=lambda x: x[1])
+        print("  %-14s -> %s (%.1f)" % (w[:14], best[0], best[1]))
+
+
 def state_show():
     st = state_load()
     b = body_read()
@@ -5228,6 +5361,23 @@ def main(argv):
         except OSError:
             pass
         print("%s key save ho gayi (%d bytes): %s" % (prov, len(k), path))
+        return 0
+    if argv[0] == "--emotions":
+        emo_show()
+        return 0
+    if argv[0] == "--feel-learn":
+        cfg = load_config()
+        got, added = emo_learn_web(cfg, load_key())
+        print("Web se %d source, %d naye shabd-bhaav jode" % (got, added))
+        emo_show()
+        return 0
+    if argv[0] == "--feel-teach":
+        if len(argv) < 3:
+            print('Use: python jarvis.py --feel-teach happy "aaj bahut mazaa aaya"')
+            return 1
+        n = emo_learn(" ".join(argv[2:]), {"happy": "success", "sad": "scolded", "angry": "angry",
+                                           "love": "love", "fear": "fail"}.get(argv[1], "success"))
+        print("%d shabd '%s' bhaav me jode" % (n, argv[1]))
         return 0
     if argv[0] == "--state":
         state_show()
