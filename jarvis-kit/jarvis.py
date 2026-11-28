@@ -2290,11 +2290,33 @@ def ask_messages(cfg, mem, user_text, extra=None):
     return msgs
 
 
+def data_context(query, cfg, k=None):
+    """Vault se relevant hisse - har provider ke liye (source ke saath)."""
+    if not query:
+        return ""
+    try:
+        chunks, _n, _c = build_index(cfg)
+        picked = retrieve(query, chunks, int(k or cfg.get("rag_top", 4)))
+    except Exception as exc:
+        log("data_context fail: %s" % exc)
+        return ""
+    if not picked:
+        return ""
+    lines = []
+    for c in picked:
+        lines.append("[%s] %s" % (c.get("file", "?"), c.get("text", "")[:700]))
+    return ("USER KE APNE DATA SE (sirf inhi par bharosa karo, source naam ke saath bolo):\n"
+            + "\n---\n".join(lines))
+
+
 def ask_remote(cfg, mem, user_part, key, extra=None):
     """Gemini -> Groq -> OpenRouter -> local, jo pehle chale."""
     order = [p.strip() for p in str(cfg.get("providers",
              "gemini,groq,openrouter,local")).split(",") if p.strip()]
     text_part = user_part if isinstance(user_part, str) else ""
+    dctx = data_context(text_part, cfg)
+    if dctx:
+        extra = (extra + "\n\n" + dctx) if extra else dctx
     last_err = ""
     LAST_PROVIDER["trace"] = []
     now_t = time.time()
