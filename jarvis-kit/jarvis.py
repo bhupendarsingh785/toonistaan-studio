@@ -1095,7 +1095,8 @@ def port_open(host, port, timeout=3):
         return False
 
 
-def adb_auto(cfg):
+def adb_auto(cfg, args=None):
+    args = args or []
     """ADB pairing: port khud (mDNS) ya poochh kar, code ek baar, phir save."""
     if not have("adb"):
         print("adb install kar raha hoon (1-2 minute)...")
@@ -1108,8 +1109,17 @@ def adb_auto(cfg):
     print("  -> 'Pair device with pairing code' KHOLO (popup khula rakho)")
     print("  -> popup me: 'Wi-Fi pairing code' (6 ank) aur 'IP address & port' (port)\n")
 
-    pair, conn = adb_mdns_ports()
-    if pair:
+    if len(args) >= 2:
+        pport, code = args[0], args[1]
+        conn_arg = args[2] if len(args) > 2 else ""
+        pair = conn = ""
+        print("Args se: port=%s code=%s" % (pport, code))
+    else:
+        pport = code = conn_arg = ""
+        pair, conn = adb_mdns_ports()
+    if pport:
+        pass
+    elif pair:
         print("mDNS se mila: pairing=%s connect=%s" % (pair, conn or "?"))
         pport = pair.split(":")[-1]
     else:
@@ -1161,9 +1171,14 @@ def adb_auto(cfg):
               "ya port galat. Dobara: python jarvis.py --adb-auto")
         return False
 
+    if not conn and conn_arg:
+        conn = conn_arg if ":" in conn_arg else None
+        cport = conn_arg if ":" not in conn_arg else ""
+    else:
+        cport = ""
     if not conn:
         _, conn = adb_mdns_ports()
-    if not conn:
+    if not conn and not cport:
         cport = _ask_digits("Connect port (Wireless debugging screen ka port, 5 ank): ", 4, 5)
         if cport:
             for h in ([base_ip] + [x for x in ("127.0.0.1",) if x != base_ip]):
@@ -3666,7 +3681,7 @@ USAGE = """JARVIS (Termux) - private phone assistant
   python jarvis.py --update       naya version khud install karo (backup ke saath)
   python jarvis.py --always       hamesha sunne wala mode (wakelock + notification)
   python jarvis.py --serve        browser panel (http://127.0.0.1:8080) - saare tools browser se
-  python jarvis.py --adb-auto     ADB pairing jitna automatic ho sake (port khud)
+  python jarvis.py --adb-auto [PORT CODE [CONNECTPORT]]   ADB pairing (args se turant)
   python jarvis.py --adb-connect  purane pairing se dobara judo
   python jarvis.py --adb "command"     poore phone par adb command (setup_adb.sh ke baad)
   python jarvis.py --research "topic"  internet se source ke saath jawab
@@ -4990,7 +5005,7 @@ def main(argv):
                 port = int(a)
         return serve(cfg, port)
     if argv[0] == "--adb-auto":
-        return 0 if adb_auto(load_config()) else 1
+        return 0 if adb_auto(load_config(), argv[1:]) else 1
     if argv[0] == "--adb-connect":
         ok_c, msg_c = adb_reconnect(load_config())
         print(("OK: " if ok_c else "INFO: ") + msg_c)
